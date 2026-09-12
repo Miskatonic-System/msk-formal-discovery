@@ -40,5 +40,9 @@ class RefactoringError(FormalDiscoveryError):
     """Raised when an automated refactoring proposal violates safety or mutates canonical source."""
 
 
-class ReceiptValidationError(FormalDiscoveryError):
+class ReceiptValidationError(FormalDiscoveryError, ValueError):
     """Raised when an execution or replay receipt fails schema or consistency invariants."""
+
+
+class CustodyGraphResolutionError(ReceiptValidationError):
+    """Raised when end-to-end custody graph resolution fails or detects provenance divergence."""

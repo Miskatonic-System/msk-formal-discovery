@@ -20,6 +20,7 @@ from msk_formal_discovery.abstraction.candidate import AbstractionCandidate
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_R1_DIR = REPO_ROOT / "experiments" / "formal-discovery-01b-r1"
 DEFAULT_R2_DIR = REPO_ROOT / "experiments" / "formal-discovery-01b-r2"
+DEFAULT_R3_DIR = REPO_ROOT / "experiments" / "formal-discovery-01b-r3"
 
 R1_EXECUTION_COMMIT = "d421e48f5345b3f28493b2098b6dabaa3c4c41e0"
 R1_EXECUTION_TREE = "de2faaf9be02dabca4993972d0423310e88ffbbe"
@@ -222,3 +223,164 @@ def verify_r2_commit_b_diff(
         "changed_files": changed_files,
         "violations": [],
     }
+
+
+def validate_r3_freeze(
+    exp_r3_dir: Optional[Path] = None,
+    exp_r2_dir: Optional[Path] = None,
+    exp_r1_dir: Optional[Path] = None,
+) -> Dict[str, Any]:
+    """Validate all pre-execution invariants prior to R3 Commit B (Finding F-FD-01B-R2-01)."""
+    target_r3 = exp_r3_dir or DEFAULT_R3_DIR
+    target_r2 = exp_r2_dir or DEFAULT_R2_DIR
+    target_r1 = exp_r1_dir or DEFAULT_R1_DIR
+
+    # 1. Check R1 Result SHA256
+    res_file = target_r1 / "result.json"
+    if not res_file.exists():
+        raise ValueError("R3_FREEZE_VALIDATION_FAILED: R1 result.json missing")
+    actual_res_sha = hashlib.sha256(res_file.read_bytes()).hexdigest()
+    if actual_res_sha != R1_RESULT_SHA256:
+        raise ValueError(f"R3_FREEZE_VALIDATION_FAILED: R1 result.json SHA mismatch: {actual_res_sha} != {R1_RESULT_SHA256}")
+
+    # 2. Check Candidate Digest
+    cand_file = target_r1 / "candidate.json"
+    if not cand_file.exists():
+        raise ValueError("R3_FREEZE_VALIDATION_FAILED: R1 candidate.json missing")
+    cand_dict = json.loads(cand_file.read_text(encoding="utf-8"))
+    cand = AbstractionCandidate.from_dict(cand_dict)
+    actual_cand_dig = cand.artifact_digest()
+    if actual_cand_dig != R1_CANDIDATE_ARTIFACT_DIGEST:
+        raise ValueError(f"R3_FREEZE_VALIDATION_FAILED: R1 candidate artifact digest mismatch: {actual_cand_dig}")
+
+    # 3. Check Implementation Digests against Preregistration
+    prereg_file = target_r1 / "preregistration.json"
+    prereg = json.loads(prereg_file.read_text(encoding="utf-8"))
+    expected_digs = prereg["implementation_digests"]
+
+    actual_app = get_applicator_implementation_digest()
+    if actual_app != expected_digs["applicator"]:
+        raise ValueError(f"R3_FREEZE_VALIDATION_FAILED: Applicator digest drift: {actual_app} != {expected_digs['applicator']}")
+
+    actual_env = get_rewrite_environment_implementation_digest()
+    if actual_env != expected_digs["environment"]:
+        raise ValueError(f"R3_FREEZE_VALIDATION_FAILED: Environment digest drift: {actual_env} != {expected_digs['environment']}")
+
+    actual_sel = get_selector_implementation_digest()
+    if actual_sel != expected_digs["selector"]:
+        raise ValueError(f"R3_FREEZE_VALIDATION_FAILED: Selector digest drift: {actual_sel} != {expected_digs['selector']}")
+
+    actual_smt = get_smt_control_implementation_digest()
+    if actual_smt != expected_digs["smt_control"]:
+        raise ValueError(f"R3_FREEZE_VALIDATION_FAILED: SMT control digest drift: {actual_smt} != {expected_digs['smt_control']}")
+
+    actual_adj = get_adjudicator_implementation_digest()
+    if actual_adj != expected_digs["adjudicator"]:
+        raise ValueError(f"R3_FREEZE_VALIDATION_FAILED: Adjudicator digest drift: {actual_adj} != {expected_digs['adjudicator']}")
+
+    # 4. Check schemas exist
+    schema_file = REPO_ROOT / "schemas" / "terminal-state-custody-receipt.v0.1.schema.json"
+    if not schema_file.exists():
+        raise ValueError("R3_FREEZE_VALIDATION_FAILED: terminal-state-custody-receipt.v0.1.schema.json missing")
+    schema_sha = hashlib.sha256(schema_file.read_bytes()).hexdigest()
+
+    # 5. Check R2 artifacts exist and are intact
+    freeze_file = target_r2 / "r1-original-result-freeze.json"
+    if not freeze_file.exists():
+        raise ValueError("R3_FREEZE_VALIDATION_FAILED: r1-original-result-freeze.json missing")
+    freeze_sha = hashlib.sha256(freeze_file.read_bytes()).hexdigest()
+    if freeze_sha != "7a9b7a14857311e8609ced51d2e7a0c6fa5a3d4ba78a453910ff28d9302d155a":
+        raise ValueError(f"R3_FREEZE_VALIDATION_FAILED: r1-original-result-freeze.json SHA mismatch: {freeze_sha}")
+
+    # 6. Verify zero R3 execution artifacts exist prior to Commit B
+    receipts_dir = target_r3 / "receipts"
+    if receipts_dir.exists():
+        replays = list(receipts_dir.glob("search-replay-*.json"))
+        custody_receipts = list(receipts_dir.glob("custody-*.json"))
+        if replays or custody_receipts:
+            raise ValueError(
+                f"R3_FREEZE_VALIDATION_FAILED: R3 receipts exist prior to execution: {[r.name for r in replays + custody_receipts]}"
+            )
+
+    scoped_onto = target_r3 / "onto-export-scoped.json"
+    if scoped_onto.exists():
+        raise ValueError("R3_FREEZE_VALIDATION_FAILED: onto-export-scoped.json exists prior to execution")
+
+    closure_manifest = target_r3 / "r1-terminal-custody-closure.v0.1.json"
+    if closure_manifest.exists():
+        raise ValueError("R3_FREEZE_VALIDATION_FAILED: r1-terminal-custody-closure.v0.1.json exists prior to execution")
+
+    paired_manifest = target_r3 / "paired-terminal-custody-manifest.v0.1.json"
+    if paired_manifest.exists():
+        raise ValueError("R3_FREEZE_VALIDATION_FAILED: paired-terminal-custody-manifest.v0.1.json exists prior to execution")
+
+    return {
+        "status": "R3_CUSTODY_FREEZE_VALIDATED",
+        "r1_source_commit": R1_EXECUTION_COMMIT,
+        "r1_source_tree": R1_EXECUTION_TREE,
+        "r1_result_sha256": R1_RESULT_SHA256,
+        "candidate_artifact_digest": R1_CANDIDATE_ARTIFACT_DIGEST,
+        "custody_schema_sha256": schema_sha,
+        "r1_freeze_sha256": freeze_sha,
+        "applicator_digest": actual_app,
+        "environment_digest": actual_env,
+        "selector_digest": actual_sel,
+        "smt_control_digest": actual_smt,
+        "adjudicator_digest": actual_adj,
+        "verified_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+def verify_r3_commit_b_diff(
+    repo_dir: Optional[Path] = None,
+    commit_a_sha: str = "",
+    commit_b_sha: str = "",
+) -> Dict[str, Any]:
+    """Verify that Commit B delta contains strictly additions in R3 evidence namespace (Finding F-FD-01B-R2-01/02/03)."""
+    target_repo = repo_dir or REPO_ROOT
+    if not commit_a_sha or not commit_b_sha:
+        raise ValueError("commit_a_sha and commit_b_sha required")
+
+    out = subprocess.check_output(
+        ["git", "diff", "--name-status", commit_a_sha, commit_b_sha],
+        cwd=str(target_repo),
+        text=True,
+    )
+    lines = [line.strip() for line in out.strip().split("\n") if line.strip()]
+
+    allowed_prefix = "experiments/formal-discovery-01b-r3/"
+    violations = []
+    added_files = []
+
+    for line in lines:
+        parts = line.split("\t")
+        if not parts:
+            continue
+        status = parts[0].strip()
+        filepath = parts[1].strip() if len(parts) > 1 else ""
+
+        # Status must be strictly 'A' (addition)
+        if status != "A":
+            violations.append(f"NON_ADDITION_STATUS: [{status}] {filepath}")
+            continue
+
+        # Filepath must be inside allowed_prefix
+        if not filepath.startswith(allowed_prefix):
+            violations.append(f"OUT_OF_SCOPE_PATH: [{status}] {filepath}")
+            continue
+
+        added_files.append(filepath)
+
+    if violations:
+        raise ValueError(f"R1_EVIDENCE_CUSTODY_REPLAY_DIVERGED: Prohibited changes in Commit B: {violations}")
+
+    if not added_files:
+        raise ValueError("R1_EVIDENCE_CUSTODY_REPLAY_DIVERGED: Commit B contains zero additions")
+
+    return {
+        "status": "COMMIT_B_DELTA_VALIDATED",
+        "total_files_added": len(added_files),
+        "added_files": added_files,
+        "violations": [],
+    }
+

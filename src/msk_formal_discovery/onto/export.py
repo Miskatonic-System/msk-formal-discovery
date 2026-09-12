@@ -159,6 +159,59 @@ class OntoEvaluationPackage:
                 raise ValueError(
                     "SUPPORTED_WITHOUT_EVIDENCE: functional_search_benefit SUPPORTED requires supported evidence_refs"
                 )
+
+        repo_root = Path(__file__).resolve().parents[3]
+        for r in self.evidence_refs:
+            if r.evidence_kind == "TERMINAL_STATE_CUSTODY_CLOSURE":
+                ref_lower = r.artifact_ref.lower()
+                if "freeze" in ref_lower or (Path(r.artifact_ref).name.lower() == "result.json" or ("result" in Path(r.artifact_ref).name.lower() and "closure" not in Path(r.artifact_ref).name.lower())):
+                    raise ReceiptValidationError(
+                        f"EVIDENCE_KIND_TARGET_MISMATCH: TERMINAL_STATE_CUSTODY_CLOSURE cannot target result freeze artifact '{r.artifact_ref}'"
+                    )
+                if "closure" not in ref_lower:
+                    raise ReceiptValidationError(
+                        f"EVIDENCE_KIND_TARGET_MISMATCH: TERMINAL_STATE_CUSTODY_CLOSURE must target a closure manifest, got '{r.artifact_ref}'"
+                    )
+                p = Path(r.artifact_ref)
+                if not p.is_file():
+                    alt = repo_root / r.artifact_ref
+                    if alt.is_file():
+                        p = alt
+                if p.is_file():
+                    try:
+                        raw = json.loads(p.read_text(encoding="utf-8"))
+                        if "closure_status" not in raw and "closure_id" not in raw:
+                            raise ReceiptValidationError(
+                                f"EVIDENCE_KIND_TARGET_MISMATCH: Target '{r.artifact_ref}' is not a custody closure manifest"
+                            )
+                    except json.JSONDecodeError:
+                        pass
+            elif r.evidence_kind == "FROZEN_R1_SCIENTIFIC_RESULT":
+                ref_lower = r.artifact_ref.lower()
+                if "closure" in ref_lower:
+                    raise ReceiptValidationError(
+                        f"EVIDENCE_KIND_TARGET_MISMATCH: FROZEN_R1_SCIENTIFIC_RESULT cannot target custody closure manifest '{r.artifact_ref}'"
+                    )
+                if not ("freeze" in ref_lower or "result" in ref_lower):
+                    raise ReceiptValidationError(
+                        f"EVIDENCE_KIND_TARGET_MISMATCH: FROZEN_R1_SCIENTIFIC_RESULT must target result freeze artifact, got '{r.artifact_ref}'"
+                    )
+                p = Path(r.artifact_ref)
+                if not p.is_file():
+                    alt = repo_root / r.artifact_ref
+                    if alt.is_file():
+                        p = alt
+                if p.is_file():
+                    try:
+                        raw = json.loads(p.read_text(encoding="utf-8"))
+                        if "closure_status" in raw or "closure_id" in raw:
+                            raise ReceiptValidationError(
+                                f"EVIDENCE_KIND_TARGET_MISMATCH: Target '{r.artifact_ref}' is a closure manifest, not a frozen result"
+                            )
+                    except json.JSONDecodeError:
+                        pass
+
+        if self.functional_search_benefit == "SUPPORTED":
             for r in supported_refs:
                 r.validate(require_durable=True)
 
@@ -238,7 +291,7 @@ class OntoExporter:
         representation_evidence: Optional[Union[OntoEvidenceRef, str]] = None,
         cross_policy_evidence: Optional[Union[OntoEvidenceRef, str]] = None,
         cross_formal_system_evidence: Optional[Union[OntoEvidenceRef, str]] = None,
-        functional_evidence: Optional[Union[OntoEvidenceRef, str]] = None,
+        functional_evidence: Optional[Union[OntoEvidenceRef, List[OntoEvidenceRef], str]] = None,
         known_artifacts: Optional[Dict[str, str]] = None,
     ) -> OntoEvaluationPackage:
         # Reject naked booleans per Section 31
@@ -284,7 +337,16 @@ class OntoExporter:
         else:
             cross_formal = cross_formal_system_evidence or "UNKNOWN"
 
-        if isinstance(functional_evidence, OntoEvidenceRef):
+        if isinstance(functional_evidence, list):
+            for ref in functional_evidence:
+                if isinstance(ref, OntoEvidenceRef):
+                    ref.validate(known_artifacts=known_artifacts)
+                    evidence_refs.append(ref)
+            if any(r.evidence_status == "SUPPORTED" for r in functional_evidence if isinstance(r, OntoEvidenceRef)):
+                func_benefit = "SUPPORTED"
+            else:
+                func_benefit = "NOT_SUPPORTED"
+        elif isinstance(functional_evidence, OntoEvidenceRef):
             functional_evidence.validate(known_artifacts=known_artifacts)
             evidence_refs.append(functional_evidence)
             func_benefit = functional_evidence.evidence_status
@@ -359,17 +421,21 @@ class OntoExporter:
         end_to_end_runtime_benefit: str = "NOT_ESTABLISHED",
         claim_ceiling: str = "ENGINEERING_ABSTRACTION_EFFECT_ONLY",
         durable_evidence_ref: Optional[OntoEvidenceRef] = None,
+        durable_evidence_refs: Optional[List[OntoEvidenceRef]] = None,
         representation_evidence: Optional[Union[OntoEvidenceRef, str]] = None,
         cross_policy_evidence: Optional[Union[OntoEvidenceRef, str]] = None,
         cross_formal_system_evidence: Optional[Union[OntoEvidenceRef, str]] = None,
     ) -> OntoEvaluationPackage:
         """Export scoped ONTO package enforcing strict authority scope (WO-MATH-FORMAL-DISCOVERY-01B-R2 Sections 19-24)."""
+        func_ev: Any = durable_evidence_ref
+        if durable_evidence_refs is not None:
+            func_ev = durable_evidence_refs
         pkg = OntoExporter.export(
             candidate=candidate,
             representation_evidence=representation_evidence,
             cross_policy_evidence=cross_policy_evidence,
             cross_formal_system_evidence=cross_formal_system_evidence,
-            functional_evidence=durable_evidence_ref,
+            functional_evidence=func_ev,
         )
         pkg.functional_search_benefit_scope = functional_search_benefit_scope
         pkg.end_to_end_runtime_benefit = end_to_end_runtime_benefit

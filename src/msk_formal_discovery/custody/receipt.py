@@ -63,6 +63,8 @@ class TerminalStateCustodyReceipt:
     replayed_at: str
     authority: str
     receipt_digest: str = ""
+    replay_search_receipt_ref: str = ""
+    replay_search_receipt_digest: str = ""
 
     def __post_init__(self) -> None:
         if not self.receipt_digest:
@@ -72,7 +74,7 @@ class TerminalStateCustodyReceipt:
         return compute_custody_receipt_digest(self.to_dict())
 
     def to_dict(self) -> Dict[str, Any]:
-        return {
+        d: Dict[str, Any] = {
             "schema_version": self.schema_version,
             "custody_receipt_id": self.custody_receipt_id,
             "custody_mode": self.custody_mode,
@@ -111,6 +113,11 @@ class TerminalStateCustodyReceipt:
             "authority": self.authority,
             "receipt_digest": self.receipt_digest,
         }
+        if self.replay_search_receipt_ref:
+            d["replay_search_receipt_ref"] = self.replay_search_receipt_ref
+        if self.replay_search_receipt_digest:
+            d["replay_search_receipt_digest"] = self.replay_search_receipt_digest
+        return d
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> TerminalStateCustodyReceipt:
@@ -152,6 +159,8 @@ class TerminalStateCustodyReceipt:
             replayed_at=data["replayed_at"],
             authority=data["authority"],
             receipt_digest=data.get("receipt_digest", ""),
+            replay_search_receipt_ref=data.get("replay_search_receipt_ref", ""),
+            replay_search_receipt_digest=data.get("replay_search_receipt_digest", ""),
         )
 
     def validate(self, schema_path: Optional[Path] = None) -> None:
@@ -160,6 +169,26 @@ class TerminalStateCustodyReceipt:
             raise AuthorityViolationError(
                 f"AUTHORITY_VIOLATION: authority must be 'NONE', got '{self.authority}'"
             )
+
+        if self.source_work_order == "WO-MATH-FORMAL-DISCOVERY-01B-R3":
+            if not self.replay_search_receipt_ref:
+                raise ReceiptValidationError("MISSING_REPLAY_SEARCH_RECEIPT_REF: replay_search_receipt_ref required for R3")
+            if not self.replay_search_receipt_digest:
+                raise ReceiptValidationError("MISSING_REPLAY_SEARCH_RECEIPT_DIGEST: replay_search_receipt_digest required for R3")
+
+        if self.replay_search_receipt_ref:
+            p = Path(self.replay_search_receipt_ref)
+            if not p.is_file():
+                repo_root = Path(__file__).resolve().parents[3]
+                alt_p = repo_root / self.replay_search_receipt_ref
+                if alt_p.is_file():
+                    p = alt_p
+            if p.is_file() and self.replay_search_receipt_digest:
+                actual_file_dig = hashlib.sha256(p.read_bytes()).hexdigest()
+                if actual_file_dig != self.replay_search_receipt_digest:
+                    raise ReceiptValidationError(
+                        f"REPLAY_SEARCH_RECEIPT_DIGEST_MISMATCH: File digest {actual_file_dig} != {self.replay_search_receipt_digest}"
+                    )
 
         if self.custody_mode != "DETERMINISTIC_EVIDENCE_REPLAY":
             raise ReceiptValidationError(

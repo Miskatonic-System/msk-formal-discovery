@@ -1,0 +1,20 @@
+{
+  "schema_version": "miskatonic.representation-transform-receipt.v0.1",
+  "receipt_id": "transform-fam-pos-02-R0_CANONICAL_CONTROL",
+  "family_id": "fam-pos-02",
+  "stratum": "R0_CANONICAL_CONTROL",
+  "source_expression": "add(0, add(0, add(mul(1, kb), 0)))",
+  "transformed_expression": "add(0, add(0, add(mul(1, kb), 0)))",
+  "source_expression_digest": "55001e30296fd97a97c8772e1cd18ab62c4dfb4715bdf73e4c832132b0d4626d",
+  "transformed_expression_digest": "55001e30296fd97a97c8772e1cd18ab62c4dfb4715bdf73e4c832132b0d4626d",
+  "variable_bijection": {
+    "kb": "kb"
+  },
+  "transform_implementation_digest": "5c85f28d268f138ffbf2ec8d9fe400d72a1378ed09223ddff43a802ccd809d4a",
+  "smt_certificate_ref": "experiments/formal-discovery-01c/receipts/smt-transform-fam-pos-02-R0_CANONICAL_CONTROL.json",
+  "smt_certificate_digest": "2a19ece9943419e00e7366e8050c214f8c473db0408976209b8be1a613c3b99d",
+  "smt_verdict": "UNSAT_REFUTED",
+  "semantic_equivalence_certified": true,
+  "authority": "NONE",
+  "receipt_digest": "e56418e48783980fbf00ec78528784093a4b26cb436b271757d84d1ba83a8a9b"
+}

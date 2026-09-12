@@ -1,0 +1,20 @@
+{
+  "schema_version": "miskatonic.representation-transform-receipt.v0.1",
+  "receipt_id": "transform-fam-pos-03-R3_COMMUTATIVE_MIRROR",
+  "family_id": "fam-pos-03",
+  "stratum": "R3_COMMUTATIVE_MIRROR",
+  "source_expression": "mul(1, mul(1, add(mul(1, kc), 0)))",
+  "transformed_expression": "mul(mul(add(0, mul(kc, 1)), 1), 1)",
+  "source_expression_digest": "5b03a8ed6757386d743807bca2f39ff099716ea3b6c0ba70f89dee9e0e8f6efc",
+  "transformed_expression_digest": "a789e84e095630f139ea1e356cf77325a15ce62052ef60fb4177b7e40fd43970",
+  "variable_bijection": {
+    "kc": "kc"
+  },
+  "transform_implementation_digest": "5c85f28d268f138ffbf2ec8d9fe400d72a1378ed09223ddff43a802ccd809d4a",
+  "smt_certificate_ref": "experiments/formal-discovery-01c/receipts/smt-transform-fam-pos-03-R3_COMMUTATIVE_MIRROR.json",
+  "smt_certificate_digest": "ed10d66f987df4571e82822111bdc64d8ed7a68d4de39c2d70db63867f8743ba",
+  "smt_verdict": "UNSAT_REFUTED",
+  "semantic_equivalence_certified": true,
+  "authority": "NONE",
+  "receipt_digest": "4b078dadaa70abcbde2cf15b61080fd1a4ca93e67041e116eae181d37c3c455f"
+}

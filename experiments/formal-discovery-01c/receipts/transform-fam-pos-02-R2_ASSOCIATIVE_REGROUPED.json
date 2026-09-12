@@ -1,0 +1,20 @@
+{
+  "schema_version": "miskatonic.representation-transform-receipt.v0.1",
+  "receipt_id": "transform-fam-pos-02-R2_ASSOCIATIVE_REGROUPED",
+  "family_id": "fam-pos-02",
+  "stratum": "R2_ASSOCIATIVE_REGROUPED",
+  "source_expression": "add(0, add(0, add(mul(1, kb), 0)))",
+  "transformed_expression": "add(add(0, 0), add(mul(1, kb), 0))",
+  "source_expression_digest": "55001e30296fd97a97c8772e1cd18ab62c4dfb4715bdf73e4c832132b0d4626d",
+  "transformed_expression_digest": "45e241baf9126c60ff5b7e009371c087fc3f3818485581c1785f2d6367b6b7d3",
+  "variable_bijection": {
+    "kb": "kb"
+  },
+  "transform_implementation_digest": "5c85f28d268f138ffbf2ec8d9fe400d72a1378ed09223ddff43a802ccd809d4a",
+  "smt_certificate_ref": "experiments/formal-discovery-01c/receipts/smt-transform-fam-pos-02-R2_ASSOCIATIVE_REGROUPED.json",
+  "smt_certificate_digest": "e9c863a2e632245e31834de3ae5a3c914277727c231083927f079ef523e8ef3f",
+  "smt_verdict": "UNSAT_REFUTED",
+  "semantic_equivalence_certified": true,
+  "authority": "NONE",
+  "receipt_digest": "36a8dde3aace73c9dca372f3a203b5bb78598e21a4610323da8b5af614c9ec82"
+}

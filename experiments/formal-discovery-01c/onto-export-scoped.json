@@ -1,0 +1,74 @@
+{
+  "package_id": "onto-eval-formal-discovery-01c",
+  "candidate_id": "macro_mul_one_add_zero",
+  "recurrence_count": 8,
+  "representation_invariance": "NOT_SUPPORTED",
+  "cross_search_policy_recurrence": "UNKNOWN",
+  "cross_formal_system_recurrence": "UNKNOWN",
+  "functional_search_benefit": "SUPPORTED",
+  "source_traces": [
+    "trace-fam-01",
+    "trace-fam-02",
+    "trace-fam-03",
+    "trace-fam-04",
+    "trace-fam-05",
+    "trace-fam-06",
+    "trace-fam-07",
+    "trace-fam-08",
+    "trace-fam-09",
+    "trace-fam-10",
+    "trace-fam-11",
+    "trace-fam-12"
+  ],
+  "structural_fingerprint": "273a1d821e54ba6bf1832a2f1f11b338853aa9d1070d873c8b29345ba5aae903",
+  "evidence_refs": [
+    {
+      "evidence_kind": "REPRESENTATION_INVARIANCE_CLOSURE",
+      "artifact_ref": "experiments/formal-discovery-01c/representation-invariance-closure.v0.1.json",
+      "artifact_digest": "896588d4b34e44222eb5f982335b7e6bbbe9a5ac9f1d3c473bbec525764e3186",
+      "evidence_status": "NOT_SUPPORTED",
+      "source_experimental_units": [
+        "fam-pos-01",
+        "fam-pos-02",
+        "fam-pos-03",
+        "fam-pos-04",
+        "fam-pos-05",
+        "fam-pos-06",
+        "fam-pos-07",
+        "fam-pos-08",
+        "fam-neg-01",
+        "fam-neg-02",
+        "fam-neg-03",
+        "fam-neg-04"
+      ],
+      "source_repository": "Miskatonic-System/msk-formal-discovery"
+    },
+    {
+      "evidence_kind": "TERMINAL_STATE_CUSTODY_CLOSURE",
+      "artifact_ref": "experiments/formal-discovery-01b-r3/r1-terminal-custody-closure.v0.1.json",
+      "artifact_digest": "40ac582596100a9663de34e0851a4b344d594fce44904aaf8852814d6c9e4a3d",
+      "evidence_status": "SUPPORTED",
+      "source_experimental_units": [
+        "fam-pos-01",
+        "fam-pos-02",
+        "fam-pos-03",
+        "fam-pos-04",
+        "fam-pos-05",
+        "fam-pos-06",
+        "fam-pos-07",
+        "fam-pos-08",
+        "fam-neg-01",
+        "fam-neg-02",
+        "fam-neg-03",
+        "fam-neg-04"
+      ],
+      "source_repository": "Miskatonic-System/msk-formal-discovery",
+      "source_commit": "292cbd26075b4a831e516d6f15eca3c1222f6e71"
+    }
+  ],
+  "authority": "NONE",
+  "functional_search_benefit_scope": "NODE_EXPANSION_SEARCH_STRUCTURE",
+  "representation_invariance_scope": "ALPHA_ASSOCIATIVE_COMMUTATIVE_IDENTITY_ORBIT_V0_1",
+  "end_to_end_runtime_benefit": "NOT_ESTABLISHED",
+  "claim_ceiling": "ENGINEERING_ABSTRACTION_EFFECT_ONLY"
+}

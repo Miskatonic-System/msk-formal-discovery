@@ -1,0 +1,20 @@
+{
+  "schema_version": "miskatonic.representation-transform-receipt.v0.1",
+  "receipt_id": "transform-fam-neg-03-R3_COMMUTATIVE_MIRROR",
+  "family_id": "fam-neg-03",
+  "stratum": "R3_COMMUTATIVE_MIRROR",
+  "source_expression": "add(add(qc, 0), 0)",
+  "transformed_expression": "add(0, add(0, qc))",
+  "source_expression_digest": "37cbe263bbeff1b2412ba6bba761973b275149adca0a0a897268f8baa399038b",
+  "transformed_expression_digest": "4217128948f739403ec2f44ab5ed646cf9634ebcb11e08711dce11c8847ca608",
+  "variable_bijection": {
+    "qc": "qc"
+  },
+  "transform_implementation_digest": "5c85f28d268f138ffbf2ec8d9fe400d72a1378ed09223ddff43a802ccd809d4a",
+  "smt_certificate_ref": "experiments/formal-discovery-01c/receipts/smt-transform-fam-neg-03-R3_COMMUTATIVE_MIRROR.json",
+  "smt_certificate_digest": "decd12159b0e4fb02a9ed904f68a1f2b5ddb28ef647d61657caba6efb7c96bd3",
+  "smt_verdict": "UNSAT_REFUTED",
+  "semantic_equivalence_certified": true,
+  "authority": "NONE",
+  "receipt_digest": "165d9b81fbbcc46666a6f698dead4d0ed26cbbc5b2cc9af8a0dc9ad85797a76c"
+}

@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "miskatonic.candidate-application-receipt.v0.1",
+  "title": "Miskatonic Candidate Application Receipt Schema v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "application_id",
+    "candidate_id",
+    "candidate_artifact_digest",
+    "candidate_kind",
+    "applicator_id",
+    "applicator_version",
+    "applicator_implementation_digest",
+    "experimental_unit_id",
+    "problem_digest",
+    "input_state_digest",
+    "candidate_pattern_digest",
+    "substitution_witness",
+    "primitive_expansion",
+    "primitive_expansion_digest",
+    "pre_action_surface_digest",
+    "post_action_surface_digest",
+    "output_macro_action_digest",
+    "output_state_digest",
+    "transition_model_digest",
+    "application_status",
+    "started_at",
+    "completed_at",
+    "receipt_digest",
+    "authority"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "miskatonic.candidate-application-receipt.v0.1"
+    },
+    "application_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidate_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidate_artifact_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "candidate_kind": {
+      "type": "string",
+      "enum": [
+        "LEMMA",
+        "REWRITE_RULE",
+        "PRECONDITION",
+        "NORMALIZATION_RULE",
+        "LIBRARY_BRIDGE",
+        "TACTIC_MACRO",
+        "API_FUNCTION",
+        "MODULE_BOUNDARY"
+      ]
+    },
+    "applicator_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "applicator_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "applicator_implementation_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "experimental_unit_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "problem_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "input_state_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "candidate_pattern_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "substitution_witness": {
+      "type": "object"
+    },
+    "primitive_expansion": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "primitive_expansion_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "pre_action_surface_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "post_action_surface_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "output_macro_action_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "output_state_digest": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "transition_model_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "application_status": {
+      "type": "string",
+      "enum": [
+        "APPLIED",
+        "NOT_APPLICABLE",
+        "REJECTED"
+      ]
+    },
+    "started_at": {
+      "type": "string"
+    },
+    "completed_at": {
+      "type": "string"
+    },
+    "receipt_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "authority": {
+      "const": "NONE"
+    }
+  }
+}

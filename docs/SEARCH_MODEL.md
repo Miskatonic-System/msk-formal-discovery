@@ -111,12 +111,17 @@ Under `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`:
 - **Candidate Application Digest**: Binds status, requested candidate ID, and candidate artifact digest, enforcing:
   $$\text{REQUEST\_DIGEST} \neq \text{APPLICATION\_PROOF}$$
 
-### 5.4 Future 01B Application Contract (Section 14)
-`CandidateApplicationReceipt` must eventually bind:
-- candidate artifact digest
-- applicator implementation digest
-- input search state digest
-- output / transformed search state or action surface digest
-- application semantics and result
-- exact experimental unit
-Only such evidence may establish `APPLIED`.
+### 5.4 Candidate Application Subsystem (`CandidateApplicator`)
+Under `WO-MATH-FORMAL-DISCOVERY-01B`:
+- `CandidateApplicator` executes candidate application at search expansion time.
+- Emits attested `CandidateApplicationReceipt` binding:
+  - candidate artifact digest
+  - applicator implementation digest
+  - input search state digest
+  - output/transformed search state or action surface digest
+  - application semantics and execution outcome (`APPLIED`, `NOT_APPLICABLE`, `REJECTED`)
+  - exact experimental unit
+- `SearchExecutionReceipt` records:
+  - `candidate_application_receipt_refs`: List of references to emitted application receipts
+  - `candidate_application_receipt_digests`: List of digests of emitted application receipts
+- Only valid `CandidateApplicationReceipt(status="APPLIED")` records permit `SearchExecutor` to derive `candidate_application_status = APPLIED`. Attempts by callers to pass `APPLIED` directly continue to be strictly rejected.

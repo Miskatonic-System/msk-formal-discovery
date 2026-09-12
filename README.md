@@ -1,19 +1,39 @@
 # Miskatonic Formal Discovery Engine (`msk-formal-discovery`)
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01B`
 **Repository**: `Miskatonic-System/msk-formal-discovery`
 **Architecture Owner**: `Miskatonic-System/miskatonic-systems`
 **Upstream Sources**: `Miskatonic-System/msk-corpus-intake`, `Miskatonic-System/msk-epistemic-engine`
 **Evaluation Owner**: `Miskatonic-System/msk-onto`
-**Work Type**: `CANDIDATE_APPLICATION_AUTHORITY_REPAIR`
-**Authority**: `NONE` (Zero theorem proof or mathematical claim authority)
-**Canonical Main**: `8d80e82d5936fb0df36afc95ff7bffb7d4915768` (`FORMAL_DISCOVERY_PROTOTYPE_SPINE_ESTABLISHED`)
-**Reviewed R1 Head**: `96587f8fa379aa972922b7f5e689728e36238f50`
-**Reviewed R2 Head**: `5a641eee2022d8ba54b20aef8708c6b380f3f987`
-**Reviewed R3 Head**: `17724487c3e127ff0f6df07e2ad15824712078b4`
-**Reviewed R4 Head**: `6d80eb75c7949358597022a69eb7536faeafe59d`
-**Blocking Source Review**: `5188003849`
-**Earned Final Ratification Disposition**: `FORMAL_DISCOVERY_SPINE_ACCEPTED`
+**Work Type**: `PROSPECTIVE_CANDIDATE_APPLICATION_EXPERIMENT`
+**Claim Ceiling**: `ENGINEERING_ABSTRACTION_EFFECT_ONLY`
+**Authority**: `NONE` (Zero theorem proof or mathematical claim authority; canonical library mutation prohibited; MCTS scientific claims prohibited)
+**Canonical Predecessor**: `288af1a06fa1d98bd9cf8dd48a9ef6902c36b9f9` (`FORMAL_DISCOVERY_SPINE_ACCEPTED`)
+**Canonical Predecessor Tree**: `2e7ccb2cb5750ad2a09ec8feae684a3e8ed5409a`
+**Acceptance Review**: `5188100687`
+
+---
+
+## 0. WO-MATH-FORMAL-DISCOVERY-01B: Governed Candidate Application & Prospective Replay
+
+`WO-MATH-FORMAL-DISCOVERY-01B` implements the governed candidate application subsystem and runs the first prospective held-out search experiment to answer whether an abstraction candidate derived from primitive discovery traces can improve search performance on held-out problems without compromising semantic equivalence or negative-control selectivity.
+
+### Two-Phase Governance Freeze
+1. **Commit A (`APPLICATION_AND_PREREG_FREEZE`)**:
+   - Schema: [`candidate-application-receipt.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/candidate-application-receipt.v0.1.schema.json) certifying candidate artifact digest, applicator implementation digest, problem digest, input state digest, substitution witness, primitive expansion digest, pre/post action surface digests, macro action digest, output state digest, and status.
+   - Subsystem: [`CandidateApplicator`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/application/applicator.py) performing step-by-step primitive expansion matching, macro action construction, application equivalence witness checking (`macro_output_state_digest == primitive_output_state_digest`), and action surface replacement.
+   - Integration: [`SearchExecutor`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/search/executor.py) binds `CandidateApplicator` and derives `candidate_application_status = APPLIED` exclusively via attested receipts; caller-minted `APPLIED` is strictly rejected with `AuthorityViolationError`.
+   - Environment: [`RewriteSearchEnvironment`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/experiments/rewrite_control.py) implementing primitive term rewriting over an integer algebra ruleset (`MUL_ONE_LEFT`, `MUL_ONE_RIGHT`, `ADD_ZERO_LEFT`, `ADD_ZERO_RIGHT`, `DOUBLE_NEG`).
+   - SMT Control: Native Z3 SMT-LIB2 semantic equivalence checking (`UNSAT_REFUTED` via `/home/linuxbrew/.linuxbrew/bin/z3`).
+   - Frozen Manifests:
+     - `discovery-manifest.json` (8 discovery problems, `seed=42`)
+     - `qualification-manifest.json` (8 positive held-out problems, `seed=1337`; 4 negative control problems, `seed=2026`)
+     - `preregistration.json` (frozen candidate selection rule, search budget, metric thresholds, adjudication criteria)
+   - Commit A Freeze: Contains zero held-out execution results or performance numbers.
+2. **Commit B (`FROZEN_EXPERIMENT_EXECUTION`)**:
+   - Executes the frozen discovery and paired replay experiment across all 12 held-out units.
+   - Evaluates prospective search reduction and selectivity parity on negative controls.
+   - Exports non-authoritative ONTO package and refactoring proposal under `ENGINEERING_ABSTRACTION_EFFECT_ONLY`.
 
 ---
 
@@ -24,20 +44,7 @@
 3. **01A-R2 Evidence Chain & Trace Semantics**: Head commit `5a641eee2022d8ba54b20aef8708c6b380f3f987` resolved initial evidence-chain defects across 79 deterministic tests.
 4. **01A-R3 Final Execution Evidence Closure**: Head commit `17724487c3e127ff0f6df07e2ad15824712078b4` sealed evidence custody seams across 99 deterministic tests.
 5. **01A-R4 Production Bridge Final Repair**: Head commit `6d80eb75c7949358597022a69eb7536faeafe59d` sealed production bridges across 115 deterministic tests.
-6. **01A-R4-R1 Candidate-Application Authority Closure & Spine Ratification**: Under `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`, candidate application authority was closed and the formal discovery spine ratified across 124 deterministic tests:
-   - **Caller APPLIED Authority Removed**: `SearchExecutor.execute(...)` derives application state itself; public caller cannot mint `APPLIED`. Attempting to set `APPLIED` is strictly rejected with `AuthorityViolationError`.
-   - **01A Application States Sealed**: `candidate_enabled = False` => `DISABLED`; `candidate_enabled = True` => `REQUESTED_NOT_APPLIED`. No 01A `SearchExecutor` invocation may emit `APPLIED`.
-   - **APPLIED Reserved for 01B**: `APPLIED` is frozen as a reserved future state requiring a governed `CandidateApplicator` and `CandidateApplicationReceipt` binding candidate artifact digest, applicator implementation digest, input state digest, output action surface digest, application semantics, and result.
-   - **Candidate-Aware Action Generator Eliminated**: The canonical execution path does not pass `candidate_id` into action generators. Baseline and candidate-requested arms receive identical inputs.
-   - **Transition Parity Enforced**: Baseline (`DISABLED`) and candidate-requested (`REQUESTED_NOT_APPLIED`) arms use identical action generators, transition models, policies, budgets, seeds, and environments.
-   - **Qualification Gate Sealed**: `QUALIFIED_HELD_OUT` requires abstracted `candidate_application_status = APPLIED`. Because 01A cannot produce `APPLIED`, candidate-requested runs remain `CANDIDATE_ONLY`.
-   - **ONTO Boundary Sealed**: ONTO export remains `functional_search_benefit = UNTESTED` for all candidate-requested runs. No canonical 01A test emits `SUPPORTED`.
-   - **Candidate Artifact Digest**: Deterministically binds `candidate_id`, `candidate_kind`, `formal_specification`, `lgg_digest`, and `admissibility_receipt_digest`.
-   - **Candidate Application Digest**: Explicitly binds status, candidate ID, and candidate artifact digest with invariant `REQUEST_DIGEST != APPLICATION_PROOF`.
-   - **Process-Local Witness Trust Statement**: Frozen: `PROCESS_LOCAL_PROVENANCE_WITNESS != HOSTILE_CODE_ISOLATION`. `SearchExecutionWitness` provides process-local provenance and anti-construction, not arbitrary code sandboxing inside Python.
-
-The verified final disposition is:
-$$\text{FORMAL\_DISCOVERY\_SPINE\_ACCEPTED}$$
+6. **01A-R4-R1 Candidate-Application Authority Closure & Spine Ratification**: Candidate application authority was formally closed and sealed, earning `FORMAL_DISCOVERY_SPINE_ACCEPTED` across 124 deterministic tests.
 
 
 ---

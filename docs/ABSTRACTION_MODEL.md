@@ -177,16 +177,19 @@ Replay runs produce attested receipts validating against [`schemas/replay-run-re
 > It does **not** provide cryptographic isolation against malicious code executing within the same Python interpreter process memory.
 > $$\text{PROCESS\_LOCAL\_PROVENANCE\_WITNESS} \neq \text{HOSTILE\_CODE\_ISOLATION}$$
 
-### 5.7 Future 01B Candidate Application Contract
-
-Full candidate application is deferred to `01B`. When implemented, a governed `CandidateApplicator` must emit an attested `CandidateApplicationReceipt` binding:
-- candidate artifact digest
-- applicator implementation digest
-- input search state digest
-- output/transformed search state or action surface digest
-- application semantics and execution outcome
-- exact experimental unit
-Only such evidence may legitimately establish `APPLIED` status.
+### 5.7 Candidate Application Contract (`CandidateApplicator`)
+Under `WO-MATH-FORMAL-DISCOVERY-01B`:
+- Governed candidate application is implemented by [`CandidateApplicator`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/application/applicator.py).
+- The applicator generates attested [`CandidateApplicationReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/candidate-application-receipt.v0.1.schema.json) records binding:
+  - candidate artifact digest
+  - applicator implementation digest
+  - input search state digest
+  - output/transformed search state and action surface digests
+  - application semantics, equivalence witness, and execution outcome
+  - exact experimental unit
+- When an abstraction candidate's primitive expansion matches the current state, an equivalence check verifies that executing the synthesized macro action produces the identical state digest as executing the primitive sequence step-by-step.
+- SMT semantic equivalence control is executed via native Z3 (`UNSAT_REFUTED`).
+- Only such evidence establishes `APPLIED` status.
 
 ---
 

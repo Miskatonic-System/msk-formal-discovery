@@ -63,6 +63,7 @@ class AbstractionCandidate:
     held_out_evaluation: Optional[Dict[str, Any]] = None
     blueprint_family: Optional[str] = None
     onto_export: Optional[Dict[str, Any]] = None
+    primitive_expansion: List[str] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         # Validate hex digest patterns on discovery and qualification problem digests
@@ -145,6 +146,7 @@ class AbstractionCandidate:
             "held_out_evaluation": held_out_data,
             "blueprint_family": self.blueprint_family,
             "onto_export": onto_data,
+            "primitive_expansion": list(self.primitive_expansion),
             "authority": self.authority,
         }
         if self.admissibility_receipt is not None:
@@ -213,12 +215,20 @@ def compute_candidate_artifact_digest(candidate: Any) -> str:
         lgg_dig = getattr(candidate, "lgg_digest", "0" * 64)
         adm_dig = getattr(candidate, "admissibility_receipt_digest", "0" * 64)
 
+    prim_exp = (
+        getattr(candidate, "primitive_expansion", None)
+        or (candidate.get("primitive_expansion") if isinstance(candidate, dict) else None)
+        or []
+    )
+    prim_exp_dig = hashlib.sha256(json.dumps(prim_exp, sort_keys=True).encode("utf-8")).hexdigest() if prim_exp else ("0" * 64)
+
     payload = {
         "candidate_id": cid,
         "candidate_kind": ckind,
         "formal_specification_digest": hashlib.sha256(spec_str.encode("utf-8")).hexdigest(),
         "lgg_digest": lgg_dig or ("0" * 64),
         "admissibility_receipt_digest": adm_dig or ("0" * 64),
+        "primitive_expansion_digest": prim_exp_dig,
     }
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
 
@@ -325,4 +335,5 @@ class CandidateFactory:
             admissibility_status=status,
             admissibility_receipt=receipt.to_dict(),
             blueprint_family=blueprint_family,
+            primitive_expansion=list(getattr(pattern, "operations", [])),
         )

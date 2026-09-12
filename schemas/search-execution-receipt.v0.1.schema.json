@@ -38,6 +38,8 @@
     "search_policy_implementation_digest",
     "candidate_application_status",
     "candidate_application_digest",
+    "candidate_application_receipt_refs",
+    "candidate_application_receipt_digests",
     "receipt_digest"
   ],
   "properties": {
@@ -185,6 +187,19 @@
     "candidate_application_digest": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
+    },
+    "candidate_application_receipt_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "candidate_application_receipt_digests": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
     },
     "receipt_digest": {
       "type": "string",

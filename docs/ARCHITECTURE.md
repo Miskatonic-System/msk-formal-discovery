@@ -105,10 +105,15 @@ Sequence violations (such as skipping search, out-of-order execution, or promoti
 ### 3.6 Replay & Qualification Engine
 - **Disjointness Guard**: Verifies canonical experimental unit separation:
   $$\text{DISCOVERY\_PROBLEM\_DIGESTS} \cap \text{QUALIFICATION\_PROBLEM\_DIGESTS} = \emptyset$$
+- **Candidate Applicator Subsystem (`CandidateApplicator`)**:
+  - Implements governed candidate application ([`CandidateApplicator`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/application/applicator.py)).
+  - Emits attested [`CandidateApplicationReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/candidate-application-receipt.v0.1.schema.json) certifying candidate artifact digest, applicator implementation digest, input state digest, substitution witness, primitive expansion digest, pre/post action surface digests, macro action digest, and output state digest.
+  - Verifies application equivalence witness (`macro_output_state_digest == primitive_output_state_digest`) and replaces the redundant primitive entry point while preserving all unrelated actions untouched.
+  - SMT semantic equivalence control executed natively via Z3 (`UNSAT_REFUTED`).
 - **Paired Replay Contract**: [`PairedReplayContract`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/abstraction/replay.py) binds all non-abstraction variables (environment_digest, backend_digest, source_graph_digest, search_policy_digest, problem_digest, budget, seed) identical between baseline and abstracted arms, verified via cryptographic `contract_digest`.
 - **Receipt Validation & Cross-Checking**: Replay run receipts validate against [`ReplayRunReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/replay-run-receipt.v0.1.schema.json) and cross-check against underlying [`SearchExecutionReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/search-execution-receipt.v0.1.schema.json) records.
 - **De-Fabricated Benefit**: Qualification requires genuine observed search reduction from `EXECUTED_SEARCH_RUN` or `CERTIFIED_SEARCH_REPLAY`. `SYNTHETIC_REPLAY_FIXTURE` leaves candidates at `CANDIDATE_ONLY`.
-- **Lifecycle Ratchet**: Candidates transition from `PROPOSED` to `QUALIFIED_HELD_OUT` only after passing empirical replay thresholds under executed paired replay with `admissibility_status == "ADMISSIBLE"` and non-synthetic discovery origin.
+- **Lifecycle Ratchet**: Candidates transition from `PROPOSED` to `QUALIFIED_HELD_OUT` only after passing empirical replay thresholds under executed paired replay with `admissibility_status == "ADMISSIBLE"`, valid `CandidateApplicationReceipt(status="APPLIED")`, and non-synthetic discovery origin.
 
 ### 3.7 Downstream Integration
 - **`msk-onto`**: Receives structural evaluation export packages ([`OntoEvaluationPackage`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/onto/export.py)). Naked booleans and unsupported positive claims are prohibited (`NAKED_BOOLEAN_PROHIBITED`); all positive claims require structured [`OntoEvidenceRef`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/onto/export.py) validated against a resolvable evidence registry.

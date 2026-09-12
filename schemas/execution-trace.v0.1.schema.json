@@ -30,10 +30,8 @@
       "minLength": 1
     },
     "problem_digest": {
-      "type": [
-        "string",
-        "null"
-      ]
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
     },
     "backend_id": {
       "type": "string",
@@ -222,7 +220,31 @@
               }
             }
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "event_origin": {
+                  "enum": [
+                    "CLIENT_DECLARED",
+                    "SYNTHETIC_FIXTURE"
+                  ]
+                }
+              },
+              "required": [
+                "event_origin"
+              ]
+            },
+            "then": {
+              "properties": {
+                "logical_authority_class": {
+                  "const": "NONE"
+                }
+              }
+            }
+          }
+        ]
       }
     },
     "terminal_verdict": {
@@ -235,6 +257,7 @@
         "SYNTHETIC_SAT",
         "SYNTHETIC_UNSAT",
         "TIMEOUT",
+        "UNKNOWN",
         "INCOMPLETE",
         "RESOURCE_EXHAUSTED",
         "FAILED"
@@ -295,7 +318,44 @@
         ],
         "properties": {
           "execution_receipt": {
-            "type": "object"
+            "type": "object",
+            "required": [
+              "schema_version",
+              "receipt_id",
+              "backend_id",
+              "backend_family",
+              "execution_origin",
+              "executable_path",
+              "executable_version",
+              "executable_sha256",
+              "command",
+              "input_digest",
+              "started_at",
+              "completed_at",
+              "exit_code",
+              "timeout_status",
+              "stdout_digest",
+              "stderr_digest",
+              "terminal_classification",
+              "logical_authority_class"
+            ],
+            "properties": {
+              "schema_version": {
+                "const": "miskatonic.backend-execution-receipt.v0.1"
+              },
+              "input_digest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "stdout_digest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "stderr_digest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
           }
         }
       }

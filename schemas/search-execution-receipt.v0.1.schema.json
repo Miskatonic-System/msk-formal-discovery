@@ -1,24 +1,26 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "miskatonic.replay-run-receipt.v0.1",
-  "title": "Miskatonic Replay Run Receipt Schema v0.1",
+  "$id": "miskatonic.search-execution-receipt.v0.1",
+  "title": "Miskatonic Search Execution Receipt Schema v0.1",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schema_version",
-    "receipt_id",
-    "replay_mode",
-    "arm",
-    "paired_contract_digest",
-    "experimental_unit_id",
+    "executor_id",
+    "executor_version",
+    "executor_implementation_digest",
+    "run_id",
     "problem_id",
     "problem_digest",
     "backend_id",
-    "search_policy_kind",
+    "backend_configuration_digest",
+    "search_policy",
     "search_policy_configuration_digest",
     "search_budget_digest",
     "random_seed",
     "corpus_context_digest",
+    "source_graph_context_digest",
+    "environment_identity_digest",
     "candidate_id",
     "candidate_enabled",
     "started_at",
@@ -26,43 +28,29 @@
     "nodes_expanded",
     "nodes_evaluated",
     "branch_count",
-    "solved",
+    "terminal_status",
     "wall_time_ms",
-    "backend_calls",
-    "search_run_ref",
-    "search_run_digest",
-    "execution_trace_refs",
-    "execution_trace_digests",
-    "evidence_origin",
-    "authority"
+    "resulting_trace_refs",
+    "resulting_trace_digests",
+    "receipt_digest"
   ],
   "properties": {
     "schema_version": {
-      "const": "miskatonic.replay-run-receipt.v0.1"
+      "const": "miskatonic.search-execution-receipt.v0.1"
     },
-    "receipt_id": {
+    "executor_id": {
       "type": "string",
       "minLength": 1
     },
-    "replay_mode": {
+    "executor_version": {
       "type": "string",
-      "enum": [
-        "EXECUTED_HELD_OUT_REPLAY",
-        "SYNTHETIC_REPLAY_FIXTURE"
-      ]
+      "minLength": 1
     },
-    "arm": {
-      "type": "string",
-      "enum": [
-        "BASELINE",
-        "ABSTRACTED"
-      ]
-    },
-    "paired_contract_digest": {
+    "executor_implementation_digest": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
     },
-    "experimental_unit_id": {
+    "run_id": {
       "type": "string",
       "minLength": 1
     },
@@ -78,7 +66,11 @@
       "type": "string",
       "minLength": 1
     },
-    "search_policy_kind": {
+    "backend_configuration_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "search_policy": {
       "type": "string",
       "minLength": 1
     },
@@ -97,8 +89,19 @@
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
     },
+    "source_graph_context_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "environment_identity_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
     "candidate_id": {
-      "type": "string"
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "candidate_enabled": {
       "type": "boolean"
@@ -121,79 +124,37 @@
       "type": "integer",
       "minimum": 0
     },
-    "solved": {
-      "type": "boolean"
+    "terminal_status": {
+      "type": "string",
+      "enum": [
+        "SUCCESS",
+        "SOLVED",
+        "EXHAUSTED",
+        "TIMEOUT",
+        "BUDGET_REACHED",
+        "FAILED"
+      ]
     },
     "wall_time_ms": {
       "type": "number",
-      "minimum": 0.0
-    },
-    "backend_calls": {
-      "type": "integer",
       "minimum": 0
     },
-    "search_run_ref": {
-      "type": "string",
-      "minLength": 1
-    },
-    "search_run_digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    },
-    "execution_trace_refs": {
+    "resulting_trace_refs": {
       "type": "array",
       "items": {
-        "type": "string",
-        "minLength": 1
+        "type": "string"
       }
     },
-    "execution_trace_digests": {
+    "resulting_trace_digests": {
       "type": "array",
       "items": {
         "type": "string",
         "pattern": "^[0-9a-f]{64}$"
       }
     },
-    "search_execution_receipt": {
-      "type": [
-        "object",
-        "null"
-      ]
-    },
-    "evidence_origin": {
+    "receipt_digest": {
       "type": "string",
-      "enum": [
-        "EXECUTED_SEARCH_RUN",
-        "CERTIFIED_SEARCH_REPLAY",
-        "SYNTHETIC_FIXTURE"
-      ]
-    },
-    "authority": {
-      "const": "NONE"
+      "pattern": "^[0-9a-f]{64}$"
     }
-  },
-  "allOf": [
-    {
-      "if": {
-        "properties": {
-          "evidence_origin": {
-            "const": "EXECUTED_SEARCH_RUN"
-          }
-        },
-        "required": [
-          "evidence_origin"
-        ]
-      },
-      "then": {
-        "required": [
-          "search_execution_receipt"
-        ],
-        "properties": {
-          "search_execution_receipt": {
-            "type": "object"
-          }
-        }
-      }
-    }
-  ]
+  }
 }

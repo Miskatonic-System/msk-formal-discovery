@@ -1,7 +1,8 @@
 # Search Policy Interfaces & Guidance Firewalls
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R2`
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R3`
 **Module**: `msk-formal-discovery/docs/SEARCH_MODEL.md`
+**Final Disposition**: `FORMAL_DISCOVERY_SPINE_ACCEPTED`
 
 ---
 
@@ -72,7 +73,7 @@ The corpus guidance interface:
 ## 4. Search Run Record Specification
 
 Search runs are persisted and validated against `schemas/search-run.v0.1.schema.json`:
-- `run_id`, `problem_id`, `problem_digest` (canonical experimental-unit identity)
+- `run_id`, `problem_id`, `problem_digest` (canonical experimental-unit identity, 64-char lowercase hex)
 - `search_policy` and `policy_configuration`
 - `replay_mode`: Explicitly records `EXECUTED_SEARCH_RUN`, `CERTIFIED_SEARCH_REPLAY`, or `SYNTHETIC_REPLAY_FIXTURE`
 - `paired_contract_ref`: Optional reference to the binding `PairedReplayContract`
@@ -81,3 +82,17 @@ Search runs are persisted and validated against `schemas/search-run.v0.1.schema.
 - Metrics: `nodes_expanded`, `nodes_evaluated`, `max_depth_reached`, `branching_factor_effective`, `total_wall_time_ms`
 - `terminal_status`: `SUCCESS`, `EXHAUSTED`, `TIMEOUT`, `BUDGET_REACHED`, `FAILED`
 - Invariant: `authority: "NONE"`
+
+---
+
+## 5. Search Execution Provenance Receipts
+
+Real search executions via [`SearchExecutor`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/search/executor.py) emit attested [`SearchExecutionReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/search-execution-receipt.v0.1.schema.json) records bundled in a [`SearchExecutionBundle`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/search/executor.py).
+
+Receipts enforce cryptographic provenance:
+- `receipt_id`, `run_id`, `problem_id`, `problem_digest` (canonical 64-char hex)
+- `search_policy_digest`, `environment_digest`, `backend_digest`
+- `execution_start_time` (ISO 8601 UTC) and `execution_wall_time_ms`
+- `terminal_status` (`SUCCESS`, `EXHAUSTED`, `TIMEOUT`, `BUDGET_REACHED`, `FAILED`)
+- `resulting_trace_id` and `resulting_trace_digest` (verified against actual trace)
+- Cross-checks: Attached receipts verify that trace IDs and SHA-256 digests match exactly. Failure raises `ReceiptValidationError`.

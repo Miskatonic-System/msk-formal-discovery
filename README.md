@@ -1,35 +1,37 @@
 # Miskatonic Formal Discovery Engine (`msk-formal-discovery`)
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R2`
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R3`
 **Repository**: `Miskatonic-System/msk-formal-discovery`
 **Architecture Owner**: `Miskatonic-System/miskatonic-systems`
 **Upstream Sources**: `Miskatonic-System/msk-corpus-intake`, `Miskatonic-System/msk-epistemic-engine`
 **Evaluation Owner**: `Miskatonic-System/msk-onto`
-**Work Type**: `EVIDENCE_CHAIN_AND_TRACE_SEMANTICS_REPAIR`
+**Work Type**: `FINAL_EXECUTION_EVIDENCE_CLOSURE`
 **Authority**: `NONE` (Zero theorem proof or mathematical claim authority)
 **Historical 01A Predecessor**: `8d80e82d5936fb0df36afc95ff7bffb7d4915768` (`FORMAL_DISCOVERY_PROTOTYPE_SPINE_ESTABLISHED`)
 **Reviewed R1 Head**: `96587f8fa379aa972922b7f5e689728e36238f50`
-**Earned Final Repaired Disposition**: `FORMAL_DISCOVERY_SPINE_READY`
+**Reviewed R2 Head**: `5a641eee2022d8ba54b20aef8708c6b380f3f987`
+**Earned Final Acceptance Disposition**: `FORMAL_DISCOVERY_SPINE_ACCEPTED`
 
 ---
 
-## Historical Disposition & R2 Repair Record
+## Historical Disposition & R3 Final Closure Record
 
 1. **01A Prototype Baseline**: Root commit `8d80e82d5936fb0df36afc95ff7bffb7d4915768` established the initial formal discovery prototype. `FORMAL_DISCOVERY_SPINE_READY` was withheld due to simulated backends, missing process receipts, and formula-based qualification.
 2. **01A-R1 Authority Repair**: Head commit `96587f8fa379aa972922b7f5e689728e36238f50` established execution-authority separation and paired replay contracts.
-3. **01A-R2 Evidence Chain & Trace Semantics Final Reseal**: Under `WO-MATH-FORMAL-DISCOVERY-01A-R2`, all nine blocking review defects (F-FD-R1-01 through F-FD-R1-09) have been comprehensively resolved across 79 deterministic tests:
-   - **F-FD-R1-01 (Universal Receipt Gate)**: Non-`NONE` authority strictly requires an attested, valid `BackendExecutionReceipt` verified through `derive_authority(...)`.
-   - **F-FD-R1-02 (Trace Event Semantics)**: Tactic suggestions from caller contexts are classified as `CLIENT_DECLARED`, while checker terminal verdicts are `BACKEND_OBSERVED`. Abstraction subtrace mining strictly excludes `CLIENT_DECLARED` events.
-   - **F-FD-R1-03 (Solver Authority & Exit Code Closure)**: SMT/Z3 adapter employs strict line-by-line parsing; non-zero exit codes yield `FAILED` and `NONE` authority; `SAT_MODEL` and `UNSAT_CORE` events are emitted only when requested and parsed.
-   - **F-FD-R1-04 (Canonical Experimental-Unit Identity)**: Replay and qualification bind instances by canonical `problem_digest` rather than mutable trace identifiers, closing alias-based held-out leakage.
-   - **F-FD-R1-05 (Replay Run Receipt Schema)**: Implemented and validated against `schemas/replay-run-receipt.v0.1.schema.json`.
-   - **F-FD-R1-06 (Paired Replay Contract Digest & Configuration Parity)**: Replay contracts compute cryptographic `contract_digest` enforcing baseline/abstracted arm parameter parity.
-   - **F-FD-R1-07 (Synthetic Replay Demotion)**: Synthetic replay receipts leave candidates at `CANDIDATE_ONLY` under mode `SYNTHETIC_REPLAY_FIXTURE`.
-   - **F-FD-R1-08 (Default Admissibility & Wrapper Rejection)**: Candidate admissibility defaults to `UNASSESSED`, requires explicit `AdmissibilityReceipt`, and rejects vacuous structures such as `seq(V1)`.
-   - **F-FD-R1-09 (Evidence-Referenced ONTO Export)**: Prohibited naked booleans and naked strings (`NAKED_BOOLEAN_PROHIBITED`), requiring structured `OntoEvidenceRef`.
+3. **01A-R2 Evidence Chain & Trace Semantics**: Head commit `5a641eee2022d8ba54b20aef8708c6b380f3f987` resolved initial evidence-chain defects across 79 deterministic tests.
+4. **01A-R3 Final Execution Evidence Closure**: Under `WO-MATH-FORMAL-DISCOVERY-01A-R3`, all final evidence custody seams and hostile invariants have been sealed across 99 deterministic tests:
+   - **Search-Execution Provenance Seal**: Implemented `SearchExecutor` producing attested `SearchExecutionReceipt` instances (`schemas/search-execution-receipt.v0.1.schema.json`). Replay receipts claiming `EXECUTED_SEARCH_RUN` strictly require and cross-check matching `search_execution_receipt`.
+   - **Digest-Complete Paired Experiments**: `PairedReplayContract` computes complete digests across `backend_configuration`, `source_graph_context`, `environment_identity`, and `search_policy_configuration`, enforcing exact arm parity.
+   - **Strict 64-char Hex Problem Digest**: Enforced `^[0-9a-f]{64}$` for all problem digests across candidates, traces, contracts, and receipts. Problem labels as digests are strictly rejected.
+   - **Backend Receipt Canonicalization & Validation**: Automatic schema validation of embedded receipts; cross-consistency checks on `executable_version` / `backend_version`, `input_digest`, exit codes, and authority classes.
+   - **Discovery-Origin Custody**: Traces track event origins; `SubtraceMiner` excludes `CLIENT_DECLARED` and `SYNTHETIC_FIXTURE` in production; `AbstractionCandidate` tracks `discovery_origin`. Synthetic discovery candidates cannot qualify into `QUALIFIED_HELD_OUT`.
+   - **Admissibility Evidence Validation**: Governed by `AdmissibilityReceipt` (`schemas/admissibility-receipt.v0.1.schema.json`) with deterministic LGG recomputation, meaningful shared constructor checks, and independent validation at qualification time.
+   - **ONTO Evidence Closure**: Prohibited naked booleans; `OntoEvidenceRef.validate()` requires resolvable verified artifacts and matching digests before admitting `SUPPORTED`.
+   - **Positive Hostile Control & Complete Hostile Suite**: Verified Section 27 positive hostile control and all 19 Section 28 hostile invariant test cases across 61 hostile tests.
 
-The verified disposition is:
-$$\text{FORMAL\_DISCOVERY\_SPINE\_READY}$$
+The verified final disposition is:
+$$\text{FORMAL\_DISCOVERY\_SPINE\_ACCEPTED}$$
+
 
 ---
 
@@ -126,11 +128,13 @@ All data exchange conforms strictly to JSON Schema Draft 2020-12 specifications:
 
 1. [`schemas/reasoning-backend.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/reasoning-backend.v0.1.schema.json): Adapter capabilities, backend families, and logical authority classes.
 2. [`schemas/backend-execution-receipt.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/backend-execution-receipt.v0.1.schema.json): Exact executable path, sha256, command, source input digest, stdout/stderr digests, exit code, timeout status, and authority class.
-3. [`schemas/replay-run-receipt.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/replay-run-receipt.v0.1.schema.json): Paired replay run receipt capturing contract digest, arm parity, observed metrics, and replay execution mode.
-4. [`schemas/execution-trace.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/execution-trace.v0.1.schema.json): Monotonic sequence, parent-child event DAG, execution origin, event origins (`CLIENT_DECLARED`, `BACKEND_OBSERVED`), receipts, and problem digest.
-5. [`schemas/search-run.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/search-run.v0.1.schema.json): Search policy metrics, corpus guidance disclaimers, problem digest, replay mode, and node expansions.
-6. [`schemas/abstraction-candidate.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/abstraction-candidate.v0.1.schema.json): LGG representation, admissibility status (`UNASSESSED` default), admissibility receipt, substitution witnesses, and held-out problem digests.
-7. [`schemas/refactoring-proposal.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/refactoring-proposal.v0.1.schema.json): Non-mutating refactoring transformations and replay plans.
+3. [`schemas/search-execution-receipt.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/search-execution-receipt.v0.1.schema.json): Attested search execution receipt tracking executor ID/version/digest, problem digest, policy configuration, search budget digest, trace refs/digests, and receipt digest.
+4. [`schemas/replay-run-receipt.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/replay-run-receipt.v0.1.schema.json): Paired replay run receipt capturing contract digest, arm parity, observed metrics, embedded search execution receipt, and replay execution mode.
+5. [`schemas/admissibility-receipt.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/admissibility-receipt.v0.1.schema.json): Attested admissibility receipt recording LGG digest, term digests, branch guards, meaningful shared constructor count, and admissibility status.
+6. [`schemas/execution-trace.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/execution-trace.v0.1.schema.json): Monotonic sequence, parent-child event DAG, execution origin, event origins (`CLIENT_DECLARED`, `BACKEND_OBSERVED`), receipts, and problem digest.
+7. [`schemas/search-run.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/search-run.v0.1.schema.json): Search policy metrics, corpus guidance disclaimers, problem digest, replay mode, and node expansions.
+8. [`schemas/abstraction-candidate.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/abstraction-candidate.v0.1.schema.json): LGG representation, discovery origin, admissibility status (`UNASSESSED` default), admissibility receipt, substitution witnesses, and held-out problem digests.
+9. [`schemas/refactoring-proposal.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/refactoring-proposal.v0.1.schema.json): Non-mutating refactoring transformations and replay plans.
 
 ---
 
@@ -140,17 +144,17 @@ All data exchange conforms strictly to JSON Schema Draft 2020-12 specifications:
 
 ```bash
 cd /home/kowen9024/repos/msk-formal-discovery
-python3 -m pytest
+python3 -m pytest -v
 ```
 
-The test suite runs 79 deterministic tests verifying:
-- Backend registry, adapters, real native execution, line-by-line parsing, and authority boundaries (`test_reasoning_backends.py`)
-- Execution Trace IR sequence invariants, problem digests, event origins, and normalization (`test_execution_trace_ir.py`)
-- Search policies (Frontier, Beam, A*, MCTS) (`test_search_policies.py`)
-- Structural anti-unification, LGG, admissibility receipts, and wrapper guards (`test_anti_unification.py`)
-- All 8 preregistered fixture matrix cases (`test_fixture_matrix.py`)
-- End-to-end multi-trace discovery and paired replay qualification flow (`test_end_to_end_demonstration.py`)
-- All 41 hostile rejection and authority escalation invariant tests (`test_hostile_invariants.py`)
+The test suite runs 99 deterministic tests verifying:
+- Backend registry, adapters, real native execution, line-by-line parsing, and authority boundaries (`test_reasoning_backends.py`, 9 tests)
+- Execution Trace IR sequence invariants, problem digests, event origins, and normalization (`test_execution_trace_ir.py`, 6 tests)
+- Search policies (Frontier, Beam, A*, MCTS) (`test_search_policies.py`, 5 tests)
+- Structural anti-unification, LGG, admissibility receipts, and wrapper guards (`test_anti_unification.py`, 9 tests)
+- All 8 preregistered fixture matrix cases (`test_fixture_matrix.py`, 8 tests)
+- End-to-end multi-trace discovery and paired replay qualification flow with SearchExecutor (`test_end_to_end_demonstration.py`, 1 test)
+- All 61 hostile rejection, positive control, authority escalation, and qualification de-fabrication invariant tests (`test_hostile_invariants.py`, 61 tests)
 
 ---
 

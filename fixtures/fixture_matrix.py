@@ -1,8 +1,9 @@
 """Preregistered deterministic fixture matrix (Section 14)."""
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from msk_formal_discovery.core.terms import Term
 from msk_formal_discovery.trace.events import TraceEventType
@@ -26,10 +27,13 @@ def make_sample_trace(
     execution_origin: str = "SYNTHETIC_FIXTURE",
     backend_id: str = "synthetic-fixture",
     logical_authority_class: str = "NONE",
+    problem_digest: Optional[str] = None,
 ) -> ExecutionTrace:
+    p_digest = problem_digest or hashlib.sha256(problem_id.encode("utf-8")).hexdigest()
     tr = ExecutionTrace(
         trace_id=trace_id,
         problem_id=problem_id,
+        problem_digest=p_digest,
         backend_id=backend_id,
         backend_version="1.0.0-fixture",
         execution_origin=execution_origin,

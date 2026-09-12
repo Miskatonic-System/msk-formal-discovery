@@ -38,41 +38,136 @@ def compute_shared_meaningful_constructors(term: Term) -> int:
     return 0
 
 
-@dataclass(frozen=True)
+from pathlib import Path
+import re
+import jsonschema
+from msk_formal_discovery.core.exceptions import AntiUnificationError, ReceiptValidationError
+
+HEX_64_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+
+
+@dataclass
 class AdmissibilityReceipt:
-    """Deterministic admissibility assessment evidence (Section 26)."""
+    """Deterministic admissibility assessment evidence (WO-MATH-FORMAL-DISCOVERY-01A-R3 Section 20)."""
     receipt_id: str
     algorithm_version: str
     source_trace_ids: List[str]
+    source_trace_digests: List[str]
     discovery_problem_digests: List[str]
     source_term_digests: List[str]
     lgg_digest: str
-    shared_meaningful_constructor_count: int
+    substitution_witness_digest: str
     branch_guards: List[str]
-    semantic_domain_metadata: Dict[str, Any]
+    semantic_domain_evidence: Dict[str, Any]
+    meaningful_shared_constructor_count: int
     admissibility_status: AdmissibilityStatus
+    receipt_digest: str = ""
+
+    def __post_init__(self) -> None:
+        if not self.receipt_digest:
+            self.receipt_digest = self.compute_digest()
+
+    @property
+    def shared_meaningful_constructor_count(self) -> int:
+        return self.meaningful_shared_constructor_count
+
+    @property
+    def semantic_domain_metadata(self) -> Dict[str, Any]:
+        return self.semantic_domain_evidence
 
     def to_dict(self) -> Dict[str, Any]:
         return {
+            "schema_version": "miskatonic.admissibility-receipt.v0.1",
             "receipt_id": self.receipt_id,
             "algorithm_version": self.algorithm_version,
-            "source_trace_ids": self.source_trace_ids,
-            "discovery_problem_digests": self.discovery_problem_digests,
-            "source_term_digests": self.source_term_digests,
+            "source_trace_ids": list(self.source_trace_ids),
+            "source_trace_digests": list(self.source_trace_digests),
+            "discovery_problem_digests": list(self.discovery_problem_digests),
+            "source_term_digests": list(self.source_term_digests),
             "lgg_digest": self.lgg_digest,
-            "shared_meaningful_constructor_count": self.shared_meaningful_constructor_count,
-            "branch_guards": self.branch_guards,
-            "semantic_domain_metadata": self.semantic_domain_metadata,
+            "substitution_witness_digest": self.substitution_witness_digest,
+            "branch_guards": list(self.branch_guards),
+            "semantic_domain_evidence": self.semantic_domain_evidence,
+            "meaningful_shared_constructor_count": self.meaningful_shared_constructor_count,
+            "admissibility_status": (
+                self.admissibility_status.value
+                if isinstance(self.admissibility_status, AdmissibilityStatus)
+                else str(self.admissibility_status)
+            ),
+            "receipt_digest": self.receipt_digest or self.compute_digest(),
+        }
+
+    def compute_digest(self) -> str:
+        d = {
+            "schema_version": "miskatonic.admissibility-receipt.v0.1",
+            "receipt_id": self.receipt_id,
+            "algorithm_version": self.algorithm_version,
+            "source_trace_ids": list(self.source_trace_ids),
+            "source_trace_digests": list(self.source_trace_digests),
+            "discovery_problem_digests": list(self.discovery_problem_digests),
+            "source_term_digests": list(self.source_term_digests),
+            "lgg_digest": self.lgg_digest,
+            "substitution_witness_digest": self.substitution_witness_digest,
+            "branch_guards": list(self.branch_guards),
+            "semantic_domain_evidence": self.semantic_domain_evidence,
+            "meaningful_shared_constructor_count": self.meaningful_shared_constructor_count,
             "admissibility_status": (
                 self.admissibility_status.value
                 if isinstance(self.admissibility_status, AdmissibilityStatus)
                 else str(self.admissibility_status)
             ),
         }
+        serialized = json.dumps(d, sort_keys=True)
+        return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
     def digest(self) -> str:
-        serialized = json.dumps(self.to_dict(), sort_keys=True)
-        return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+        return self.receipt_digest or self.compute_digest()
+
+    def validate(self, schema_path: Optional[Path] = None) -> None:
+        if schema_path is None:
+            default_path = Path(__file__).resolve().parents[3] / "schemas" / "admissibility-receipt.v0.1.schema.json"
+            if default_path.exists():
+                schema_path = default_path
+        if schema_path and schema_path.exists():
+            schema_data = json.loads(schema_path.read_text(encoding="utf-8"))
+            try:
+                jsonschema.validate(self.to_dict(), schema_data)
+            except jsonschema.ValidationError as e:
+                raise ReceiptValidationError(f"ADMISSIBILITY_RECEIPT_SCHEMA_ERROR: {e.message}") from e
+
+        # Invariant: discovery problem digests must not be empty and must be hex
+        if not self.discovery_problem_digests:
+            raise ReceiptValidationError("ADMISSIBILITY_RECEIPT_EMPTY_PROBLEM_DIGESTS: discovery_problem_digests must not be empty")
+        for pd in self.discovery_problem_digests:
+            if not HEX_64_PATTERN.match(pd):
+                raise ReceiptValidationError(f"INVALID_PROBLEM_DIGEST: '{pd}' is not a 64-char lowercase hex SHA-256")
+
+        # Invariant: recomputed digest must match
+        expected_digest = self.compute_digest()
+        if self.receipt_digest != expected_digest:
+            raise ReceiptValidationError(
+                f"ADMISSIBILITY_RECEIPT_DIGEST_MISMATCH: receipt_digest '{self.receipt_digest}' != computed '{expected_digest}'"
+            )
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> AdmissibilityReceipt:
+        st_val = data["admissibility_status"]
+        status = AdmissibilityStatus(st_val) if st_val in AdmissibilityStatus.__members__ else AdmissibilityStatus(st_val)
+        return cls(
+            receipt_id=data["receipt_id"],
+            algorithm_version=data["algorithm_version"],
+            source_trace_ids=list(data["source_trace_ids"]),
+            source_trace_digests=list(data.get("source_trace_digests", [])),
+            discovery_problem_digests=list(data.get("discovery_problem_digests", [])),
+            source_term_digests=list(data["source_term_digests"]),
+            lgg_digest=data["lgg_digest"],
+            substitution_witness_digest=data.get("substitution_witness_digest", "0" * 64),
+            branch_guards=list(data.get("branch_guards", [])),
+            semantic_domain_evidence=data.get("semantic_domain_evidence") or data.get("semantic_domain_metadata", {}),
+            meaningful_shared_constructor_count=data.get("meaningful_shared_constructor_count", data.get("shared_meaningful_constructor_count", 0)),
+            admissibility_status=status,
+            receipt_digest=data.get("receipt_digest", ""),
+        )
 
 
 def create_admissibility_receipt(
@@ -81,6 +176,7 @@ def create_admissibility_receipt(
     status: Optional[AdmissibilityStatus] = None,
     branch_guards: Optional[Sequence[str]] = None,
     discovery_problem_digests: Optional[Sequence[str]] = None,
+    source_trace_digests: Optional[Sequence[str]] = None,
     semantic_domains: Optional[Dict[str, Any]] = None,
 ) -> AdmissibilityReceipt:
     """Create a validated AdmissibilityReceipt."""
@@ -91,18 +187,32 @@ def create_admissibility_receipt(
     trace_ids = [t[0] for t in terms]
     meaningful_count = compute_shared_meaningful_constructors(result.lgg_term)
     receipt_id = f"adm-rcpt-{result.deterministic_digest[:16]}"
-    return AdmissibilityReceipt(
+
+    # Compute substitution witness digest
+    raw_substs = {
+        tid: {v: str(t_val) for v, t_val in subst.items()}
+        for tid, subst in result.substitution_witnesses.items()
+    }
+    subst_dig = hashlib.sha256(json.dumps(raw_substs, sort_keys=True).encode("utf-8")).hexdigest()
+
+    tr_digests = list(source_trace_digests or [hashlib.sha256(tid.encode("utf-8")).hexdigest() for tid in trace_ids])
+    prob_digests = list(discovery_problem_digests or [])
+
+    rcpt = AdmissibilityReceipt(
         receipt_id=receipt_id,
         algorithm_version=result.algorithm_version,
         source_trace_ids=trace_ids,
-        discovery_problem_digests=list(discovery_problem_digests or []),
+        source_trace_digests=tr_digests,
+        discovery_problem_digests=prob_digests,
         source_term_digests=term_digests,
         lgg_digest=result.deterministic_digest,
-        shared_meaningful_constructor_count=meaningful_count,
+        substitution_witness_digest=subst_dig,
         branch_guards=guards,
-        semantic_domain_metadata=semantic_domains or {},
+        semantic_domain_evidence=semantic_domains or {},
+        meaningful_shared_constructor_count=meaningful_count,
         admissibility_status=status,
     )
+    return rcpt
 
 
 @dataclass(frozen=True)

@@ -3,14 +3,18 @@ from __future__ import annotations
 
 import hashlib
 import json
+from pathlib import Path
+import re
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Union
 
 import jsonschema
 
-from msk_formal_discovery.abstraction.anti_unification import AdmissibilityStatus
+from msk_formal_discovery.abstraction.anti_unification import (
+    AdmissibilityReceipt,
+    AdmissibilityStatus,
+)
 from msk_formal_discovery.abstraction.candidate import AbstractionCandidate, CandidateStatus
 from msk_formal_discovery.abstraction.value_metrics import AbstractionValueReport
 from msk_formal_discovery.core.exceptions import (
@@ -18,8 +22,15 @@ from msk_formal_discovery.core.exceptions import (
     ReceiptValidationError,
     ReplayContractError,
 )
+from msk_formal_discovery.search.executor import SearchExecutionBundle, SearchExecutionReceipt
 from msk_formal_discovery.search.policy import SearchRun
 from msk_formal_discovery.trace.ir import ExecutionTrace
+
+HEX_DIGEST_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+SCHEMAS_DIR = Path(__file__).resolve().parents[3] / "schemas"
+REPLAY_RECEIPT_SCHEMA_PATH = SCHEMAS_DIR / "replay-run-receipt.v0.1.schema.json"
+SEARCH_EXECUTION_RECEIPT_SCHEMA_PATH = SCHEMAS_DIR / "search-execution-receipt.v0.1.schema.json"
+ADMISSIBILITY_RECEIPT_SCHEMA_PATH = SCHEMAS_DIR / "admissibility-receipt.v0.1.schema.json"
 
 
 @dataclass
@@ -56,6 +67,7 @@ class ReplayRunReceipt:
     evidence_origin: str = "SYNTHETIC_FIXTURE"
     authority: str = "NONE"
     bound_search_run: Optional[SearchRun] = None
+    search_execution_receipt: Optional[Dict[str, Any]] = None
     execution_receipts: List[Dict[str, Any]] = field(default_factory=list)
 
     def __post_init__(self) -> None:
@@ -68,17 +80,29 @@ class ReplayRunReceipt:
             self.started_at = now_iso
         if not self.completed_at:
             self.completed_at = now_iso
-        if not self.problem_digest:
-            self.problem_digest = hashlib.sha256(self.problem_id.encode("utf-8")).hexdigest()
-        if not self.experimental_unit_id:
-            self.experimental_unit_id = self.problem_digest
-        if not self.problem_digest:
+        if not self.problem_digest and self.problem_id:
             self.problem_digest = hashlib.sha256(self.problem_id.encode("utf-8")).hexdigest()
         if not self.experimental_unit_id:
             self.experimental_unit_id = self.problem_digest
 
+        # Validate hex digest patterns on digests
+        for name, d in [
+            ("problem_digest", self.problem_digest),
+            ("paired_contract_digest", self.paired_contract_digest),
+            ("search_policy_configuration_digest", self.search_policy_configuration_digest),
+            ("search_budget_digest", self.search_budget_digest),
+            ("corpus_context_digest", self.corpus_context_digest),
+            ("search_run_digest", self.search_run_digest),
+        ]:
+            if d and not HEX_DIGEST_PATTERN.match(d):
+                raise ValueError(f"Invalid {name}: {d}. Must be 64-char lowercase hex.")
+
+        for d in self.execution_trace_digests:
+            if not HEX_DIGEST_PATTERN.match(d):
+                raise ValueError(f"Invalid execution_trace_digest: {d}. Must be 64-char lowercase hex.")
+
     def to_dict(self) -> Dict[str, Any]:
-        return {
+        data: Dict[str, Any] = {
             "schema_version": "miskatonic.replay-run-receipt.v0.1",
             "receipt_id": self.receipt_id,
             "replay_mode": self.replay_mode,
@@ -110,21 +134,90 @@ class ReplayRunReceipt:
             "evidence_origin": self.evidence_origin,
             "authority": self.authority,
         }
+        if self.search_execution_receipt is not None:
+            data["search_execution_receipt"] = self.search_execution_receipt
+        return data
 
     def validate(self, schema_path: Optional[Path] = None) -> None:
         if schema_path is None:
-            default_path = Path(__file__).resolve().parents[3] / "schemas" / "replay-run-receipt.v0.1.schema.json"
-            if default_path.exists():
-                schema_path = default_path
+            if REPLAY_RECEIPT_SCHEMA_PATH.exists():
+                schema_path = REPLAY_RECEIPT_SCHEMA_PATH
         if schema_path and schema_path.exists():
             schema_data = json.loads(schema_path.read_text(encoding="utf-8"))
-            jsonschema.validate(self.to_dict(), schema_data)
+            try:
+                jsonschema.validate(self.to_dict(), schema_data)
+            except jsonschema.ValidationError as e:
+                raise ReceiptValidationError(f"SCHEMA_VALIDATION_FAILED: {e.message}") from e
 
         if not self.receipt_id or not self.paired_contract_digest:
             raise ReceiptValidationError("RECEIPT_FIELD_MISSING: receipt_id and paired_contract_digest must not be empty")
 
-        # Section 19: Cross-check metrics against bound SearchRun
+        # Section 4 & 5: EXECUTED_SEARCH_RUN requires valid SearchExecutionReceipt
+        if self.evidence_origin == "EXECUTED_SEARCH_RUN":
+            if not self.search_execution_receipt:
+                raise ReceiptValidationError(
+                    "MISSING_SEARCH_EXECUTION_RECEIPT: evidence_origin EXECUTED_SEARCH_RUN requires valid search_execution_receipt"
+                )
+            if SEARCH_EXECUTION_RECEIPT_SCHEMA_PATH.exists():
+                s_schema = json.loads(SEARCH_EXECUTION_RECEIPT_SCHEMA_PATH.read_text(encoding="utf-8"))
+                jsonschema.validate(self.search_execution_receipt, s_schema)
+
+            s_rcpt = SearchExecutionReceipt.from_dict(self.search_execution_receipt)
+            expected_digest = s_rcpt.compute_digest()
+            if s_rcpt.receipt_digest != expected_digest:
+                raise ReceiptValidationError(
+                    f"SEARCH_EXECUTION_RECEIPT_DIGEST_MISMATCH: {s_rcpt.receipt_digest} != {expected_digest}"
+                )
+
+            # Cross-check search_execution_receipt properties against replay receipt
+            if s_rcpt.run_id != self.search_run_ref:
+                raise ReplayContractError(
+                    f"SEARCH_RUN_REF_MISMATCH: receipt search_run_ref '{self.search_run_ref}' != SearchExecutionReceipt '{s_rcpt.run_id}'"
+                )
+            if s_rcpt.nodes_expanded != self.nodes_expanded:
+                raise ReplayContractError(
+                    f"METRICS_DISAGREEMENT: nodes_expanded ({self.nodes_expanded}) != SearchExecutionReceipt ({s_rcpt.nodes_expanded})"
+                )
+            if s_rcpt.nodes_evaluated != self.nodes_evaluated:
+                raise ReplayContractError(
+                    f"METRICS_DISAGREEMENT: nodes_evaluated ({self.nodes_evaluated}) != SearchExecutionReceipt ({s_rcpt.nodes_evaluated})"
+                )
+            if s_rcpt.problem_digest != self.problem_digest:
+                raise ReplayContractError(
+                    f"PROBLEM_DIGEST_MISMATCH: {self.problem_digest} != {s_rcpt.problem_digest}"
+                )
+            if s_rcpt.candidate_id != self.candidate_id:
+                raise ReplayContractError(
+                    f"CANDIDATE_MISMATCH: candidate_id '{self.candidate_id}' != SearchExecutionReceipt '{s_rcpt.candidate_id}'"
+                )
+            if s_rcpt.candidate_enabled != self.candidate_enabled:
+                raise ReplayContractError(
+                    f"CANDIDATE_ENABLED_MISMATCH: candidate_enabled ({self.candidate_enabled}) != SearchExecutionReceipt ({s_rcpt.candidate_enabled})"
+                )
+
+        # Section 7: Trace binding invariants
+        if len(self.execution_trace_refs) != len(self.execution_trace_digests):
+            raise ReceiptValidationError(
+                f"TRACE_COUNT_MISMATCH: execution_trace_refs count ({len(self.execution_trace_refs)}) != execution_trace_digests count ({len(self.execution_trace_digests)})"
+            )
+        if self.evidence_origin in ("EXECUTED_SEARCH_RUN", "CERTIFIED_SEARCH_REPLAY") and self.backend_calls > 0:
+            if not self.execution_trace_refs:
+                raise ReceiptValidationError(
+                    "MISSING_TRACE_REFS: execution_trace_refs cannot be empty for executed search run with backend_calls > 0"
+                )
+
+        # Section 6 & 19: Cross-check metrics against bound SearchRun
         if self.bound_search_run is not None:
+            sr_dict = self.bound_search_run.to_dict()
+            expected_sr_digest = hashlib.sha256(json.dumps(sr_dict, sort_keys=True).encode("utf-8")).hexdigest()
+            if self.search_run_digest != expected_sr_digest:
+                raise ReplayContractError(
+                    f"SEARCH_RUN_DIGEST_MISMATCH: search_run_digest '{self.search_run_digest}' != recomputed '{expected_sr_digest}'"
+                )
+            if self.search_run_ref != self.bound_search_run.run_id:
+                raise ReplayContractError(
+                    f"SEARCH_RUN_REF_MISMATCH: search_run_ref '{self.search_run_ref}' != '{self.bound_search_run.run_id}'"
+                )
             if self.nodes_expanded != self.bound_search_run.nodes_expanded:
                 raise ReplayContractError(
                     f"METRICS_DISAGREEMENT: nodes_expanded ({self.nodes_expanded}) != SearchRun ({self.bound_search_run.nodes_expanded})"
@@ -161,6 +254,12 @@ class ReplayRunReceipt:
         branch_count = int(search_run.branching_factor_effective * search_run.nodes_expanded)
         candidate_enabled = (arm == "ABSTRACTED")
 
+        trace_refs = list(search_run.execution_trace_refs)
+        trace_digests = list(search_run.execution_trace_digests)
+        if not trace_refs and search_run.resulting_trace_id:
+            trace_refs = [search_run.resulting_trace_id]
+            trace_digests = [search_run.resulting_trace_digest] if search_run.resulting_trace_digest else ["0" * 64]
+
         return cls(
             receipt_id=receipt_id or f"rcpt-replay-{arm.lower()}-{contract.problem_id}",
             replay_mode=replay_mode,
@@ -184,14 +283,64 @@ class ReplayRunReceipt:
             branch_count=branch_count,
             solved=is_solved,
             wall_time_ms=search_run.total_wall_time_ms,
-            backend_calls=1,
+            backend_calls=1 if trace_refs else 0,
             search_run_ref=search_run.run_id,
             search_run_digest=sr_digest,
-            execution_trace_refs=[search_run.resulting_trace_id] if search_run.resulting_trace_id else [],
-            execution_trace_digests=[],
+            execution_trace_refs=trace_refs,
+            execution_trace_digests=trace_digests,
             evidence_origin=evidence_origin,
             authority="NONE",
             bound_search_run=search_run,
+            search_execution_receipt=search_run.search_execution_receipt,
+        )
+
+    @classmethod
+    def from_search_execution_bundle(
+        cls,
+        bundle: SearchExecutionBundle,
+        contract: PairedReplayContract,
+        arm: str,
+        receipt_id: Optional[str] = None,
+    ) -> ReplayRunReceipt:
+        sr = bundle.search_run
+        rcpt = bundle.search_execution_receipt
+        c_digest = hashlib.sha256(json.dumps(contract.corpus_context, sort_keys=True).encode("utf-8")).hexdigest()
+        is_solved = (sr.terminal_status == "SOLVED")
+        branch_count = int(sr.branching_factor_effective * sr.nodes_expanded)
+        candidate_enabled = (arm == "ABSTRACTED")
+
+        return cls(
+            receipt_id=receipt_id or f"rcpt-replay-{arm.lower()}-{contract.problem_id}",
+            replay_mode="EXECUTED_HELD_OUT_REPLAY",
+            arm=arm,
+            paired_contract_digest=contract.contract_digest(),
+            experimental_unit_id=contract.problem_digest,
+            problem_id=contract.problem_id,
+            problem_digest=contract.problem_digest,
+            backend_id=contract.backend_id,
+            search_policy_kind=contract.search_policy_kind,
+            search_policy_configuration_digest=rcpt.search_policy_configuration_digest,
+            search_budget_digest=rcpt.search_budget_digest,
+            random_seed=contract.random_seed,
+            corpus_context_digest=c_digest,
+            candidate_id=contract.candidate_id,
+            candidate_enabled=candidate_enabled,
+            started_at=rcpt.started_at,
+            completed_at=rcpt.completed_at,
+            nodes_expanded=rcpt.nodes_expanded,
+            nodes_evaluated=rcpt.nodes_evaluated,
+            branch_count=branch_count,
+            solved=is_solved,
+            wall_time_ms=rcpt.wall_time_ms,
+            backend_calls=rcpt.backend_calls,
+            search_run_ref=rcpt.search_run_id,
+            search_run_digest=rcpt.search_run_digest,
+            execution_trace_refs=list(rcpt.execution_trace_refs),
+            execution_trace_digests=list(rcpt.execution_trace_digests),
+            evidence_origin="EXECUTED_SEARCH_RUN",
+            authority="NONE",
+            bound_search_run=sr,
+            search_execution_receipt=rcpt.to_dict(),
         )
 
 
@@ -212,17 +361,22 @@ class PairedReplayContract:
     backend_configuration: Dict[str, Any] = field(default_factory=dict)
     source_graph_context: Dict[str, Any] = field(default_factory=dict)
     environment_identity: Dict[str, Any] = field(default_factory=dict)
+    search_policy_configuration: Dict[str, Any] = field(default_factory=dict)
 
     def contract_digest(self) -> str:
-        """Deterministic SHA-256 digest of contract content (Section 20)."""
+        """Deterministic SHA-256 digest of contract content (Section 8 & 20)."""
         payload = {
             "problem_id": self.problem_id,
             "problem_digest": self.problem_digest,
             "backend_id": self.backend_id,
+            "backend_configuration": self.backend_configuration,
             "search_policy_kind": self.search_policy_kind,
+            "search_policy_configuration": self.search_policy_configuration,
             "search_budget": self.search_budget,
             "random_seed": self.random_seed,
             "corpus_context": self.corpus_context,
+            "source_graph_context": self.source_graph_context,
+            "environment_identity": self.environment_identity,
             "candidate_id": self.candidate_id,
             "candidate_enabled_in_abstracted": self.candidate_enabled_in_abstracted,
             "baseline_configuration": self.baseline_configuration,
@@ -232,7 +386,12 @@ class PairedReplayContract:
         return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
     def validate(self) -> None:
-        """Enforce full arm parity (Section 21)."""
+        """Enforce full arm parity (Section 9 & 21)."""
+        if not HEX_DIGEST_PATTERN.match(self.problem_digest):
+            raise ValueError(
+                f"Invalid problem_digest: {self.problem_digest}. Must be 64-char lowercase hex."
+            )
+
         if not self.candidate_enabled_in_abstracted:
             raise ReplayContractError(
                 "CANDIDATE_NOT_ENABLED_IN_ABSTRACTED_ARM: Candidate must be explicitly enabled in abstracted configuration"
@@ -278,7 +437,7 @@ class PairedReplayContract:
             )
 
         # Normalized configuration parity after removing prospective abstraction delta
-        ignore_keys = {"candidate_id", "candidate_enabled", "enable_candidate", "budget", "seed"}
+        ignore_keys = {"candidate_id", "candidate_enabled", "enable_candidate"}
         norm_base = {k: v for k, v in self.baseline_configuration.items() if k not in ignore_keys}
         norm_abs = {k: v for k, v in self.abstracted_configuration.items() if k not in ignore_keys}
         if norm_base != norm_abs:
@@ -391,6 +550,55 @@ class HeldOutReplayEngine:
     """Evaluates abstraction candidates against strictly held-out qualification problems."""
 
     @staticmethod
+    def validate_candidate_admissibility(candidate: AbstractionCandidate) -> None:
+        """Independently validate candidate's admissibility receipt against candidate (Section 21)."""
+        if not candidate.admissibility_receipt:
+            raise ReceiptValidationError("MISSING_ADMISSIBILITY_RECEIPT: Candidate has no admissibility receipt")
+
+        rcpt_dict = candidate.admissibility_receipt.to_dict() if hasattr(candidate.admissibility_receipt, "to_dict") else candidate.admissibility_receipt
+        if ADMISSIBILITY_RECEIPT_SCHEMA_PATH.exists():
+            schema_data = json.loads(ADMISSIBILITY_RECEIPT_SCHEMA_PATH.read_text(encoding="utf-8"))
+            try:
+                jsonschema.validate(rcpt_dict, schema_data)
+            except jsonschema.ValidationError as e:
+                raise ReceiptValidationError(f"ADMISSIBILITY_RECEIPT_SCHEMA_FAILED: {e.message}") from e
+
+        rcpt = AdmissibilityReceipt.from_dict(rcpt_dict)
+        rcpt.validate()
+
+        if rcpt.lgg_digest != candidate.anti_unification_evidence.deterministic_digest:
+            raise ReceiptValidationError(
+                f"ADMISSIBILITY_LGG_MISMATCH: Receipt LGG digest '{rcpt.lgg_digest}' != candidate '{candidate.anti_unification_evidence.deterministic_digest}'"
+            )
+
+        status_val = rcpt.admissibility_status.value if hasattr(rcpt.admissibility_status, "value") else str(rcpt.admissibility_status)
+        if status_val != "ADMISSIBLE":
+            raise ReceiptValidationError(
+                f"ADMISSIBILITY_STATUS_INVALID: Receipt admissibility status is '{status_val}', expected 'ADMISSIBLE'"
+            )
+
+        if set(rcpt.source_trace_ids) != set(candidate.discovery_set_trace_ids):
+            raise ReceiptValidationError(
+                f"ADMISSIBILITY_TRACE_MISMATCH: Receipt source traces {rcpt.source_trace_ids} != candidate {candidate.discovery_set_trace_ids}"
+            )
+
+        if set(rcpt.discovery_problem_digests) != set(candidate.discovery_problem_digests):
+            raise ReceiptValidationError(
+                f"ADMISSIBILITY_PROBLEM_DIGEST_MISMATCH: Receipt problem digests {rcpt.discovery_problem_digests} != candidate {candidate.discovery_problem_digests}"
+            )
+
+        if rcpt.meaningful_shared_constructor_count < 1:
+            raise ReceiptValidationError(
+                f"TRIVIAL_STRUCTURAL_GENERALIZATION: Meaningful shared constructor count must be >= 1, got {rcpt.meaningful_shared_constructor_count}"
+            )
+
+        expected_digest = rcpt.compute_digest()
+        if rcpt.receipt_digest != expected_digest:
+            raise ReceiptValidationError(
+                f"ADMISSIBILITY_RECEIPT_DIGEST_MISMATCH: Receipt digest '{rcpt.receipt_digest}' != recomputed '{expected_digest}'"
+            )
+
+    @staticmethod
     def verify_held_out_disjointness(
         candidate_or_disc_traces: Any,
         qualification_traces_or_contracts: Any = None,
@@ -398,9 +606,18 @@ class HeldOutReplayEngine:
         qualification_problem_digests: Optional[Sequence[str]] = None,
         qualification_contracts: Optional[Sequence[PairedReplayContract]] = None,
     ) -> None:
-        """Enforce strict invariant: DISCOVERY_PROBLEM_DIGESTS ∩ QUALIFICATION_PROBLEM_DIGESTS = ∅ (Section 14 & 15)."""
+        """Enforce strict invariant: DISCOVERY_PROBLEM_DIGESTS ∩ QUALIFICATION_PROBLEM_DIGESTS = ∅ (Section 16, 17, 18)."""
         # Handle call styles: candidate object vs list of trace ids
         if isinstance(candidate_or_disc_traces, AbstractionCandidate):
+            if not candidate_or_disc_traces.discovery_problem_digests:
+                raise HeldOutDataLeakageError(
+                    "HELD_OUT_DATA_LEAKAGE: Missing discovery problem digests prohibits qualification (fail-closed experimental unit rule)"
+                )
+            for d in candidate_or_disc_traces.discovery_problem_digests:
+                if not HEX_DIGEST_PATTERN.match(d):
+                    raise HeldOutDataLeakageError(
+                        f"Invalid discovery problem digest '{d}': must be 64-char lowercase hex"
+                    )
             disc_digests = set(candidate_or_disc_traces.discovery_problem_digests)
             disc_traces = set(candidate_or_disc_traces.discovery_set_trace_ids)
         else:
@@ -426,6 +643,12 @@ class HeldOutReplayEngine:
                     qual_traces.add(item.trace_id)
                 elif isinstance(item, str):
                     qual_traces.add(item)
+
+        for d in qual_digests:
+            if not HEX_DIGEST_PATTERN.match(d):
+                raise HeldOutDataLeakageError(
+                    f"Invalid qualification problem digest '{d}': must be 64-char lowercase hex"
+                )
 
         # Check problem digest disjointness (canonical experimental unit)
         if disc_digests and qual_digests:
@@ -457,6 +680,7 @@ class HeldOutReplayEngine:
         - Authority remains NONE.
         """
         qual_ids = [t.trace_id for t in qualification_traces]
+        qual_problem_ids = [t.problem_id for t in qualification_traces]
         qual_digests = [t.problem_digest for t in qualification_traces if t.problem_digest]
         self.verify_held_out_disjointness(
             candidate,
@@ -483,6 +707,7 @@ class HeldOutReplayEngine:
 
         # Freeze invariant: synthetic replay leaves status at PROPOSED or CANDIDATE_ONLY
         candidate.qualification_trace_ids = qual_ids
+        candidate.qualification_problem_ids = qual_problem_ids
         candidate.qualification_problem_digests = qual_digests
         candidate.held_out_evaluation = report.to_dict()
         if candidate.status != CandidateStatus.REJECTED:
@@ -502,29 +727,44 @@ class HeldOutReplayEngine:
         self,
         candidate: AbstractionCandidate,
         contracts: Sequence[PairedReplayContract],
-        runner_fn: Callable[[PairedReplayContract, str], ReplayRunReceipt],
+        runner_fn: Callable[[PairedReplayContract, str], Union[ReplayRunReceipt, SearchExecutionBundle]],
     ) -> AbstractionValueReport:
         """Execute genuine paired replay across held-out problems (Sections 18-23)."""
         qual_digests = [c.problem_digest for c in contracts]
-        qual_ids = [c.problem_id for c in contracts]
+        qual_problem_ids = [c.problem_id for c in contracts]
         self.verify_held_out_disjointness(
             candidate,
             qualification_contracts=contracts,
-            qualification_trace_ids=qual_ids,
             qualification_problem_digests=qual_digests,
         )
+
+        def _run_and_adapt(contract: PairedReplayContract, arm: str) -> ReplayRunReceipt:
+            result = runner_fn(contract, arm)
+            if isinstance(result, SearchExecutionBundle):
+                return ReplayRunReceipt.from_search_execution_bundle(result, contract, arm)
+            return result
 
         comparisons: List[ReplayComparison] = []
         for contract in contracts:
             contract.validate()
-            base_rcpt = runner_fn(contract, "BASELINE")
-            abs_rcpt = runner_fn(contract, "ABSTRACTED")
+            base_rcpt = _run_and_adapt(contract, "BASELINE")
+            abs_rcpt = _run_and_adapt(contract, "ABSTRACTED")
 
             # Section 18 & 22: Validate receipts against contract & schema & cross-consistency
             _validate_receipt_against_contract(contract, base_rcpt, "BASELINE")
             _validate_receipt_against_contract(contract, abs_rcpt, "ABSTRACTED")
 
             comparisons.append(ReplayComparison(contract.problem_id, base_rcpt, abs_rcpt))
+
+        qual_trace_ids: List[str] = []
+        for comp in comparisons:
+            for ref in comp.baseline_receipt.execution_trace_refs + comp.abstracted_receipt.execution_trace_refs:
+                if ref not in qual_trace_ids:
+                    qual_trace_ids.append(ref)
+
+        candidate.qualification_problem_ids = qual_problem_ids
+        candidate.qualification_problem_digests = qual_digests
+        candidate.qualification_trace_ids = qual_trace_ids
 
         if not comparisons:
             report = AbstractionValueReport(
@@ -583,35 +823,33 @@ class HeldOutReplayEngine:
             replay_mode=replay_mode,
         )
 
-        candidate.qualification_trace_ids = qual_ids
-        candidate.qualification_problem_digests = qual_digests
         candidate.held_out_evaluation = report.to_dict()
 
-        # Section 23: Promotion to QUALIFIED_HELD_OUT requires ALL of:
+        # Section 15 & 23: Promotion to QUALIFIED_HELD_OUT requires ALL of:
         # - candidate.admissibility_status == AdmissibilityStatus.ADMISSIBLE
         # - candidate.admissibility_receipt is valid
         # - disjoint experimental units
         # - valid paired contracts with arm parity
         # - two valid receipts per experimental unit
+        # - candidate.discovery_origin in ("EXECUTED_OBSERVED", "CERTIFIED_REPLAY")
         # - evidence_origin in ("EXECUTED_SEARCH_RUN", "CERTIFIED_SEARCH_REPLAY")
         # - observed benefit meeting threshold
         # - no success-rate degradation
-        all_executed_or_certified = all(
-            c.baseline_receipt.evidence_origin in ("EXECUTED_SEARCH_RUN", "CERTIFIED_SEARCH_REPLAY")
-            and c.abstracted_receipt.evidence_origin in ("EXECUTED_SEARCH_RUN", "CERTIFIED_SEARCH_REPLAY")
-            for c in comparisons
-        )
         is_admissible = (candidate.admissibility_status == AdmissibilityStatus.ADMISSIBLE)
         has_receipt = candidate.admissibility_receipt is not None
         no_degradation = (success_delta >= 0.0)
+        is_non_synthetic_discovery = candidate.discovery_origin in ("EXECUTED_OBSERVED", "CERTIFIED_REPLAY")
 
         if (
             is_admissible
             and has_receipt
             and all_executed_or_certified
             and no_degradation
+            and is_non_synthetic_discovery
             and report.is_qualified_for_promotion()
         ):
+            # Independently validate admissibility receipt per Section 21
+            self.validate_candidate_admissibility(candidate)
             candidate.status = CandidateStatus.QUALIFIED_HELD_OUT
         else:
             candidate.status = CandidateStatus.CANDIDATE_ONLY

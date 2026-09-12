@@ -8,6 +8,8 @@ import hashlib
 import json
 from typing import Any, Dict, Optional
 
+from msk_formal_discovery.core.exceptions import AuthorityViolationError
+
 
 class TraceEventType(str, Enum):
     """Canonical event types supported by execution trace IR."""
@@ -59,6 +61,15 @@ class ExecutionTraceEvent:
     evidence_digest: Optional[str] = None
     payload: Dict[str, Any] = field(default_factory=dict)
     typed_extension: Optional[Dict[str, Any]] = None
+
+    def __post_init__(self) -> None:
+        origin_val = self.event_origin.value if isinstance(self.event_origin, EventOrigin) else str(self.event_origin)
+        if origin_val in ("CLIENT_DECLARED", "SYNTHETIC_FIXTURE"):
+            if self.logical_authority_class not in ("NONE", "SYNTHETIC_FIXTURE_ONLY"):
+                raise AuthorityViolationError(
+                    f"EVENT_AUTHORITY_VIOLATION: Event with origin '{origin_val}' cannot carry authority '{self.logical_authority_class}' (must be 'NONE')"
+                )
+            self.logical_authority_class = "NONE"
 
     def to_dict(self) -> Dict[str, Any]:
         data: Dict[str, Any] = {

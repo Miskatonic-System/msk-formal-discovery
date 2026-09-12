@@ -1,6 +1,7 @@
 """Abstraction candidate representations, fail-closed defaults, and lifecycle (WO-MATH-FORMAL-DISCOVERY-01A-R1)."""
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional
@@ -14,6 +15,8 @@ from msk_formal_discovery.abstraction.anti_unification import (
 )
 from msk_formal_discovery.core.exceptions import AntiUnificationError, AuthorityViolationError
 from msk_formal_discovery.core.terms import Term
+
+HEX_DIGEST_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
 
 class AbstractionKind(str, Enum):
@@ -47,7 +50,9 @@ class AbstractionCandidate:
     formal_specification: Dict[str, Any]
     anti_unification_evidence: AntiUnificationResult
     discovery_set_trace_ids: List[str]
+    discovery_origin: str = "EXECUTED_OBSERVED"
     discovery_problem_digests: List[str] = field(default_factory=list)
+    qualification_problem_ids: List[str] = field(default_factory=list)
     qualification_trace_ids: List[str] = field(default_factory=list)
     qualification_problem_digests: List[str] = field(default_factory=list)
     status: CandidateStatus = CandidateStatus.PROPOSED
@@ -58,6 +63,21 @@ class AbstractionCandidate:
     onto_export: Optional[Dict[str, Any]] = None
 
     def __post_init__(self) -> None:
+        # Validate hex digest patterns on discovery and qualification problem digests
+        for d in self.discovery_problem_digests:
+            if not HEX_DIGEST_PATTERN.match(d):
+                raise ValueError(f"Invalid discovery_problem_digest: {d}. Must be 64-char lowercase hex.")
+        for d in self.qualification_problem_digests:
+            if not HEX_DIGEST_PATTERN.match(d):
+                raise ValueError(f"Invalid qualification_problem_digest: {d}. Must be 64-char lowercase hex.")
+
+        if self.admissibility_receipt is not None and hasattr(self.admissibility_receipt, "to_dict"):
+            self.admissibility_receipt = self.admissibility_receipt.to_dict()
+
+        # Fail-closed default: if marked ADMISSIBLE without admissibility receipt, reset to UNASSESSED
+        if self.admissibility_status == AdmissibilityStatus.ADMISSIBLE and not self.admissibility_receipt:
+            self.admissibility_status = AdmissibilityStatus.UNASSESSED
+
         # Enforce Section 23 & 25: QUALIFIED_HELD_OUT requires ADMISSIBLE and valid admissibility receipt
         if self.status == CandidateStatus.QUALIFIED_HELD_OUT:
             if self.admissibility_status != AdmissibilityStatus.ADMISSIBLE or not self.admissibility_receipt:
@@ -114,8 +134,10 @@ class AbstractionCandidate:
                 "substitution_witnesses": witness_list,
                 "deterministic_digest": self.anti_unification_evidence.deterministic_digest,
             },
+            "discovery_origin": self.discovery_origin,
             "discovery_set_trace_ids": self.discovery_set_trace_ids,
             "discovery_problem_digests": self.discovery_problem_digests,
+            "qualification_problem_ids": self.qualification_problem_ids,
             "qualification_trace_ids": self.qualification_trace_ids,
             "qualification_problem_digests": self.qualification_problem_digests,
             "held_out_evaluation": held_out_data,
@@ -153,12 +175,20 @@ class CandidateFactory:
             branch_guards=branch_guards,
         )
 
+        disc_prob_digests = (
+            discovery_problem_digests
+            if discovery_problem_digests is not None
+            else list(getattr(pattern, "trace_problem_digests", []))
+        )
+        trace_digests = list(getattr(pattern, "trace_digests", []))
+
         receipt = create_admissibility_receipt(
             terms=terms,
             result=au_res,
             status=status,
             branch_guards=branch_guards,
-            discovery_problem_digests=discovery_problem_digests or [],
+            discovery_problem_digests=disc_prob_digests,
+            source_trace_digests=trace_digests,
         )
 
         cid = candidate_id or f"cand_{pattern.pattern_id}"
@@ -179,8 +209,9 @@ class CandidateFactory:
             candidate_kind=candidate_kind,
             formal_specification=formal_spec,
             anti_unification_evidence=au_res,
+            discovery_origin=getattr(pattern, "discovery_origin", "EXECUTED_OBSERVED"),
             discovery_set_trace_ids=source_trace_ids,
-            discovery_problem_digests=list(discovery_problem_digests or []),
+            discovery_problem_digests=disc_prob_digests,
             status=cand_status,
             admissibility_status=status,
             admissibility_receipt=receipt.to_dict(),

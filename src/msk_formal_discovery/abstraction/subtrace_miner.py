@@ -25,18 +25,47 @@ class RecurringSubtracePattern:
     extracted_terms: Dict[str, Term]  # trace_id -> Term
     anti_unification_result: Optional[AntiUnificationResult] = None
     branch_guards: List[str] = field(default_factory=list)
+    discovery_origin: str = "EXECUTED_OBSERVED"
+    trace_problem_digests: Dict[str, str] = field(default_factory=dict)
+    trace_digests: Dict[str, str] = field(default_factory=dict)
 
 
 class SubtraceMiner:
-    """Discovers repeated subtrace patterns across execution traces."""
+    """Discovers repeated subtrace patterns across execution traces (Section 6 & WO-MATH-FORMAL-DISCOVERY-01A-R3 Section 14)."""
 
-    def __init__(self, min_length: int = 2, min_support: int = 2) -> None:
+    def __init__(
+        self,
+        min_length: int = 2,
+        min_support: int = 2,
+        synthetic_algorithm_test_mode: bool = False,
+    ) -> None:
         self.min_length = min_length
         self.min_support = min_support
+        self.synthetic_algorithm_test_mode = synthetic_algorithm_test_mode
         self.anti_unifier = StructuralAntiUnifier()
 
     def mine_traces(self, traces: Sequence[ExecutionTrace]) -> List[RecurringSubtracePattern]:
         """Mine successful traces for recurring subtrace patterns."""
+        import json
+        import hashlib
+
+        # Map trace problem digests and trace content digests
+        trace_pdigests: Dict[str, str] = {tr.trace_id: tr.problem_digest for tr in traces if tr.problem_digest}
+        trace_digs: Dict[str, str] = {
+            tr.trace_id: hashlib.sha256(json.dumps(tr.to_dict(), sort_keys=True).encode("utf-8")).hexdigest()
+            for tr in traces
+        }
+
+        # Determine overall discovery origin
+        if self.synthetic_algorithm_test_mode:
+            discovery_origin = "SYNTHETIC_FIXTURE"
+        elif all(tr.execution_origin in ("EXECUTED_NATIVE", "EXECUTED_CONTAINERIZED") for tr in traces):
+            discovery_origin = "EXECUTED_OBSERVED"
+        elif all(tr.execution_origin == "CERTIFIED_REPLAY" for tr in traces):
+            discovery_origin = "CERTIFIED_REPLAY"
+        else:
+            discovery_origin = "SYNTHETIC_FIXTURE"
+
         # 1. Slicing successful paths
         sliced_traces: Dict[str, List[ExecutionTraceEvent]] = {}
         trace_branch_guards: Dict[str, List[str]] = defaultdict(list)
@@ -52,7 +81,14 @@ class SubtraceMiner:
                     g = ev.payload.get("branch_guard") or ev.payload.get("branch_condition") or ev.payload.get("guard")
                     trace_branch_guards[tr.trace_id].append(str(g))
 
-            # Section 3: CLIENT_DECLARED events must NOT be mined as executed reasoning
+            # Section 14: Discovery Event Eligibility Rule
+            # In production, only BACKEND_OBSERVED and DERIVED_NORMALIZATION are eligible.
+            # CLIENT_DECLARED and SYNTHETIC_FIXTURE are excluded unless synthetic_algorithm_test_mode is active.
+            if self.synthetic_algorithm_test_mode:
+                allowed_origins = {EventOrigin.BACKEND_OBSERVED, EventOrigin.DERIVED_NORMALIZATION, EventOrigin.SYNTHETIC_FIXTURE}
+            else:
+                allowed_origins = {EventOrigin.BACKEND_OBSERVED, EventOrigin.DERIVED_NORMALIZATION}
+
             tactical_events = [
                 e for e in spine
                 if e.event_type not in (
@@ -60,7 +96,7 @@ class SubtraceMiner:
                     TraceEventType.TERMINAL_VERDICT,
                     TraceEventType.RESOURCE_OBSERVATION,
                 )
-                and e.event_origin != EventOrigin.CLIENT_DECLARED
+                and e.event_origin in allowed_origins
             ]
             if tactical_events:
                 sliced_traces[tr.trace_id] = tactical_events
@@ -69,7 +105,6 @@ class SubtraceMiner:
             return []
 
         # 2. Extract n-gram subtrace sequences
-        # Map: operations_tuple -> list of (trace_id, start_idx, extracted_term, guards)
         patterns_map: Dict[Tuple[str, ...], List[Tuple[str, int, Term, List[str]]]] = defaultdict(list)
 
         for trace_id, events in sliced_traces.items():
@@ -78,7 +113,6 @@ class SubtraceMiner:
             for length in range(self.min_length, min(n + 1, self.min_length + 4)):
                 for start in range(n - length + 1):
                     sub_ops = tuple(ops[start : start + length])
-                    # Construct composite term representation for this subtrace
                     sub_events = events[start : start + length]
                     expr_terms = []
                     sub_guards = list(trace_branch_guards.get(trace_id, []))
@@ -95,12 +129,10 @@ class SubtraceMiner:
                         try:
                             term_obj = Term.parse(str(val))
                         except Exception:
-                            # Fallback to atomic Const
                             from msk_formal_discovery.core.terms import Const
                             term_obj = Const(str(val))
                         expr_terms.append(term_obj)
 
-                    # Wrap in composite sequence application
                     from msk_formal_discovery.core.terms import App
                     composite_term = App("seq", tuple(expr_terms))
                     patterns_map[sub_ops].append((trace_id, start, composite_term, sub_guards))
@@ -113,7 +145,6 @@ class SubtraceMiner:
             distinct_traces = {occ[0] for occ in occurrences}
             if len(distinct_traces) >= self.min_support:
                 pat_counter += 1
-                # Gather one representative term per distinct trace
                 trace_term_map: Dict[str, Term] = {}
                 occ_list: List[Tuple[str, int]] = []
                 pat_guards: List[str] = []
@@ -125,7 +156,6 @@ class SubtraceMiner:
                         if g not in pat_guards:
                             pat_guards.append(g)
 
-                # Anti-unify terms across participating traces
                 au_res: Optional[AntiUnificationResult] = None
                 try:
                     pairs = list(trace_term_map.items())
@@ -141,6 +171,9 @@ class SubtraceMiner:
                     extracted_terms=trace_term_map,
                     anti_unification_result=au_res,
                     branch_guards=pat_guards,
+                    discovery_origin=discovery_origin,
+                    trace_problem_digests=trace_pdigests,
+                    trace_digests=trace_digs,
                 )
                 discovered.append(pattern)
 

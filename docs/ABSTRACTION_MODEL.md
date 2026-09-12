@@ -1,7 +1,8 @@
 # Automated Abstraction & Anti-Unification Model
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R2`
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R3`
 **Module**: `msk-formal-discovery/docs/ABSTRACTION_MODEL.md`
+**Final Disposition**: `FORMAL_DISCOVERY_SPINE_ACCEPTED`
 
 ---
 
@@ -55,12 +56,17 @@ Before any candidate is emitted, the engine verifies the reconstruction identity
 $$\text{LGG}(t_1, \dots, t_N)\sigma_i = t_i \quad \forall i \in \{1, \dots, N\}$$
 Failure to reconstruct raises `AntiUnificationError`.
 
-### 3.3 Admissibility Evaluation & Guards
+### 3.3 Admissibility Evaluation & Attested Receipts
 
 Every newly generated candidate defaults to:
 $$\text{admissibility\_status} \equiv \text{"UNASSESSED"}$$
 
-Admissibility must be formally evaluated, generating an attested [`AdmissibilityReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/abstraction/anti_unification.py). Candidates with `UNASSESSED` admissibility are prohibited from held-out qualification.
+Admissibility must be formally evaluated, generating an attested [`AdmissibilityReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/admissibility-receipt.v0.1.schema.json). Candidates with `UNASSESSED` admissibility are prohibited from held-out qualification.
+
+The receipt requires:
+- Cryptographic binding to candidate, anti-unifier version, and evaluation timestamp.
+- Recomputed verification that `lgg_term_digest == lgg.digest()` and each input term digest matches the original term digests.
+- Count of meaningful shared constructor symbols ($\ge 1$).
 
 The kernel evaluates terms against strict structural guards:
 1. **Trivial Variable Guard (`STRUCTURAL_GENERALIZATION_TRIVIAL`)**:
@@ -76,39 +82,43 @@ The kernel evaluates terms against strict structural guards:
 
 ---
 
-## 4. Subtrace Mining
+## 4. Subtrace Mining & Origin Custody
 
 The [`SubtraceMiner`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/abstraction/subtrace_miner.py) discovers recurring n-gram sequences:
 1. Slices successful proof paths via `TraceNormalizer.slice_successful_path`.
 2. Strips lifecycle framing events (`INITIAL_PROBLEM`, `TERMINAL_VERDICT`, `RESOURCE_OBSERVATION`).
-3. **Excludes Caller Tactics**: Events tagged with `event_origin == EventOrigin.CLIENT_DECLARED` are strictly excluded from mining. Only `BACKEND_OBSERVED` events are eligible for abstraction.
+3. **Excludes Caller Tactics & Synthetic Traces**: In production mode (`synthetic_algorithm_test_mode=False`), events tagged with `event_origin == EventOrigin.CLIENT_DECLARED` or originating from `SYNTHETIC_FIXTURE` are strictly excluded from mining. Only genuinely executed `BACKEND_OBSERVED` events are eligible for abstraction.
 4. Extracts contiguous operation sub-sequences of length $L \in [\text{min\_length}, \text{min\_length} + 4]$.
 5. Evaluates support across distinct trace IDs and canonical `problem_digests`. Subtraces appearing in $\ge \text{min\_support}$ distinct traces are fed to the anti-unifier.
+6. Candidates retain explicit `discovery_origin` (`EXECUTED_SEARCH_MINING`, `CLIENT_DECLARED_MINING`, `SYNTHETIC_FIXTURE`) and `qualification_problem_ids`.
 
 ---
 
-## 5. De-Fabricated Held-Out Replay & Paired Contracts
+## 5. De-Fabricated Held-Out Replay & Digest-Complete Paired Contracts
 
 ### 5.1 Prohibition of Fabricated Benefit Formulas
 Predetermined improvement formulas (`baseline * 0.7`) are strictly prohibited. All qualification metrics must be **empirically observed** from search execution receipts or explicitly marked synthetic.
 
-### 5.2 Paired Replay Contract & Cryptographic Binding
+### 5.2 Digest-Complete Paired Replay Contract
 For every held-out problem instance, a [`PairedReplayContract`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/abstraction/replay.py) binds identical execution variables:
-- Canonical `problem_digest`
-- Identical backend ID and version
-- Identical search policy kind and budget
-- Identical random seed (for stochastic policies like MCTS)
+- Canonical `problem_digest` (64-char lowercase hex)
+- Attested `environment_digest` (64-char lowercase hex)
+- Attested `backend_digest` (64-char lowercase hex)
+- Attested `source_graph_digest` (64-char lowercase hex)
+- Attested `search_policy_digest` (64-char lowercase hex)
+- Identical search budget and random seed
 - Identical corpus context
 
 The contract computes a SHA-256 `contract_digest` enforcing:
 $$\text{ALL NON-ABSTRACTION VARIABLES IDENTICAL}$$
 Any configuration drift between baseline and abstracted arms raises `PairedReplayViolationError`.
 
-### 5.3 Replay Run Receipts & Schema Validation
+### 5.3 Replay Run Receipts & Cross-Checks
 Replay runs produce attested receipts validating against [`schemas/replay-run-receipt.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/replay-run-receipt.v0.1.schema.json). Receipts verify:
 - Exact contract digest match
 - Consistency between search run metrics and receipt metrics
 - Disjointness between discovery problem digests and qualification problem digests
+- Cross-checking of underlying [`SearchExecutionReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/search-execution-receipt.v0.1.schema.json) records for baseline and abstracted arms.
 
 ### 5.4 Replay Modes & Qualification Gating
 
@@ -119,6 +129,7 @@ Replay runs produce attested receipts validating against [`schemas/replay-run-re
    - Cannot establish functional search benefit.
 2. **`EXECUTED_SEARCH_RUN` / `CERTIFIED_SEARCH_REPLAY`**:
    - Genuinely executes search across held-out instances under paired replay contracts.
+   - Requires candidate `discovery_origin == "EXECUTED_SEARCH_MINING"`.
    - Evaluates observed compression ratio, evaluation reduction, and branch reduction.
    - Only this mode may promote candidate to `QUALIFIED_HELD_OUT`.
 

@@ -14,7 +14,7 @@ def fixtures():
 
 def test_fixture_1_repeated_identical(fixtures):
     case = fixtures["REPEATED_IDENTICAL"]
-    miner = SubtraceMiner(min_length=2, min_support=2)
+    miner = SubtraceMiner(min_length=2, min_support=2, synthetic_algorithm_test_mode=True)
     patterns = miner.mine_traces(case.traces)
 
     assert len(patterns) > 0
@@ -29,7 +29,7 @@ def test_fixture_1_repeated_identical(fixtures):
 
 def test_fixture_2_alpha_renamed(fixtures):
     case = fixtures["ALPHA_RENAMED"]
-    miner = SubtraceMiner(min_length=2, min_support=2)
+    miner = SubtraceMiner(min_length=2, min_support=2, synthetic_algorithm_test_mode=True)
     patterns = miner.mine_traces(case.traces)
 
     assert len(patterns) > 0
@@ -42,7 +42,7 @@ def test_fixture_2_alpha_renamed(fixtures):
 
 def test_fixture_3_structurally_generalizable(fixtures):
     case = fixtures["STRUCTURALLY_GENERALIZABLE"]
-    miner = SubtraceMiner(min_length=2, min_support=2)
+    miner = SubtraceMiner(min_length=2, min_support=2, synthetic_algorithm_test_mode=True)
     patterns = miner.mine_traces(case.traces)
 
     assert len(patterns) > 0
@@ -81,7 +81,7 @@ def test_fixture_5_repeated_unsat_core(fixtures):
 
 def test_fixture_6_shared_lemma_chains(fixtures):
     case = fixtures["SHARED_LEMMA_CHAINS"]
-    miner = SubtraceMiner(min_length=3, min_support=2)
+    miner = SubtraceMiner(min_length=3, min_support=2, synthetic_algorithm_test_mode=True)
     patterns = miner.mine_traces(case.traces)
 
     assert len(patterns) > 0

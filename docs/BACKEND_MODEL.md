@@ -1,7 +1,8 @@
 # Heterogeneous Reasoning Backend Contract & Adapters
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R2`
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R3`
 **Module**: `msk-formal-discovery/docs/BACKEND_MODEL.md`
+**Final Disposition**: `FORMAL_DISCOVERY_SPINE_ACCEPTED`
 
 ---
 
@@ -40,22 +41,24 @@ Every trace event and receipt is tagged with its exact `ExecutionOrigin`:
 ### 2.3 Event Origin Taxonomy (`EventOrigin`)
 
 Events within execution traces are strictly partitioned by their origin:
-- **`CLIENT_DECLARED`**: Tactical steps, hints, and hypotheses declared by the caller. These represent exploration suggestions and are **strictly excluded** from abstraction mining.
+- **`CLIENT_DECLARED`**: Tactical steps, hints, and hypotheses declared by the caller. These represent exploration suggestions and are **strictly excluded** from abstraction mining. Attempts to assign non-`NONE` authority to `CLIENT_DECLARED` events raise `AuthorityViolationError`.
 - **`BACKEND_OBSERVED`**: Verdicts and structural events directly parsed and confirmed by the backend execution engine.
 
 ---
 
 ## 3. Authority Escalation Firewalls & Execution Receipts
 
-### 3.1 Strict Receipt Requirement
+### 3.1 Strict Receipt Requirement & Schema Canonicalization
 To claim non-zero logical authority (`DEDUCTIVE_PROOF_AUTHORITY`, `SOLVER_SAT_OR_UNSAT`, `BOUNDED_EXHAUSTIVE_VERDICT`), traces **must** include an attested [`BackendExecutionReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/backend-execution-receipt.v0.1.schema.json) certifying:
-- Verified executable path and version
+- Verified executable path and version (must strictly match `trace.backend_version`)
 - SHA-256 digest of executable binary (or runtime indicator)
 - Exact process invocation arguments (`command`)
-- SHA-256 digest of source input syntax
+- SHA-256 digest of source input syntax (must match source trace syntax)
 - Process exit code (`exit_code == 0`)
 - `timeout_status == False`
 - SHA-256 digests of captured stdout and stderr
+
+Every execution trace automatically validates its embedded backend receipt against `schemas/backend-execution-receipt.v0.1.schema.json` upon construction. Corrupt, invalid, or mismatched receipts raise `ReceiptValidationError` or `AuthorityViolationError`.
 
 ### 3.2 Authority Derivation Rules
 Under `derive_authority(...)`, the sole derivation gateway:

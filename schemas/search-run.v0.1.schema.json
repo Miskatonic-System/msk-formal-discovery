@@ -27,10 +27,8 @@
       "minLength": 1
     },
     "problem_digest": {
-      "type": [
-        "string",
-        "null"
-      ]
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
     },
     "search_policy": {
       "type": "string",
@@ -58,6 +56,8 @@
       "enum": [
         "SYNTHETIC_REPLAY_FIXTURE",
         "EXECUTED_HELD_OUT_REPLAY",
+        "EXECUTED_SEARCH_RUN",
+        "CERTIFIED_SEARCH_REPLAY",
         null
       ]
     },
@@ -66,6 +66,25 @@
         "object",
         "null"
       ]
+    },
+    "search_execution_receipt": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "execution_trace_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "execution_trace_digests": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
     },
     "corpus_guidance": {
       "type": [

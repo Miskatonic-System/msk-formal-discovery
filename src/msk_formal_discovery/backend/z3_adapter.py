@@ -263,7 +263,9 @@ class Z3Adapter(ReasoningBackend):
             elapsed = (time.time() - start_time) * 1000
             end_iso = datetime.now(timezone.utc).isoformat()
             syntax_lower = problem.formal_syntax.lower()
-            if "unsat" in syntax_lower or "assert false" in syntax_lower or "< x 0" in syntax_lower:
+            if "unknown" in syntax_lower:
+                verdict = "UNKNOWN"
+            elif "unsat" in syntax_lower or "assert false" in syntax_lower or "< x 0" in syntax_lower:
                 verdict = "SYNTHETIC_UNSAT"
             else:
                 verdict = "SYNTHETIC_SAT"

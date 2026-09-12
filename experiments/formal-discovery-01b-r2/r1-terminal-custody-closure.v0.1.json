@@ -1,0 +1,21 @@
+{
+  "schema_version": "miskatonic.r1-terminal-custody-closure.v0.1",
+  "closure_id": "r1-terminal-custody-closure",
+  "source_work_order": "WO-MATH-FORMAL-DISCOVERY-01B-R1",
+  "r2_work_order": "WO-MATH-FORMAL-DISCOVERY-01B-R2",
+  "source_execution_commit": "d421e48f5345b3f28493b2098b6dabaa3c4c41e0",
+  "source_execution_tree": "de2faaf9be02dabca4993972d0423310e88ffbbe",
+  "custody_receipt_count": 24,
+  "paired_unit_count": 12,
+  "source_result_digest_verified": true,
+  "all_terminal_digest_parity": true,
+  "all_metric_parity": true,
+  "all_application_parity": true,
+  "all_original_search_refs_resolved": true,
+  "all_replay_receipts_resolved": true,
+  "source_science_mutated": false,
+  "terminal_canonical_forms_durably_bound": "YES",
+  "closure_status": "R1_EVIDENCE_CUSTODY_CLOSED",
+  "authority": "NONE",
+  "closure_digest": "68bed56727c1c96bc3cd4a56f8858a4b50229b753128b8fcb7904947c8bf0144"
+}

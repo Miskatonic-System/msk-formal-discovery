@@ -59,6 +59,7 @@ class MCTSSearch(SearchPolicy):
         self.max_rollouts = max_rollouts
         self.corpus_guidance = corpus_guidance or {}
         self.rules = self.config.get("available_rules", ["rule_0", "rule_1", "rule_2"])
+        self.rollout_evaluator_type = "SYNTHETIC_PRIOR_ROLLOUT"
 
     def propose_actions(self, state: SearchState) -> List[SearchAction]:
         actions = []
@@ -132,7 +133,8 @@ class MCTSSearch(SearchPolicy):
             node.children.append(child_node)
 
     def _simulate(self, node: MCTSNode) -> float:
-        # Default rollout evaluation: prior-weighted simulation score
+        # Evaluator: SYNTHETIC_PRIOR_ROLLOUT (Section 22)
+        # Note: This is exploration guidance, NOT reasoning-backed simulation.
         return min(1.0, max(0.0, node.prior))
 
     def _backpropagate(self, node: Optional[MCTSNode], reward: float) -> None:

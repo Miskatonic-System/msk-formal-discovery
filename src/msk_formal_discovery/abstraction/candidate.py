@@ -1,11 +1,15 @@
-"""Abstraction candidate representations and lifecycle (Section 8)."""
+"""Abstraction candidate representations, fail-closed defaults, and lifecycle (WO-MATH-FORMAL-DISCOVERY-01A-R1)."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from msk_formal_discovery.abstraction.anti_unification import AntiUnificationResult
+from msk_formal_discovery.abstraction.anti_unification import (
+    AdmissibilityStatus,
+    AntiUnificationResult,
+)
+from msk_formal_discovery.core.exceptions import AuthorityViolationError
 from msk_formal_discovery.core.terms import Term
 
 
@@ -42,9 +46,17 @@ class AbstractionCandidate:
     discovery_set_trace_ids: List[str]
     qualification_trace_ids: List[str] = field(default_factory=list)
     status: CandidateStatus = CandidateStatus.PROPOSED
+    admissibility_status: AdmissibilityStatus = AdmissibilityStatus.ADMISSIBLE
     held_out_evaluation: Optional[Dict[str, Any]] = None
     blueprint_family: Optional[str] = None
     onto_export: Optional[Dict[str, Any]] = None
+
+    def __post_init__(self) -> None:
+        # Enforce admissibility on lemma promotion
+        if self.candidate_kind == AbstractionKind.LEMMA:
+            if self.admissibility_status != AdmissibilityStatus.ADMISSIBLE:
+                if self.status == CandidateStatus.QUALIFIED_HELD_OUT:
+                    self.status = CandidateStatus.REJECTED
 
     @property
     def authority(self) -> str:
@@ -58,8 +70,10 @@ class AbstractionCandidate:
                 "substitutions": {var: str(val) for var, val in subst.items()},
             })
 
+        # Fail-closed defaults per Section 15
         held_out_data = self.held_out_evaluation or {
-            "is_held_out_disjoint_from_discovery": True,
+            "replay_mode": "UNTESTED",
+            "is_held_out_disjoint_from_discovery": False,
             "supporting_trace_count": len(self.discovery_set_trace_ids),
             "structural_compression_ratio": 1.0,
             "proof_branch_reduction": 0.0,
@@ -68,12 +82,13 @@ class AbstractionCandidate:
             "wall_time_delta_pct": 0.0,
         }
 
+        # Fail-closed ONTO defaults per Section 15 & 16: UNKNOWN instead of true
         onto_data = self.onto_export or {
             "recurrence_count": len(self.discovery_set_trace_ids),
-            "representation_invariance": True,
-            "cross_search_policy_recurrence": True,
-            "cross_formal_system_recurrence": False,
-            "functional_search_benefit": True,
+            "representation_invariance": "UNKNOWN",
+            "cross_search_policy_recurrence": "UNKNOWN",
+            "cross_formal_system_recurrence": "UNKNOWN",
+            "functional_search_benefit": "UNKNOWN",
         }
 
         return {
@@ -81,6 +96,7 @@ class AbstractionCandidate:
             "candidate_id": self.candidate_id,
             "candidate_kind": self.candidate_kind.value,
             "status": self.status.value,
+            "admissibility_status": self.admissibility_status.value,
             "formal_specification": self.formal_specification,
             "anti_unification_evidence": {
                 "algorithm_version": self.anti_unification_evidence.algorithm_version,

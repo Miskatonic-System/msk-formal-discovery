@@ -1,4 +1,4 @@
-"""Execution trace IR implementation and validator."""
+"""Execution trace IR implementation and validator (WO-MATH-FORMAL-DISCOVERY-01A-R1)."""
 from __future__ import annotations
 
 import json
@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional
 
 import jsonschema
 
-from msk_formal_discovery.core.exceptions import TraceValidationError
+from msk_formal_discovery.core.exceptions import AuthorityViolationError, TraceValidationError
 from msk_formal_discovery.trace.events import ExecutionTraceEvent, TraceEventType
 
 
@@ -22,9 +22,34 @@ class ExecutionTrace:
     backend_version: str
     logical_authority_class: str
     created_at: str
+    execution_origin: str = "SYNTHETIC_FIXTURE"
+    execution_receipt: Optional[Dict[str, Any]] = None
     events: List[ExecutionTraceEvent] = field(default_factory=list)
     terminal_verdict: str = "INCOMPLETE"
     wall_time_ms: float = 0.0
+
+    def __post_init__(self) -> None:
+        # Enforce Section 8: Trace Authority Derivation & Synthetic Fixture Boundaries
+        if self.execution_origin in ("SYNTHETIC_FIXTURE", "SIMULATED"):
+            if self.logical_authority_class == "DEDUCTIVE_PROOF_AUTHORITY":
+                raise AuthorityViolationError(
+                    "SYNTHETIC_FIXTURE_CANNOT_CLAIM_PROOF_AUTHORITY: Synthetic fixture or simulated trace cannot assert deductive proof authority"
+                )
+            if self.logical_authority_class == "SOLVER_SAT_OR_UNSAT":
+                raise AuthorityViolationError(
+                    "SIMULATED_TRACE_CANNOT_CLAIM_SOLVER_AUTHORITY: Simulated solver trace cannot assert authoritative solver SAT/UNSAT verdict"
+                )
+
+        if self.execution_origin in ("EXECUTED_NATIVE", "EXECUTED_CONTAINERIZED"):
+            if self.logical_authority_class == "DEDUCTIVE_PROOF_AUTHORITY":
+                if not self.execution_receipt:
+                    raise AuthorityViolationError(
+                        "RECEIPT_REQUIRED_FOR_PROOF_AUTHORITY: Real execution trace requires validated execution receipt to claim deductive proof authority"
+                    )
+                if self.execution_receipt.get("exit_code") != 0 or self.terminal_verdict != "PROVEN":
+                    raise AuthorityViolationError(
+                        "UNSUCCESSFUL_EXECUTION_CANNOT_CLAIM_PROOF_AUTHORITY: Execution receipt must attest exit_code == 0 and PROVEN verdict"
+                    )
 
     def add_event(
         self,
@@ -98,12 +123,13 @@ class ExecutionTrace:
 
     def to_dict(self) -> Dict[str, Any]:
         branch_count = sum(1 for e in self.events if e.event_type == TraceEventType.BRANCH)
-        return {
+        data: Dict[str, Any] = {
             "schema_version": "miskatonic.execution-trace.v0.1",
             "trace_id": self.trace_id,
             "problem_id": self.problem_id,
             "backend_id": self.backend_id,
             "backend_version": self.backend_version,
+            "execution_origin": self.execution_origin,
             "logical_authority_class": self.logical_authority_class,
             "created_at": self.created_at,
             "events": [e.to_dict() for e in self.events],
@@ -114,6 +140,9 @@ class ExecutionTrace:
                 "wall_time_ms": self.wall_time_ms,
             },
         }
+        if self.execution_receipt:
+            data["execution_receipt"] = self.execution_receipt
+        return data
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> ExecutionTrace:
@@ -124,6 +153,8 @@ class ExecutionTrace:
             problem_id=data["problem_id"],
             backend_id=data["backend_id"],
             backend_version=data["backend_version"],
+            execution_origin=data.get("execution_origin", "SYNTHETIC_FIXTURE"),
+            execution_receipt=data.get("execution_receipt"),
             logical_authority_class=data["logical_authority_class"],
             created_at=data["created_at"],
             events=events,

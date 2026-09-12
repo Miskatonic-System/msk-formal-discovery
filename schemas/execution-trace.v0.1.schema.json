@@ -10,6 +10,7 @@
     "problem_id",
     "backend_id",
     "backend_version",
+    "execution_origin",
     "logical_authority_class",
     "created_at",
     "events",
@@ -36,6 +37,16 @@
       "type": "string",
       "minLength": 1
     },
+    "execution_origin": {
+      "type": "string",
+      "enum": [
+        "EXECUTED_NATIVE",
+        "EXECUTED_CONTAINERIZED",
+        "CERTIFIED_REPLAY",
+        "SYNTHETIC_FIXTURE",
+        "SIMULATED"
+      ]
+    },
     "logical_authority_class": {
       "type": "string",
       "enum": [
@@ -43,7 +54,15 @@
         "BOUNDED_EXHAUSTIVE_VERDICT",
         "DEDUCTIVE_PROOF_AUTHORITY",
         "SYMBOLIC_IDENTITY",
-        "EMPIRICAL_EXECUTION"
+        "EMPIRICAL_EXECUTION",
+        "SYNTHETIC_FIXTURE_ONLY",
+        "NONE"
+      ]
+    },
+    "execution_receipt": {
+      "type": [
+        "object",
+        "null"
       ]
     },
     "created_at": {
@@ -151,7 +170,9 @@
               "BOUNDED_EXHAUSTIVE_VERDICT",
               "DEDUCTIVE_PROOF_AUTHORITY",
               "SYMBOLIC_IDENTITY",
-              "EMPIRICAL_EXECUTION"
+              "EMPIRICAL_EXECUTION",
+              "SYNTHETIC_FIXTURE_ONLY",
+              "NONE"
             ]
           },
           "typed_extension": {
@@ -182,6 +203,9 @@
         "PROVEN",
         "REFUTED_SAT",
         "UNSAT_REFUTED",
+        "SYNTHETIC_SUCCESS",
+        "SYNTHETIC_SAT",
+        "SYNTHETIC_UNSAT",
         "TIMEOUT",
         "INCOMPLETE",
         "RESOURCE_EXHAUSTED",

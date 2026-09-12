@@ -28,7 +28,15 @@ class TraceNormalizer:
         Backtracks and failed branches are eliminated, leaving the direct proof / derivation spine.
         """
         # If trace is empty or failed, return empty
-        if trace.terminal_verdict not in ("PROVEN", "UNSAT_REFUTED", "REFUTED_SAT", "SUCCESS"):
+        if trace.terminal_verdict not in (
+            "PROVEN",
+            "UNSAT_REFUTED",
+            "REFUTED_SAT",
+            "SUCCESS",
+            "SYNTHETIC_SUCCESS",
+            "SYNTHETIC_SAT",
+            "SYNTHETIC_UNSAT",
+        ):
             return []
 
         # Start from terminal event and trace backwards along parent_event_id links

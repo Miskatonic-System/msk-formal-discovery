@@ -21,15 +21,19 @@ def make_sample_trace(
     trace_id: str,
     problem_id: str,
     operations: List[Tuple[str, str]],  # (op_name, expression)
-    verdict: str = "PROVEN",
+    verdict: str = "SYNTHETIC_SUCCESS",
     branch_count: int = 0,
+    execution_origin: str = "SYNTHETIC_FIXTURE",
+    backend_id: str = "synthetic-fixture",
+    logical_authority_class: str = "NONE",
 ) -> ExecutionTrace:
     tr = ExecutionTrace(
         trace_id=trace_id,
         problem_id=problem_id,
-        backend_id="lean4",
-        backend_version="4.25.0",
-        logical_authority_class="DEDUCTIVE_PROOF_AUTHORITY",
+        backend_id=backend_id,
+        backend_version="1.0.0-fixture",
+        execution_origin=execution_origin,
+        logical_authority_class=logical_authority_class,
         created_at="2026-09-12T10:00:00Z",
         terminal_verdict=verdict,
         wall_time_ms=15.0,
@@ -59,7 +63,7 @@ def make_sample_trace(
         state_digest="1" * 64,
         result_digest="2" * 64,
         parent_event_id=last_id,
-        payload={"verdict": verdict},
+        payload={"verdict": verdict, "proof_complete": "NOT_ESTABLISHED"},
     )
     return tr
 
@@ -151,12 +155,12 @@ def get_preregistered_fixtures() -> Dict[str, FixtureCase]:
     t1_unsat = make_sample_trace(
         "trace-unsat-1", "prob-9",
         [("assert_c1", "assert(c1)"), ("assert_c2", "assert(c2)"), ("assert_c3", "assert(c3)")],
-        verdict="UNSAT_REFUTED"
+        verdict="SYNTHETIC_UNSAT"
     )
     t2_unsat = make_sample_trace(
         "trace-unsat-2", "prob-10",
         [("assert_c1", "assert(c1)"), ("assert_other", "assert(c4)"), ("assert_c3", "assert(c3)")],
-        verdict="UNSAT_REFUTED"
+        verdict="SYNTHETIC_UNSAT"
     )
     fixtures["REPEATED_UNSAT_CORE"] = FixtureCase(
         name="repeated_unsat_core_patterns",

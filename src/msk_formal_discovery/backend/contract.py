@@ -1,13 +1,17 @@
-"""Reasoning backend contract and authority boundaries (WO-MATH-FORMAL-DISCOVERY-01A)."""
+"""Reasoning backend contract, execution receipts, and authority derivation (WO-MATH-FORMAL-DISCOVERY-01A-R1)."""
 from __future__ import annotations
 
 import abc
-from dataclasses import dataclass
+import hashlib
+import json
+from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import jsonschema
 
 from msk_formal_discovery.core.exceptions import AuthorityViolationError
-from msk_formal_discovery.trace.ir import ExecutionTrace
 
 
 class BackendFamily(str, Enum):
@@ -15,8 +19,19 @@ class BackendFamily(str, Enum):
     SMT_SOLVER = "SMT_SOLVER"
     MODEL_CHECKER = "MODEL_CHECKER"
     PROOF_ASSISTANT = "PROOF_ASSISTANT"
+    STRUCTURAL_PROOF_ASSISTANT = "STRUCTURAL_PROOF_ASSISTANT"
+    INTERACTIVE_THEOREM_PROVER = "INTERACTIVE_THEOREM_PROVER"
     SYMBOLIC_ORACLE = "SYMBOLIC_ORACLE"
     EXECUTABLE_ORACLE = "EXECUTABLE_ORACLE"
+
+
+class ExecutionOrigin(str, Enum):
+    """Exact execution origin of backend evidence."""
+    EXECUTED_NATIVE = "EXECUTED_NATIVE"
+    EXECUTED_CONTAINERIZED = "EXECUTED_CONTAINERIZED"
+    CERTIFIED_REPLAY = "CERTIFIED_REPLAY"
+    SYNTHETIC_FIXTURE = "SYNTHETIC_FIXTURE"
+    SIMULATED = "SIMULATED"
 
 
 class LogicalAuthorityClass(str, Enum):
@@ -26,16 +41,115 @@ class LogicalAuthorityClass(str, Enum):
     DEDUCTIVE_PROOF_AUTHORITY = "DEDUCTIVE_PROOF_AUTHORITY"
     SYMBOLIC_IDENTITY = "SYMBOLIC_IDENTITY"
     EMPIRICAL_EXECUTION = "EMPIRICAL_EXECUTION"
+    SYNTHETIC_FIXTURE_ONLY = "SYNTHETIC_FIXTURE_ONLY"
+    NONE = "NONE"
 
 
-# Enforce standard authority mapping per backend family
 FAMILY_TO_DEFAULT_AUTHORITY: Dict[BackendFamily, LogicalAuthorityClass] = {
     BackendFamily.SMT_SOLVER: LogicalAuthorityClass.SOLVER_SAT_OR_UNSAT,
     BackendFamily.MODEL_CHECKER: LogicalAuthorityClass.BOUNDED_EXHAUSTIVE_VERDICT,
     BackendFamily.PROOF_ASSISTANT: LogicalAuthorityClass.DEDUCTIVE_PROOF_AUTHORITY,
+    BackendFamily.STRUCTURAL_PROOF_ASSISTANT: LogicalAuthorityClass.DEDUCTIVE_PROOF_AUTHORITY,
+    BackendFamily.INTERACTIVE_THEOREM_PROVER: LogicalAuthorityClass.DEDUCTIVE_PROOF_AUTHORITY,
     BackendFamily.SYMBOLIC_ORACLE: LogicalAuthorityClass.SYMBOLIC_IDENTITY,
     BackendFamily.EXECUTABLE_ORACLE: LogicalAuthorityClass.EMPIRICAL_EXECUTION,
 }
+
+
+@dataclass
+class BackendExecutionReceipt:
+    """Attested receipt of a real or simulated backend invocation."""
+    receipt_id: str
+    backend_id: str
+    backend_family: BackendFamily
+    execution_origin: ExecutionOrigin
+    executable_path: str
+    executable_version: str
+    executable_sha256: str
+    command: List[str]
+    input_digest: str
+    started_at: str
+    completed_at: str
+    exit_code: Optional[int]
+    timeout_status: bool
+    stdout_digest: str
+    stderr_digest: str
+    terminal_classification: str
+    logical_authority_class: LogicalAuthorityClass
+    execution_metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "schema_version": "miskatonic.backend-execution-receipt.v0.1",
+            "receipt_id": self.receipt_id,
+            "backend_id": self.backend_id,
+            "backend_family": self.backend_family.value,
+            "execution_origin": self.execution_origin.value,
+            "executable_path": self.executable_path,
+            "executable_version": self.executable_version,
+            "executable_sha256": self.executable_sha256,
+            "command": self.command,
+            "input_digest": self.input_digest,
+            "started_at": self.started_at,
+            "completed_at": self.completed_at,
+            "exit_code": self.exit_code,
+            "timeout_status": self.timeout_status,
+            "stdout_digest": self.stdout_digest,
+            "stderr_digest": self.stderr_digest,
+            "terminal_classification": self.terminal_classification,
+            "logical_authority_class": self.logical_authority_class.value,
+            "execution_metadata": self.execution_metadata,
+        }
+
+    def validate(self, schema_path: Optional[Path] = None) -> None:
+        if schema_path and schema_path.exists():
+            schema_data = json.loads(schema_path.read_text(encoding="utf-8"))
+            jsonschema.validate(self.to_dict(), schema_data)
+
+
+def derive_authority(
+    backend_family: BackendFamily,
+    execution_origin: ExecutionOrigin,
+    receipt: Optional[BackendExecutionReceipt],
+    terminal_classification: str,
+) -> LogicalAuthorityClass:
+    """Derive logical authority class strictly from execution origin, receipt, and status."""
+    # Simulation or Synthetic Fixture NEVER grants proof or solver authority
+    if execution_origin in (ExecutionOrigin.SYNTHETIC_FIXTURE, ExecutionOrigin.SIMULATED):
+        return LogicalAuthorityClass.NONE
+
+    if receipt is None or receipt.exit_code != 0 or receipt.timeout_status:
+        return LogicalAuthorityClass.NONE
+
+    # Proof assistants
+    if backend_family in (
+        BackendFamily.PROOF_ASSISTANT,
+        BackendFamily.STRUCTURAL_PROOF_ASSISTANT,
+        BackendFamily.INTERACTIVE_THEOREM_PROVER,
+    ):
+        if (
+            terminal_classification == "PROVEN"
+            and execution_origin in (ExecutionOrigin.EXECUTED_NATIVE, ExecutionOrigin.EXECUTED_CONTAINERIZED)
+        ):
+            return LogicalAuthorityClass.DEDUCTIVE_PROOF_AUTHORITY
+        return LogicalAuthorityClass.NONE
+
+    # SMT Solvers
+    if backend_family == BackendFamily.SMT_SOLVER:
+        if (
+            terminal_classification in ("SAT", "UNSAT", "UNSAT_REFUTED", "REFUTED_SAT")
+            and execution_origin in (ExecutionOrigin.EXECUTED_NATIVE, ExecutionOrigin.EXECUTED_CONTAINERIZED)
+        ):
+            return LogicalAuthorityClass.SOLVER_SAT_OR_UNSAT
+        return LogicalAuthorityClass.NONE
+
+    # Model Checkers
+    if backend_family == BackendFamily.MODEL_CHECKER:
+        if execution_origin in (ExecutionOrigin.EXECUTED_NATIVE, ExecutionOrigin.EXECUTED_CONTAINERIZED):
+            return LogicalAuthorityClass.BOUNDED_EXHAUSTIVE_VERDICT
+        return LogicalAuthorityClass.NONE
+
+    return LogicalAuthorityClass.NONE
 
 
 @dataclass
@@ -81,7 +195,7 @@ class ReasoningBackend(abc.ABC):
                 )
 
     @abc.abstractmethod
-    def solve(self, problem: ProblemDefinition) -> ExecutionTrace:
+    def solve(self, problem: ProblemDefinition) -> Any:
         """Attempt to solve the formal problem and return a governed ExecutionTrace."""
 
     @abc.abstractmethod

@@ -1,6 +1,6 @@
 # Search Policy Interfaces & Guidance Firewalls
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A`  
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R1`  
 **Module**: `msk-formal-discovery/docs/SEARCH_MODEL.md`
 
 ---
@@ -43,8 +43,11 @@ $$\text{SearchPolicy.authority} \equiv \text{NONE}$$
   1. **Selection**: Traverses tree using Upper Confidence bounds for Trees (UCT):
      $$\text{UCT}(n) = Q(n) + c \cdot P(n) \cdot \sqrt{\frac{\ln N(\text{parent})}{1 + N(n)}}$$
   2. **Expansion**: Proposes actions for unexplored leaf states.
-  3. **Simulation**: Evaluates candidate rollout reward.
+  3. **Simulation / Rollout**: Evaluates candidate rollout reward.
   4. **Backpropagation**: Updates visit counts and cumulative values along ancestry path.
+- **Rollout Evaluator Capability Boundary**:
+  Rollout evaluations are explicitly typed as **`SYNTHETIC_PRIOR_ROLLOUT`** (or `UNBOUNDED_ESTIMATE`). They carry **zero** formal proof authority:
+  $$\text{MCTS\_SIMULATION\_METRICS} \not\to \text{DEDUCTIVE\_PROOF\_AUTHORITY}$$
 
 ---
 
@@ -71,6 +74,8 @@ The corpus guidance interface:
 Search runs are persisted and validated against `schemas/search-run.v0.1.schema.json`:
 - `run_id`, `problem_id`, `search_policy`
 - `policy_configuration`
+- `replay_mode`: Explicitly records `EXECUTED_HELD_OUT_REPLAY` or `SYNTHETIC_REPLAY_FIXTURE` (when used in replay experiments)
+- `paired_contract_ref`: Optional reference to the binding `PairedReplayContract`
 - `corpus_guidance` (if present)
 - `resulting_trace_id`
 - Metrics: `nodes_expanded`, `nodes_evaluated`, `max_depth_reached`, `branching_factor_effective`, `total_wall_time_ms`

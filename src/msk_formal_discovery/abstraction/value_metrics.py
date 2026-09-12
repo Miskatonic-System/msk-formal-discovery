@@ -22,6 +22,7 @@ class AbstractionValueReport:
     portability_across_formal_systems: float
     human_inspectable_representation_size: int
     is_held_out_disjoint_from_discovery: bool = True
+    replay_mode: str = "SYNTHETIC_REPLAY_FIXTURE"
 
     def is_qualified_for_promotion(
         self,
@@ -33,9 +34,14 @@ class AbstractionValueReport:
         
         Requires:
         - at least min_support traces
+        - real executed paired replay (NOT synthetic replay)
         - measurable compression or branch reduction
         - non-negative held-out success delta
         """
+        # Synthetic replay CANNOT qualify candidates per Section 11 & 14
+        if self.replay_mode != "EXECUTED_HELD_OUT_REPLAY":
+            return False
+
         if self.supporting_trace_count < min_support:
             return False
         if self.held_out_success_rate_delta < 0.0:
@@ -50,6 +56,7 @@ class AbstractionValueReport:
 
     def to_dict(self) -> Dict[str, Any]:
         return {
+            "replay_mode": self.replay_mode,
             "is_held_out_disjoint_from_discovery": self.is_held_out_disjoint_from_discovery,
             "supporting_trace_count": self.supporting_trace_count,
             "structural_compression_ratio": round(self.structural_compression_ratio, 4),

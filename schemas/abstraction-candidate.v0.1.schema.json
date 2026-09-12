@@ -47,6 +47,16 @@
         "CANDIDATE_ONLY"
       ]
     },
+    "admissibility_status": {
+      "type": "string",
+      "enum": [
+        "ADMISSIBLE",
+        "STRUCTURAL_GENERALIZATION_TRIVIAL",
+        "TRIVIAL_OR_SEMANTICALLY_INCOMPATIBLE_GENERALIZATION",
+        "REQUIRES_BRANCH_GUARD",
+        "NON_GLOBALIZABLE"
+      ]
+    },
     "formal_specification": {
       "type": "object",
       "required": [
@@ -60,6 +70,9 @@
         "canonical_representation": {
           "type": "string"
         },
+        "statement": {
+          "type": "string"
+        },
         "parameters": {
           "type": "array",
           "items": {
@@ -68,6 +81,12 @@
         },
         "signature": {
           "type": "string"
+        },
+        "guard": {
+          "type": [
+            "string",
+            "null"
+          ]
         }
       }
     },
@@ -133,17 +152,19 @@
       }
     },
     "held_out_evaluation": {
-      "type": "object",
-      "required": [
-        "is_held_out_disjoint_from_discovery",
-        "supporting_trace_count",
-        "structural_compression_ratio",
-        "proof_branch_reduction",
-        "candidate_evaluation_reduction",
-        "held_out_success_rate_delta",
-        "wall_time_delta_pct"
+      "type": [
+        "object",
+        "null"
       ],
       "properties": {
+        "replay_mode": {
+          "type": "string",
+          "enum": [
+            "SYNTHETIC_REPLAY_FIXTURE",
+            "EXECUTED_HELD_OUT_REPLAY",
+            "UNTESTED"
+          ]
+        },
         "is_held_out_disjoint_from_discovery": {
           "type": "boolean"
         },
@@ -210,16 +231,28 @@
           "minimum": 0
         },
         "representation_invariance": {
-          "type": "boolean"
+          "oneOf": [
+            { "type": "boolean" },
+            { "type": "string", "enum": ["UNKNOWN", "UNTESTED", "EVIDENCED", "REFUTED"] }
+          ]
         },
         "cross_search_policy_recurrence": {
-          "type": "boolean"
+          "oneOf": [
+            { "type": "boolean" },
+            { "type": "string", "enum": ["UNKNOWN", "UNTESTED", "EVIDENCED", "REFUTED"] }
+          ]
         },
         "cross_formal_system_recurrence": {
-          "type": "boolean"
+          "oneOf": [
+            { "type": "boolean" },
+            { "type": "string", "enum": ["UNKNOWN", "UNTESTED", "EVIDENCED", "REFUTED"] }
+          ]
         },
         "functional_search_benefit": {
-          "type": "boolean"
+          "oneOf": [
+            { "type": "boolean" },
+            { "type": "string", "enum": ["UNKNOWN", "UNTESTED", "EVIDENCED", "REFUTED"] }
+          ]
         }
       }
     },

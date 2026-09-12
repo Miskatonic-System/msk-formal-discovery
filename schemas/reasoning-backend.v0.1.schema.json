@@ -29,6 +29,8 @@
         "SMT_SOLVER",
         "MODEL_CHECKER",
         "PROOF_ASSISTANT",
+        "STRUCTURAL_PROOF_ASSISTANT",
+        "INTERACTIVE_THEOREM_PROVER",
         "SYMBOLIC_ORACLE",
         "EXECUTABLE_ORACLE"
       ]

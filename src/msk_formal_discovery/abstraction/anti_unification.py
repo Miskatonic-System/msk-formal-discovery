@@ -1,14 +1,26 @@
-"""Structural anti-unification and Least General Generalization (LGG) kernel (Section 7)."""
+"""Structural anti-unification, Least General Generalization (LGG), and admissibility guards (WO-MATH-FORMAL-DISCOVERY-01A-R1)."""
 from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass
-from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
+from enum import Enum
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Set, Tuple
 
 from msk_formal_discovery.core.exceptions import AntiUnificationError
 from msk_formal_discovery.core.terms import App, Const, Term, Var
 
 ANTI_UNIFICATION_ALGORITHM_VERSION = "miskatonic.structural-lgg-v0.1"
+
+
+class AdmissibilityStatus(str, Enum):
+    """Admissibility classification for generalized patterns."""
+    ADMISSIBLE = "ADMISSIBLE"
+    STRUCTURAL_GENERALIZATION_TRIVIAL = "STRUCTURAL_GENERALIZATION_TRIVIAL"
+    TRIVIAL_OR_SEMANTICALLY_INCOMPATIBLE_GENERALIZATION = (
+        "TRIVIAL_OR_SEMANTICALLY_INCOMPATIBLE_GENERALIZATION"
+    )
+    REQUIRES_BRANCH_GUARD = "REQUIRES_BRANCH_GUARD"
+    NON_GLOBALIZABLE = "NON_GLOBALIZABLE"
 
 
 @dataclass(frozen=True)
@@ -18,6 +30,11 @@ class AntiUnificationResult:
     substitution_witnesses: Dict[str, Dict[str, Term]]  # trace_id -> {var_name: term}
     algorithm_version: str
     deterministic_digest: str
+
+    @property
+    def is_trivial_variable(self) -> bool:
+        """Return True if the generalized term erased all structure down to a single variable."""
+        return isinstance(self.lgg_term, Var)
 
     def verify_reconstruction(self, original_terms: Mapping[str, Term]) -> bool:
         """Verify that applying each witness substitution exactly reconstructs the original term."""
@@ -104,3 +121,30 @@ class StructuralAntiUnifier:
             raise AntiUnificationError("Generalization failed reconstruction verification invariant")
 
         return result
+
+    @staticmethod
+    def assess_admissibility(
+        terms: Sequence[Tuple[str, Term]],
+        result: AntiUnificationResult,
+        branch_guards: Optional[Sequence[str]] = None,
+    ) -> AdmissibilityStatus:
+        """Assess candidate admissibility for lemma promotion (Sections 18, 19, 20)."""
+        # 1. Check for conflicting branch guards
+        if branch_guards:
+            distinct_guards = set(branch_guards)
+            if len(distinct_guards) > 1:
+                return AdmissibilityStatus.REQUIRES_BRANCH_GUARD
+
+        # 2. Check if LGG is a bare variable (trivial generalization)
+        if result.is_trivial_variable:
+            # Check for semantic domain / functor incompatibility (e.g. int_plus vs bool_xor)
+            app_functors = {t.fn for _, t in terms if isinstance(t, App)}
+            if len(app_functors) > 1:
+                return AdmissibilityStatus.TRIVIAL_OR_SEMANTICALLY_INCOMPATIBLE_GENERALIZATION
+            return AdmissibilityStatus.STRUCTURAL_GENERALIZATION_TRIVIAL
+
+        # 3. Check if all structure is erased or too shallow (single node)
+        if result.lgg_term.size() <= 1:
+            return AdmissibilityStatus.STRUCTURAL_GENERALIZATION_TRIVIAL
+
+        return AdmissibilityStatus.ADMISSIBLE

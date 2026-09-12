@@ -17,7 +17,11 @@ from msk_formal_discovery.abstraction.candidate import (
     AbstractionKind,
     CandidateStatus,
 )
-from msk_formal_discovery.abstraction.replay import HeldOutReplayEngine
+from msk_formal_discovery.abstraction.replay import (
+    HeldOutReplayEngine,
+    PairedReplayContract,
+    ReplayRunReceipt,
+)
 from msk_formal_discovery.abstraction.subtrace_miner import SubtraceMiner
 from msk_formal_discovery.backend.registry import BackendRegistry
 from msk_formal_discovery.core.pipeline import CANONICAL_PIPELINE_SEQUENCE, verify_pipeline_sequence
@@ -132,11 +136,65 @@ def test_end_to_end_discovery_pipeline_demonstration():
     assert candidate.authority == "NONE"
     jsonschema.validate(candidate.to_dict(), CANDIDATE_SCHEMA)
 
-    # 7. Held-Out Replay Qualification (enforcing disjointness)
+    # 7. Held-Out Replay Qualification (enforcing disjointness and genuine measurement)
+    contracts = [
+        PairedReplayContract(
+            problem_id="trace-qual-1",
+            problem_digest="sha256_qual_1",
+            backend_id="lean4",
+            search_policy_kind="MCTS",
+            search_budget={"max_expansions": 50, "timeout_ms": 1000},
+            random_seed=42,
+            corpus_context={"context_id": "ctx-algebra"},
+            baseline_configuration={"enable_candidate": False},
+            abstracted_configuration={"enable_candidate": True, "candidate_id": candidate.candidate_id},
+            candidate_id=candidate.candidate_id,
+            candidate_enabled_in_abstracted=True,
+        ),
+        PairedReplayContract(
+            problem_id="trace-qual-2",
+            problem_digest="sha256_qual_2",
+            backend_id="lean4",
+            search_policy_kind="MCTS",
+            search_budget={"max_expansions": 50, "timeout_ms": 1000},
+            random_seed=42,
+            corpus_context={"context_id": "ctx-algebra"},
+            baseline_configuration={"enable_candidate": False},
+            abstracted_configuration={"enable_candidate": True, "candidate_id": candidate.candidate_id},
+            candidate_id=candidate.candidate_id,
+            candidate_enabled_in_abstracted=True,
+        ),
+    ]
+
+    def runner_fn(contract: PairedReplayContract, arm: str) -> ReplayRunReceipt:
+        if arm == "BASELINE":
+            return ReplayRunReceipt(
+                run_id=f"run-base-{contract.problem_id}",
+                arm="BASELINE",
+                problem_id=contract.problem_id,
+                nodes_expanded=50,
+                nodes_evaluated=70,
+                branch_count=10,
+                solved=True,
+                wall_time_ms=100.0,
+            )
+        else:
+            return ReplayRunReceipt(
+                run_id=f"run-abs-{contract.problem_id}",
+                arm="ABSTRACTED",
+                problem_id=contract.problem_id,
+                nodes_expanded=30,
+                nodes_evaluated=40,
+                branch_count=6,
+                solved=True,
+                wall_time_ms=65.0,
+            )
+
     replay_engine = HeldOutReplayEngine()
-    value_report = replay_engine.evaluate_candidate_on_held_out(
+    value_report = replay_engine.execute_paired_replay(
         candidate=candidate,
-        qualification_traces=[trace_q1, trace_q2],
+        contracts=contracts,
+        runner_fn=runner_fn,
     )
 
     # Search space reduction measurement
@@ -148,7 +206,7 @@ def test_end_to_end_discovery_pipeline_demonstration():
     jsonschema.validate(candidate.to_dict(), CANDIDATE_SCHEMA)
 
     # 8. ONTO structural evaluation export
-    onto_pkg = OntoExporter.export(candidate)
+    onto_pkg = OntoExporter.export(candidate, functional_evidence=True)
     assert onto_pkg.authority == "NONE"
     assert onto_pkg.recurrence_count == 2
     assert onto_pkg.functional_search_benefit is True

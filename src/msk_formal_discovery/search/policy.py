@@ -69,6 +69,12 @@ class SearchPolicy(abc.ABC):
         """Select the next state to explore according to the policy."""
 
 
+import re
+from msk_formal_discovery.core.exceptions import ReceiptValidationError
+
+HEX_64_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+
+
 @dataclass
 class SearchRun:
     """Record of a search execution run."""
@@ -76,6 +82,7 @@ class SearchRun:
     problem_id: str
     search_policy: SearchPolicyKind
     policy_configuration: Dict[str, Any]
+    problem_digest: str = ""
     nodes_expanded: int = 0
     nodes_evaluated: int = 0
     max_depth_reached: int = 0
@@ -84,13 +91,33 @@ class SearchRun:
     terminal_status: str = "EXHAUSTED"
     resulting_trace_id: Optional[str] = None
     corpus_guidance: Optional[Dict[str, Any]] = None
+    execution_trace_refs: List[str] = field(default_factory=list)
+    execution_trace_digests: List[str] = field(default_factory=list)
+    search_execution_receipt: Optional[Dict[str, Any]] = None
+    replay_mode: Optional[str] = None
+
+    def __post_init__(self) -> None:
+        if self.problem_digest and not HEX_64_PATTERN.match(self.problem_digest):
+            raise ValueError(
+                f"INVALID_PROBLEM_DIGEST: problem_digest '{self.problem_digest}' is not a 64-char lowercase hex SHA-256"
+            )
+        if self.replay_mode == "EXECUTED_SEARCH_RUN":
+            if not self.search_execution_receipt:
+                raise ReceiptValidationError(
+                    "EXECUTED_SEARCH_RUN_REQUIRES_RECEIPT: SearchRun claiming EXECUTED_SEARCH_RUN requires valid search_execution_receipt"
+                )
+            if self.execution_trace_refs or self.execution_trace_digests:
+                if len(self.execution_trace_refs) != len(self.execution_trace_digests):
+                    raise ReceiptValidationError(
+                        f"TRACE_REF_DIGEST_COUNT_MISMATCH: {len(self.execution_trace_refs)} refs != {len(self.execution_trace_digests)} digests"
+                    )
 
     @property
     def authority(self) -> str:
         return "NONE"
 
     def to_dict(self) -> Dict[str, Any]:
-        return {
+        d = {
             "schema_version": "miskatonic.search-run.v0.1",
             "run_id": self.run_id,
             "problem_id": self.problem_id,
@@ -108,3 +135,20 @@ class SearchRun:
             "terminal_status": self.terminal_status,
             "authority": self.authority,
         }
+        if self.problem_digest:
+            d["problem_digest"] = self.problem_digest
+        if self.replay_mode:
+            d["replay_mode"] = self.replay_mode
+        if self.search_execution_receipt is not None:
+            d["search_execution_receipt"] = self.search_execution_receipt
+        if self.execution_trace_refs:
+            d["execution_trace_refs"] = list(self.execution_trace_refs)
+        if self.execution_trace_digests:
+            d["execution_trace_digests"] = list(self.execution_trace_digests)
+        return d
+
+
+def is_successful_terminal(terminal_status: str) -> bool:
+    """Canonical predicate for successful search run terminal status (WO-MATH-FORMAL-DISCOVERY-01A-R4 Section 8)."""
+    return terminal_status in ("SUCCESS", "SOLVED")
+

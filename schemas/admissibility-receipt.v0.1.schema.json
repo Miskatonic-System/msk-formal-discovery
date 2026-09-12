@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "miskatonic.admissibility-receipt.v0.1",
+  "title": "Miskatonic Admissibility Receipt Schema v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "algorithm_version",
+    "source_trace_ids",
+    "source_trace_digests",
+    "discovery_problem_digests",
+    "source_term_digests",
+    "lgg_digest",
+    "substitution_witness_digest",
+    "branch_guards",
+    "semantic_domain_evidence",
+    "meaningful_shared_constructor_count",
+    "admissibility_status",
+    "receipt_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "miskatonic.admissibility-receipt.v0.1"
+    },
+    "receipt_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "algorithm_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_trace_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_trace_digests": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    },
+    "discovery_problem_digests": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    },
+    "source_term_digests": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    },
+    "lgg_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "substitution_witness_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "branch_guards": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "semantic_domain_evidence": {
+      "type": "object"
+    },
+    "meaningful_shared_constructor_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "admissibility_status": {
+      "type": "string",
+      "enum": [
+        "ADMISSIBLE",
+        "STRUCTURAL_GENERALIZATION_TRIVIAL",
+        "TRIVIAL_OR_SEMANTICALLY_INCOMPATIBLE_GENERALIZATION",
+        "REQUIRES_BRANCH_GUARD",
+        "NON_GLOBALIZABLE",
+        "UNASSESSED"
+      ]
+    },
+    "receipt_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

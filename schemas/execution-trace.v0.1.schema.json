@@ -10,6 +10,7 @@
     "problem_id",
     "backend_id",
     "backend_version",
+    "execution_origin",
     "logical_authority_class",
     "created_at",
     "events",
@@ -28,6 +29,10 @@
       "type": "string",
       "minLength": 1
     },
+    "problem_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
     "backend_id": {
       "type": "string",
       "minLength": 1
@@ -36,6 +41,16 @@
       "type": "string",
       "minLength": 1
     },
+    "execution_origin": {
+      "type": "string",
+      "enum": [
+        "EXECUTED_NATIVE",
+        "EXECUTED_CONTAINERIZED",
+        "CERTIFIED_REPLAY",
+        "SYNTHETIC_FIXTURE",
+        "SIMULATED"
+      ]
+    },
     "logical_authority_class": {
       "type": "string",
       "enum": [
@@ -43,7 +58,15 @@
         "BOUNDED_EXHAUSTIVE_VERDICT",
         "DEDUCTIVE_PROOF_AUTHORITY",
         "SYMBOLIC_IDENTITY",
-        "EMPIRICAL_EXECUTION"
+        "EMPIRICAL_EXECUTION",
+        "SYNTHETIC_FIXTURE_ONLY",
+        "NONE"
+      ]
+    },
+    "execution_receipt": {
+      "type": [
+        "object",
+        "null"
       ]
     },
     "created_at": {
@@ -65,9 +88,31 @@
           "operation",
           "result_digest",
           "provenance",
-          "logical_authority_class"
+          "logical_authority_class",
+          "event_origin"
         ],
         "properties": {
+          "event_origin": {
+            "type": "string",
+            "enum": [
+              "BACKEND_OBSERVED",
+              "CLIENT_DECLARED",
+              "DERIVED_NORMALIZATION",
+              "SYNTHETIC_FIXTURE"
+            ]
+          },
+          "evidence_ref": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_digest": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "event_id": {
             "type": "string",
             "minLength": 1
@@ -151,7 +196,9 @@
               "BOUNDED_EXHAUSTIVE_VERDICT",
               "DEDUCTIVE_PROOF_AUTHORITY",
               "SYMBOLIC_IDENTITY",
-              "EMPIRICAL_EXECUTION"
+              "EMPIRICAL_EXECUTION",
+              "SYNTHETIC_FIXTURE_ONLY",
+              "NONE"
             ]
           },
           "typed_extension": {
@@ -173,7 +220,31 @@
               }
             }
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "event_origin": {
+                  "enum": [
+                    "CLIENT_DECLARED",
+                    "SYNTHETIC_FIXTURE"
+                  ]
+                }
+              },
+              "required": [
+                "event_origin"
+              ]
+            },
+            "then": {
+              "properties": {
+                "logical_authority_class": {
+                  "const": "NONE"
+                }
+              }
+            }
+          }
+        ]
       }
     },
     "terminal_verdict": {
@@ -182,7 +253,11 @@
         "PROVEN",
         "REFUTED_SAT",
         "UNSAT_REFUTED",
+        "SYNTHETIC_SUCCESS",
+        "SYNTHETIC_SAT",
+        "SYNTHETIC_UNSAT",
         "TIMEOUT",
+        "UNKNOWN",
         "INCOMPLETE",
         "RESOURCE_EXHAUSTED",
         "FAILED"
@@ -210,5 +285,80 @@
         }
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "execution_origin": {
+            "enum": [
+              "EXECUTED_NATIVE",
+              "EXECUTED_CONTAINERIZED",
+              "CERTIFIED_REPLAY"
+            ]
+          },
+          "logical_authority_class": {
+            "enum": [
+              "DEDUCTIVE_PROOF_AUTHORITY",
+              "SOLVER_SAT_OR_UNSAT",
+              "BOUNDED_EXHAUSTIVE_VERDICT",
+              "SYMBOLIC_IDENTITY",
+              "EMPIRICAL_EXECUTION"
+            ]
+          }
+        },
+        "required": [
+          "execution_origin",
+          "logical_authority_class"
+        ]
+      },
+      "then": {
+        "required": [
+          "execution_receipt"
+        ],
+        "properties": {
+          "execution_receipt": {
+            "type": "object",
+            "required": [
+              "schema_version",
+              "receipt_id",
+              "backend_id",
+              "backend_family",
+              "execution_origin",
+              "executable_path",
+              "executable_version",
+              "executable_sha256",
+              "command",
+              "input_digest",
+              "started_at",
+              "completed_at",
+              "exit_code",
+              "timeout_status",
+              "stdout_digest",
+              "stderr_digest",
+              "terminal_classification",
+              "logical_authority_class"
+            ],
+            "properties": {
+              "schema_version": {
+                "const": "miskatonic.backend-execution-receipt.v0.1"
+              },
+              "input_digest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "stdout_digest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "stderr_digest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

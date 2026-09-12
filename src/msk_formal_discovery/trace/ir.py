@@ -1,4 +1,4 @@
-"""Execution trace IR implementation and validator."""
+"""Execution trace IR implementation and validator (WO-MATH-FORMAL-DISCOVERY-01A-R1)."""
 from __future__ import annotations
 
 import json
@@ -9,8 +9,13 @@ from typing import Any, Dict, List, Optional
 
 import jsonschema
 
-from msk_formal_discovery.core.exceptions import TraceValidationError
-from msk_formal_discovery.trace.events import ExecutionTraceEvent, TraceEventType
+from msk_formal_discovery.core.exceptions import AuthorityViolationError, ReceiptValidationError, TraceValidationError
+from msk_formal_discovery.trace.events import EventOrigin, ExecutionTraceEvent, TraceEventType
+
+
+import re
+
+HEX_64_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
 
 @dataclass
@@ -22,9 +27,79 @@ class ExecutionTrace:
     backend_version: str
     logical_authority_class: str
     created_at: str
+    execution_origin: str = "SYNTHETIC_FIXTURE"
+    problem_digest: str = ""
+    execution_receipt: Optional[Dict[str, Any]] = None
     events: List[ExecutionTraceEvent] = field(default_factory=list)
     terminal_verdict: str = "INCOMPLETE"
     wall_time_ms: float = 0.0
+
+    def __post_init__(self) -> None:
+        if not self.problem_digest and self.problem_id:
+            import hashlib
+            self.problem_digest = hashlib.sha256(self.problem_id.encode("utf-8")).hexdigest()
+
+        if self.problem_digest and not HEX_64_PATTERN.match(self.problem_digest):
+            raise TraceValidationError(
+                f"INVALID_PROBLEM_DIGEST: problem_digest '{self.problem_digest}' is not a 64-char lowercase hex SHA-256"
+            )
+
+        # Enforce Section 8: Universal Non-NONE Authority Rule
+        # Simulation or Synthetic Fixture NEVER grants non-NONE authority
+        if self.execution_origin in ("SYNTHETIC_FIXTURE", "SIMULATED"):
+            if self.logical_authority_class not in ("NONE", "SYNTHETIC_FIXTURE_ONLY"):
+                raise AuthorityViolationError(
+                    f"SYNTHETIC_CANNOT_CLAIM_AUTHORITY: Synthetic fixture or simulated trace cannot assert {self.logical_authority_class}"
+                )
+
+        # Real execution traces carrying non-NONE authority require a valid execution receipt
+        if self.execution_origin in ("EXECUTED_NATIVE", "EXECUTED_CONTAINERIZED", "CERTIFIED_REPLAY"):
+            if self.logical_authority_class not in ("NONE", "SYNTHETIC_FIXTURE_ONLY"):
+                if not self.execution_receipt:
+                    raise AuthorityViolationError(
+                        f"RECEIPT_REQUIRED_FOR_NON_NONE_AUTHORITY: Real execution trace claiming '{self.logical_authority_class}' requires validated execution receipt"
+                    )
+
+                # Section 10: Automatic schema validation of backend receipt
+                receipt_dict = self.execution_receipt if isinstance(self.execution_receipt, dict) else self.execution_receipt.to_dict()
+                schema_path = Path(__file__).resolve().parents[3] / "schemas" / "backend-execution-receipt.v0.1.schema.json"
+                if schema_path.exists():
+                    schema_data = json.loads(schema_path.read_text(encoding="utf-8"))
+                    try:
+                        jsonschema.validate(receipt_dict, schema_data)
+                    except jsonschema.ValidationError as e:
+                        raise ReceiptValidationError(f"FORGED_OR_INVALID_BACKEND_RECEIPT: {e.message}") from e
+
+                # Section 7 & 10: Trace / Receipt Cross-Consistency
+                if receipt_dict.get("exit_code") != 0 or receipt_dict.get("timeout_status") is True:
+                    raise AuthorityViolationError(
+                        "UNSUCCESSFUL_EXECUTION_CANNOT_CLAIM_AUTHORITY: Execution receipt must attest exit_code == 0 and timeout_status == False"
+                    )
+                if receipt_dict.get("backend_id") != self.backend_id:
+                    raise AuthorityViolationError(
+                        f"RECEIPT_TRACE_MISMATCH: backend_id mismatch: trace '{self.backend_id}' vs receipt '{receipt_dict.get('backend_id')}'"
+                    )
+                receipt_version = receipt_dict.get("executable_version") or receipt_dict.get("backend_version")
+                if receipt_version != self.backend_version:
+                    raise AuthorityViolationError(
+                        f"RECEIPT_TRACE_MISMATCH: backend_version mismatch: trace '{self.backend_version}' vs receipt '{receipt_version}'"
+                    )
+                if receipt_dict.get("execution_origin") != self.execution_origin:
+                    raise AuthorityViolationError(
+                        f"RECEIPT_TRACE_MISMATCH: execution_origin mismatch: trace '{self.execution_origin}' vs receipt '{receipt_dict.get('execution_origin')}'"
+                    )
+                if receipt_dict.get("logical_authority_class") != self.logical_authority_class:
+                    raise AuthorityViolationError(
+                        f"RECEIPT_TRACE_MISMATCH: logical_authority_class mismatch: trace '{self.logical_authority_class}' vs receipt '{receipt_dict.get('logical_authority_class')}'"
+                    )
+                if receipt_dict.get("terminal_classification") != self.terminal_verdict:
+                    raise AuthorityViolationError(
+                        f"RECEIPT_TRACE_MISMATCH: terminal mismatch: trace terminal_verdict '{self.terminal_verdict}' vs receipt terminal_classification '{receipt_dict.get('terminal_classification')}'"
+                    )
+                if self.problem_digest and receipt_dict.get("input_digest") and self.problem_digest != receipt_dict.get("input_digest"):
+                    raise AuthorityViolationError(
+                        f"RECEIPT_TRACE_MISMATCH: input_digest mismatch: trace '{self.problem_digest}' vs receipt '{receipt_dict.get('input_digest')}'"
+                    )
 
     def add_event(
         self,
@@ -35,6 +110,10 @@ class ExecutionTrace:
         parent_event_id: Optional[str] = None,
         payload: Optional[Dict[str, Any]] = None,
         provenance: Optional[Dict[str, Any]] = None,
+        logical_authority_class: Optional[str] = None,
+        event_origin: Optional[EventOrigin] = None,
+        evidence_ref: Optional[str] = None,
+        evidence_digest: Optional[str] = None,
         typed_extension: Optional[Dict[str, Any]] = None,
     ) -> ExecutionTraceEvent:
         seq = len(self.events)
@@ -44,6 +123,23 @@ class ExecutionTrace:
                 "timestamp": datetime.now(timezone.utc).isoformat(),
                 "origin": self.backend_id,
             }
+        if event_origin is None:
+            event_origin = (
+                EventOrigin.SYNTHETIC_FIXTURE
+                if self.execution_origin in ("SYNTHETIC_FIXTURE", "SIMULATED")
+                else EventOrigin.BACKEND_OBSERVED
+            )
+
+        # Section 12: Event Authority Rule
+        if event_origin in (EventOrigin.CLIENT_DECLARED, EventOrigin.SYNTHETIC_FIXTURE):
+            if logical_authority_class is not None and logical_authority_class not in ("NONE", "SYNTHETIC_FIXTURE_ONLY"):
+                raise AuthorityViolationError(
+                    f"EVENT_AUTHORITY_VIOLATION: Event with origin '{event_origin.value}' cannot carry authority '{logical_authority_class}'"
+                )
+            event_authority = "NONE"
+        else:
+            event_authority = logical_authority_class or self.logical_authority_class
+
         ev = ExecutionTraceEvent(
             event_id=ev_id,
             sequence=seq,
@@ -55,7 +151,10 @@ class ExecutionTrace:
             operation=operation,
             result_digest=result_digest,
             provenance=provenance,
-            logical_authority_class=self.logical_authority_class,
+            logical_authority_class=event_authority,
+            event_origin=event_origin,
+            evidence_ref=evidence_ref,
+            evidence_digest=evidence_digest,
             payload=payload or {},
             typed_extension=typed_extension,
         )
@@ -98,12 +197,13 @@ class ExecutionTrace:
 
     def to_dict(self) -> Dict[str, Any]:
         branch_count = sum(1 for e in self.events if e.event_type == TraceEventType.BRANCH)
-        return {
+        data: Dict[str, Any] = {
             "schema_version": "miskatonic.execution-trace.v0.1",
             "trace_id": self.trace_id,
             "problem_id": self.problem_id,
             "backend_id": self.backend_id,
             "backend_version": self.backend_version,
+            "execution_origin": self.execution_origin,
             "logical_authority_class": self.logical_authority_class,
             "created_at": self.created_at,
             "events": [e.to_dict() for e in self.events],
@@ -114,6 +214,17 @@ class ExecutionTrace:
                 "wall_time_ms": self.wall_time_ms,
             },
         }
+        if self.problem_digest:
+            data["problem_digest"] = self.problem_digest
+        if self.execution_receipt:
+            data["execution_receipt"] = self.execution_receipt
+        return data
+
+    def digest(self) -> str:
+        """Deterministic SHA-256 digest of trace content."""
+        import hashlib
+        serialized = json.dumps(self.to_dict(), sort_keys=True)
+        return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> ExecutionTrace:
@@ -124,6 +235,9 @@ class ExecutionTrace:
             problem_id=data["problem_id"],
             backend_id=data["backend_id"],
             backend_version=data["backend_version"],
+            execution_origin=data.get("execution_origin", "SYNTHETIC_FIXTURE"),
+            problem_digest=data.get("problem_digest", ""),
+            execution_receipt=data.get("execution_receipt"),
             logical_authority_class=data["logical_authority_class"],
             created_at=data["created_at"],
             events=events,

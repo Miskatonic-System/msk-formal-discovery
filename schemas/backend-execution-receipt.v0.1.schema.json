@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "miskatonic.backend-execution-receipt.v0.1",
+  "title": "Miskatonic Backend Execution Receipt Schema v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "backend_id",
+    "backend_family",
+    "execution_origin",
+    "executable_path",
+    "executable_version",
+    "executable_sha256",
+    "command",
+    "input_digest",
+    "started_at",
+    "completed_at",
+    "exit_code",
+    "timeout_status",
+    "stdout_digest",
+    "stderr_digest",
+    "terminal_classification",
+    "logical_authority_class"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "miskatonic.backend-execution-receipt.v0.1"
+    },
+    "receipt_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "backend_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "backend_family": {
+      "type": "string",
+      "enum": [
+        "SMT_SOLVER",
+        "MODEL_CHECKER",
+        "PROOF_ASSISTANT",
+        "STRUCTURAL_PROOF_ASSISTANT",
+        "INTERACTIVE_THEOREM_PROVER",
+        "SYMBOLIC_ORACLE",
+        "EXECUTABLE_ORACLE"
+      ]
+    },
+    "execution_origin": {
+      "type": "string",
+      "enum": [
+        "EXECUTED_NATIVE",
+        "EXECUTED_CONTAINERIZED",
+        "CERTIFIED_REPLAY",
+        "SYNTHETIC_FIXTURE",
+        "SIMULATED"
+      ]
+    },
+    "executable_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "executable_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "executable_sha256": {
+      "type": "string",
+      "minLength": 1
+    },
+    "command": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "input_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "started_at": {
+      "type": "string"
+    },
+    "completed_at": {
+      "type": "string"
+    },
+    "exit_code": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "timeout_status": {
+      "type": "boolean"
+    },
+    "stdout_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "stderr_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "terminal_classification": {
+      "type": "string",
+      "minLength": 1
+    },
+    "logical_authority_class": {
+      "type": "string",
+      "enum": [
+        "SOLVER_SAT_OR_UNSAT",
+        "BOUNDED_EXHAUSTIVE_VERDICT",
+        "DEDUCTIVE_PROOF_AUTHORITY",
+        "SYMBOLIC_IDENTITY",
+        "EMPIRICAL_EXECUTION",
+        "SYNTHETIC_FIXTURE_ONLY",
+        "NONE"
+      ]
+    },
+    "execution_metadata": {
+      "type": "object"
+    }
+  }
+}

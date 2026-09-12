@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "miskatonic.search-execution-receipt.v0.1",
+  "title": "Miskatonic Search Execution Receipt Schema v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "executor_id",
+    "executor_version",
+    "executor_implementation_digest",
+    "run_id",
+    "problem_id",
+    "problem_digest",
+    "backend_id",
+    "backend_configuration_digest",
+    "search_policy",
+    "search_policy_configuration_digest",
+    "search_budget_digest",
+    "random_seed",
+    "corpus_context_digest",
+    "source_graph_context_digest",
+    "environment_identity_digest",
+    "candidate_id",
+    "candidate_enabled",
+    "started_at",
+    "completed_at",
+    "nodes_expanded",
+    "nodes_evaluated",
+    "branch_count",
+    "terminal_status",
+    "wall_time_ms",
+    "resulting_trace_refs",
+    "resulting_trace_digests",
+    "initial_state_digest",
+    "transition_model_id",
+    "transition_model_digest",
+    "search_policy_implementation_digest",
+    "candidate_application_status",
+    "candidate_application_digest",
+    "receipt_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "miskatonic.search-execution-receipt.v0.1"
+    },
+    "executor_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "executor_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "executor_implementation_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "problem_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "problem_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "backend_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "backend_configuration_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "search_policy": {
+      "type": "string",
+      "minLength": 1
+    },
+    "search_policy_configuration_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "search_budget_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "random_seed": {
+      "type": "integer"
+    },
+    "corpus_context_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source_graph_context_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "environment_identity_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "candidate_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "candidate_enabled": {
+      "type": "boolean"
+    },
+    "started_at": {
+      "type": "string"
+    },
+    "completed_at": {
+      "type": "string"
+    },
+    "nodes_expanded": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "nodes_evaluated": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "branch_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "terminal_status": {
+      "type": "string",
+      "enum": [
+        "SUCCESS",
+        "SOLVED",
+        "EXHAUSTED",
+        "TIMEOUT",
+        "BUDGET_REACHED",
+        "FAILED"
+      ]
+    },
+    "wall_time_ms": {
+      "type": "number",
+      "minimum": 0
+    },
+    "resulting_trace_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "resulting_trace_digests": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    },
+    "initial_state_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "transition_model_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "transition_model_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "search_policy_implementation_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "candidate_application_status": {
+      "type": "string",
+      "enum": [
+        "DISABLED",
+        "REQUESTED_NOT_APPLIED",
+        "APPLIED"
+      ]
+    },
+    "candidate_application_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "receipt_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

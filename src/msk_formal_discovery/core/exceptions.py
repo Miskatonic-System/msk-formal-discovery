@@ -8,6 +8,10 @@ class BackendExecutionError(FormalDiscoveryError):
     """Raised when a reasoning backend fails or misbehaves."""
 
 
+class BackendUnavailableError(FormalDiscoveryError):
+    """Raised when a requested reasoning backend executable is unavailable."""
+
+
 class TraceValidationError(FormalDiscoveryError):
     """Raised when an execution trace IR invariant is violated."""
 
@@ -28,5 +32,13 @@ class HeldOutDataLeakageError(FormalDiscoveryError):
     """Raised when training/discovery traces leak into held-out qualification set."""
 
 
+class ReplayContractError(FormalDiscoveryError):
+    """Raised when paired replay contract or execution invariants are violated."""
+
+
 class RefactoringError(FormalDiscoveryError):
     """Raised when an automated refactoring proposal violates safety or mutates canonical source."""
+
+
+class ReceiptValidationError(FormalDiscoveryError):
+    """Raised when an execution or replay receipt fails schema or consistency invariants."""

@@ -1,4 +1,4 @@
-"""First-order term representation, parsing, and substitution for anti-unification."""
+"""Untyped first-order structural AST representation (UNTYPED FIRST_ORDER_STRUCTURAL_AST), parsing, and substitution for anti-unification."""
 from __future__ import annotations
 
 import abc

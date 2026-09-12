@@ -86,9 +86,10 @@ def test_z3_adapter_simulated():
         simulate=True,
     )
     assert trace.backend_id == "z3"
-    assert trace.logical_authority_class == "SOLVER_SAT_OR_UNSAT"
-    assert trace.terminal_verdict == "UNSAT_REFUTED"
-    assert len(trace.events) >= 3
+    assert trace.execution_origin == "SIMULATED"
+    assert trace.logical_authority_class == "NONE"
+    assert trace.terminal_verdict in ("SYNTHETIC_SAT", "SYNTHETIC_UNSAT")
+    assert len(trace.events) >= 2
 
 
 def test_lean4_adapter_simulated():
@@ -101,9 +102,10 @@ def test_lean4_adapter_simulated():
         simulate=True,
     )
     assert trace.backend_id == "lean4"
-    assert trace.logical_authority_class == "DEDUCTIVE_PROOF_AUTHORITY"
-    assert trace.terminal_verdict == "PROVEN"
-    assert len(trace.events) >= 3
+    assert trace.execution_origin == "SYNTHETIC_FIXTURE"
+    assert trace.logical_authority_class == "NONE"
+    assert trace.terminal_verdict == "SYNTHETIC_SUCCESS"
+    assert len(trace.events) >= 2
 
 
 def test_rocq_adapter_simulated():
@@ -116,6 +118,44 @@ def test_rocq_adapter_simulated():
         simulate=True,
     )
     assert trace.backend_id == "rocq"
+    assert trace.execution_origin == "SYNTHETIC_FIXTURE"
+    assert trace.logical_authority_class == "NONE"
+    assert trace.terminal_verdict == "SYNTHETIC_SUCCESS"
+    assert len(trace.events) >= 2
+
+
+def test_z3_adapter_real_execution():
+    adapter = Z3Adapter()
+    if not adapter.z3_binary:
+        pytest.skip("z3 binary not available")
+    trace = adapter.run_smt(
+        problem_id="prob-smt-real-001",
+        smtlib_script="(declare-const x Int)\n(assert (> x 0))\n(assert (< x 0))\n(check-sat)\n",
+        execution_mode="REAL",
+    )
+    assert trace.backend_id == "z3"
+    assert trace.execution_origin == "EXECUTED_NATIVE"
+    assert trace.logical_authority_class == "SOLVER_SAT_OR_UNSAT"
+    assert trace.terminal_verdict == "UNSAT_REFUTED"
+    assert trace.execution_receipt is not None
+    assert trace.execution_receipt["exit_code"] == 0
+
+
+def test_lean4_adapter_real_execution():
+    adapter = Lean4Adapter()
+    if not adapter.lean_binary:
+        pytest.skip("lean binary not available")
+    code = "theorem test_real (p : Prop) (h : p) : p := by\n  exact h\n"
+    trace = adapter.run_proof(
+        problem_id="prob-lean-real-001",
+        theorem_name="test_real",
+        code=code,
+        execution_mode="REAL",
+    )
+    assert trace.backend_id == "lean4"
+    assert trace.execution_origin == "EXECUTED_NATIVE"
     assert trace.logical_authority_class == "DEDUCTIVE_PROOF_AUTHORITY"
     assert trace.terminal_verdict == "PROVEN"
-    assert len(trace.events) >= 3
+    assert trace.execution_receipt is not None
+    assert trace.execution_receipt["exit_code"] == 0
+

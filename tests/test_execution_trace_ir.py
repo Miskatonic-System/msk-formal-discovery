@@ -79,9 +79,10 @@ def test_successful_path_slicing_eliminates_backtracks():
         problem_id="prob-branching",
         backend_id="lean4",
         backend_version="4.25.0",
-        logical_authority_class="DEDUCTIVE_PROOF_AUTHORITY",
+        logical_authority_class="NONE",
         created_at="2026-09-12T10:00:00Z",
-        terminal_verdict="PROVEN",
+        execution_origin="SYNTHETIC_FIXTURE",
+        terminal_verdict="SYNTHETIC_SUCCESS",
     )
     ev0 = trace.add_event(TraceEventType.INITIAL_PROBLEM, "init", "d0", "d0")
     # Failed branch

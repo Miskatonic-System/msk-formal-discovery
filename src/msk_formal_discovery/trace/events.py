@@ -8,6 +8,8 @@ import hashlib
 import json
 from typing import Any, Dict, Optional
 
+from msk_formal_discovery.core.exceptions import AuthorityViolationError
+
 
 class TraceEventType(str, Enum):
     """Canonical event types supported by execution trace IR."""
@@ -32,6 +34,14 @@ class TraceEventType(str, Enum):
     RESOURCE_OBSERVATION = "RESOURCE_OBSERVATION"
 
 
+class EventOrigin(str, Enum):
+    """Exact origin classification of execution trace events (WO-MATH-FORMAL-DISCOVERY-01A-R2)."""
+    BACKEND_OBSERVED = "BACKEND_OBSERVED"
+    CLIENT_DECLARED = "CLIENT_DECLARED"
+    DERIVED_NORMALIZATION = "DERIVED_NORMALIZATION"
+    SYNTHETIC_FIXTURE = "SYNTHETIC_FIXTURE"
+
+
 @dataclass
 class ExecutionTraceEvent:
     """A discrete, typed step within an execution trace."""
@@ -46,8 +56,20 @@ class ExecutionTraceEvent:
     result_digest: str
     provenance: Dict[str, Any]
     logical_authority_class: str
+    event_origin: EventOrigin = EventOrigin.BACKEND_OBSERVED
+    evidence_ref: Optional[str] = None
+    evidence_digest: Optional[str] = None
     payload: Dict[str, Any] = field(default_factory=dict)
     typed_extension: Optional[Dict[str, Any]] = None
+
+    def __post_init__(self) -> None:
+        origin_val = self.event_origin.value if isinstance(self.event_origin, EventOrigin) else str(self.event_origin)
+        if origin_val in ("CLIENT_DECLARED", "SYNTHETIC_FIXTURE"):
+            if self.logical_authority_class not in ("NONE", "SYNTHETIC_FIXTURE_ONLY"):
+                raise AuthorityViolationError(
+                    f"EVENT_AUTHORITY_VIOLATION: Event with origin '{origin_val}' cannot carry authority '{self.logical_authority_class}' (must be 'NONE')"
+                )
+            self.logical_authority_class = "NONE"
 
     def to_dict(self) -> Dict[str, Any]:
         data: Dict[str, Any] = {
@@ -62,7 +84,12 @@ class ExecutionTraceEvent:
             "result_digest": self.result_digest,
             "provenance": self.provenance,
             "logical_authority_class": self.logical_authority_class,
+            "event_origin": self.event_origin.value if isinstance(self.event_origin, EventOrigin) else str(self.event_origin),
         }
+        if self.evidence_ref is not None:
+            data["evidence_ref"] = self.evidence_ref
+        if self.evidence_digest is not None:
+            data["evidence_digest"] = self.evidence_digest
         if self.payload:
             data["payload"] = self.payload
         if self.typed_extension:
@@ -73,6 +100,8 @@ class ExecutionTraceEvent:
     def from_dict(cls, data: Dict[str, Any]) -> ExecutionTraceEvent:
         event_type_str = data["event_type"]
         ev_type = TraceEventType(event_type_str) if event_type_str in TraceEventType.__members__ else TraceEventType(event_type_str)
+        origin_str = data.get("event_origin", EventOrigin.BACKEND_OBSERVED.value)
+        ev_origin = EventOrigin(origin_str) if origin_str in EventOrigin.__members__ else EventOrigin(origin_str)
         return cls(
             event_id=data["event_id"],
             sequence=data["sequence"],
@@ -85,6 +114,9 @@ class ExecutionTraceEvent:
             result_digest=data["result_digest"],
             provenance=data["provenance"],
             logical_authority_class=data["logical_authority_class"],
+            event_origin=ev_origin,
+            evidence_ref=data.get("evidence_ref"),
+            evidence_digest=data.get("evidence_digest"),
             payload=data.get("payload", {}),
             typed_extension=data.get("typed_extension"),
         )

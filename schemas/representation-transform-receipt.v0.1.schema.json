@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "miskatonic.representation-transform-receipt.v0.1",
+  "title": "Miskatonic Representation Transform Receipt Schema v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "family_id",
+    "stratum",
+    "source_expression",
+    "transformed_expression",
+    "source_expression_digest",
+    "transformed_expression_digest",
+    "variable_bijection",
+    "transform_implementation_digest",
+    "smt_certificate_ref",
+    "smt_certificate_digest",
+    "smt_verdict",
+    "semantic_equivalence_certified",
+    "authority",
+    "receipt_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "miskatonic.representation-transform-receipt.v0.1"
+    },
+    "receipt_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "family_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stratum": {
+      "type": "string",
+      "enum": [
+        "R0_CANONICAL_CONTROL",
+        "R1_ALPHA_RENAMED",
+        "R2_ASSOCIATIVE_REGROUPED",
+        "R3_COMMUTATIVE_MIRROR"
+      ]
+    },
+    "source_expression": {
+      "type": "string",
+      "minLength": 1
+    },
+    "transformed_expression": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_expression_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "transformed_expression_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "variable_bijection": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "transform_implementation_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "smt_certificate_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "smt_certificate_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "smt_verdict": {
+      "type": "string",
+      "enum": ["UNSAT_REFUTED"]
+    },
+    "semantic_equivalence_certified": {
+      "const": true
+    },
+    "authority": {
+      "const": "NONE"
+    },
+    "receipt_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

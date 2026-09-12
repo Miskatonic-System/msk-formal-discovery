@@ -1,0 +1,118 @@
+{
+  "schema_version": "miskatonic.semantic-families-manifest.v0.1",
+  "positive_family_seed": 161803,
+  "negative_family_seed": 141421,
+  "family_count": 12,
+  "positive_count": 8,
+  "negative_count": 4,
+  "families": [
+    {
+      "family_id": "fam-pos-01",
+      "category": "HELD_OUT_POSITIVE",
+      "canonical_variable": "ka",
+      "r0_initial_expression": "add(add(add(mul(1, ka), 0), 0), 0)",
+      "r2_initial_expression": "add(add(mul(1, ka), 0), add(0, 0))",
+      "goal_expression": "ka",
+      "description": "Positive family 1: add-zero suffix left-to-right associative regrouping"
+    },
+    {
+      "family_id": "fam-pos-02",
+      "category": "HELD_OUT_POSITIVE",
+      "canonical_variable": "kb",
+      "r0_initial_expression": "add(0, add(0, add(mul(1, kb), 0)))",
+      "r2_initial_expression": "add(add(0, 0), add(mul(1, kb), 0))",
+      "goal_expression": "kb",
+      "description": "Positive family 2: add-zero prefix right-to-left associative regrouping"
+    },
+    {
+      "family_id": "fam-pos-03",
+      "category": "HELD_OUT_POSITIVE",
+      "canonical_variable": "kc",
+      "r0_initial_expression": "mul(1, mul(1, add(mul(1, kc), 0)))",
+      "r2_initial_expression": "mul(mul(1, 1), add(mul(1, kc), 0))",
+      "goal_expression": "kc",
+      "description": "Positive family 3: mul-one prefix right-to-left associative regrouping"
+    },
+    {
+      "family_id": "fam-pos-04",
+      "category": "HELD_OUT_POSITIVE",
+      "canonical_variable": "kd",
+      "r0_initial_expression": "mul(mul(add(mul(1, kd), 0), 1), 1)",
+      "r2_initial_expression": "mul(add(mul(1, kd), 0), mul(1, 1))",
+      "goal_expression": "kd",
+      "description": "Positive family 4: mul-one suffix left-to-right associative regrouping"
+    },
+    {
+      "family_id": "fam-pos-05",
+      "category": "HELD_OUT_POSITIVE",
+      "canonical_variable": "ke",
+      "r0_initial_expression": "add(add(mul(1, add(ke, 0)), 0), 0)",
+      "r2_initial_expression": "add(mul(1, add(ke, 0)), add(0, 0))",
+      "goal_expression": "ke",
+      "description": "Positive family 5: X2 left-to-right associative regrouping"
+    },
+    {
+      "family_id": "fam-pos-06",
+      "category": "HELD_OUT_POSITIVE",
+      "canonical_variable": "kf",
+      "r0_initial_expression": "add(0, add(0, mul(1, add(kf, 0))))",
+      "r2_initial_expression": "add(add(0, 0), mul(1, add(kf, 0)))",
+      "goal_expression": "kf",
+      "description": "Positive family 6: X2 right-to-left associative regrouping"
+    },
+    {
+      "family_id": "fam-pos-07",
+      "category": "HELD_OUT_POSITIVE",
+      "canonical_variable": "kg",
+      "r0_initial_expression": "mul(1, mul(1, mul(1, add(kg, 0))))",
+      "r2_initial_expression": "mul(mul(1, 1), mul(1, add(kg, 0)))",
+      "goal_expression": "kg",
+      "description": "Positive family 7: X2 prefix mul right-to-left associative regrouping"
+    },
+    {
+      "family_id": "fam-pos-08",
+      "category": "HELD_OUT_POSITIVE",
+      "canonical_variable": "kh",
+      "r0_initial_expression": "mul(mul(mul(1, add(kh, 0)), 1), 1)",
+      "r2_initial_expression": "mul(mul(1, add(kh, 0)), mul(1, 1))",
+      "goal_expression": "kh",
+      "description": "Positive family 8: X2 suffix mul left-to-right associative regrouping"
+    },
+    {
+      "family_id": "fam-neg-01",
+      "category": "HELD_OUT_NEGATIVE",
+      "canonical_variable": "qa",
+      "r0_initial_expression": "add(0, add(0, qa))",
+      "r2_initial_expression": "add(add(0, 0), qa)",
+      "goal_expression": "qa",
+      "description": "Negative family 1: zero prefix without mul motif"
+    },
+    {
+      "family_id": "fam-neg-02",
+      "category": "HELD_OUT_NEGATIVE",
+      "canonical_variable": "qb",
+      "r0_initial_expression": "mul(1, mul(1, qb))",
+      "r2_initial_expression": "mul(mul(1, 1), qb)",
+      "goal_expression": "qb",
+      "description": "Negative family 2: one prefix without add motif"
+    },
+    {
+      "family_id": "fam-neg-03",
+      "category": "HELD_OUT_NEGATIVE",
+      "canonical_variable": "qc",
+      "r0_initial_expression": "add(add(qc, 0), 0)",
+      "r2_initial_expression": "add(qc, add(0, 0))",
+      "goal_expression": "qc",
+      "description": "Negative family 3: zero suffix without mul motif"
+    },
+    {
+      "family_id": "fam-neg-04",
+      "category": "HELD_OUT_NEGATIVE",
+      "canonical_variable": "qd",
+      "r0_initial_expression": "mul(mul(qd, 1), 1)",
+      "r2_initial_expression": "mul(qd, mul(1, 1))",
+      "goal_expression": "qd",
+      "description": "Negative family 4: one suffix without add motif"
+    }
+  ]
+}

@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "miskatonic.representation-invariance-closure.v0.1",
+  "title": "Miskatonic Representation Invariance Closure Schema v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "closure_id",
+    "work_order",
+    "canonical_predecessor_commit",
+    "canonical_predecessor_tree",
+    "candidate_id",
+    "candidate_artifact_digest",
+    "paired_manifest_ref",
+    "paired_manifest_digest",
+    "family_count",
+    "represented_problem_count",
+    "search_receipt_count",
+    "transform_receipt_count",
+    "smt_certificate_count",
+    "paired_terminal_smt_receipt_count",
+    "per_stratum_dispositions",
+    "global_disposition",
+    "representation_invariance_scope",
+    "functional_search_benefit_scope",
+    "end_to_end_runtime_benefit",
+    "claim_ceiling",
+    "authority",
+    "all_representation_certificates_verified",
+    "all_search_receipts_verified",
+    "all_terminal_parity_verified",
+    "closure_status",
+    "closure_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "miskatonic.representation-invariance-closure.v0.1"
+    },
+    "closure_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "work_order": {
+      "const": "WO-MATH-FORMAL-DISCOVERY-01C"
+    },
+    "canonical_predecessor_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "canonical_predecessor_tree": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "candidate_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidate_artifact_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "paired_manifest_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "paired_manifest_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "family_count": {
+      "type": "integer",
+      "const": 12
+    },
+    "represented_problem_count": {
+      "type": "integer",
+      "const": 48
+    },
+    "search_receipt_count": {
+      "type": "integer",
+      "const": 96
+    },
+    "transform_receipt_count": {
+      "type": "integer",
+      "const": 48
+    },
+    "smt_certificate_count": {
+      "type": "integer",
+      "const": 48
+    },
+    "paired_terminal_smt_receipt_count": {
+      "type": "integer",
+      "const": 48
+    },
+    "per_stratum_dispositions": {
+      "type": "object",
+      "required": [
+        "R0_CANONICAL_CONTROL",
+        "R1_ALPHA_RENAMED",
+        "R2_ASSOCIATIVE_REGROUPED",
+        "R3_COMMUTATIVE_MIRROR"
+      ],
+      "properties": {
+        "R0_CANONICAL_CONTROL": { "type": "string", "enum": ["REPRESENTATION_STRATUM_INVARIANT", "REPRESENTATION_STRATUM_SENSITIVE", "REPRESENTATION_STRATUM_INVALID"] },
+        "R1_ALPHA_RENAMED": { "type": "string", "enum": ["REPRESENTATION_STRATUM_INVARIANT", "REPRESENTATION_STRATUM_SENSITIVE", "REPRESENTATION_STRATUM_INVALID"] },
+        "R2_ASSOCIATIVE_REGROUPED": { "type": "string", "enum": ["REPRESENTATION_STRATUM_INVARIANT", "REPRESENTATION_STRATUM_SENSITIVE", "REPRESENTATION_STRATUM_INVALID"] },
+        "R3_COMMUTATIVE_MIRROR": { "type": "string", "enum": ["REPRESENTATION_STRATUM_INVARIANT", "REPRESENTATION_STRATUM_SENSITIVE", "REPRESENTATION_STRATUM_INVALID"] }
+      }
+    },
+    "global_disposition": {
+      "type": "string",
+      "enum": [
+        "REPRESENTATION_INVARIANCE_SUPPORTED",
+        "REPRESENTATION_INVARIANCE_NOT_SUPPORTED",
+        "REPRESENTATION_EVALUATION_INCONCLUSIVE_CONTROL_FAILED",
+        "REPRESENTATION_EVALUATION_INCONCLUSIVE"
+      ]
+    },
+    "representation_invariance_scope": {
+      "const": "ALPHA_ASSOCIATIVE_COMMUTATIVE_IDENTITY_ORBIT_V0_1"
+    },
+    "functional_search_benefit_scope": {
+      "const": "NODE_EXPANSION_SEARCH_STRUCTURE"
+    },
+    "end_to_end_runtime_benefit": {
+      "const": "NOT_ESTABLISHED"
+    },
+    "claim_ceiling": {
+      "const": "ENGINEERING_ABSTRACTION_EFFECT_ONLY"
+    },
+    "authority": {
+      "const": "NONE"
+    },
+    "all_representation_certificates_verified": {
+      "type": "boolean"
+    },
+    "all_search_receipts_verified": {
+      "type": "boolean"
+    },
+    "all_terminal_parity_verified": {
+      "type": "boolean"
+    },
+    "closure_status": {
+      "const": "REPRESENTATION_ORBIT_EVALUATION_CLOSED"
+    },
+    "closure_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

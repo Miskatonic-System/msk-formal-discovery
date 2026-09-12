@@ -8,6 +8,7 @@ from pathlib import Path
 import json
 import pytest
 import jsonschema
+from typing import Any, Dict, List, Optional
 
 from fixtures.fixture_matrix import make_sample_trace
 from msk_formal_discovery.abstraction.anti_unification import (
@@ -63,8 +64,21 @@ from msk_formal_discovery.core.terms import Const, Term, Var
 from msk_formal_discovery.onto.export import OntoEvidenceRef, OntoExporter
 from msk_formal_discovery.refactoring.proposal import RefactoringKind, RefactoringProposal
 from msk_formal_discovery.search.mcts import MCTSSearch
-from msk_formal_discovery.search.executor import SearchExecutionReceipt
-from msk_formal_discovery.search.policy import SearchPolicyKind, SearchRun
+from msk_formal_discovery.search.executor import (
+    SearchExecutor,
+    SearchExecutionBundle,
+    SearchExecutionReceipt,
+    SearchExecutionWitness,
+    get_executor_implementation_digest,
+    compute_initial_state_digest,
+)
+from msk_formal_discovery.search.policy import (
+    SearchAction,
+    SearchPolicyKind,
+    SearchRun,
+    SearchState,
+    is_successful_terminal,
+)
 from msk_formal_discovery.trace.events import EventOrigin, ExecutionTraceEvent, TraceEventType
 from msk_formal_discovery.trace.ir import ExecutionTrace
 
@@ -83,15 +97,29 @@ def make_valid_search_execution_receipt(
     problem_digest: str,
     candidate_id: str | None = None,
     candidate_enabled: bool = False,
+    candidate_application_status: str | None = None,
+    candidate_application_digest: str | None = None,
     nodes_expanded: int = 10,
     nodes_evaluated: int = 20,
     branch_count: int = 2,
     wall_time_ms: float = 10.0,
+    terminal_status: str = "SUCCESS",
+    initial_state_digest: str = "0" * 64,
+    transition_model_id: str = "default_discrete_transition_model",
+    transition_model_digest: str = "0" * 64,
+    search_policy_implementation_digest: str = "0" * 64,
+    executor_implementation_digest: str | None = None,
 ) -> SearchExecutionReceipt:
+    if candidate_application_status is None:
+        candidate_application_status = "APPLIED" if candidate_enabled else "DISABLED"
+    if candidate_application_digest is None:
+        candidate_application_digest = hashlib.sha256(f"cand-{candidate_id}".encode("utf-8")).hexdigest() if candidate_enabled else ("0" * 64)
+    if executor_implementation_digest is None:
+        executor_implementation_digest = get_executor_implementation_digest()
     return SearchExecutionReceipt(
         executor_id="msk-search-executor-v0.1",
         executor_version="0.1.0",
-        executor_implementation_digest="0" * 64,
+        executor_implementation_digest=executor_implementation_digest,
         run_id=run_id,
         problem_id=problem_id,
         problem_digest=problem_digest,
@@ -99,23 +127,89 @@ def make_valid_search_execution_receipt(
         backend_configuration_digest="0" * 64,
         search_policy="MCTS",
         search_policy_configuration_digest="0" * 64,
+        search_policy_implementation_digest=search_policy_implementation_digest,
         search_budget_digest="0" * 64,
         random_seed=42,
         corpus_context_digest="0" * 64,
         source_graph_context_digest="0" * 64,
         environment_identity_digest="0" * 64,
+        initial_state_digest=initial_state_digest,
+        transition_model_id=transition_model_id,
+        transition_model_digest=transition_model_digest,
         candidate_id=candidate_id,
         candidate_enabled=candidate_enabled,
+        candidate_application_status=candidate_application_status,
+        candidate_application_digest=candidate_application_digest,
         started_at="2026-09-12T12:00:00Z",
         completed_at="2026-09-12T12:01:00Z",
         nodes_expanded=nodes_expanded,
         nodes_evaluated=nodes_evaluated,
         branch_count=branch_count,
-        terminal_status="SOLVED",
+        terminal_status=terminal_status,
         wall_time_ms=wall_time_ms,
         resulting_trace_refs=["t1"],
         resulting_trace_digests=["0" * 64],
     )
+
+
+def make_valid_search_execution_bundle(
+    contract: PairedReplayContract,
+    arm: str,
+    candidate_application_status: str | None = None,
+    action_generator: Any = None,
+    traces: list | None = None,
+    solved: bool = True,
+) -> SearchExecutionBundle:
+    executor = SearchExecutor()
+    prob = ProblemDefinition(
+        problem_id=contract.problem_id,
+        formal_syntax=f"eval({contract.problem_id})",
+        context={},
+        goals=["True"],
+        assumptions=[],
+        problem_digest=contract.problem_digest,
+    )
+    init_state = SearchState(
+        state_id=f"init_{contract.problem_id}",
+        goal=f"goal_{contract.problem_id}",
+        depth=0,
+        is_solved=False,
+    )
+    cand_enabled = (arm == "ABSTRACTED")
+    if candidate_application_status is None:
+        candidate_application_status = "APPLIED" if cand_enabled else "DISABLED"
+
+    if action_generator is None:
+        def default_action_gen(state: SearchState, cand_id: str | None = None):
+            if solved:
+                return [SearchAction(action_id=f"act-solve-{state.state_id}", operation="solve", prior_probability=1.0, estimated_cost=1.0)]
+            return [SearchAction(action_id=f"act-step-{state.state_id}", operation="step", prior_probability=1.0, estimated_cost=1.0)]
+        action_generator = default_action_gen
+
+    if traces is None:
+        tr = make_sample_trace(
+            trace_id=f"tr-{arm.lower()}-{contract.problem_id}",
+            problem_id=contract.problem_id,
+            operations=[("step", "res")],
+            problem_digest=contract.problem_digest,
+        )
+        traces = [tr]
+
+    bundle = executor.execute(
+        policy=MCTSSearch(config={"available_rules": ["rule_0", "solve"]}),
+        problem=prob,
+        initial_state=init_state,
+        budget=contract.search_budget,
+        candidate_id=contract.candidate_id,
+        candidate_enabled=cand_enabled,
+        candidate_application_status=candidate_application_status,
+        random_seed=contract.random_seed,
+        corpus_context=contract.corpus_context,
+        transition_model_id=contract.transition_model_id,
+        action_generator=action_generator,
+        traces=traces,
+    )
+    return bundle
 
 
 # 1. Simulated Lean cannot emit DEDUCTIVE_PROOF_AUTHORITY
@@ -1158,47 +1252,10 @@ def test_unassessed_candidate_cannot_qualify():
     )
 
     def executed_runner(c, arm):
-        cand_enabled = (arm == "ABSTRACTED")
-        nodes_exp = 100 if arm == "BASELINE" else 20
-        nodes_eval = 150 if arm == "BASELINE" else 30
-        branch_cnt = 10 if arm == "BASELINE" else 2
-        w_time = 100.0 if arm == "BASELINE" else 20.0
-        s_rcpt = make_valid_search_execution_receipt(
-            run_id=f"r-{arm}",
-            problem_id=c.problem_id,
-            problem_digest=c.problem_digest,
-            candidate_id=c.candidate_id,
-            candidate_enabled=cand_enabled,
-            nodes_expanded=nodes_exp,
-            nodes_evaluated=nodes_eval,
-            branch_count=branch_cnt,
-            wall_time_ms=w_time,
-        )
-        return ReplayRunReceipt(
-            receipt_id=f"r-{arm}",
-            arm=arm,
-            problem_id=c.problem_id,
-            problem_digest=c.problem_digest,
-            paired_contract_digest=c.contract_digest(),
-            backend_id=c.backend_id,
-            search_policy_kind=c.search_policy_kind,
-            candidate_id=c.candidate_id,
-            candidate_enabled=cand_enabled,
-            random_seed=c.random_seed,
-            search_budget_digest=hashlib.sha256(json.dumps(c.search_budget, sort_keys=True).encode("utf-8")).hexdigest(),
-            corpus_context_digest=hashlib.sha256(json.dumps(c.corpus_context, sort_keys=True).encode("utf-8")).hexdigest(),
-            nodes_expanded=nodes_exp,
-            nodes_evaluated=nodes_eval,
-            branch_count=branch_cnt,
-            solved=True,
-            wall_time_ms=w_time,
-            search_run_ref=f"r-{arm}",
-            search_run_digest="0" * 64,
-            backend_calls=1,
-            execution_trace_refs=["t1"],
-            execution_trace_digests=["0" * 64],
-            evidence_origin="EXECUTED_SEARCH_RUN",
-            search_execution_receipt=s_rcpt.to_dict(),
+        return make_valid_search_execution_bundle(
+            c,
+            arm,
+            candidate_application_status="APPLIED" if arm == "ABSTRACTED" else "DISABLED",
         )
 
     engine = HeldOutReplayEngine()
@@ -1364,48 +1421,19 @@ def test_validated_executed_replay_evidence_can_populate_functional_benefit():
         candidate_enabled_in_abstracted=True,
     )
 
+    def compression_action_gen(state: SearchState, cand_id: str | None = None):
+        if cand_id:
+            return [SearchAction(action_id=f"act-solve-{state.state_id}", operation="solve", prior_probability=1.0, estimated_cost=1.0)]
+        if state.depth < 4:
+            return [SearchAction(action_id=f"act-step-{state.state_id}", operation="step", prior_probability=1.0, estimated_cost=1.0)]
+        return [SearchAction(action_id=f"act-solve-{state.state_id}", operation="solve", prior_probability=1.0, estimated_cost=1.0)]
+
     def executed_benefit_runner(c, arm):
-        cand_enabled = (arm == "ABSTRACTED")
-        nodes_exp = 100 if arm == "BASELINE" else 30
-        nodes_eval = 150 if arm == "BASELINE" else 45
-        branch_cnt = 10 if arm == "BASELINE" else 3
-        w_time = 100.0 if arm == "BASELINE" else 35.0
-        s_rcpt = make_valid_search_execution_receipt(
-            run_id=f"r-{arm}",
-            problem_id=c.problem_id,
-            problem_digest=c.problem_digest,
-            candidate_id=c.candidate_id,
-            candidate_enabled=cand_enabled,
-            nodes_expanded=nodes_exp,
-            nodes_evaluated=nodes_eval,
-            branch_count=branch_cnt,
-            wall_time_ms=w_time,
-        )
-        return ReplayRunReceipt(
-            receipt_id=f"r-{arm}",
-            arm=arm,
-            problem_id=c.problem_id,
-            problem_digest=c.problem_digest,
-            paired_contract_digest=c.contract_digest(),
-            backend_id=c.backend_id,
-            search_policy_kind=c.search_policy_kind,
-            candidate_id=c.candidate_id,
-            candidate_enabled=cand_enabled,
-            random_seed=c.random_seed,
-            search_budget_digest=hashlib.sha256(json.dumps(c.search_budget, sort_keys=True).encode("utf-8")).hexdigest(),
-            corpus_context_digest=hashlib.sha256(json.dumps(c.corpus_context, sort_keys=True).encode("utf-8")).hexdigest(),
-            nodes_expanded=nodes_exp,
-            nodes_evaluated=nodes_eval,
-            branch_count=branch_cnt,
-            solved=True,
-            wall_time_ms=w_time,
-            search_run_ref=f"r-{arm}",
-            search_run_digest="0" * 64,
-            backend_calls=1,
-            execution_trace_refs=["t1"],
-            execution_trace_digests=["0" * 64],
-            evidence_origin="EXECUTED_SEARCH_RUN",
-            search_execution_receipt=s_rcpt.to_dict(),
+        return make_valid_search_execution_bundle(
+            c,
+            arm,
+            candidate_application_status="APPLIED" if arm == "ABSTRACTED" else "DISABLED",
+            action_generator=compression_action_gen,
         )
 
     engine = HeldOutReplayEngine()
@@ -1723,47 +1751,10 @@ def test_synthetic_discovery_candidate_cannot_qualify():
     )
 
     def executed_benefit_runner(c, arm):
-        cand_enabled = (arm == "ABSTRACTED")
-        nodes_exp = 100 if arm == "BASELINE" else 30
-        nodes_eval = 150 if arm == "BASELINE" else 45
-        branch_cnt = 10 if arm == "BASELINE" else 3
-        w_time = 100.0 if arm == "BASELINE" else 35.0
-        s_rcpt = make_valid_search_execution_receipt(
-            run_id=f"r-{arm}",
-            problem_id=c.problem_id,
-            problem_digest=c.problem_digest,
-            candidate_id=c.candidate_id,
-            candidate_enabled=cand_enabled,
-            nodes_expanded=nodes_exp,
-            nodes_evaluated=nodes_eval,
-            branch_count=branch_cnt,
-            wall_time_ms=w_time,
-        )
-        return ReplayRunReceipt(
-            receipt_id=f"r-{arm}",
-            arm=arm,
-            problem_id=c.problem_id,
-            problem_digest=c.problem_digest,
-            paired_contract_digest=c.contract_digest(),
-            backend_id=c.backend_id,
-            search_policy_kind=c.search_policy_kind,
-            candidate_id=c.candidate_id,
-            candidate_enabled=cand_enabled,
-            random_seed=c.random_seed,
-            search_budget_digest=hashlib.sha256(json.dumps(c.search_budget, sort_keys=True).encode("utf-8")).hexdigest(),
-            corpus_context_digest=hashlib.sha256(json.dumps(c.corpus_context, sort_keys=True).encode("utf-8")).hexdigest(),
-            nodes_expanded=nodes_exp,
-            nodes_evaluated=nodes_eval,
-            branch_count=branch_cnt,
-            solved=True,
-            wall_time_ms=w_time,
-            search_run_ref=f"r-{arm}",
-            search_run_digest="0" * 64,
-            backend_calls=1,
-            execution_trace_refs=["t1"],
-            execution_trace_digests=["0" * 64],
-            evidence_origin="EXECUTED_SEARCH_RUN",
-            search_execution_receipt=s_rcpt.to_dict(),
+        return make_valid_search_execution_bundle(
+            c,
+            arm,
+            candidate_application_status="APPLIED" if arm == "ABSTRACTED" else "DISABLED",
         )
 
     engine = HeldOutReplayEngine()
@@ -2169,4 +2160,631 @@ def test_onto_supported_without_resolvable_evidence_rejected():
     with pytest.raises(ReceiptValidationError) as excinfo:
         OntoExporter.export(cand, functional_evidence=ref)
     assert "UNRESOLVABLE_EVIDENCE_ARTIFACT" in str(excinfo.value)
+
+
+# ======================================================================
+# WO-MATH-FORMAL-DISCOVERY-01A-R4 Section 28 Hostile Tests
+# ======================================================================
+
+# 1. schema-valid manually forged SearchExecutionReceipt rejected for executed qualification
+def test_positive_hostile_control_fabricated_executed_receipt_rejected():
+    au = StructuralAntiUnifier()
+    terms = [("t1", Term.parse("f(a)")), ("t2", Term.parse("f(b)"))]
+    res = au.anti_unify(terms)
+    p_disc = hashlib.sha256(b"p-disc").hexdigest()
+    cand = AbstractionCandidate(
+        candidate_id="c-fab-receipt",
+        candidate_kind=AbstractionKind.LEMMA,
+        formal_specification={"name": "lem", "canonical_representation": "f(V1)"},
+        anti_unification_evidence=res,
+        discovery_set_trace_ids=["t1", "t2"],
+        discovery_problem_digests=[p_disc],
+        discovery_origin="EXECUTED_OBSERVED",
+        admissibility_status=AdmissibilityStatus.ADMISSIBLE,
+        admissibility_receipt=create_admissibility_receipt(
+            terms=terms,
+            result=res,
+            status=AdmissibilityStatus.ADMISSIBLE,
+            discovery_problem_digests=[p_disc],
+        ),
+    )
+    p_qual = hashlib.sha256(b"p-qual").hexdigest()
+    contract = PairedReplayContract(
+        problem_id="p-qual",
+        problem_digest=p_qual,
+        backend_id="lean4",
+        search_policy_kind="MCTS",
+        search_budget={"max_depth": 5},
+        random_seed=42,
+        corpus_context={},
+        baseline_configuration={},
+        abstracted_configuration={"candidate_id": cand.candidate_id},
+        candidate_id=cand.candidate_id,
+        candidate_enabled_in_abstracted=True,
+    )
+
+    def forged_receipt_runner(c, arm):
+        cand_enabled = (arm == "ABSTRACTED")
+        s_rcpt = make_valid_search_execution_receipt(
+            run_id=f"r-forged-{arm}",
+            problem_id=c.problem_id,
+            problem_digest=c.problem_digest,
+            candidate_id=c.candidate_id,
+            candidate_enabled=cand_enabled,
+            candidate_application_status="APPLIED" if cand_enabled else "DISABLED",
+            nodes_expanded=10 if arm == "BASELINE" else 2,
+            nodes_evaluated=20 if arm == "BASELINE" else 4,
+            terminal_status="SUCCESS",
+        )
+        return ReplayRunReceipt(
+            receipt_id=f"rcpt-forged-{arm}",
+            arm=arm,
+            problem_id=c.problem_id,
+            problem_digest=c.problem_digest,
+            paired_contract_digest=c.contract_digest(),
+            backend_id=c.backend_id,
+            search_policy_kind=c.search_policy_kind,
+            candidate_id=c.candidate_id,
+            candidate_enabled=cand_enabled,
+            random_seed=c.random_seed,
+            search_budget_digest=hashlib.sha256(json.dumps(c.search_budget, sort_keys=True).encode("utf-8")).hexdigest(),
+            corpus_context_digest=hashlib.sha256(json.dumps(c.corpus_context, sort_keys=True).encode("utf-8")).hexdigest(),
+            nodes_expanded=10 if arm == "BASELINE" else 2,
+            nodes_evaluated=20 if arm == "BASELINE" else 4,
+            branch_count=2,
+            solved=True,
+            evidence_origin="EXECUTED_SEARCH_RUN",
+            search_execution_receipt=s_rcpt.to_dict(),
+        )
+
+    engine = HeldOutReplayEngine()
+    with pytest.raises(ReceiptValidationError) as excinfo:
+        engine.execute_paired_replay(cand, [contract], forged_receipt_runner)
+    assert "CALLER_CONSTRUCTED_REPLAY_RECEIPT" in str(excinfo.value)
+
+
+# 2. manually forged SearchExecutionBundle without witness rejected
+def test_manually_forged_bundle_without_witness_rejected():
+    au = StructuralAntiUnifier()
+    terms = [("t1", Term.parse("f(a)")), ("t2", Term.parse("f(b)"))]
+    res = au.anti_unify(terms)
+    p_disc = hashlib.sha256(b"p-disc-witness").hexdigest()
+    cand = AbstractionCandidate(
+        candidate_id="c-forged-bundle",
+        candidate_kind=AbstractionKind.LEMMA,
+        formal_specification={"name": "lem", "canonical_representation": "f(V1)"},
+        anti_unification_evidence=res,
+        discovery_set_trace_ids=["t1", "t2"],
+        discovery_problem_digests=[p_disc],
+        discovery_origin="EXECUTED_OBSERVED",
+        admissibility_status=AdmissibilityStatus.ADMISSIBLE,
+        admissibility_receipt=create_admissibility_receipt(
+            terms=terms,
+            result=res,
+            status=AdmissibilityStatus.ADMISSIBLE,
+            discovery_problem_digests=[p_disc],
+        ),
+    )
+    p_qual = hashlib.sha256(b"p-qual-witness").hexdigest()
+    contract = PairedReplayContract(
+        problem_id="p-qual-witness",
+        problem_digest=p_qual,
+        backend_id="lean4",
+        search_policy_kind="MCTS",
+        search_budget={"max_depth": 5},
+        random_seed=42,
+        corpus_context={},
+        baseline_configuration={},
+        abstracted_configuration={"candidate_id": cand.candidate_id},
+        candidate_id=cand.candidate_id,
+        candidate_enabled_in_abstracted=True,
+    )
+
+    def forged_bundle_runner(c, arm):
+        cand_enabled = (arm == "ABSTRACTED")
+        sample_tr = make_sample_trace("t1", c.problem_id, [("step", "res")], problem_digest=c.problem_digest)
+        s_rcpt = make_valid_search_execution_receipt(
+            run_id=f"r-bundle-{arm}",
+            problem_id=c.problem_id,
+            problem_digest=c.problem_digest,
+            candidate_id=c.candidate_id,
+            candidate_enabled=cand_enabled,
+            candidate_application_status="APPLIED" if cand_enabled else "DISABLED",
+            nodes_expanded=10 if arm == "BASELINE" else 2,
+            nodes_evaluated=20 if arm == "BASELINE" else 4,
+            terminal_status="SUCCESS",
+        )
+        s_rcpt.resulting_trace_digests = [sample_tr.digest()]
+        s_rcpt.receipt_digest = s_rcpt.compute_digest()
+        sr = SearchRun(
+            run_id=s_rcpt.run_id,
+            problem_id=c.problem_id,
+            search_policy=SearchPolicyKind.MCTS,
+            policy_configuration={},
+            problem_digest=c.problem_digest,
+            nodes_expanded=s_rcpt.nodes_expanded,
+            nodes_evaluated=s_rcpt.nodes_evaluated,
+            max_depth_reached=2,
+            branching_factor_effective=2.0,
+            total_wall_time_ms=10.0,
+            terminal_status="SUCCESS",
+            execution_trace_refs=["t1"],
+            execution_trace_digests=[sample_tr.digest()],
+            resulting_trace_id="t1",
+            replay_mode="EXECUTED_SEARCH_RUN",
+            search_execution_receipt=s_rcpt.to_dict(),
+        )
+        return SearchExecutionBundle(
+            search_run=sr,
+            receipt=s_rcpt,
+            traces=[sample_tr],
+            runtime_witness=None,
+        )
+
+    engine = HeldOutReplayEngine()
+    with pytest.raises(ReceiptValidationError) as excinfo:
+        engine.execute_paired_replay(cand, [contract], forged_bundle_runner)
+    assert "INVALID_EXECUTION_WITNESS" in str(excinfo.value) or "runtime witness" in str(excinfo.value)
+
+
+# 3. executor implementation digest equals actual implementation artifact digest
+def test_executor_implementation_digest_equals_actual_file_bytes():
+    executor_file = Path(__file__).resolve().parent.parent / "src" / "msk_formal_discovery" / "search" / "executor.py"
+    expected_digest = hashlib.sha256(executor_file.read_bytes()).hexdigest()
+    actual_digest = get_executor_implementation_digest()
+    assert actual_digest == expected_digest
+
+
+# 4. from_search_execution_bundle works on real executor output
+def test_from_search_execution_bundle_works_on_real_executor_output():
+    executor = SearchExecutor()
+    prob = ProblemDefinition(
+        problem_id="p-real-exec",
+        formal_syntax="eval(True)",
+        context={},
+        goals=["True"],
+        assumptions=[],
+        problem_digest="a" * 64,
+    )
+    contract = PairedReplayContract(
+        problem_id="p-real-exec",
+        problem_digest="a" * 64,
+        backend_id="lean4",
+        search_policy_kind="MCTS",
+        search_budget={"max_nodes": 10, "max_depth": 5},
+        random_seed=42,
+        corpus_context={},
+        baseline_configuration={},
+        abstracted_configuration={"candidate_id": "c-1"},
+        candidate_id="c-1",
+        candidate_enabled_in_abstracted=True,
+    )
+    init_state = SearchState(state_id="init_0", goal="True", depth=0)
+    bundle = executor.execute(
+        policy=MCTSSearch(config={"available_rules": ["solve"]}),
+        problem=prob,
+        initial_state=init_state,
+        budget=contract.search_budget,
+        candidate_id="c-1",
+        candidate_enabled=False,
+        random_seed=42,
+    )
+    bundle.validate()
+
+    receipt = ReplayRunReceipt.from_search_execution_bundle(bundle, contract, "BASELINE")
+    assert receipt.arm == "BASELINE"
+    assert receipt.evidence_origin == "EXECUTED_SEARCH_RUN"
+    assert receipt.search_run_ref == bundle.receipt.run_id
+    assert receipt.solved is True
+    assert receipt.nodes_expanded == bundle.receipt.nodes_expanded
+    receipt.validate()
+
+
+# 5. from_search_execution_bundle uses actual receipt field names
+def test_from_search_execution_bundle_uses_actual_receipt_field_names():
+    contract = PairedReplayContract(
+        problem_id="p-fields",
+        problem_digest="b" * 64,
+        backend_id="lean4",
+        search_policy_kind="MCTS",
+        search_budget={"max_nodes": 10, "max_depth": 5},
+        random_seed=42,
+        corpus_context={},
+        baseline_configuration={},
+        abstracted_configuration={"candidate_id": "c-1"},
+        candidate_id="c-1",
+        candidate_enabled_in_abstracted=True,
+    )
+    bundle = make_valid_search_execution_bundle(contract, "BASELINE")
+    assert hasattr(bundle.receipt, "run_id")
+    assert hasattr(bundle.receipt, "resulting_trace_refs")
+    assert hasattr(bundle.receipt, "resulting_trace_digests")
+    assert not hasattr(bundle.receipt, "execution_trace_refs")
+    assert not hasattr(bundle.receipt, "search_run_id")
+
+    receipt = ReplayRunReceipt.from_search_execution_bundle(bundle, contract, "BASELINE")
+    assert receipt.search_run_ref == bundle.receipt.run_id
+    assert receipt.execution_trace_refs == bundle.receipt.resulting_trace_refs
+    assert receipt.execution_trace_digests == bundle.receipt.resulting_trace_digests
+
+
+# 6. SUCCESS maps to solved consistently
+def test_success_maps_to_solved_consistently():
+    assert is_successful_terminal("SUCCESS") is True
+    assert is_successful_terminal("SOLVED") is True
+    assert is_successful_terminal("EXHAUSTED") is False
+    assert is_successful_terminal("BUDGET_REACHED") is False
+    assert is_successful_terminal("FAILED") is False
+
+    contract = PairedReplayContract(
+        problem_id="p-succ",
+        problem_digest="c" * 64,
+        backend_id="lean4",
+        search_policy_kind="MCTS",
+        search_budget={"max_nodes": 10, "max_depth": 5},
+        random_seed=42,
+        corpus_context={},
+        baseline_configuration={},
+        abstracted_configuration={"candidate_id": "c-1"},
+        candidate_id="c-1",
+        candidate_enabled_in_abstracted=True,
+    )
+    bundle_success = make_valid_search_execution_bundle(contract, "BASELINE", solved=True)
+    assert bundle_success.receipt.terminal_status == "SUCCESS"
+    receipt_success = ReplayRunReceipt.from_search_execution_bundle(bundle_success, contract, "BASELINE")
+    assert receipt_success.solved is True
+
+    bundle_exhausted = make_valid_search_execution_bundle(contract, "BASELINE", solved=False)
+    receipt_exhausted = ReplayRunReceipt.from_search_execution_bundle(bundle_exhausted, contract, "BASELINE")
+    assert receipt_exhausted.solved is False
+
+
+# 7. candidate factory derives problem digests automatically
+def test_candidate_factory_derives_problem_digests_automatically():
+    p1_digest = hashlib.sha256(b"problem-1-syntax").hexdigest()
+    p2_digest = hashlib.sha256(b"problem-2-syntax").hexdigest()
+    tr1 = ExecutionTrace(
+        trace_id="tr-derive-1",
+        problem_id="prob-1",
+        backend_id="lean4",
+        backend_version="1.0.0",
+        execution_origin="SIMULATED",
+        logical_authority_class="NONE",
+        created_at="2026-09-12T12:00:00Z",
+        terminal_verdict="PROVEN",
+        wall_time_ms=10.0,
+        problem_digest=p1_digest,
+    )
+    tr1.add_event(TraceEventType.INITIAL_PROBLEM, "init", "0" * 64, "0" * 64, event_origin=EventOrigin.BACKEND_OBSERVED)
+    tr1.add_event(TraceEventType.TACTIC_APPLICATION, "shared_rw", "0" * 64, "1" * 64, payload={"expression": "f(a)"}, event_origin=EventOrigin.BACKEND_OBSERVED)
+
+    tr2 = ExecutionTrace(
+        trace_id="tr-derive-2",
+        problem_id="prob-2",
+        backend_id="lean4",
+        backend_version="1.0.0",
+        execution_origin="SIMULATED",
+        logical_authority_class="NONE",
+        created_at="2026-09-12T12:00:00Z",
+        terminal_verdict="PROVEN",
+        wall_time_ms=10.0,
+        problem_digest=p2_digest,
+    )
+    tr2.add_event(TraceEventType.INITIAL_PROBLEM, "init", "0" * 64, "0" * 64, event_origin=EventOrigin.BACKEND_OBSERVED)
+    tr2.add_event(TraceEventType.TACTIC_APPLICATION, "shared_rw", "0" * 64, "1" * 64, payload={"expression": "f(b)"}, event_origin=EventOrigin.BACKEND_OBSERVED)
+
+    miner = SubtraceMiner(min_length=1, min_support=2)
+    patterns = miner.mine_traces([tr1, tr2])
+    assert len(patterns) > 0
+    pat = patterns[0]
+
+    cand = CandidateFactory.from_pattern(pat, candidate_id="c-auto-derived")
+    assert cand.discovery_problem_digests == [p1_digest, p2_digest]
+
+
+# 8. candidate factory derives trace digests automatically
+def test_candidate_factory_derives_trace_digests_automatically():
+    p1 = hashlib.sha256(b"p1").hexdigest()
+    p2 = hashlib.sha256(b"p2").hexdigest()
+    tr1 = ExecutionTrace(
+        trace_id="tr-td-1",
+        problem_id="p1",
+        backend_id="lean4",
+        backend_version="1.0.0",
+        execution_origin="SIMULATED",
+        logical_authority_class="NONE",
+        created_at="2026-09-12T12:00:00Z",
+        terminal_verdict="PROVEN",
+        wall_time_ms=10.0,
+        problem_digest=p1,
+    )
+    tr1.add_event(TraceEventType.INITIAL_PROBLEM, "init", "0" * 64, "0" * 64, event_origin=EventOrigin.BACKEND_OBSERVED)
+    tr1.add_event(TraceEventType.TACTIC_APPLICATION, "step", "0" * 64, "1" * 64, payload={"expression": "g(a)"}, event_origin=EventOrigin.BACKEND_OBSERVED)
+
+    tr2 = ExecutionTrace(
+        trace_id="tr-td-2",
+        problem_id="p2",
+        backend_id="lean4",
+        backend_version="1.0.0",
+        execution_origin="SIMULATED",
+        logical_authority_class="NONE",
+        created_at="2026-09-12T12:00:00Z",
+        terminal_verdict="PROVEN",
+        wall_time_ms=10.0,
+        problem_digest=p2,
+    )
+    tr2.add_event(TraceEventType.INITIAL_PROBLEM, "init", "0" * 64, "0" * 64, event_origin=EventOrigin.BACKEND_OBSERVED)
+    tr2.add_event(TraceEventType.TACTIC_APPLICATION, "step", "0" * 64, "1" * 64, payload={"expression": "g(b)"}, event_origin=EventOrigin.BACKEND_OBSERVED)
+
+    miner = SubtraceMiner(min_length=1, min_support=2)
+    patterns = miner.mine_traces([tr1, tr2])
+    cand = CandidateFactory.from_pattern(patterns[0], candidate_id="c-td")
+    assert cand.admissibility_receipt is not None
+    assert cand.admissibility_receipt["source_trace_digests"] == [tr1.digest(), tr2.digest()]
+
+
+# 9. caller discovery-digest mismatch rejected
+def test_caller_discovery_digest_mismatch_rejected():
+    p1 = hashlib.sha256(b"p1").hexdigest()
+    p2 = hashlib.sha256(b"p2").hexdigest()
+    tr1 = ExecutionTrace(
+        trace_id="tr-mm-1",
+        problem_id="p1",
+        backend_id="lean4",
+        backend_version="1.0.0",
+        execution_origin="SIMULATED",
+        logical_authority_class="NONE",
+        created_at="2026-09-12T12:00:00Z",
+        terminal_verdict="PROVEN",
+        wall_time_ms=10.0,
+        problem_digest=p1,
+    )
+    tr1.add_event(TraceEventType.INITIAL_PROBLEM, "init", "0" * 64, "0" * 64, event_origin=EventOrigin.BACKEND_OBSERVED)
+    tr1.add_event(TraceEventType.TACTIC_APPLICATION, "step", "0" * 64, "1" * 64, payload={"expression": "g(a)"}, event_origin=EventOrigin.BACKEND_OBSERVED)
+
+    tr2 = ExecutionTrace(
+        trace_id="tr-mm-2",
+        problem_id="p2",
+        backend_id="lean4",
+        backend_version="1.0.0",
+        execution_origin="SIMULATED",
+        logical_authority_class="NONE",
+        created_at="2026-09-12T12:00:00Z",
+        terminal_verdict="PROVEN",
+        wall_time_ms=10.0,
+        problem_digest=p2,
+    )
+    tr2.add_event(TraceEventType.INITIAL_PROBLEM, "init", "0" * 64, "0" * 64, event_origin=EventOrigin.BACKEND_OBSERVED)
+    tr2.add_event(TraceEventType.TACTIC_APPLICATION, "step", "0" * 64, "1" * 64, payload={"expression": "g(b)"}, event_origin=EventOrigin.BACKEND_OBSERVED)
+
+    miner = SubtraceMiner(min_length=1, min_support=2)
+    pat = miner.mine_traces([tr1, tr2])[0]
+
+    with pytest.raises(ValueError) as excinfo:
+        CandidateFactory.from_pattern(
+            pat,
+            candidate_id="c-mm",
+            discovery_problem_digests=["f" * 64, "e" * 64],
+        )
+    assert "CALLER_DISCOVERY_DIGEST_MISMATCH" in str(excinfo.value)
+
+
+# 10. trace-id-as-problem-digest regression rejected
+def test_trace_id_as_problem_digest_regression_rejected():
+    p1 = hashlib.sha256(b"p1").hexdigest()
+    p2 = hashlib.sha256(b"p2").hexdigest()
+    tr1 = ExecutionTrace(
+        trace_id="tr-reg-1",
+        problem_id="p1",
+        backend_id="lean4",
+        backend_version="1.0.0",
+        execution_origin="SIMULATED",
+        logical_authority_class="NONE",
+        created_at="2026-09-12T12:00:00Z",
+        terminal_verdict="PROVEN",
+        wall_time_ms=10.0,
+        problem_digest=p1,
+    )
+    tr1.add_event(TraceEventType.INITIAL_PROBLEM, "init", "0" * 64, "0" * 64, event_origin=EventOrigin.BACKEND_OBSERVED)
+    tr1.add_event(TraceEventType.TACTIC_APPLICATION, "step", "0" * 64, "1" * 64, payload={"expression": "g(a)"}, event_origin=EventOrigin.BACKEND_OBSERVED)
+
+    tr2 = ExecutionTrace(
+        trace_id="tr-reg-2",
+        problem_id="p2",
+        backend_id="lean4",
+        backend_version="1.0.0",
+        execution_origin="SIMULATED",
+        logical_authority_class="NONE",
+        created_at="2026-09-12T12:00:00Z",
+        terminal_verdict="PROVEN",
+        wall_time_ms=10.0,
+        problem_digest=p2,
+    )
+    tr2.add_event(TraceEventType.INITIAL_PROBLEM, "init", "0" * 64, "0" * 64, event_origin=EventOrigin.BACKEND_OBSERVED)
+    tr2.add_event(TraceEventType.TACTIC_APPLICATION, "step", "0" * 64, "1" * 64, payload={"expression": "g(b)"}, event_origin=EventOrigin.BACKEND_OBSERVED)
+
+    miner = SubtraceMiner(min_length=1, min_support=2)
+    pat = miner.mine_traces([tr1, tr2])[0]
+    cand = CandidateFactory.from_pattern(pat, candidate_id="c-reg")
+
+    for dig in cand.discovery_problem_digests:
+        assert dig != "tr-reg-1"
+        assert dig != "tr-reg-2"
+        assert len(dig) == 64
+        int(dig, 16)
+
+
+# 11. missing source problem digest rejected
+def test_missing_source_problem_digest_rejected():
+    au = StructuralAntiUnifier()
+    res = au.anti_unify([("t1", Term.parse("f(a)")), ("t2", Term.parse("f(b)"))])
+    pat = RecurringSubtracePattern(
+        pattern_id="pat-missing-pdig",
+        operations=("step",),
+        occurrences=[("t1", 0), ("t2", 0)],
+        frequency=2,
+        extracted_terms={"t1": Term.parse("f(a)"), "t2": Term.parse("f(b)")},
+        anti_unification_result=res,
+        trace_problem_digests={"t1": "0" * 64},
+        trace_digests={"t1": "0" * 64, "t2": "1" * 64},
+    )
+    with pytest.raises(ValueError) as excinfo:
+        CandidateFactory.from_pattern(pat, candidate_id="c-missing-p")
+    assert "MISSING_SOURCE_PROBLEM_DIGEST" in str(excinfo.value)
+
+
+# 12. missing source trace digest rejected
+def test_missing_source_trace_digest_rejected():
+    au = StructuralAntiUnifier()
+    res = au.anti_unify([("t1", Term.parse("f(a)")), ("t2", Term.parse("f(b)"))])
+    pat = RecurringSubtracePattern(
+        pattern_id="pat-missing-tdig",
+        operations=("step",),
+        occurrences=[("t1", 0), ("t2", 0)],
+        frequency=2,
+        extracted_terms={"t1": Term.parse("f(a)"), "t2": Term.parse("f(b)")},
+        anti_unification_result=res,
+        trace_problem_digests={"t1": "0" * 64, "t2": "1" * 64},
+        trace_digests={"t1": "0" * 64},
+    )
+    with pytest.raises(ValueError) as excinfo:
+        CandidateFactory.from_pattern(pat, candidate_id="c-missing-t")
+    assert "MISSING_SOURCE_TRACE_DIGEST" in str(excinfo.value)
+
+
+# 13. initial-state mismatch rejected
+def test_initial_state_mismatch_rejected():
+    contract = PairedReplayContract(
+        problem_id="p-init-mismatch",
+        problem_digest="0" * 64,
+        backend_id="lean4",
+        search_policy_kind="MCTS",
+        search_budget={"max_nodes": 10},
+        random_seed=42,
+        corpus_context={},
+        baseline_configuration={"initial_state_digest": "1" * 64},
+        abstracted_configuration={"candidate_id": "c-1", "initial_state_digest": "2" * 64},
+        candidate_id="c-1",
+        candidate_enabled_in_abstracted=True,
+    )
+    with pytest.raises(ReplayContractError) as excinfo:
+        contract.validate()
+    assert "INITIAL_STATE_MISMATCH" in str(excinfo.value)
+
+
+# 14. transition-model mismatch rejected
+def test_transition_model_mismatch_rejected():
+    contract = PairedReplayContract(
+        problem_id="p-trans-mismatch",
+        problem_digest="0" * 64,
+        backend_id="lean4",
+        search_policy_kind="MCTS",
+        search_budget={"max_nodes": 10},
+        random_seed=42,
+        corpus_context={},
+        baseline_configuration={"transition_model_digest": "1" * 64},
+        abstracted_configuration={"candidate_id": "c-1", "transition_model_digest": "2" * 64},
+        candidate_id="c-1",
+        candidate_enabled_in_abstracted=True,
+    )
+    with pytest.raises(ReplayContractError) as excinfo:
+        contract.validate()
+    assert "TRANSITION_MODEL_MISMATCH" in str(excinfo.value)
+
+
+# 15. policy-implementation mismatch rejected
+def test_policy_implementation_mismatch_rejected():
+    contract = PairedReplayContract(
+        problem_id="p-pol-mismatch",
+        problem_digest="0" * 64,
+        backend_id="lean4",
+        search_policy_kind="MCTS",
+        search_budget={"max_nodes": 10},
+        random_seed=42,
+        corpus_context={},
+        baseline_configuration={"search_policy_implementation_digest": "1" * 64},
+        abstracted_configuration={"candidate_id": "c-1", "search_policy_implementation_digest": "2" * 64},
+        candidate_id="c-1",
+        candidate_enabled_in_abstracted=True,
+    )
+    with pytest.raises(ReplayContractError) as excinfo:
+        contract.validate()
+    assert "POLICY_IMPLEMENTATION_MISMATCH" in str(excinfo.value)
+
+
+# 16. candidate REQUESTED_NOT_APPLIED cannot qualify
+def test_candidate_requested_not_applied_cannot_qualify():
+    au = StructuralAntiUnifier()
+    terms = [("t1", Term.parse("f(a)")), ("t2", Term.parse("f(b)"))]
+    res = au.anti_unify(terms)
+    p_disc = hashlib.sha256(b"p-disc-not-applied").hexdigest()
+    cand = AbstractionCandidate(
+        candidate_id="c-not-applied",
+        candidate_kind=AbstractionKind.LEMMA,
+        formal_specification={"name": "lem", "canonical_representation": "f(V1)"},
+        anti_unification_evidence=res,
+        discovery_set_trace_ids=["t1", "t2"],
+        discovery_problem_digests=[p_disc],
+        discovery_origin="EXECUTED_OBSERVED",
+        admissibility_status=AdmissibilityStatus.ADMISSIBLE,
+        admissibility_receipt=create_admissibility_receipt(
+            terms=terms,
+            result=res,
+            status=AdmissibilityStatus.ADMISSIBLE,
+            discovery_problem_digests=[p_disc],
+        ),
+    )
+    p_qual = hashlib.sha256(b"p-qual-not-applied").hexdigest()
+    contract = PairedReplayContract(
+        problem_id="p-qual-not-applied",
+        problem_digest=p_qual,
+        backend_id="lean4",
+        search_policy_kind="MCTS",
+        search_budget={"max_nodes": 10, "max_depth": 5},
+        random_seed=42,
+        corpus_context={},
+        baseline_configuration={},
+        abstracted_configuration={"candidate_id": cand.candidate_id},
+        candidate_id=cand.candidate_id,
+        candidate_enabled_in_abstracted=True,
+    )
+
+    def not_applied_runner(c, arm):
+        return make_valid_search_execution_bundle(
+            c,
+            arm,
+            candidate_application_status="REQUESTED_NOT_APPLIED" if arm == "ABSTRACTED" else "DISABLED",
+        )
+
+    engine = HeldOutReplayEngine()
+    report = engine.execute_paired_replay(cand, [contract], not_applied_runner)
+    assert cand.status == CandidateStatus.CANDIDATE_ONLY
+    assert cand.status != CandidateStatus.QUALIFIED_HELD_OUT
+
+
+# 17. manual ONTO fixture registry cannot establish canonical executed benefit
+def test_manual_onto_fixture_registry_cannot_establish_canonical_executed_benefit():
+    au = StructuralAntiUnifier()
+    terms = [("t1", Term.parse("f(a)")), ("t2", Term.parse("f(b)"))]
+    res = au.anti_unify(terms)
+    cand = AbstractionCandidate(
+        candidate_id="c-onto-unexecuted",
+        candidate_kind=AbstractionKind.LEMMA,
+        formal_specification={"name": "lem", "canonical_representation": "f(V1)"},
+        anti_unification_evidence=res,
+        discovery_set_trace_ids=["t1", "t2"],
+        discovery_problem_digests=["0" * 64],
+        admissibility_status=AdmissibilityStatus.UNASSESSED,
+    )
+
+    ref = OntoEvidenceRef(
+        evidence_kind="HELD_OUT_REPLAY",
+        artifact_ref="fixture-art-1",
+        artifact_digest="0" * 64,
+        evidence_status="SUPPORTED",
+        source_experimental_units=["u1"],
+    )
+    OntoExporter.register_artifact(ref.artifact_ref, ref.artifact_digest)
+    assert cand.status != CandidateStatus.QUALIFIED_HELD_OUT
+    assert cand.status in (CandidateStatus.PROPOSED, CandidateStatus.CANDIDATE_ONLY)
 

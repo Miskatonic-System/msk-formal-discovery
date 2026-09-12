@@ -23,7 +23,7 @@ from msk_formal_discovery.core.exceptions import (
     ReplayContractError,
 )
 from msk_formal_discovery.search.executor import SearchExecutionBundle, SearchExecutionReceipt
-from msk_formal_discovery.search.policy import SearchRun
+from msk_formal_discovery.search.policy import SearchRun, is_successful_terminal
 from msk_formal_discovery.trace.ir import ExecutionTrace
 
 HEX_DIGEST_PATTERN = re.compile(r"^[0-9a-f]{64}$")
@@ -226,7 +226,7 @@ class ReplayRunReceipt:
                 raise ReplayContractError(
                     f"METRICS_DISAGREEMENT: nodes_evaluated ({self.nodes_evaluated}) != SearchRun ({self.bound_search_run.nodes_evaluated})"
                 )
-            sr_solved = (self.bound_search_run.terminal_status == "SOLVED")
+            sr_solved = is_successful_terminal(self.bound_search_run.terminal_status)
             if self.solved != sr_solved:
                 raise ReplayContractError(
                     f"METRICS_DISAGREEMENT: solved ({self.solved}) != SearchRun ({sr_solved})"
@@ -250,7 +250,7 @@ class ReplayRunReceipt:
         b_digest = hashlib.sha256(json.dumps(contract.search_budget, sort_keys=True).encode("utf-8")).hexdigest()
         p_digest = hashlib.sha256(json.dumps(search_run.policy_configuration, sort_keys=True).encode("utf-8")).hexdigest()
         c_digest = hashlib.sha256(json.dumps(contract.corpus_context, sort_keys=True).encode("utf-8")).hexdigest()
-        is_solved = (search_run.terminal_status == "SOLVED")
+        is_solved = is_successful_terminal(search_run.terminal_status)
         branch_count = int(search_run.branching_factor_effective * search_run.nodes_expanded)
         candidate_enabled = (arm == "ABSTRACTED")
 
@@ -305,9 +305,15 @@ class ReplayRunReceipt:
         sr = bundle.search_run
         rcpt = bundle.search_execution_receipt
         c_digest = hashlib.sha256(json.dumps(contract.corpus_context, sort_keys=True).encode("utf-8")).hexdigest()
-        is_solved = (sr.terminal_status == "SOLVED")
+        is_solved = is_successful_terminal(sr.terminal_status)
         branch_count = int(sr.branching_factor_effective * sr.nodes_expanded)
         candidate_enabled = (arm == "ABSTRACTED")
+
+        sr_dict = sr.to_dict()
+        sr_digest = hashlib.sha256(json.dumps(sr_dict, sort_keys=True).encode("utf-8")).hexdigest()
+
+        trace_refs = list(rcpt.resulting_trace_refs)
+        trace_digests = list(rcpt.resulting_trace_digests)
 
         return cls(
             receipt_id=receipt_id or f"rcpt-replay-{arm.lower()}-{contract.problem_id}",
@@ -332,11 +338,11 @@ class ReplayRunReceipt:
             branch_count=branch_count,
             solved=is_solved,
             wall_time_ms=rcpt.wall_time_ms,
-            backend_calls=rcpt.backend_calls,
-            search_run_ref=rcpt.search_run_id,
-            search_run_digest=rcpt.search_run_digest,
-            execution_trace_refs=list(rcpt.execution_trace_refs),
-            execution_trace_digests=list(rcpt.execution_trace_digests),
+            backend_calls=len(trace_refs),
+            search_run_ref=rcpt.run_id,
+            search_run_digest=sr_digest,
+            execution_trace_refs=trace_refs,
+            execution_trace_digests=trace_digests,
             evidence_origin="EXECUTED_SEARCH_RUN",
             authority="NONE",
             bound_search_run=sr,
@@ -346,7 +352,7 @@ class ReplayRunReceipt:
 
 @dataclass
 class PairedReplayContract:
-    """Contract binding all non-abstraction variables identically across arms (Sections 20 & 21)."""
+    """Contract binding all non-abstraction variables identically across arms (WO-MATH-FORMAL-DISCOVERY-01A-R4 Sections 14-16)."""
     problem_id: str
     problem_digest: str
     backend_id: str
@@ -362,9 +368,13 @@ class PairedReplayContract:
     source_graph_context: Dict[str, Any] = field(default_factory=dict)
     environment_identity: Dict[str, Any] = field(default_factory=dict)
     search_policy_configuration: Dict[str, Any] = field(default_factory=dict)
+    initial_state_digest: str = "0" * 64
+    transition_model_id: str = "default_discrete_transition_model"
+    transition_model_digest: str = "0" * 64
+    search_policy_implementation_digest: str = "0" * 64
 
     def contract_digest(self) -> str:
-        """Deterministic SHA-256 digest of contract content (Section 8 & 20)."""
+        """Deterministic SHA-256 digest of contract content (Sections 14-16 & 20)."""
         payload = {
             "problem_id": self.problem_id,
             "problem_digest": self.problem_digest,
@@ -372,11 +382,15 @@ class PairedReplayContract:
             "backend_configuration": self.backend_configuration,
             "search_policy_kind": self.search_policy_kind,
             "search_policy_configuration": self.search_policy_configuration,
+            "search_policy_implementation_digest": self.search_policy_implementation_digest,
             "search_budget": self.search_budget,
             "random_seed": self.random_seed,
             "corpus_context": self.corpus_context,
             "source_graph_context": self.source_graph_context,
             "environment_identity": self.environment_identity,
+            "initial_state_digest": self.initial_state_digest,
+            "transition_model_id": self.transition_model_id,
+            "transition_model_digest": self.transition_model_digest,
             "candidate_id": self.candidate_id,
             "candidate_enabled_in_abstracted": self.candidate_enabled_in_abstracted,
             "baseline_configuration": self.baseline_configuration,
@@ -386,11 +400,18 @@ class PairedReplayContract:
         return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
     def validate(self) -> None:
-        """Enforce full arm parity (Section 9 & 21)."""
+        """Enforce full arm parity (Sections 14-16 & 21)."""
         if not HEX_DIGEST_PATTERN.match(self.problem_digest):
             raise ValueError(
                 f"Invalid problem_digest: {self.problem_digest}. Must be 64-char lowercase hex."
             )
+        for name, dig in [
+            ("initial_state_digest", self.initial_state_digest),
+            ("transition_model_digest", self.transition_model_digest),
+            ("search_policy_implementation_digest", self.search_policy_implementation_digest),
+        ]:
+            if not HEX_DIGEST_PATTERN.match(dig):
+                raise ValueError(f"Invalid {name}: {dig}. Must be 64-char lowercase hex.")
 
         if not self.candidate_enabled_in_abstracted:
             raise ReplayContractError(
@@ -436,8 +457,38 @@ class PairedReplayContract:
                 f"ABSTRACTED_CANDIDATE_MISMATCH: Abstracted candidate_id '{self.abstracted_configuration.get('candidate_id')}' != '{self.candidate_id}'"
             )
 
+        # Section 14, 15, 16: Verify initial state, transition model, and policy implementation parity
+        base_init = self.baseline_configuration.get("initial_state_digest", self.initial_state_digest)
+        abs_init = self.abstracted_configuration.get("initial_state_digest", self.initial_state_digest)
+        if base_init != abs_init:
+            raise ReplayContractError(
+                f"INITIAL_STATE_MISMATCH: Baseline initial_state_digest '{base_init}' != abstracted '{abs_init}'"
+            )
+
+        base_trans = self.baseline_configuration.get("transition_model_digest", self.transition_model_digest)
+        abs_trans = self.abstracted_configuration.get("transition_model_digest", self.transition_model_digest)
+        if base_trans != abs_trans:
+            raise ReplayContractError(
+                f"TRANSITION_MODEL_MISMATCH: Baseline transition_model_digest '{base_trans}' != abstracted '{abs_trans}'"
+            )
+
+        base_pol = self.baseline_configuration.get("search_policy_implementation_digest", self.search_policy_implementation_digest)
+        abs_pol = self.abstracted_configuration.get("search_policy_implementation_digest", self.search_policy_implementation_digest)
+        if base_pol != abs_pol:
+            raise ReplayContractError(
+                f"POLICY_IMPLEMENTATION_MISMATCH: Baseline search_policy_implementation_digest '{base_pol}' != abstracted '{abs_pol}'"
+            )
+
         # Normalized configuration parity after removing prospective abstraction delta
-        ignore_keys = {"candidate_id", "candidate_enabled", "enable_candidate"}
+        ignore_keys = {
+            "candidate_id",
+            "candidate_enabled",
+            "enable_candidate",
+            "initial_state_digest",
+            "transition_model_id",
+            "transition_model_digest",
+            "search_policy_implementation_digest",
+        }
         norm_base = {k: v for k, v in self.baseline_configuration.items() if k not in ignore_keys}
         norm_abs = {k: v for k, v in self.abstracted_configuration.items() if k not in ignore_keys}
         if norm_base != norm_abs:
@@ -498,6 +549,25 @@ def _validate_receipt_against_contract(
         raise ReplayContractError(
             f"CORPUS_CONTEXT_DIGEST_MISMATCH: {receipt.corpus_context_digest} != {expected_corpus_digest}"
         )
+
+    # Cross-check search execution receipt state / model digests
+    if receipt.search_execution_receipt is not None:
+        s_dict = receipt.search_execution_receipt
+        s_init = s_dict.get("initial_state_digest")
+        if contract.initial_state_digest != "0" * 64 and s_init and s_init != contract.initial_state_digest:
+            raise ReplayContractError(
+                f"INITIAL_STATE_MISMATCH: receipt initial_state_digest '{s_init}' != contract '{contract.initial_state_digest}'"
+            )
+        s_trans = s_dict.get("transition_model_digest")
+        if contract.transition_model_digest != "0" * 64 and s_trans and s_trans != contract.transition_model_digest:
+            raise ReplayContractError(
+                f"TRANSITION_MODEL_MISMATCH: receipt transition_model_digest '{s_trans}' != contract '{contract.transition_model_digest}'"
+            )
+        s_pol = s_dict.get("search_policy_implementation_digest")
+        if contract.search_policy_implementation_digest != "0" * 64 and s_pol and s_pol != contract.search_policy_implementation_digest:
+            raise ReplayContractError(
+                f"POLICY_IMPLEMENTATION_MISMATCH: receipt search_policy_implementation_digest '{s_pol}' != contract '{contract.search_policy_implementation_digest}'"
+            )
 
 
 @dataclass
@@ -741,8 +811,18 @@ class HeldOutReplayEngine:
         def _run_and_adapt(contract: PairedReplayContract, arm: str) -> ReplayRunReceipt:
             result = runner_fn(contract, arm)
             if isinstance(result, SearchExecutionBundle):
+                # Validate bundle against SearchRun, traces, and opaque SearchExecutor runtime witness (Sections 4 & 7)
+                result.validate()
                 return ReplayRunReceipt.from_search_execution_bundle(result, contract, arm)
-            return result
+            elif isinstance(result, ReplayRunReceipt):
+                # Sections 3 & 4: Freeze: CALLER_CONSTRUCTED_REPLAY_RECEIPT != EXECUTED_REPLAY_EVIDENCE
+                if result.evidence_origin in ("EXECUTED_SEARCH_RUN", "CERTIFIED_SEARCH_REPLAY"):
+                    raise ReceiptValidationError(
+                        "CALLER_CONSTRUCTED_REPLAY_RECEIPT: Executed replay qualification requires a SearchExecutionBundle with a valid SearchExecutor runtime witness; arbitrary caller-constructed ReplayRunReceipt is rejected"
+                    )
+                return result
+            else:
+                raise ValueError(f"Unexpected result type from runner_fn: {type(result)}")
 
         comparisons: List[ReplayComparison] = []
         for contract in contracts:
@@ -825,7 +905,7 @@ class HeldOutReplayEngine:
 
         candidate.held_out_evaluation = report.to_dict()
 
-        # Section 15 & 23: Promotion to QUALIFIED_HELD_OUT requires ALL of:
+        # Section 15 & 23 & R4 Section 17 & 20: Promotion to QUALIFIED_HELD_OUT requires ALL of:
         # - candidate.admissibility_status == AdmissibilityStatus.ADMISSIBLE
         # - candidate.admissibility_receipt is valid
         # - disjoint experimental units
@@ -833,6 +913,7 @@ class HeldOutReplayEngine:
         # - two valid receipts per experimental unit
         # - candidate.discovery_origin in ("EXECUTED_OBSERVED", "CERTIFIED_REPLAY")
         # - evidence_origin in ("EXECUTED_SEARCH_RUN", "CERTIFIED_SEARCH_REPLAY")
+        # - baseline candidate status = DISABLED and abstracted candidate status = APPLIED
         # - observed benefit meeting threshold
         # - no success-rate degradation
         is_admissible = (candidate.admissibility_status == AdmissibilityStatus.ADMISSIBLE)
@@ -840,12 +921,26 @@ class HeldOutReplayEngine:
         no_degradation = (success_delta >= 0.0)
         is_non_synthetic_discovery = candidate.discovery_origin in ("EXECUTED_OBSERVED", "CERTIFIED_REPLAY")
 
+        # R4 Section 17 & 20: Check candidate application status
+        base_app_status = (
+            comparisons[0].baseline_receipt.search_execution_receipt.get("candidate_application_status")
+            if (comparisons and comparisons[0].baseline_receipt.search_execution_receipt)
+            else None
+        )
+        abs_app_status = (
+            comparisons[0].abstracted_receipt.search_execution_receipt.get("candidate_application_status")
+            if (comparisons and comparisons[0].abstracted_receipt.search_execution_receipt)
+            else None
+        )
+        is_candidate_applied = (base_app_status == "DISABLED" and abs_app_status == "APPLIED")
+
         if (
             is_admissible
             and has_receipt
             and all_executed_or_certified
             and no_degradation
             and is_non_synthetic_discovery
+            and is_candidate_applied
             and report.is_qualified_for_promotion()
         ):
             # Independently validate admissibility receipt per Section 21

@@ -161,7 +161,7 @@ class CandidateFactory:
         discovery_problem_digests: Optional[List[str]] = None,
         blueprint_family: Optional[str] = None,
     ) -> AbstractionCandidate:
-        """Automatically assess pattern, create receipt, bind receipt, and emit candidate."""
+        """Automatically assess pattern, derive trace identity, create receipt, and emit candidate (WO-MATH-FORMAL-DISCOVERY-01A-R4 Sections 9-12)."""
         if not getattr(pattern, "anti_unification_result", None):
             raise AntiUnificationError("Cannot synthesize candidate from pattern without anti-unification result")
 
@@ -175,20 +175,56 @@ class CandidateFactory:
             branch_guards=branch_guards,
         )
 
-        disc_prob_digests = (
-            discovery_problem_digests
-            if discovery_problem_digests is not None
-            else list(getattr(pattern, "trace_problem_digests", []))
-        )
-        trace_digests = list(getattr(pattern, "trace_digests", []))
+        source_trace_ids = list(pattern.extracted_terms.keys())
+
+        # Section 9 & 12: Map source_trace_ids -> pattern.trace_problem_digests[trace_id]
+        trace_pdigests_map = getattr(pattern, "trace_problem_digests", {})
+        if not trace_pdigests_map:
+            raise ValueError("INCOMPLETE_SOURCE_TRACE_IDENTITY: pattern missing trace_problem_digests")
+
+        auto_prob_digests: List[str] = []
+        for tid in source_trace_ids:
+            if isinstance(trace_pdigests_map, dict):
+                p_dig = trace_pdigests_map.get(tid)
+            else:
+                p_dig = None
+            if not p_dig or not HEX_DIGEST_PATTERN.match(p_dig):
+                raise ValueError(
+                    f"INCOMPLETE_SOURCE_TRACE_IDENTITY (MISSING_SOURCE_PROBLEM_DIGEST): Source trace '{tid}' missing valid 64-hex problem_digest"
+                )
+            auto_prob_digests.append(p_dig)
+
+        # Section 11 & 12: Map source_trace_ids -> pattern.trace_digests[trace_id]
+        trace_digests_map = getattr(pattern, "trace_digests", {})
+        if not trace_digests_map:
+            raise ValueError("INCOMPLETE_SOURCE_TRACE_IDENTITY (MISSING_SOURCE_TRACE_DIGEST): pattern missing trace_digests")
+
+        auto_trace_digests: List[str] = []
+        for tid in source_trace_ids:
+            if isinstance(trace_digests_map, dict):
+                tr_dig = trace_digests_map.get(tid)
+            else:
+                tr_dig = None
+            if not tr_dig or not HEX_DIGEST_PATTERN.match(tr_dig):
+                raise ValueError(
+                    f"INCOMPLETE_SOURCE_TRACE_IDENTITY (MISSING_SOURCE_TRACE_DIGEST): Source trace '{tid}' missing valid 64-hex trace_digest"
+                )
+            auto_trace_digests.append(tr_dig)
+
+        # Section 10: Reject caller discovery digest override mismatch
+        if discovery_problem_digests is not None:
+            if discovery_problem_digests != auto_prob_digests:
+                raise ValueError(
+                    f"CALLER_DISCOVERY_DIGEST_MISMATCH: Caller provided discovery_problem_digests {discovery_problem_digests} does not match trace-derived {auto_prob_digests}"
+                )
 
         receipt = create_admissibility_receipt(
             terms=terms,
             result=au_res,
             status=status,
             branch_guards=branch_guards,
-            discovery_problem_digests=disc_prob_digests,
-            source_trace_digests=trace_digests,
+            discovery_problem_digests=auto_prob_digests,
+            source_trace_digests=auto_trace_digests,
         )
 
         cid = candidate_id or f"cand_{pattern.pattern_id}"
@@ -202,7 +238,6 @@ class CandidateFactory:
             "guard": branch_guards[0] if (branch_guards and len(set(branch_guards)) == 1) else None,
         }
 
-        source_trace_ids = list(pattern.extracted_terms.keys())
         cand_status = CandidateStatus.PROPOSED if status == AdmissibilityStatus.ADMISSIBLE else CandidateStatus.CANDIDATE_ONLY
         return AbstractionCandidate(
             candidate_id=cid,
@@ -211,7 +246,7 @@ class CandidateFactory:
             anti_unification_evidence=au_res,
             discovery_origin=getattr(pattern, "discovery_origin", "EXECUTED_OBSERVED"),
             discovery_set_trace_ids=source_trace_ids,
-            discovery_problem_digests=disc_prob_digests,
+            discovery_problem_digests=auto_prob_digests,
             status=cand_status,
             admissibility_status=status,
             admissibility_receipt=receipt.to_dict(),

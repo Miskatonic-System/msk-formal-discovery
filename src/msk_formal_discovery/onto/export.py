@@ -120,21 +120,22 @@ class OntoEvaluationPackage:
 
 
 class OntoExporter:
-    """Exports abstraction candidate evidence for external ONTO evaluation without pre-answering research questions."""
+    """Exports abstraction candidate evidence for external ONTO evaluation without pre-answering research questions (WO-MATH-FORMAL-DISCOVERY-01A-R4 Sections 26 & 27)."""
 
-    _KNOWN_ARTIFACT_REGISTRY: ClassVar[Dict[str, str]] = {}
+    FIXTURE_EVIDENCE_REGISTRY: ClassVar[Dict[str, str]] = {}
+    _KNOWN_ARTIFACT_REGISTRY = FIXTURE_EVIDENCE_REGISTRY
 
     @classmethod
     def register_evidence_artifact(cls, artifact_ref: str, artifact_digest: str) -> None:
-        """Register a known verified artifact into the exporter registry."""
-        cls._KNOWN_ARTIFACT_REGISTRY[artifact_ref] = artifact_digest
+        """Register an artifact into FIXTURE_EVIDENCE_REGISTRY (for fixture testing only; not 01B executed authority)."""
+        cls.FIXTURE_EVIDENCE_REGISTRY[artifact_ref] = artifact_digest
 
     register_artifact = register_evidence_artifact
 
     @classmethod
     def clear_evidence_registry(cls) -> None:
-        """Clear registered artifacts."""
-        cls._KNOWN_ARTIFACT_REGISTRY.clear()
+        """Clear registered fixture artifacts."""
+        cls.FIXTURE_EVIDENCE_REGISTRY.clear()
 
     @staticmethod
     def export(

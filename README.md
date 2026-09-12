@@ -1,33 +1,39 @@
 # Miskatonic Formal Discovery Engine (`msk-formal-discovery`)
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R3`
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R4`
 **Repository**: `Miskatonic-System/msk-formal-discovery`
 **Architecture Owner**: `Miskatonic-System/miskatonic-systems`
 **Upstream Sources**: `Miskatonic-System/msk-corpus-intake`, `Miskatonic-System/msk-epistemic-engine`
 **Evaluation Owner**: `Miskatonic-System/msk-onto`
-**Work Type**: `FINAL_EXECUTION_EVIDENCE_CLOSURE`
+**Work Type**: `PRODUCTION_BRIDGE_FINAL_REPAIR`
 **Authority**: `NONE` (Zero theorem proof or mathematical claim authority)
-**Historical 01A Predecessor**: `8d80e82d5936fb0df36afc95ff7bffb7d4915768` (`FORMAL_DISCOVERY_PROTOTYPE_SPINE_ESTABLISHED`)
+**Canonical Main**: `8d80e82d5936fb0df36afc95ff7bffb7d4915768` (`FORMAL_DISCOVERY_PROTOTYPE_SPINE_ESTABLISHED`)
 **Reviewed R1 Head**: `96587f8fa379aa972922b7f5e689728e36238f50`
 **Reviewed R2 Head**: `5a641eee2022d8ba54b20aef8708c6b380f3f987`
-**Earned Final Acceptance Disposition**: `FORMAL_DISCOVERY_SPINE_ACCEPTED`
+**Reviewed R3 Head**: `17724487c3e127ff0f6df07e2ad15824712078b4`
+**Blocking Source Review**: `5187890074`
+**Earned Final Ratification Disposition**: `FORMAL_DISCOVERY_SPINE_ACCEPTED`
 
 ---
 
-## Historical Disposition & R3 Final Closure Record
+## Historical Disposition & R4 Ratification Record
 
 1. **01A Prototype Baseline**: Root commit `8d80e82d5936fb0df36afc95ff7bffb7d4915768` established the initial formal discovery prototype. `FORMAL_DISCOVERY_SPINE_READY` was withheld due to simulated backends, missing process receipts, and formula-based qualification.
 2. **01A-R1 Authority Repair**: Head commit `96587f8fa379aa972922b7f5e689728e36238f50` established execution-authority separation and paired replay contracts.
 3. **01A-R2 Evidence Chain & Trace Semantics**: Head commit `5a641eee2022d8ba54b20aef8708c6b380f3f987` resolved initial evidence-chain defects across 79 deterministic tests.
-4. **01A-R3 Final Execution Evidence Closure**: Under `WO-MATH-FORMAL-DISCOVERY-01A-R3`, all final evidence custody seams and hostile invariants have been sealed across 99 deterministic tests:
-   - **Search-Execution Provenance Seal**: Implemented `SearchExecutor` producing attested `SearchExecutionReceipt` instances (`schemas/search-execution-receipt.v0.1.schema.json`). Replay receipts claiming `EXECUTED_SEARCH_RUN` strictly require and cross-check matching `search_execution_receipt`.
-   - **Digest-Complete Paired Experiments**: `PairedReplayContract` computes complete digests across `backend_configuration`, `source_graph_context`, `environment_identity`, and `search_policy_configuration`, enforcing exact arm parity.
-   - **Strict 64-char Hex Problem Digest**: Enforced `^[0-9a-f]{64}$` for all problem digests across candidates, traces, contracts, and receipts. Problem labels as digests are strictly rejected.
-   - **Backend Receipt Canonicalization & Validation**: Automatic schema validation of embedded receipts; cross-consistency checks on `executable_version` / `backend_version`, `input_digest`, exit codes, and authority classes.
-   - **Discovery-Origin Custody**: Traces track event origins; `SubtraceMiner` excludes `CLIENT_DECLARED` and `SYNTHETIC_FIXTURE` in production; `AbstractionCandidate` tracks `discovery_origin`. Synthetic discovery candidates cannot qualify into `QUALIFIED_HELD_OUT`.
-   - **Admissibility Evidence Validation**: Governed by `AdmissibilityReceipt` (`schemas/admissibility-receipt.v0.1.schema.json`) with deterministic LGG recomputation, meaningful shared constructor checks, and independent validation at qualification time.
-   - **ONTO Evidence Closure**: Prohibited naked booleans; `OntoEvidenceRef.validate()` requires resolvable verified artifacts and matching digests before admitting `SUPPORTED`.
-   - **Positive Hostile Control & Complete Hostile Suite**: Verified Section 27 positive hostile control and all 19 Section 28 hostile invariant test cases across 61 hostile tests.
+4. **01A-R3 Final Execution Evidence Closure**: Head commit `17724487c3e127ff0f6df07e2ad15824712078b4` sealed evidence custody seams across 99 deterministic tests.
+5. **01A-R4 Production Bridge Final Repair & Spine Ratification**: Under `WO-MATH-FORMAL-DISCOVERY-01A-R4`, all production bridges for 01B have been completely repaired and sealed across 115 deterministic tests:
+   - **Factory-Bound Search Execution Provenance**: Opaque `SearchExecutionWitness` is minted only inside `SearchExecutor.execute(...)`. Caller-constructed replay receipts without witness cannot confer executed qualification capability (`CALLER_CONSTRUCTED_REPLAY_RECEIPT != EXECUTED_REPLAY_EVIDENCE`).
+   - **Search-Bundle Replay Bridge Repair**: `ReplayRunReceipt.from_search_execution_bundle` consumes actual `SearchExecutionReceipt` and `SearchRun` fields (`run_id`, `resulting_trace_refs`, `resulting_trace_digests`). Nonexistent legacy fields are eliminated.
+   - **Automatic Discovery-Unit Derivation**: `CandidateFactory.from_pattern` automatically maps `source_trace_ids` to `trace_problem_digests[tid]` and `trace_digests[tid]` preserving deterministic trace order. The dictionary key-extraction regression is permanently eliminated.
+   - **Caller Discovery Digest Override Rejection**: Any mismatch between caller-supplied discovery problem digests and automatically derived digests fails closed (`CALLER_DISCOVERY_DIGEST_MISMATCH`).
+   - **Missing Trace Identity Fail-Closed**: Any source trace lacking valid 64-char hex `problem_digest` or `trace_digest` fails closed (`MISSING_SOURCE_PROBLEM_DIGEST`, `MISSING_SOURCE_TRACE_DIGEST`).
+   - **Solved-State Normalization**: Canonical `is_successful_terminal(status)` predicate unifies successful terminal status handling across `SearchExecutor` and replay bridges, accepting `"SUCCESS"` and `"SOLVED"`.
+   - **Initial-State, Transition, and Policy Identity Binding**: `initial_state_digest`, `transition_model_id`, `transition_model_digest`, and `search_policy_implementation_digest` are bound into `PairedReplayContract`, `SearchExecutionReceipt`, and replay receipts, enforcing complete arm parity.
+   - **Candidate Application State**: Receipts record `candidate_application_status` (`DISABLED`, `REQUESTED_NOT_APPLIED`, `APPLIED`). Replay qualification strictly requires `APPLIED` on abstracted arm and `DISABLED` on baseline arm.
+   - **Executor Implementation Digest**: Cryptographically bound to actual file bytes of `search/executor.py` (`test_executor_implementation_digest_equals_actual_file_bytes`).
+   - **Trust Model & Evidence Boundary**: `RECEIPT_DIGEST = INTEGRITY`, `SearchExecutionBundle witness = LIVE EXECUTION PROVENANCE`, `FIXTURE_EVIDENCE_REGISTRY = TEST FIXTURES ONLY`.
+   - **Comprehensive Hostile Verification**: All 17 Section 28 hostile invariant test cases and positive hostile controls pass with 0 failures across 78 hostile tests (115 total tests).
 
 The verified final disposition is:
 $$\text{FORMAL\_DISCOVERY\_SPINE\_ACCEPTED}$$

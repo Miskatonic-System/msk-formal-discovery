@@ -224,6 +224,7 @@ class ProblemDefinition:
     goals: List[str]
     assumptions: List[str]
     timeout_seconds: float = 30.0
+    problem_digest: Optional[str] = None
 
 
 class ReasoningBackend(abc.ABC):

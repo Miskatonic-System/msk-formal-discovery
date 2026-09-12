@@ -264,6 +264,7 @@ def test_end_to_end_discovery_pipeline_demonstration():
         context={},
         goals=["True"],
         assumptions=[],
+        problem_digest=exec_prob_digest,
     )
     mcts_policy = MCTSSearch({"max_rollouts": 5})
     init_state = SearchState(state_id="init_0", goal="True", depth=0)
@@ -275,11 +276,34 @@ def test_end_to_end_discovery_pipeline_demonstration():
         budget={"max_nodes": 10, "max_depth": 5},
         random_seed=42,
         corpus_context={},
+        candidate_id="c-demo",
+        candidate_enabled=False,
     )
     assert bundle.search_run.replay_mode == "EXECUTED_SEARCH_RUN"
     bundle.receipt.validate()
     jsonschema.validate(bundle.receipt.to_dict(), SEARCH_EXECUTION_RECEIPT_SCHEMA)
     assert bundle.search_run.search_execution_receipt is not None
+    bundle.validate()
+    assert SearchExecutor.verify_bundle_witness(bundle) is True
+
+    # Section 2: Demonstrate ReplayRunReceipt.from_search_execution_bundle bridge
+    paired_contract = PairedReplayContract(
+        problem_id="prob-executed-mcts",
+        problem_digest=exec_prob_digest,
+        backend_id="lean4",
+        search_policy_kind="MCTS",
+        search_budget={"max_nodes": 10, "max_depth": 5},
+        random_seed=42,
+        corpus_context={},
+        baseline_configuration={},
+        abstracted_configuration={"candidate_id": "c-demo"},
+        candidate_id="c-demo",
+        candidate_enabled_in_abstracted=True,
+    )
+    exec_replay_rcpt = ReplayRunReceipt.from_search_execution_bundle(bundle, paired_contract, "BASELINE")
+    exec_replay_rcpt.validate()
+    assert exec_replay_rcpt.evidence_origin == "EXECUTED_SEARCH_RUN"
+    assert exec_replay_rcpt.search_run_ref == bundle.receipt.run_id
 
     # Prove that EXECUTED_SEARCH_RUN cannot be manually forged without SearchExecutionReceipt
     from msk_formal_discovery.core.exceptions import ReceiptValidationError

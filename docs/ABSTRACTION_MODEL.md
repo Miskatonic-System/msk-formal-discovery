@@ -1,6 +1,6 @@
 # Automated Abstraction & Anti-Unification Model
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R3`
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R4`
 **Module**: `msk-formal-discovery/docs/ABSTRACTION_MODEL.md`
 **Final Disposition**: `FORMAL_DISCOVERY_SPINE_ACCEPTED`
 
@@ -82,7 +82,7 @@ The kernel evaluates terms against strict structural guards:
 
 ---
 
-## 4. Subtrace Mining & Origin Custody
+## 4. Subtrace Mining & Automatic Discovery-Unit Derivation
 
 The [`SubtraceMiner`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/abstraction/subtrace_miner.py) discovers recurring n-gram sequences:
 1. Slices successful proof paths via `TraceNormalizer.slice_successful_path`.
@@ -91,6 +91,15 @@ The [`SubtraceMiner`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_
 4. Extracts contiguous operation sub-sequences of length $L \in [\text{min\_length}, \text{min\_length} + 4]$.
 5. Evaluates support across distinct trace IDs and canonical `problem_digests`. Subtraces appearing in $\ge \text{min\_support}$ distinct traces are fed to the anti-unifier.
 6. Candidates retain explicit `discovery_origin` (`EXECUTED_SEARCH_MINING`, `CLIENT_DECLARED_MINING`, `SYNTHETIC_FIXTURE`) and `qualification_problem_ids`.
+
+### 4.1 Automatic Discovery-Unit Derivation (`CandidateFactory.from_pattern`)
+Under `WO-MATH-FORMAL-DISCOVERY-01A-R4`:
+- `discovery_problem_digests` and `source_trace_digests` are derived automatically by projecting over source trace IDs in deterministic order:
+  $$\text{discovery\_problem\_digests} = [\text{trace\_problem\_digests}[t] \text{ for } t \in \text{source\_trace\_ids}]$$
+  $$\text{source\_trace\_digests} = [\text{trace\_digests}[t] \text{ for } t \in \text{source\_trace\_ids}]$$
+- The previous dictionary key-extraction regression is permanently eliminated.
+- **Fail-Closed Missing Identity**: Any trace missing a valid 64-char lowercase hex `problem_digest` or `trace_digest` immediately raises `AbstractionCandidateError` (`MISSING_SOURCE_PROBLEM_DIGEST`, `MISSING_SOURCE_TRACE_DIGEST`).
+- **Caller Override Rejection**: If the caller passes explicit discovery digests that conflict with the automatically derived trace digests, the factory fails closed with `CALLER_DISCOVERY_DIGEST_MISMATCH`.
 
 ---
 
@@ -106,6 +115,9 @@ For every held-out problem instance, a [`PairedReplayContract`](file:///home/kow
 - Attested `backend_digest` (64-char lowercase hex)
 - Attested `source_graph_digest` (64-char lowercase hex)
 - Attested `search_policy_digest` (64-char lowercase hex)
+- Attested `initial_state_digest` (64-char lowercase hex)
+- Attested `transition_model_id` and `transition_model_digest` (64-char lowercase hex)
+- Attested `search_policy_implementation_digest` (64-char lowercase hex)
 - Identical search budget and random seed
 - Identical corpus context
 
@@ -113,22 +125,25 @@ The contract computes a SHA-256 `contract_digest` enforcing:
 $$\text{ALL NON-ABSTRACTION VARIABLES IDENTICAL}$$
 Any configuration drift between baseline and abstracted arms raises `PairedReplayViolationError`.
 
-### 5.3 Replay Run Receipts & Cross-Checks
+### 5.3 Replay Run Receipts & Search-Bundle Bridge
 Replay runs produce attested receipts validating against [`schemas/replay-run-receipt.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/replay-run-receipt.v0.1.schema.json). Receipts verify:
 - Exact contract digest match
 - Consistency between search run metrics and receipt metrics
 - Disjointness between discovery problem digests and qualification problem digests
-- Cross-checking of underlying [`SearchExecutionReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/search-execution-receipt.v0.1.schema.json) records for baseline and abstracted arms.
+- Candidate application state: `DISABLED` on baseline arm, `APPLIED` on abstracted arm.
+- Factory-bound creation via `ReplayRunReceipt.from_search_execution_bundle(bundle, ...)` consuming verified `SearchExecutionBundle` instances.
+- Terminal success evaluation using canonical `is_successful_terminal(status)`.
 
 ### 5.4 Replay Modes & Qualification Gating
 
 1. **`SYNTHETIC_REPLAY_FIXTURE`**:
-   - Uses fixture data or synthetic runs.
+   - Uses fixture data or synthetic runs (`FIXTURE_EVIDENCE_REGISTRY`).
    - Authority is strictly `NONE`.
    - **Cannot** qualify candidate into `QUALIFIED_HELD_OUT` (leaves status at `CANDIDATE_ONLY`).
    - Cannot establish functional search benefit.
 2. **`EXECUTED_SEARCH_RUN` / `CERTIFIED_SEARCH_REPLAY`**:
    - Genuinely executes search across held-out instances under paired replay contracts.
+   - Requires valid runtime HMAC `SearchExecutionWitness`. Caller-constructed replay receipts are rejected (`CALLER_CONSTRUCTED_REPLAY_RECEIPT != EXECUTED_REPLAY_EVIDENCE`).
    - Requires candidate `discovery_origin == "EXECUTED_SEARCH_MINING"`.
    - Evaluates observed compression ratio, evaluation reduction, and branch reduction.
    - Only this mode may promote candidate to `QUALIFIED_HELD_OUT`.

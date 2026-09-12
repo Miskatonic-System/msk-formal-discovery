@@ -35,6 +35,10 @@ class ExecutionTrace:
     wall_time_ms: float = 0.0
 
     def __post_init__(self) -> None:
+        if not self.problem_digest and self.problem_id:
+            import hashlib
+            self.problem_digest = hashlib.sha256(self.problem_id.encode("utf-8")).hexdigest()
+
         if self.problem_digest and not HEX_64_PATTERN.match(self.problem_digest):
             raise TraceValidationError(
                 f"INVALID_PROBLEM_DIGEST: problem_digest '{self.problem_digest}' is not a 64-char lowercase hex SHA-256"
@@ -215,6 +219,12 @@ class ExecutionTrace:
         if self.execution_receipt:
             data["execution_receipt"] = self.execution_receipt
         return data
+
+    def digest(self) -> str:
+        """Deterministic SHA-256 digest of trace content."""
+        import hashlib
+        serialized = json.dumps(self.to_dict(), sort_keys=True)
+        return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> ExecutionTrace:

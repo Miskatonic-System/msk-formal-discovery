@@ -147,3 +147,8 @@ class SearchRun:
             d["execution_trace_digests"] = list(self.execution_trace_digests)
         return d
 
+
+def is_successful_terminal(terminal_status: str) -> bool:
+    """Canonical predicate for successful search run terminal status (WO-MATH-FORMAL-DISCOVERY-01A-R4 Section 8)."""
+    return terminal_status in ("SUCCESS", "SOLVED")
+

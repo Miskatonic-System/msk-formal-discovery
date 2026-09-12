@@ -1,6 +1,6 @@
 # Search Policy Interfaces & Guidance Firewalls
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R3`
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R4`
 **Module**: `msk-formal-discovery/docs/SEARCH_MODEL.md`
 **Final Disposition**: `FORMAL_DISCOVERY_SPINE_ACCEPTED`
 
@@ -85,14 +85,24 @@ Search runs are persisted and validated against `schemas/search-run.v0.1.schema.
 
 ---
 
-## 5. Search Execution Provenance Receipts
+## 5. Search Execution Provenance Receipts & Runtime Witness
 
 Real search executions via [`SearchExecutor`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/search/executor.py) emit attested [`SearchExecutionReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/search-execution-receipt.v0.1.schema.json) records bundled in a [`SearchExecutionBundle`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/search/executor.py).
 
-Receipts enforce cryptographic provenance:
+### 5.1 Factory-Bound Witness Security
+Under `WO-MATH-FORMAL-DISCOVERY-01A-R4`:
+- A cryptographic `SearchExecutionWitness` is generated inside `SearchExecutor.execute(...)` signed with a runtime HMAC secret.
+- Caller-constructed replay receipts without witness cannot confer executed qualification capability (`CALLER_CONSTRUCTED_REPLAY_RECEIPT != EXECUTED_REPLAY_EVIDENCE`).
+- `SearchExecutionBundle.validate()` validates the witness, receipt schema, trace ID/digest cross-matching, and search run consistency.
+
+### 5.2 R4 Provenance Fields
+Receipts enforce comprehensive identity binding:
 - `receipt_id`, `run_id`, `problem_id`, `problem_digest` (canonical 64-char hex)
-- `search_policy_digest`, `environment_digest`, `backend_digest`
+- `search_policy_digest`, `search_policy_implementation_digest`
+- `environment_digest`, `backend_digest`
+- `initial_state_digest`, `transition_model_id`, `transition_model_digest`
+- `candidate_application_status` (`DISABLED`, `REQUESTED_NOT_APPLIED`, `APPLIED`) and optional `candidate_application_digest`
 - `execution_start_time` (ISO 8601 UTC) and `execution_wall_time_ms`
-- `terminal_status` (`SUCCESS`, `EXHAUSTED`, `TIMEOUT`, `BUDGET_REACHED`, `FAILED`)
+- `terminal_status` (`SUCCESS`, `EXHAUSTED`, `TIMEOUT`, `BUDGET_REACHED`, `FAILED`), normalized with canonical `is_successful_terminal(status)`
 - `resulting_trace_id` and `resulting_trace_digest` (verified against actual trace)
-- Cross-checks: Attached receipts verify that trace IDs and SHA-256 digests match exactly. Failure raises `ReceiptValidationError`.
+- `executor_implementation_digest`: Bound to the actual file bytes of `search/executor.py` (`test_executor_implementation_digest_equals_actual_file_bytes`).

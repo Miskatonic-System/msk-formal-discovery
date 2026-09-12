@@ -1,24 +1,24 @@
 # Architecture & Pipeline Specification
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R3`
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R4`
 **Module**: `msk-formal-discovery/docs/ARCHITECTURE.md`
 **Historical 01A Predecessor**: `8d80e82d5936fb0df36afc95ff7bffb7d4915768` (`FORMAL_DISCOVERY_PROTOTYPE_SPINE_ESTABLISHED`)
 **R1 Head**: `96587f8fa379aa972922b7f5e689728e36238f50`
 **R2 Head**: `5a641eee2022d8ba54b20aef8708c6b380f3f987`
+**R3 Head**: `17724487c3e127ff0f6df07e2ad15824712078b4`
 **Final Disposition**: `FORMAL_DISCOVERY_SPINE_ACCEPTED`
 
 ---
 
-## Historical Disposition & R3 Closure Record
+## Historical Disposition & R4 Ratification Record
 
-Under `WO-MATH-FORMAL-DISCOVERY-01A-R3`, the final evidence-custody seam has been sealed, elevating the formal discovery spine to final acceptance:
-1. **Search-Execution Provenance Seal**: Implemented [`SearchExecutionReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/search-execution-receipt.v0.1.schema.json) certifying problem, policy, environment, backend, and trace bindings with strict terminal status and wall time validation.
-2. **Digest-Complete Paired Experiments**: [`PairedReplayContract`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/abstraction/replay.py) binds exact 64-char lowercase hex digests for environment, backend, source-graph, and search policy, enforcing strict arm parity and contract digest recomputation.
-3. **Backend Receipt Canonicalization**: Execution traces embed and validate backend execution receipts against schema, enforcing binary version match and input digest consistency. SMT/Z3 adapter structurally parses `unknown` verdicts.
-4. **Discovery-Origin Custody**: Abstraction candidates and replay engines track `discovery_origin` and `qualification_problem_ids`; synthetic fixtures and client-declared hints cannot qualify non-synthetic discoveries.
-5. **Admissibility Evidence Validation**: Structural anti-unifier issues attested [`AdmissibilityReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/admissibility-receipt.v0.1.schema.json) with deterministic LGG and term digest recomputation, rejecting vacuous wrapper generalizations.
-6. **ONTO Evidence Closure**: Prohibits naked booleans and validates structured `OntoEvidenceRef` artifacts against a verified evidence registry.
-7. **Comprehensive Hostile Verification**: 99 test cases spanning 19 hostile invariant suites and positive hostile controls pass with 0 failures under `CLAIM CEILING: NONE` and `CANONICAL LIBRARY MUTATION: PROHIBITED`.
+Under `WO-MATH-FORMAL-DISCOVERY-01A-R4`, all production bridges for 01B have been completely repaired and sealed, ratifying the formal discovery spine:
+1. **Search-Execution Provenance Witness**: Implemented factory-bound `SearchExecutionWitness` and `SearchExecutionBundle` certifying problem, policy, environment, backend, and trace bindings. Caller-constructed replay receipts without witness cannot confer executed qualification capability.
+2. **Search-Bundle Replay Bridge Repair**: `ReplayRunReceipt.from_search_execution_bundle` bridges execution receipts into replay receipts with verified fields (`run_id`, `resulting_trace_refs`, `resulting_trace_digests`).
+3. **Automatic Discovery-Unit Derivation**: `CandidateFactory.from_pattern` automatically maps trace IDs to canonical problem digests and trace digests preserving deterministic order, failing closed on missing trace identity (`MISSING_SOURCE_PROBLEM_DIGEST`, `MISSING_SOURCE_TRACE_DIGEST`) and rejecting caller overrides (`CALLER_DISCOVERY_DIGEST_MISMATCH`).
+4. **Initial-State & Transition Model Binding**: Cryptographically binds `initial_state_digest`, `transition_model_id`, `transition_model_digest`, and `search_policy_implementation_digest` across paired contracts and receipts.
+5. **Solved-State Normalization**: Canonical `is_successful_terminal(status)` predicate unifies terminal success criteria across execution and replay (`"SUCCESS"`, `"SOLVED"`).
+6. **Comprehensive Hostile Verification**: 115 test cases spanning 19 hostile invariant suites, Section 28 requirements, and positive hostile controls pass with 0 failures under `CLAIM CEILING: NONE` and `CANONICAL LIBRARY MUTATION: PROHIBITED`.
 
 The earned disposition is:
 $$\text{FORMAL\_DISCOVERY\_SPINE\_ACCEPTED}$$

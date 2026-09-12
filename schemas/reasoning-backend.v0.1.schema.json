@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "miskatonic.reasoning-backend.v0.1",
+  "title": "Miskatonic Reasoning Backend Contract Schema v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "backend_id",
+    "backend_family",
+    "backend_version",
+    "logical_authority_class",
+    "status",
+    "supported_operations",
+    "configuration",
+    "adapter_identity"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "miskatonic.reasoning-backend.v0.1"
+    },
+    "backend_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "backend_family": {
+      "type": "string",
+      "enum": [
+        "SMT_SOLVER",
+        "MODEL_CHECKER",
+        "PROOF_ASSISTANT",
+        "SYMBOLIC_ORACLE",
+        "EXECUTABLE_ORACLE"
+      ]
+    },
+    "backend_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "logical_authority_class": {
+      "type": "string",
+      "enum": [
+        "SOLVER_SAT_OR_UNSAT",
+        "BOUNDED_EXHAUSTIVE_VERDICT",
+        "DEDUCTIVE_PROOF_AUTHORITY",
+        "SYMBOLIC_IDENTITY",
+        "EMPIRICAL_EXECUTION"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE_REFERENCE",
+        "ACTIVE_ADAPTER",
+        "PLANNED",
+        "DEPRECATED"
+      ]
+    },
+    "supported_operations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "configuration": {
+      "type": "object"
+    },
+    "adapter_identity": {
+      "type": "object",
+      "required": [
+        "adapter_class",
+        "implementation_ref",
+        "is_reference_adapter"
+      ],
+      "properties": {
+        "adapter_class": {
+          "type": "string"
+        },
+        "implementation_ref": {
+          "type": "string"
+        },
+        "is_reference_adapter": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

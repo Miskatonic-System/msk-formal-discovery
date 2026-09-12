@@ -1,0 +1,20 @@
+[project]
+name = "msk-formal-discovery"
+version = "0.1.0"
+description = "Heterogeneous formal discovery engine, execution trace IR, and automated abstraction kernel"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "jsonschema>=4.20",
+]
+
+[build-system]
+requires = ["setuptools>=61.0.0"]
+build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = ["pytest>=8.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

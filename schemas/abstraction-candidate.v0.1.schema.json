@@ -1,0 +1,231 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "miskatonic.abstraction-candidate.v0.1",
+  "title": "Miskatonic Abstraction Candidate Schema v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "candidate_id",
+    "candidate_kind",
+    "status",
+    "formal_specification",
+    "anti_unification_evidence",
+    "discovery_set_trace_ids",
+    "qualification_trace_ids",
+    "held_out_evaluation",
+    "onto_export",
+    "authority"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "miskatonic.abstraction-candidate.v0.1"
+    },
+    "candidate_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidate_kind": {
+      "type": "string",
+      "enum": [
+        "LEMMA",
+        "REWRITE_RULE",
+        "PRECONDITION",
+        "NORMALIZATION_RULE",
+        "LIBRARY_BRIDGE",
+        "TACTIC_MACRO",
+        "API_FUNCTION",
+        "MODULE_BOUNDARY"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PROPOSED",
+        "QUALIFIED_HELD_OUT",
+        "REJECTED",
+        "CANDIDATE_ONLY"
+      ]
+    },
+    "formal_specification": {
+      "type": "object",
+      "required": [
+        "name",
+        "canonical_representation"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "canonical_representation": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "signature": {
+          "type": "string"
+        }
+      }
+    },
+    "anti_unification_evidence": {
+      "type": "object",
+      "required": [
+        "algorithm_version",
+        "least_general_generalization",
+        "source_trace_ids",
+        "substitution_witnesses",
+        "deterministic_digest"
+      ],
+      "properties": {
+        "algorithm_version": {
+          "type": "string"
+        },
+        "least_general_generalization": {
+          "type": "string"
+        },
+        "source_trace_ids": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string"
+          }
+        },
+        "substitution_witnesses": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": [
+              "trace_id",
+              "substitutions"
+            ],
+            "properties": {
+              "trace_id": {
+                "type": "string"
+              },
+              "substitutions": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "deterministic_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "discovery_set_trace_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "qualification_trace_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "held_out_evaluation": {
+      "type": "object",
+      "required": [
+        "is_held_out_disjoint_from_discovery",
+        "supporting_trace_count",
+        "structural_compression_ratio",
+        "proof_branch_reduction",
+        "candidate_evaluation_reduction",
+        "held_out_success_rate_delta",
+        "wall_time_delta_pct"
+      ],
+      "properties": {
+        "is_held_out_disjoint_from_discovery": {
+          "type": "boolean"
+        },
+        "supporting_trace_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "structural_compression_ratio": {
+          "type": "number",
+          "minimum": 0
+        },
+        "proof_branch_reduction": {
+          "type": "number"
+        },
+        "candidate_evaluation_reduction": {
+          "type": "number"
+        },
+        "held_out_success_rate_delta": {
+          "type": "number"
+        },
+        "wall_time_delta_pct": {
+          "type": "number"
+        },
+        "portability_across_instances": {
+          "type": "number"
+        },
+        "portability_across_formal_systems": {
+          "type": "number"
+        },
+        "human_inspectable_representation_size": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "blueprint_family": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "MICRO_LEMMA",
+        "HIDDEN_PRECONDITION",
+        "TYPECLASS_REQUIREMENT",
+        "NORMALIZATION_LEMMA",
+        "LIBRARY_BRIDGE",
+        "FORMAL_DEPENDENCY",
+        "AMBIGUITY",
+        "UNRESOLVED_SYMBOL",
+        null
+      ]
+    },
+    "onto_export": {
+      "type": "object",
+      "required": [
+        "recurrence_count",
+        "representation_invariance",
+        "cross_search_policy_recurrence",
+        "functional_search_benefit"
+      ],
+      "properties": {
+        "recurrence_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "representation_invariance": {
+          "type": "boolean"
+        },
+        "cross_search_policy_recurrence": {
+          "type": "boolean"
+        },
+        "cross_formal_system_recurrence": {
+          "type": "boolean"
+        },
+        "functional_search_benefit": {
+          "type": "boolean"
+        }
+      }
+    },
+    "authority": {
+      "type": "string",
+      "const": "NONE"
+    }
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "miskatonic.refactoring-proposal.v0.1",
+  "title": "Miskatonic Refactoring Proposal Schema v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "proposal_id",
+    "candidate_id",
+    "refactoring_kind",
+    "before_state",
+    "proposed_after_state",
+    "semantic_obligations",
+    "affected_traces",
+    "expected_compression",
+    "replay_plan",
+    "canonical_library_mutated",
+    "authority"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "miskatonic.refactoring-proposal.v0.1"
+    },
+    "proposal_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidate_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "refactoring_kind": {
+      "type": "string",
+      "enum": [
+        "EXTRACTED_HELPER_LEMMA",
+        "COMMON_PROOF_COMBINATOR",
+        "MODULE_EXTRACTION",
+        "API_SIGNATURE",
+        "REPEATED_CONSTRAINT_HELPER",
+        "REPEATED_TACTIC_SEQUENCE"
+      ]
+    },
+    "before_state": {
+      "type": "object",
+      "required": [
+        "representation",
+        "token_or_ast_size"
+      ],
+      "properties": {
+        "representation": {
+          "type": "string"
+        },
+        "token_or_ast_size": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "proposed_after_state": {
+      "type": "object",
+      "required": [
+        "representation",
+        "token_or_ast_size"
+      ],
+      "properties": {
+        "representation": {
+          "type": "string"
+        },
+        "token_or_ast_size": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "semantic_obligations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "affected_traces": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "expected_compression": {
+      "type": "number",
+      "minimum": 0
+    },
+    "replay_plan": {
+      "type": "object",
+      "required": [
+        "replay_target_traces",
+        "verification_backend"
+      ],
+      "properties": {
+        "replay_target_traces": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "verification_backend": {
+          "type": "string"
+        }
+      }
+    },
+    "canonical_library_mutated": {
+      "type": "boolean",
+      "const": false
+    },
+    "authority": {
+      "type": "string",
+      "const": "NONE"
+    }
+  }
+}

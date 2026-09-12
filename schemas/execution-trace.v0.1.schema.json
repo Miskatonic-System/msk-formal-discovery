@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "miskatonic.execution-trace.v0.1",
+  "title": "Miskatonic Execution Trace IR Schema v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "trace_id",
+    "problem_id",
+    "backend_id",
+    "backend_version",
+    "logical_authority_class",
+    "created_at",
+    "events",
+    "terminal_verdict",
+    "metrics"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "miskatonic.execution-trace.v0.1"
+    },
+    "trace_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "problem_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "backend_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "backend_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "logical_authority_class": {
+      "type": "string",
+      "enum": [
+        "SOLVER_SAT_OR_UNSAT",
+        "BOUNDED_EXHAUSTIVE_VERDICT",
+        "DEDUCTIVE_PROOF_AUTHORITY",
+        "SYMBOLIC_IDENTITY",
+        "EMPIRICAL_EXECUTION"
+      ]
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "sequence",
+          "event_type",
+          "backend_id",
+          "backend_version",
+          "parent_event_id",
+          "state_digest",
+          "operation",
+          "result_digest",
+          "provenance",
+          "logical_authority_class"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "event_type": {
+            "type": "string",
+            "enum": [
+              "INITIAL_PROBLEM",
+              "FORMAL_CONTEXT",
+              "GOAL_STATE",
+              "SUBGOAL_STATE",
+              "CONSTRAINTS",
+              "SELECTED_ACTION",
+              "RULE_APPLICATION",
+              "TACTIC_APPLICATION",
+              "GENERATED_SUBGOALS",
+              "SOLVER_ASSERTION",
+              "SAT_MODEL",
+              "UNSAT_CORE",
+              "REWRITE",
+              "LEMMA_INVOCATION",
+              "FAILURE",
+              "BACKTRACK",
+              "BRANCH",
+              "TERMINAL_VERDICT",
+              "RESOURCE_OBSERVATION"
+            ]
+          },
+          "backend_id": {
+            "type": "string"
+          },
+          "backend_version": {
+            "type": "string"
+          },
+          "parent_event_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "state_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "payload": {
+            "type": "object"
+          },
+          "result_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "provenance": {
+            "type": "object",
+            "required": [
+              "timestamp",
+              "origin"
+            ],
+            "properties": {
+              "timestamp": {
+                "type": "string"
+              },
+              "origin": {
+                "type": "string"
+              },
+              "caller": {
+                "type": "string"
+              }
+            }
+          },
+          "logical_authority_class": {
+            "type": "string",
+            "enum": [
+              "SOLVER_SAT_OR_UNSAT",
+              "BOUNDED_EXHAUSTIVE_VERDICT",
+              "DEDUCTIVE_PROOF_AUTHORITY",
+              "SYMBOLIC_IDENTITY",
+              "EMPIRICAL_EXECUTION"
+            ]
+          },
+          "typed_extension": {
+            "type": "object",
+            "required": [
+              "extension_name",
+              "extension_schema_version",
+              "data"
+            ],
+            "properties": {
+              "extension_name": {
+                "type": "string"
+              },
+              "extension_schema_version": {
+                "type": "string"
+              },
+              "data": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "terminal_verdict": {
+      "type": "string",
+      "enum": [
+        "PROVEN",
+        "REFUTED_SAT",
+        "UNSAT_REFUTED",
+        "TIMEOUT",
+        "INCOMPLETE",
+        "RESOURCE_EXHAUSTED",
+        "FAILED"
+      ]
+    },
+    "metrics": {
+      "type": "object",
+      "required": [
+        "event_count",
+        "branch_count",
+        "wall_time_ms"
+      ],
+      "properties": {
+        "event_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "branch_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "wall_time_ms": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

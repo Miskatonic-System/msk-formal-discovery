@@ -1,0 +1,70 @@
+{
+  "package_id": "onto-eval-macro_mul_one_add_zero",
+  "candidate_id": "macro_mul_one_add_zero",
+  "recurrence_count": 8,
+  "representation_invariance": "UNKNOWN",
+  "cross_search_policy_recurrence": "UNKNOWN",
+  "cross_formal_system_recurrence": "UNKNOWN",
+  "functional_search_benefit": "SUPPORTED",
+  "source_traces": [
+    "trace-disc-01",
+    "trace-disc-02",
+    "trace-disc-03",
+    "trace-disc-04",
+    "trace-disc-05",
+    "trace-disc-06",
+    "trace-disc-07",
+    "trace-disc-08"
+  ],
+  "structural_fingerprint": "a0b46b1f618a3b621dafc81885fda040dd5dc5761e8016a45c8f9e8ac8ab0bf3",
+  "evidence_refs": [
+    {
+      "evidence_kind": "FROZEN_R1_SCIENTIFIC_RESULT",
+      "artifact_ref": "experiments/formal-discovery-01b-r2/r1-original-result-freeze.json",
+      "artifact_digest": "7a9b7a14857311e8609ced51d2e7a0c6fa5a3d4ba78a453910ff28d9302d155a",
+      "evidence_status": "SUPPORTED",
+      "source_experimental_units": [
+        "1dec19dae0add463821335af100ca45f3ffbb77541fd098a02ceff35abde2458",
+        "02444a0f7a4bc3629d85fb417ea5720efa35525f1b6f711c5f1079a7bf7eaec9",
+        "130f649e401d83995b75a80cdd71a586ec1c33e941f69e574ec05a17c6571c6f",
+        "f038bd5c6dd5d2c294187694df8ea42fc6682a346a3403241ad429eded7dea9d",
+        "5f694efce529bc67a51c4f82d9bb7eb5d4518e7b5afc40322d98829aa3aafa81",
+        "9388aea7d5e217716c277be83cbc4bf9eea31be197468fd5110ebdd95a17d17b",
+        "c0ce9c5b25c4941c8ab623379b3d269ada8d45dea658e3da4516fb8cca2850be",
+        "a447e6b90b065b7401cfe6d07aa12c7b17c1daf90d0d5a64fa9ee08bcca9c5eb",
+        "0d75812b06662e8b8d723407e3a995f91c8b3a3827ea0212c4c2c340435a798d",
+        "23c0efb8747d88e29eb515e2d19639fc48ae68b607f4559a9fbc59057aec98db",
+        "29919a47342aae56cb20659d102cbc841c3a67f21375c1da76b81f8c2c7d36ab",
+        "c30a6cbb423dd9ce6460a87d3f502e935fb9463359ea331ccc09e0c40d8e5e69"
+      ],
+      "source_repository": "Miskatonic-System/msk-formal-discovery",
+      "source_commit": "d421e48f5345b3f28493b2098b6dabaa3c4c41e0"
+    },
+    {
+      "evidence_kind": "TERMINAL_STATE_CUSTODY_CLOSURE",
+      "artifact_ref": "experiments/formal-discovery-01b-r3/r1-terminal-custody-closure.v0.1.json",
+      "artifact_digest": "40ac582596100a9663de34e0851a4b344d594fce44904aaf8852814d6c9e4a3d",
+      "evidence_status": "SUPPORTED",
+      "source_experimental_units": [
+        "1dec19dae0add463821335af100ca45f3ffbb77541fd098a02ceff35abde2458",
+        "02444a0f7a4bc3629d85fb417ea5720efa35525f1b6f711c5f1079a7bf7eaec9",
+        "130f649e401d83995b75a80cdd71a586ec1c33e941f69e574ec05a17c6571c6f",
+        "f038bd5c6dd5d2c294187694df8ea42fc6682a346a3403241ad429eded7dea9d",
+        "5f694efce529bc67a51c4f82d9bb7eb5d4518e7b5afc40322d98829aa3aafa81",
+        "9388aea7d5e217716c277be83cbc4bf9eea31be197468fd5110ebdd95a17d17b",
+        "c0ce9c5b25c4941c8ab623379b3d269ada8d45dea658e3da4516fb8cca2850be",
+        "a447e6b90b065b7401cfe6d07aa12c7b17c1daf90d0d5a64fa9ee08bcca9c5eb",
+        "0d75812b06662e8b8d723407e3a995f91c8b3a3827ea0212c4c2c340435a798d",
+        "23c0efb8747d88e29eb515e2d19639fc48ae68b607f4559a9fbc59057aec98db",
+        "29919a47342aae56cb20659d102cbc841c3a67f21375c1da76b81f8c2c7d36ab",
+        "c30a6cbb423dd9ce6460a87d3f502e935fb9463359ea331ccc09e0c40d8e5e69"
+      ],
+      "source_repository": "Miskatonic-System/msk-formal-discovery",
+      "source_commit": "d421e48f5345b3f28493b2098b6dabaa3c4c41e0"
+    }
+  ],
+  "authority": "NONE",
+  "functional_search_benefit_scope": "NODE_EXPANSION_SEARCH_STRUCTURE",
+  "end_to_end_runtime_benefit": "NOT_ESTABLISHED",
+  "claim_ceiling": "ENGINEERING_ABSTRACTION_EFFECT_ONLY"
+}

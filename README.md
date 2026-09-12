@@ -1,39 +1,40 @@
 # Miskatonic Formal Discovery Engine (`msk-formal-discovery`)
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R4`
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`
 **Repository**: `Miskatonic-System/msk-formal-discovery`
 **Architecture Owner**: `Miskatonic-System/miskatonic-systems`
 **Upstream Sources**: `Miskatonic-System/msk-corpus-intake`, `Miskatonic-System/msk-epistemic-engine`
 **Evaluation Owner**: `Miskatonic-System/msk-onto`
-**Work Type**: `PRODUCTION_BRIDGE_FINAL_REPAIR`
+**Work Type**: `CANDIDATE_APPLICATION_AUTHORITY_REPAIR`
 **Authority**: `NONE` (Zero theorem proof or mathematical claim authority)
 **Canonical Main**: `8d80e82d5936fb0df36afc95ff7bffb7d4915768` (`FORMAL_DISCOVERY_PROTOTYPE_SPINE_ESTABLISHED`)
 **Reviewed R1 Head**: `96587f8fa379aa972922b7f5e689728e36238f50`
 **Reviewed R2 Head**: `5a641eee2022d8ba54b20aef8708c6b380f3f987`
 **Reviewed R3 Head**: `17724487c3e127ff0f6df07e2ad15824712078b4`
-**Blocking Source Review**: `5187890074`
+**Reviewed R4 Head**: `6d80eb75c7949358597022a69eb7536faeafe59d`
+**Blocking Source Review**: `5188003849`
 **Earned Final Ratification Disposition**: `FORMAL_DISCOVERY_SPINE_ACCEPTED`
 
 ---
 
-## Historical Disposition & R4 Ratification Record
+## Historical Disposition & R4-R1 Ratification Record
 
 1. **01A Prototype Baseline**: Root commit `8d80e82d5936fb0df36afc95ff7bffb7d4915768` established the initial formal discovery prototype. `FORMAL_DISCOVERY_SPINE_READY` was withheld due to simulated backends, missing process receipts, and formula-based qualification.
 2. **01A-R1 Authority Repair**: Head commit `96587f8fa379aa972922b7f5e689728e36238f50` established execution-authority separation and paired replay contracts.
 3. **01A-R2 Evidence Chain & Trace Semantics**: Head commit `5a641eee2022d8ba54b20aef8708c6b380f3f987` resolved initial evidence-chain defects across 79 deterministic tests.
 4. **01A-R3 Final Execution Evidence Closure**: Head commit `17724487c3e127ff0f6df07e2ad15824712078b4` sealed evidence custody seams across 99 deterministic tests.
-5. **01A-R4 Production Bridge Final Repair & Spine Ratification**: Under `WO-MATH-FORMAL-DISCOVERY-01A-R4`, all production bridges for 01B have been completely repaired and sealed across 115 deterministic tests:
-   - **Factory-Bound Search Execution Provenance**: Opaque `SearchExecutionWitness` is minted only inside `SearchExecutor.execute(...)`. Caller-constructed replay receipts without witness cannot confer executed qualification capability (`CALLER_CONSTRUCTED_REPLAY_RECEIPT != EXECUTED_REPLAY_EVIDENCE`).
-   - **Search-Bundle Replay Bridge Repair**: `ReplayRunReceipt.from_search_execution_bundle` consumes actual `SearchExecutionReceipt` and `SearchRun` fields (`run_id`, `resulting_trace_refs`, `resulting_trace_digests`). Nonexistent legacy fields are eliminated.
-   - **Automatic Discovery-Unit Derivation**: `CandidateFactory.from_pattern` automatically maps `source_trace_ids` to `trace_problem_digests[tid]` and `trace_digests[tid]` preserving deterministic trace order. The dictionary key-extraction regression is permanently eliminated.
-   - **Caller Discovery Digest Override Rejection**: Any mismatch between caller-supplied discovery problem digests and automatically derived digests fails closed (`CALLER_DISCOVERY_DIGEST_MISMATCH`).
-   - **Missing Trace Identity Fail-Closed**: Any source trace lacking valid 64-char hex `problem_digest` or `trace_digest` fails closed (`MISSING_SOURCE_PROBLEM_DIGEST`, `MISSING_SOURCE_TRACE_DIGEST`).
-   - **Solved-State Normalization**: Canonical `is_successful_terminal(status)` predicate unifies successful terminal status handling across `SearchExecutor` and replay bridges, accepting `"SUCCESS"` and `"SOLVED"`.
-   - **Initial-State, Transition, and Policy Identity Binding**: `initial_state_digest`, `transition_model_id`, `transition_model_digest`, and `search_policy_implementation_digest` are bound into `PairedReplayContract`, `SearchExecutionReceipt`, and replay receipts, enforcing complete arm parity.
-   - **Candidate Application State**: Receipts record `candidate_application_status` (`DISABLED`, `REQUESTED_NOT_APPLIED`, `APPLIED`). Replay qualification strictly requires `APPLIED` on abstracted arm and `DISABLED` on baseline arm.
-   - **Executor Implementation Digest**: Cryptographically bound to actual file bytes of `search/executor.py` (`test_executor_implementation_digest_equals_actual_file_bytes`).
-   - **Trust Model & Evidence Boundary**: `RECEIPT_DIGEST = INTEGRITY`, `SearchExecutionBundle witness = LIVE EXECUTION PROVENANCE`, `FIXTURE_EVIDENCE_REGISTRY = TEST FIXTURES ONLY`.
-   - **Comprehensive Hostile Verification**: All 17 Section 28 hostile invariant test cases and positive hostile controls pass with 0 failures across 78 hostile tests (115 total tests).
+5. **01A-R4 Production Bridge Final Repair**: Head commit `6d80eb75c7949358597022a69eb7536faeafe59d` sealed production bridges across 115 deterministic tests.
+6. **01A-R4-R1 Candidate-Application Authority Closure & Spine Ratification**: Under `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`, candidate application authority was closed and the formal discovery spine ratified across 124 deterministic tests:
+   - **Caller APPLIED Authority Removed**: `SearchExecutor.execute(...)` derives application state itself; public caller cannot mint `APPLIED`. Attempting to set `APPLIED` is strictly rejected with `AuthorityViolationError`.
+   - **01A Application States Sealed**: `candidate_enabled = False` => `DISABLED`; `candidate_enabled = True` => `REQUESTED_NOT_APPLIED`. No 01A `SearchExecutor` invocation may emit `APPLIED`.
+   - **APPLIED Reserved for 01B**: `APPLIED` is frozen as a reserved future state requiring a governed `CandidateApplicator` and `CandidateApplicationReceipt` binding candidate artifact digest, applicator implementation digest, input state digest, output action surface digest, application semantics, and result.
+   - **Candidate-Aware Action Generator Eliminated**: The canonical execution path does not pass `candidate_id` into action generators. Baseline and candidate-requested arms receive identical inputs.
+   - **Transition Parity Enforced**: Baseline (`DISABLED`) and candidate-requested (`REQUESTED_NOT_APPLIED`) arms use identical action generators, transition models, policies, budgets, seeds, and environments.
+   - **Qualification Gate Sealed**: `QUALIFIED_HELD_OUT` requires abstracted `candidate_application_status = APPLIED`. Because 01A cannot produce `APPLIED`, candidate-requested runs remain `CANDIDATE_ONLY`.
+   - **ONTO Boundary Sealed**: ONTO export remains `functional_search_benefit = UNTESTED` for all candidate-requested runs. No canonical 01A test emits `SUPPORTED`.
+   - **Candidate Artifact Digest**: Deterministically binds `candidate_id`, `candidate_kind`, `formal_specification`, `lgg_digest`, and `admissibility_receipt_digest`.
+   - **Candidate Application Digest**: Explicitly binds status, candidate ID, and candidate artifact digest with invariant `REQUEST_DIGEST != APPLICATION_PROOF`.
+   - **Process-Local Witness Trust Statement**: Frozen: `PROCESS_LOCAL_PROVENANCE_WITNESS != HOSTILE_CODE_ISOLATION`. `SearchExecutionWitness` provides process-local provenance and anti-construction, not arbitrary code sandboxing inside Python.
 
 The verified final disposition is:
 $$\text{FORMAL\_DISCOVERY\_SPINE\_ACCEPTED}$$

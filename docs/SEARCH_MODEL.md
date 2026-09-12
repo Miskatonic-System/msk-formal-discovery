@@ -1,6 +1,6 @@
 # Search Policy Interfaces & Guidance Firewalls
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R4`
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`
 **Module**: `msk-formal-discovery/docs/SEARCH_MODEL.md`
 **Final Disposition**: `FORMAL_DISCOVERY_SPINE_ACCEPTED`
 
@@ -85,24 +85,38 @@ Search runs are persisted and validated against `schemas/search-run.v0.1.schema.
 
 ---
 
-## 5. Search Execution Provenance Receipts & Runtime Witness
+## 5. Search Execution Provenance, Candidate Application Closure, & Runtime Witness
 
 Real search executions via [`SearchExecutor`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/search/executor.py) emit attested [`SearchExecutionReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/search-execution-receipt.v0.1.schema.json) records bundled in a [`SearchExecutionBundle`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/search/executor.py).
 
-### 5.1 Factory-Bound Witness Security
-Under `WO-MATH-FORMAL-DISCOVERY-01A-R4`:
+### 5.1 Factory-Bound Witness Security & Trust Boundary
+Under `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`:
 - A cryptographic `SearchExecutionWitness` is generated inside `SearchExecutor.execute(...)` signed with a runtime HMAC secret.
 - Caller-constructed replay receipts without witness cannot confer executed qualification capability (`CALLER_CONSTRUCTED_REPLAY_RECEIPT != EXECUTED_REPLAY_EVIDENCE`).
 - `SearchExecutionBundle.validate()` validates the witness, receipt schema, trace ID/digest cross-matching, and search run consistency.
+- **Process-Local Witness Trust Note (Section 16)**:
+  `SearchExecutionWitness` is a process-local provenance and anti-construction mechanism, NOT a cryptographic security boundary against arbitrary code executing inside the same Python interpreter:
+  $$\text{PROCESS\_LOCAL\_PROVENANCE\_WITNESS} \neq \text{HOSTILE\_CODE\_ISOLATION}$$
 
-### 5.2 R4 Provenance Fields
-Receipts enforce comprehensive identity binding:
-- `receipt_id`, `run_id`, `problem_id`, `problem_digest` (canonical 64-char hex)
-- `search_policy_digest`, `search_policy_implementation_digest`
-- `environment_digest`, `backend_digest`
-- `initial_state_digest`, `transition_model_id`, `transition_model_digest`
-- `candidate_application_status` (`DISABLED`, `REQUESTED_NOT_APPLIED`, `APPLIED`) and optional `candidate_application_digest`
-- `execution_start_time` (ISO 8601 UTC) and `execution_wall_time_ms`
-- `terminal_status` (`SUCCESS`, `EXHAUSTED`, `TIMEOUT`, `BUDGET_REACHED`, `FAILED`), normalized with canonical `is_successful_terminal(status)`
-- `resulting_trace_id` and `resulting_trace_digest` (verified against actual trace)
-- `executor_implementation_digest`: Bound to the actual file bytes of `search/executor.py` (`test_executor_implementation_digest_equals_actual_file_bytes`).
+### 5.2 Candidate Application Closure & State Freeze (Sections 2-6)
+- **Removal of Caller APPLIED Control**: `SearchExecutor.execute(...)` derives application status itself:
+  - `candidate_enabled = False` $\implies$ `DISABLED`
+  - `candidate_enabled = True` $\implies$ `REQUESTED_NOT_APPLIED`
+- **Caller Requests for APPLIED Rejected**: Any caller attempt to set `candidate_application_status = "APPLIED"` raises `AuthorityViolationError`.
+- **Reserved State for 01B**: `APPLIED` is frozen as a reserved future state requiring a governed `CandidateApplicator` and `CandidateApplicationReceipt`.
+- **Action-Generator Parity**: `action_generator` receives identical inputs in baseline and candidate-requested arms; candidate ID is never passed into the action generator.
+
+### 5.3 Candidate Digests & Invariants (Sections 12 & 13)
+- **Candidate Artifact Digest**: Binds `candidate_id`, `candidate_kind`, `formal_specification`, `lgg_digest`, and `admissibility_receipt_digest`.
+- **Candidate Application Digest**: Binds status, requested candidate ID, and candidate artifact digest, enforcing:
+  $$\text{REQUEST\_DIGEST} \neq \text{APPLICATION\_PROOF}$$
+
+### 5.4 Future 01B Application Contract (Section 14)
+`CandidateApplicationReceipt` must eventually bind:
+- candidate artifact digest
+- applicator implementation digest
+- input search state digest
+- output / transformed search state or action surface digest
+- application semantics and result
+- exact experimental unit
+Only such evidence may establish `APPLIED`.

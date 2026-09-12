@@ -1,6 +1,8 @@
 """Abstraction candidate representations, fail-closed defaults, and lifecycle (WO-MATH-FORMAL-DISCOVERY-01A-R1)."""
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 from dataclasses import dataclass, field
 from enum import Enum
@@ -148,6 +150,78 @@ class AbstractionCandidate:
         if self.admissibility_receipt is not None:
             data["admissibility_receipt"] = self.admissibility_receipt
         return data
+
+    def artifact_digest(self) -> str:
+        """Compute deterministic SHA-256 candidate artifact digest (WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Section 13)."""
+        return compute_candidate_artifact_digest(self)
+
+
+def compute_candidate_artifact_digest(candidate: Any) -> str:
+    """Compute deterministic SHA-256 digest over the candidate artifact (WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Section 13).
+
+    At minimum binds:
+    - candidate_id
+    - candidate_kind
+    - formal_specification
+    - LGG digest
+    - admissibility receipt digest
+
+    This establishes WHAT was requested. It does NOT establish application.
+    """
+    if candidate is None:
+        return "0" * 64
+
+    if isinstance(candidate, AbstractionCandidate):
+        cid = candidate.candidate_id
+        ckind = candidate.candidate_kind.value if hasattr(candidate.candidate_kind, "value") else str(candidate.candidate_kind)
+        spec_str = json.dumps(candidate.formal_specification, sort_keys=True)
+
+        if hasattr(candidate, "anti_unification_evidence") and candidate.anti_unification_evidence:
+            lgg_dig = getattr(candidate.anti_unification_evidence, "deterministic_digest", None)
+            if not lgg_dig and hasattr(candidate.anti_unification_evidence, "lgg_term"):
+                lgg_dig = candidate.anti_unification_evidence.lgg_term.digest()
+            if not lgg_dig:
+                lgg_dig = hashlib.sha256(str(candidate.anti_unification_evidence).encode("utf-8")).hexdigest()
+        else:
+            lgg_dig = "0" * 64
+
+        if candidate.admissibility_receipt:
+            if isinstance(candidate.admissibility_receipt, dict):
+                adm_dig = candidate.admissibility_receipt.get("receipt_digest", "")
+            else:
+                adm_dig = getattr(candidate.admissibility_receipt, "receipt_digest", "")
+        else:
+            adm_dig = "0" * 64
+    elif isinstance(candidate, dict):
+        cid = candidate.get("candidate_id", "unknown_candidate")
+        ckind = str(candidate.get("candidate_kind", "LEMMA"))
+        spec_str = json.dumps(candidate.get("formal_specification", {}), sort_keys=True)
+        au = candidate.get("anti_unification_evidence", {})
+        lgg_dig = au.get("deterministic_digest", "") if isinstance(au, dict) else ""
+        adm = candidate.get("admissibility_receipt", {})
+        adm_dig = adm.get("receipt_digest", "") if isinstance(adm, dict) else ""
+    elif isinstance(candidate, str):
+        cid = candidate
+        ckind = "UNKNOWN"
+        spec_str = "{}"
+        lgg_dig = "0" * 64
+        adm_dig = "0" * 64
+    else:
+        cid = getattr(candidate, "candidate_id", str(candidate))
+        ckind = str(getattr(candidate, "candidate_kind", "UNKNOWN"))
+        spec_str = json.dumps(getattr(candidate, "formal_specification", {}), sort_keys=True)
+        lgg_dig = getattr(candidate, "lgg_digest", "0" * 64)
+        adm_dig = getattr(candidate, "admissibility_receipt_digest", "0" * 64)
+
+    payload = {
+        "candidate_id": cid,
+        "candidate_kind": ckind,
+        "formal_specification_digest": hashlib.sha256(spec_str.encode("utf-8")).hexdigest(),
+        "lgg_digest": lgg_dig or ("0" * 64),
+        "admissibility_receipt_digest": adm_dig or ("0" * 64),
+    }
+    return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
+
 
 
 class CandidateFactory:

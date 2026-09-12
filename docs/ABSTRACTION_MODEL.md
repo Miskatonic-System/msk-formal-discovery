@@ -1,6 +1,6 @@
 # Automated Abstraction & Anti-Unification Model
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R4`
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`
 **Module**: `msk-formal-discovery/docs/ABSTRACTION_MODEL.md`
 **Final Disposition**: `FORMAL_DISCOVERY_SPINE_ACCEPTED`
 
@@ -93,7 +93,7 @@ The [`SubtraceMiner`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_
 6. Candidates retain explicit `discovery_origin` (`EXECUTED_SEARCH_MINING`, `CLIENT_DECLARED_MINING`, `SYNTHETIC_FIXTURE`) and `qualification_problem_ids`.
 
 ### 4.1 Automatic Discovery-Unit Derivation (`CandidateFactory.from_pattern`)
-Under `WO-MATH-FORMAL-DISCOVERY-01A-R4`:
+Under `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`:
 - `discovery_problem_digests` and `source_trace_digests` are derived automatically by projecting over source trace IDs in deterministic order:
   $$\text{discovery\_problem\_digests} = [\text{trace\_problem\_digests}[t] \text{ for } t \in \text{source\_trace\_ids}]$$
   $$\text{source\_trace\_digests} = [\text{trace\_digests}[t] \text{ for } t \in \text{source\_trace\_ids}]$$
@@ -103,10 +103,11 @@ Under `WO-MATH-FORMAL-DISCOVERY-01A-R4`:
 
 ---
 
-## 5. De-Fabricated Held-Out Replay & Digest-Complete Paired Contracts
+## 5. De-Fabricated Held-Out Replay, Application Boundary Freeze, & Paired Contracts
 
-### 5.1 Prohibition of Fabricated Benefit Formulas
+### 5.1 Prohibition of Fabricated Benefit Formulas & Positive Benefit Claims
 Predetermined improvement formulas (`baseline * 0.7`) are strictly prohibited. All qualification metrics must be **empirically observed** from search execution receipts or explicitly marked synthetic.
+Furthermore, under `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`, positive abstraction benefit claims are strictly **PROHIBITED** in 01A.
 
 ### 5.2 Digest-Complete Paired Replay Contract
 For every held-out problem instance, a [`PairedReplayContract`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/abstraction/replay.py) binds identical execution variables:
@@ -123,30 +124,69 @@ For every held-out problem instance, a [`PairedReplayContract`](file:///home/kow
 
 The contract computes a SHA-256 `contract_digest` enforcing:
 $$\text{ALL NON-ABSTRACTION VARIABLES IDENTICAL}$$
-Any configuration drift between baseline and abstracted arms raises `PairedReplayViolationError`.
+Any configuration drift between baseline and candidate-requested arms raises `PairedReplayViolationError`.
 
 ### 5.3 Replay Run Receipts & Search-Bundle Bridge
 Replay runs produce attested receipts validating against [`schemas/replay-run-receipt.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/replay-run-receipt.v0.1.schema.json). Receipts verify:
 - Exact contract digest match
 - Consistency between search run metrics and receipt metrics
 - Disjointness between discovery problem digests and qualification problem digests
-- Candidate application state: `DISABLED` on baseline arm, `APPLIED` on abstracted arm.
+- **Candidate Application State in 01A**: `DISABLED` on baseline arm, `REQUESTED_NOT_APPLIED` on candidate-requested arm.
+- Any caller attempt to assert `candidate_application_status == "APPLIED"` is rejected with `AuthorityViolationError`.
 - Factory-bound creation via `ReplayRunReceipt.from_search_execution_bundle(bundle, ...)` consuming verified `SearchExecutionBundle` instances.
 - Terminal success evaluation using canonical `is_successful_terminal(status)`.
 
-### 5.4 Replay Modes & Qualification Gating
+### 5.4 Candidate Application Authority Closure & Qualification Gating
 
 1. **`SYNTHETIC_REPLAY_FIXTURE`**:
    - Uses fixture data or synthetic runs (`FIXTURE_EVIDENCE_REGISTRY`).
    - Authority is strictly `NONE`.
-   - **Cannot** qualify candidate into `QUALIFIED_HELD_OUT` (leaves status at `CANDIDATE_ONLY`).
+   - Cannot qualify candidate into `QUALIFIED_HELD_OUT` (leaves status at `CANDIDATE_ONLY`).
    - Cannot establish functional search benefit.
-2. **`EXECUTED_SEARCH_RUN` / `CERTIFIED_SEARCH_REPLAY`**:
+2. **`EXECUTED_SEARCH_RUN` / `CERTIFIED_SEARCH_REPLAY` in 01A**:
    - Genuinely executes search across held-out instances under paired replay contracts.
    - Requires valid runtime HMAC `SearchExecutionWitness`. Caller-constructed replay receipts are rejected (`CALLER_CONSTRUCTED_REPLAY_RECEIPT != EXECUTED_REPLAY_EVIDENCE`).
    - Requires candidate `discovery_origin == "EXECUTED_SEARCH_MINING"`.
-   - Evaluates observed compression ratio, evaluation reduction, and branch reduction.
-   - Only this mode may promote candidate to `QUALIFIED_HELD_OUT`.
+   - **Retraction of 01A Qualification**: Because 01A search execution does not mutate search behavior and emits `REQUESTED_NOT_APPLIED` (not `APPLIED`), 01A cannot qualify candidates as `QUALIFIED_HELD_OUT`. All candidate-requested paired replay runs in 01A remain at `CANDIDATE_ONLY`.
+   - `functional_search_benefit` exported to ONTO is strictly `UNTESTED`.
+   - `QUALIFIED_HELD_OUT` is frozen and reserved for future 01B work orders.
+
+### 5.5 Candidate Digests & Invariants
+
+1. **Candidate Artifact Digest (`compute_candidate_artifact_digest`)**:
+   Deterministic SHA-256 digest binding:
+   - `candidate_id`
+   - `candidate_kind`
+   - Canonical `formal_specification`
+   - `lgg_term_digest`
+   - `admissibility_receipt_digest`
+   Available via `AbstractionCandidate.artifact_digest()` or standalone helper.
+2. **Candidate Application Digest (`compute_candidate_application_digest`)**:
+   Deterministic SHA-256 digest binding:
+   - `candidate_application_status`
+   - `candidate_id` (or `None`)
+   - `candidate_artifact_digest` (or `CANONICAL_DISABLED_APPLICATION_DIGEST`)
+   - Attribution statement:
+     $$\text{REQUEST\_DIGEST} \neq \text{APPLICATION\_PROOF}$$
+
+### 5.6 Process-Local Witness Trust Note
+
+> [!CAUTION]
+> **Process-Local Provenance Witness $\neq$ Hostile Code Isolation**
+> `SearchExecutionWitness` provides tamper-evident receipt binding and enforces factory-bound provenance against accidental bypass or caller-constructed receipts.
+> It does **not** provide cryptographic isolation against malicious code executing within the same Python interpreter process memory.
+> $$\text{PROCESS\_LOCAL\_PROVENANCE\_WITNESS} \neq \text{HOSTILE\_CODE\_ISOLATION}$$
+
+### 5.7 Future 01B Candidate Application Contract
+
+Full candidate application is deferred to `01B`. When implemented, a governed `CandidateApplicator` must emit an attested `CandidateApplicationReceipt` binding:
+- candidate artifact digest
+- applicator implementation digest
+- input search state digest
+- output/transformed search state or action surface digest
+- application semantics and execution outcome
+- exact experimental unit
+Only such evidence may legitimately establish `APPLIED` status.
 
 ---
 
@@ -157,16 +197,17 @@ stateDiagram-v2
     [*] --> UNASSESSED : Anti-Unification Discovery
     UNASSESSED --> PROPOSED : Admissibility Receipt (ADMISSIBLE)
     UNASSESSED --> REJECTED : Admissibility Receipt (TRIVIAL / INCOMPATIBLE)
-    PROPOSED --> QUALIFIED_HELD_OUT : Executed Paired Replay Success
+    PROPOSED --> CANDIDATE_ONLY : 01A Paired Replay (REQUESTED_NOT_APPLIED)
     PROPOSED --> CANDIDATE_ONLY : Synthetic Replay Fixture
+    PROPOSED --> QUALIFIED_HELD_OUT : [01B Only] Executed Paired Replay with APPLIED Receipt
     PROPOSED --> REJECTED : Replay Failure / Degradation
     QUALIFIED_HELD_OUT --> CANDIDATE_ONLY : Emitted Refactoring Proposal
 ```
 
 - **`UNASSESSED`**: Default initial state upon pattern discovery.
 - **`PROPOSED`**: Formally assessed as admissible, pending held-out replay.
-- **`QUALIFIED_HELD_OUT`**: Successfully evaluated on held-out traces with genuine observed search reduction.
-- **`CANDIDATE_ONLY`**: Evaluated under synthetic fixture or retained as non-qualified artifact.
+- **`CANDIDATE_ONLY`**: Evaluated under 01A candidate-requested replay or synthetic fixtures; retains candidate status without positive benefit claim.
+- **`QUALIFIED_HELD_OUT`**: [Reserved for 01B] Successfully evaluated under genuine candidate application (`APPLIED`) with observed search reduction.
 - **`REJECTED`**: Fails admissibility guards, degrades solve rate, or shows negative benefit.
 - **Refactoring Proposal**: Emits [`RefactoringProposal`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/refactoring/proposal.py) specifying:
   - `before_state` vs `proposed_after_state`

@@ -8,7 +8,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any, ClassVar, Dict, List, Optional, Union
 
-from msk_formal_discovery.abstraction.candidate import AbstractionCandidate
+from msk_formal_discovery.abstraction.candidate import AbstractionCandidate, CandidateStatus
 from msk_formal_discovery.core.exceptions import ReceiptValidationError
 
 HEX_DIGEST_PATTERN = re.compile(r"^[0-9a-f]{64}$")
@@ -199,7 +199,7 @@ class OntoExporter:
             func_benefit = "UNKNOWN"
             if candidate.held_out_evaluation:
                 mode = candidate.held_out_evaluation.get("replay_mode")
-                if mode == "EXECUTED_HELD_OUT_REPLAY":
+                if mode == "EXECUTED_HELD_OUT_REPLAY" and candidate.status == CandidateStatus.QUALIFIED_HELD_OUT:
                     comp = candidate.held_out_evaluation.get("structural_compression_ratio", 1.0)
                     eval_red = candidate.held_out_evaluation.get("candidate_evaluation_reduction", 0.0)
                     branch_red = candidate.held_out_evaluation.get("proof_branch_reduction", 0.0)
@@ -227,7 +227,9 @@ class OntoExporter:
                         evidence_refs.append(auto_ref)
                     else:
                         func_benefit = "NOT_SUPPORTED"
-                elif mode == "SYNTHETIC_REPLAY_FIXTURE":
+                else:
+                    # In 01A, candidate cannot achieve QUALIFIED_HELD_OUT because candidate_application_status
+                    # is REQUESTED_NOT_APPLIED; functional_search_benefit remains UNTESTED.
                     func_benefit = "UNTESTED"
 
         # Section 24: Prohibit functional_search_benefit = SUPPORTED with empty evidence_refs

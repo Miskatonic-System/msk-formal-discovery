@@ -22,6 +22,7 @@ from msk_formal_discovery.backend.contract import (
     ProblemDefinition,
     ReasoningBackend,
 )
+from msk_formal_discovery.abstraction.candidate import compute_candidate_artifact_digest
 from msk_formal_discovery.core.exceptions import (
     AuthorityViolationError,
     ReceiptValidationError,
@@ -39,6 +40,7 @@ from msk_formal_discovery.trace.events import EventOrigin, ExecutionTraceEvent, 
 from msk_formal_discovery.trace.ir import ExecutionTrace
 
 HEX_64_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+CANONICAL_DISABLED_APPLICATION_DIGEST: str = "0" * 64
 
 
 def get_executor_implementation_digest() -> str:
@@ -72,9 +74,44 @@ def get_policy_implementation_digest(policy: SearchPolicy) -> str:
     return hashlib.sha256(code.encode("utf-8")).hexdigest()
 
 
+def compute_candidate_application_digest(
+    status: str,
+    candidate_id: Optional[str] = None,
+    candidate_artifact_digest: Optional[str] = None,
+) -> str:
+    """Compute candidate application digest (WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Section 12).
+
+    For DISABLED: returns CANONICAL_DISABLED_APPLICATION_DIGEST ("0" * 64).
+    For REQUESTED_NOT_APPLIED: binds requested candidate ID, candidate artifact digest, and status.
+
+    EXPLICIT ATTRIBUTION INVARIANT:
+    REQUEST_DIGEST != APPLICATION_PROOF
+    This establishes WHAT was requested, not that the candidate was applied.
+    """
+    if status == "DISABLED":
+        return CANONICAL_DISABLED_APPLICATION_DIGEST
+
+    cid = candidate_id or "default_candidate"
+    art_dig = candidate_artifact_digest or ("0" * 64)
+    payload = {
+        "status": status,
+        "candidate_id": cid,
+        "candidate_artifact_digest": art_dig,
+        "attribution_statement": "REQUEST_DIGEST != APPLICATION_PROOF",
+    }
+    return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
+
+
 @dataclass(frozen=True)
 class SearchExecutionWitness:
-    """Opaque runtime witness establishing live SearchExecutor provenance (Section 4)."""
+    """Opaque runtime witness establishing live SearchExecutor provenance (Section 4).
+
+    TRUST & INTEGRITY NOTE (WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Section 16):
+    SearchExecutionWitness is a process-local provenance / anti-construction mechanism.
+    It is NOT a cryptographic security boundary against arbitrary code executing inside
+    the same Python interpreter.
+    FREEZE: PROCESS_LOCAL_PROVENANCE_WITNESS != HOSTILE_CODE_ISOLATION.
+    """
     receipt_digest: str
     run_id: str
     executor_id: str
@@ -325,7 +362,21 @@ class SearchExecutionBundle:
 
 
 class SearchExecutor:
-    """Governed search executor producing attested execution receipts and runtime witnesses (Section 3 & 4)."""
+    """Governed search executor producing attested execution receipts and runtime witnesses.
+
+    APPLICATION BOUNDARY & FUTURE 01B CONTRACT (WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Section 4 & 14):
+    In 01A, candidate_enabled=True yields candidate_application_status="REQUESTED_NOT_APPLIED".
+    No 01A SearchExecutor invocation may emit "APPLIED".
+
+    01B will implement CandidateApplicator and CandidateApplicationReceipt, binding:
+    - candidate artifact digest
+    - applicator implementation digest
+    - input search state digest
+    - output / transformed search state or action surface digest
+    - application semantics and application result
+    - exact experimental unit
+    Only such evidence may establish "APPLIED".
+    """
 
     _SECRET: ClassVar[str] = secrets.token_hex(32)
 
@@ -371,6 +422,7 @@ class SearchExecutor:
         candidate_id: Optional[str] = None,
         candidate_enabled: bool = False,
         candidate_application_status: Optional[str] = None,
+        candidate: Optional[Any] = None,
         random_seed: int = 0,
         corpus_context: Optional[Dict[str, Any]] = None,
         source_graph_context: Optional[Dict[str, Any]] = None,
@@ -410,14 +462,28 @@ class SearchExecutor:
             trans_model_digest = hashlib.sha256(f"{transition_model_id}:v0.1".encode("utf-8")).hexdigest()
         policy_impl_dig = get_policy_implementation_digest(policy)
 
-        # Section 17: Candidate application status
+        # Section 2, 10: Caller cannot set APPLIED
+        if candidate_application_status == "APPLIED":
+            raise AuthorityViolationError(
+                "CALLER_CANNOT_SET_APPLIED: SearchExecutor in 01A cannot produce APPLIED status. APPLIED is reserved for 01B CandidateApplicator."
+            )
+
+        # Section 3, 12, 13: Derive application state and candidate application digest
         if not candidate_enabled:
             cand_status = "DISABLED"
-            cand_app_dig = "0" * 64
+            cand_app_dig = CANONICAL_DISABLED_APPLICATION_DIGEST
         else:
-            # In R4, if the candidate effect is not yet implemented, report REQUESTED_NOT_APPLIED
-            cand_status = candidate_application_status or "REQUESTED_NOT_APPLIED"
-            cand_app_dig = hashlib.sha256((candidate_id or "default_candidate").encode("utf-8")).hexdigest()
+            cand_status = "REQUESTED_NOT_APPLIED"
+            cand_art_dig = None
+            if candidate is not None:
+                cand_art_dig = compute_candidate_artifact_digest(candidate)
+            elif candidate_id is not None:
+                cand_art_dig = compute_candidate_artifact_digest({"candidate_id": candidate_id})
+            cand_app_dig = compute_candidate_application_digest(
+                status=cand_status,
+                candidate_id=candidate_id or (getattr(candidate, "candidate_id", None) if candidate else None),
+                candidate_artifact_digest=cand_art_dig,
+            )
 
         max_nodes = budget.get("max_nodes", 100)
         max_depth = budget.get("max_depth", 20)
@@ -454,11 +520,9 @@ class SearchExecutor:
                 terminal_status = "BUDGET_REACHED"
                 continue
 
+            # Section 5: Action generator receives identical inputs in baseline and candidate-requested arms
             if action_generator is not None:
-                try:
-                    actions = action_generator(current, candidate_id if candidate_enabled else None)
-                except TypeError:
-                    actions = action_generator(current)
+                actions = action_generator(current)
             else:
                 actions = policy.propose_actions(current)
             branch_count += len(actions)

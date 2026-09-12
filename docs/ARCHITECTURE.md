@@ -1,24 +1,27 @@
 # Architecture & Pipeline Specification
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R4`
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`
 **Module**: `msk-formal-discovery/docs/ARCHITECTURE.md`
 **Historical 01A Predecessor**: `8d80e82d5936fb0df36afc95ff7bffb7d4915768` (`FORMAL_DISCOVERY_PROTOTYPE_SPINE_ESTABLISHED`)
 **R1 Head**: `96587f8fa379aa972922b7f5e689728e36238f50`
 **R2 Head**: `5a641eee2022d8ba54b20aef8708c6b380f3f987`
 **R3 Head**: `17724487c3e127ff0f6df07e2ad15824712078b4`
+**R4 Head**: `6d80eb75c7949358597022a69eb7536faeafe59d`
 **Final Disposition**: `FORMAL_DISCOVERY_SPINE_ACCEPTED`
 
 ---
 
-## Historical Disposition & R4 Ratification Record
+## Historical Disposition & R4-R1 Ratification Record
 
-Under `WO-MATH-FORMAL-DISCOVERY-01A-R4`, all production bridges for 01B have been completely repaired and sealed, ratifying the formal discovery spine:
-1. **Search-Execution Provenance Witness**: Implemented factory-bound `SearchExecutionWitness` and `SearchExecutionBundle` certifying problem, policy, environment, backend, and trace bindings. Caller-constructed replay receipts without witness cannot confer executed qualification capability.
-2. **Search-Bundle Replay Bridge Repair**: `ReplayRunReceipt.from_search_execution_bundle` bridges execution receipts into replay receipts with verified fields (`run_id`, `resulting_trace_refs`, `resulting_trace_digests`).
-3. **Automatic Discovery-Unit Derivation**: `CandidateFactory.from_pattern` automatically maps trace IDs to canonical problem digests and trace digests preserving deterministic order, failing closed on missing trace identity (`MISSING_SOURCE_PROBLEM_DIGEST`, `MISSING_SOURCE_TRACE_DIGEST`) and rejecting caller overrides (`CALLER_DISCOVERY_DIGEST_MISMATCH`).
-4. **Initial-State & Transition Model Binding**: Cryptographically binds `initial_state_digest`, `transition_model_id`, `transition_model_digest`, and `search_policy_implementation_digest` across paired contracts and receipts.
-5. **Solved-State Normalization**: Canonical `is_successful_terminal(status)` predicate unifies terminal success criteria across execution and replay (`"SUCCESS"`, `"SOLVED"`).
-6. **Comprehensive Hostile Verification**: 115 test cases spanning 19 hostile invariant suites, Section 28 requirements, and positive hostile controls pass with 0 failures under `CLAIM CEILING: NONE` and `CANONICAL LIBRARY MUTATION: PROHIBITED`.
+Under `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`, candidate-application authority was formally closed and sealed, ratifying the formal discovery spine:
+1. **Caller APPLIED Authority Removed**: `SearchExecutor.execute(...)` derives application state itself (`candidate_enabled = False` => `DISABLED`, `candidate_enabled = True` => `REQUESTED_NOT_APPLIED`). No public caller can mint `APPLIED`; attempts are strictly rejected with `AuthorityViolationError`.
+2. **APPLIED Frozen for 01B**: `APPLIED` is reserved as a future state requiring a governed `CandidateApplicator` and `CandidateApplicationReceipt`.
+3. **Action-Generator Parity**: Canonical execution path never passes candidate ID into action generators. Both arms receive identical inputs, ensuring search dynamics parity.
+4. **Qualification Gate Sealed**: `QUALIFIED_HELD_OUT` requires abstracted `candidate_application_status = APPLIED`. Because 01A cannot emit `APPLIED`, candidate-requested runs remain `CANDIDATE_ONLY`.
+5. **ONTO Boundary Sealed**: ONTO export remains `functional_search_benefit = UNTESTED` for all candidate-requested runs.
+6. **Candidate Artifact & Application Digests**: Artifact digests deterministically bind candidate specifications; application digests bind status and artifact with invariant `REQUEST_DIGEST != APPLICATION_PROOF`.
+7. **Process-Local Witness Trust Note**: Frozen: `PROCESS_LOCAL_PROVENANCE_WITNESS != HOSTILE_CODE_ISOLATION`.
+8. **Comprehensive Hostile Verification**: 124 deterministic tests pass with 0 failures under `CLAIM CEILING: NONE` and `CANONICAL LIBRARY MUTATION: PROHIBITED`.
 
 The earned disposition is:
 $$\text{FORMAL\_DISCOVERY\_SPINE\_ACCEPTED}$$

@@ -236,11 +236,11 @@ def test_end_to_end_discovery_pipeline_demonstration():
         evidence_kind="HELD_OUT_REPLAY",
         artifact_ref=art_ref,
         artifact_digest=art_dig,
-        evidence_status="SUPPORTED",
+        evidence_status="UNTESTED",
         source_experimental_units=[q1_digest, q2_digest],
     )
     onto_pkg_with_ref = OntoExporter.export(candidate, functional_evidence=ev_ref)
-    assert onto_pkg_with_ref.functional_search_benefit == "SUPPORTED"
+    assert onto_pkg_with_ref.functional_search_benefit == "UNTESTED"
 
     # 9. Non-authoritative Refactoring Proposal Generation
     proposal = RefactoringProposalGenerator.generate(

@@ -4,8 +4,9 @@ Enforces all 16+ hostile rejection, authority firewall, and qualification de-fab
 """
 import dataclasses
 import hashlib
-from pathlib import Path
 import json
+from pathlib import Path
+import re
 import pytest
 import jsonschema
 from typing import Any, Dict, List, Optional
@@ -71,6 +72,8 @@ from msk_formal_discovery.search.executor import (
     SearchExecutionWitness,
     get_executor_implementation_digest,
     compute_initial_state_digest,
+    compute_candidate_application_digest,
+    CANONICAL_DISABLED_APPLICATION_DIGEST,
 )
 from msk_formal_discovery.search.policy import (
     SearchAction,
@@ -83,9 +86,10 @@ from msk_formal_discovery.trace.events import EventOrigin, ExecutionTraceEvent, 
 from msk_formal_discovery.trace.ir import ExecutionTrace
 
 
-SCHEMAS_DIR = Path(__file__).resolve().parent.parent / "schemas"
+SCHEMAS_DIR = Path(__file__).resolve().parents[1] / "schemas"
 RECEIPT_SCHEMA = json.loads((SCHEMAS_DIR / "backend-execution-receipt.v0.1.schema.json").read_text())
 REPLAY_RECEIPT_SCHEMA = json.loads((SCHEMAS_DIR / "replay-run-receipt.v0.1.schema.json").read_text())
+REPLAY_SCHEMA = REPLAY_RECEIPT_SCHEMA
 TRACE_SCHEMA = json.loads((SCHEMAS_DIR / "execution-trace.v0.1.schema.json").read_text())
 SEARCH_SCHEMA = json.loads((SCHEMAS_DIR / "search-run.v0.1.schema.json").read_text())
 CANDIDATE_SCHEMA = json.loads((SCHEMAS_DIR / "abstraction-candidate.v0.1.schema.json").read_text())
@@ -111,9 +115,16 @@ def make_valid_search_execution_receipt(
     executor_implementation_digest: str | None = None,
 ) -> SearchExecutionReceipt:
     if candidate_application_status is None:
-        candidate_application_status = "APPLIED" if candidate_enabled else "DISABLED"
+        candidate_application_status = "REQUESTED_NOT_APPLIED" if candidate_enabled else "DISABLED"
     if candidate_application_digest is None:
-        candidate_application_digest = hashlib.sha256(f"cand-{candidate_id}".encode("utf-8")).hexdigest() if candidate_enabled else ("0" * 64)
+        candidate_application_digest = (
+            compute_candidate_application_digest(
+                candidate_application_status,
+                candidate_id=candidate_id,
+            )
+            if candidate_enabled
+            else CANONICAL_DISABLED_APPLICATION_DIGEST
+        )
     if executor_implementation_digest is None:
         executor_implementation_digest = get_executor_implementation_digest()
     return SearchExecutionReceipt(
@@ -177,10 +188,10 @@ def make_valid_search_execution_bundle(
     )
     cand_enabled = (arm == "ABSTRACTED")
     if candidate_application_status is None:
-        candidate_application_status = "APPLIED" if cand_enabled else "DISABLED"
+        candidate_application_status = "REQUESTED_NOT_APPLIED" if cand_enabled else "DISABLED"
 
     if action_generator is None:
-        def default_action_gen(state: SearchState, cand_id: str | None = None):
+        def default_action_gen(state: SearchState):
             if solved:
                 return [SearchAction(action_id=f"act-solve-{state.state_id}", operation="solve", prior_probability=1.0, estimated_cost=1.0)]
             return [SearchAction(action_id=f"act-step-{state.state_id}", operation="step", prior_probability=1.0, estimated_cost=1.0)]
@@ -1252,11 +1263,7 @@ def test_unassessed_candidate_cannot_qualify():
     )
 
     def executed_runner(c, arm):
-        return make_valid_search_execution_bundle(
-            c,
-            arm,
-            candidate_application_status="APPLIED" if arm == "ABSTRACTED" else "DISABLED",
-        )
+        return make_valid_search_execution_bundle(c, arm)
 
     engine = HeldOutReplayEngine()
     engine.execute_paired_replay(cand, [contract], executed_runner)
@@ -1387,13 +1394,24 @@ def test_naked_positive_onto_evidence_rejected():
     assert "NAKED_BOOLEAN_PROHIBITED" in str(excinfo.value)
 
 
-# 41. Validated executed-replay evidence can populate functional-benefit evidence state
-def test_validated_executed_replay_evidence_can_populate_functional_benefit():
+# 41. Replacement test: Candidate-requested paired replay remains CANDIDATE_ONLY and functional benefit UNTESTED (WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Sections 8 & 9)
+def test_candidate_requested_paired_replay_remains_candidate_only_and_untested():
+    """WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Section 9:
+    baseline arm: DISABLED
+    candidate-requested arm: REQUESTED_NOT_APPLIED
+    same transition model.
+    Expected:
+    both execute;
+    receipts validate;
+    paired replay validates;
+    candidate remains CANDIDATE_ONLY;
+    functional_search_benefit = UNTESTED.
+    """
     au = StructuralAntiUnifier()
     terms = [("t1", Term.parse("f(a)")), ("t2", Term.parse("f(b)"))]
     res = au.anti_unify(terms)
     cand = AbstractionCandidate(
-        candidate_id="c-executed-benefit",
+        candidate_id="c-requested-replay",
         candidate_kind=AbstractionKind.LEMMA,
         formal_specification={"name": "lem", "canonical_representation": "f(V1)"},
         anti_unification_evidence=res,
@@ -1421,42 +1439,26 @@ def test_validated_executed_replay_evidence_can_populate_functional_benefit():
         candidate_enabled_in_abstracted=True,
     )
 
-    def compression_action_gen(state: SearchState, cand_id: str | None = None):
-        if cand_id:
-            return [SearchAction(action_id=f"act-solve-{state.state_id}", operation="solve", prior_probability=1.0, estimated_cost=1.0)]
+    def transition_action_gen(state: SearchState):
         if state.depth < 4:
             return [SearchAction(action_id=f"act-step-{state.state_id}", operation="step", prior_probability=1.0, estimated_cost=1.0)]
         return [SearchAction(action_id=f"act-solve-{state.state_id}", operation="solve", prior_probability=1.0, estimated_cost=1.0)]
 
-    def executed_benefit_runner(c, arm):
+    def executed_replay_runner(c, arm):
         return make_valid_search_execution_bundle(
             c,
             arm,
-            candidate_application_status="APPLIED" if arm == "ABSTRACTED" else "DISABLED",
-            action_generator=compression_action_gen,
+            action_generator=transition_action_gen,
         )
 
     engine = HeldOutReplayEngine()
-    report = engine.execute_paired_replay(cand, [contract], executed_benefit_runner)
-    assert cand.status == CandidateStatus.QUALIFIED_HELD_OUT
+    report = engine.execute_paired_replay(cand, [contract], executed_replay_runner)
+    assert cand.status == CandidateStatus.CANDIDATE_ONLY
+    assert cand.status != CandidateStatus.QUALIFIED_HELD_OUT
 
-    # ONTO export automatically derives SUPPORTED from valid executed held-out evaluation
+    # ONTO export remains UNTESTED for candidate-requested runs (Section 15)
     onto_pkg = OntoExporter.export(cand)
-    assert onto_pkg.functional_search_benefit == "SUPPORTED"
-
-    # Also supports explicit OntoEvidenceRef
-    ref = OntoEvidenceRef(
-        evidence_kind="HELD_OUT_REPLAY",
-        artifact_ref="receipt-executed-123",
-        artifact_digest=hashlib.sha256(b"receipt-data").hexdigest(),
-        evidence_status="SUPPORTED",
-        source_experimental_units=["p-qual-exec"],
-    )
-    OntoExporter.register_artifact(ref.artifact_ref, ref.artifact_digest)
-    onto_pkg_explicit = OntoExporter.export(cand, functional_evidence=ref)
-    assert onto_pkg_explicit.functional_search_benefit == "SUPPORTED"
-    assert len(onto_pkg_explicit.evidence_refs) == 1
-    assert onto_pkg_explicit.evidence_refs[0].artifact_ref == "receipt-executed-123"
+    assert onto_pkg.functional_search_benefit == "UNTESTED"
 
 
 # ======================================================================
@@ -1751,11 +1753,7 @@ def test_synthetic_discovery_candidate_cannot_qualify():
     )
 
     def executed_benefit_runner(c, arm):
-        return make_valid_search_execution_bundle(
-            c,
-            arm,
-            candidate_application_status="APPLIED" if arm == "ABSTRACTED" else "DISABLED",
-        )
+        return make_valid_search_execution_bundle(c, arm)
 
     engine = HeldOutReplayEngine()
     report = engine.execute_paired_replay(cand, [contract], executed_benefit_runner)
@@ -2787,4 +2785,318 @@ def test_manual_onto_fixture_registry_cannot_establish_canonical_executed_benefi
     OntoExporter.register_artifact(ref.artifact_ref, ref.artifact_digest)
     assert cand.status != CandidateStatus.QUALIFIED_HELD_OUT
     assert cand.status in (CandidateStatus.PROPOSED, CandidateStatus.CANDIDATE_ONLY)
+
+
+# ======================================================================
+# WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Section 18: Authority Closure & Application Boundary Tests
+# ======================================================================
+
+def test_public_applied_request_rejected():
+    """WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Section 10 & 18.1:
+    Attempt to request candidate_application_status = APPLIED through public 01A APIs.
+    Expected: rejected with AuthorityViolationError. No public caller path may mint APPLIED.
+    """
+    executor = SearchExecutor()
+    prob = ProblemDefinition(
+        problem_id="p-hostile-applied",
+        formal_syntax="eval(p)",
+        context={},
+        goals=["True"],
+        assumptions=[],
+        problem_digest="2" * 64,
+    )
+    init_state = SearchState(state_id="init", goal="goal", depth=0, is_solved=False)
+    policy = MCTSSearch(config={"available_rules": ["rule_0"]})
+    budget = {"max_nodes": 10, "max_depth": 5}
+
+    with pytest.raises(AuthorityViolationError) as excinfo:
+        executor.execute(
+            policy=policy,
+            problem=prob,
+            initial_state=init_state,
+            budget=budget,
+            candidate_id="cand-1",
+            candidate_enabled=True,
+            candidate_application_status="APPLIED",
+        )
+    assert "CALLER_CANNOT_SET_APPLIED" in str(excinfo.value)
+
+
+def test_enabled_candidate_becomes_requested_not_applied():
+    """WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Section 3 & 18.2:
+    candidate_enabled = True => candidate_application_status = REQUESTED_NOT_APPLIED.
+    No ordinary 01A SearchExecutor invocation may emit APPLIED.
+    """
+    executor = SearchExecutor()
+    prob = ProblemDefinition(
+        problem_id="p-req-not-applied",
+        formal_syntax="eval(p)",
+        context={},
+        goals=["True"],
+        assumptions=[],
+        problem_digest="3" * 64,
+    )
+    init_state = SearchState(state_id="init", goal="goal", depth=0, is_solved=False)
+    policy = MCTSSearch(config={"available_rules": ["rule_0"]})
+    budget = {"max_nodes": 10, "max_depth": 5}
+
+    bundle = executor.execute(
+        policy=policy,
+        problem=prob,
+        initial_state=init_state,
+        budget=budget,
+        candidate_id="cand-test",
+        candidate_enabled=True,
+    )
+    assert bundle.receipt.candidate_application_status == "REQUESTED_NOT_APPLIED"
+    assert bundle.receipt.candidate_enabled is True
+    assert bundle.receipt.candidate_application_status != "APPLIED"
+
+
+def test_candidate_id_not_passed_into_canonical_action_generator():
+    """WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Section 5, 11 & 18.3:
+    The canonical execution path must not pass candidate_id into action generator.
+    action_generator receives identical inputs in baseline and candidate-requested arms.
+    """
+    executor = SearchExecutor()
+    prob = ProblemDefinition(
+        problem_id="p-act-gen-cand",
+        formal_syntax="eval(p)",
+        context={},
+        goals=["True"],
+        assumptions=[],
+        problem_digest="4" * 64,
+    )
+    init_state = SearchState(state_id="init", goal="goal", depth=0, is_solved=False)
+    policy = MCTSSearch(config={"available_rules": ["rule_0"]})
+    budget = {"max_nodes": 10, "max_depth": 5}
+
+    recorded_args = []
+
+    def spy_action_generator(*args, **kwargs):
+        recorded_args.append((args, kwargs))
+        return [SearchAction(action_id="act-step", operation="step", prior_probability=1.0, estimated_cost=1.0)]
+
+    executor.execute(
+        policy=policy,
+        problem=prob,
+        initial_state=init_state,
+        budget=budget,
+        candidate_id="forbidden-candidate-leak",
+        candidate_enabled=True,
+        action_generator=spy_action_generator,
+    )
+
+    assert len(recorded_args) > 0
+    for args, kwargs in recorded_args:
+        assert len(args) == 1
+        assert isinstance(args[0], SearchState)
+        assert "forbidden-candidate-leak" not in args
+        assert "forbidden-candidate-leak" not in kwargs.values()
+
+
+def test_baseline_and_requested_arms_use_identical_transition_behavior():
+    """WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Section 6 & 18.4:
+    Baseline (DISABLED) and candidate-requested (REQUESTED_NOT_APPLIED) arms
+    use identical transition behavior and produce identical search dynamics.
+    """
+    executor = SearchExecutor()
+    prob = ProblemDefinition(
+        problem_id="p-parity-check",
+        formal_syntax="eval(p)",
+        context={},
+        goals=["True"],
+        assumptions=[],
+        problem_digest="5" * 64,
+    )
+    init_state = SearchState(state_id="init", goal="goal", depth=0, is_solved=False)
+    policy = MCTSSearch(config={"available_rules": ["rule_0"]})
+    budget = {"max_nodes": 10, "max_depth": 5}
+
+    def identical_action_gen(state: SearchState):
+        if state.depth < 2:
+            return [SearchAction(action_id=f"act-step-{state.state_id}", operation="step", prior_probability=1.0, estimated_cost=1.0)]
+        return [SearchAction(action_id=f"act-solve-{state.state_id}", operation="solve", prior_probability=1.0, estimated_cost=1.0)]
+
+    bundle_base = executor.execute(
+        policy=policy,
+        problem=prob,
+        initial_state=init_state,
+        budget=budget,
+        candidate_id=None,
+        candidate_enabled=False,
+        action_generator=identical_action_gen,
+    )
+    bundle_req = executor.execute(
+        policy=policy,
+        problem=prob,
+        initial_state=init_state,
+        budget=budget,
+        candidate_id="cand-x",
+        candidate_enabled=True,
+        action_generator=identical_action_gen,
+    )
+
+    assert bundle_base.receipt.candidate_application_status == "DISABLED"
+    assert bundle_req.receipt.candidate_application_status == "REQUESTED_NOT_APPLIED"
+    assert bundle_base.receipt.nodes_expanded == bundle_req.receipt.nodes_expanded
+    assert bundle_base.receipt.nodes_evaluated == bundle_req.receipt.nodes_evaluated
+    assert bundle_base.receipt.terminal_status == bundle_req.receipt.terminal_status
+
+
+def test_candidate_requested_run_cannot_qualify():
+    """WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Section 7 & 18.5:
+    A candidate-requested run (REQUESTED_NOT_APPLIED) cannot qualify into QUALIFIED_HELD_OUT.
+    Candidate remains CANDIDATE_ONLY.
+    """
+    au = StructuralAntiUnifier()
+    terms = [("t1", Term.parse("f(a)")), ("t2", Term.parse("f(b)"))]
+    res = au.anti_unify(terms)
+    p_disc = "6" * 64
+    p_qual = "7" * 64
+    cand = AbstractionCandidate(
+        candidate_id="c-cannot-qualify",
+        candidate_kind=AbstractionKind.LEMMA,
+        formal_specification={"name": "lem", "canonical_representation": "f(V1)"},
+        anti_unification_evidence=res,
+        discovery_set_trace_ids=["t1", "t2"],
+        discovery_problem_digests=[p_disc],
+        admissibility_status=AdmissibilityStatus.ADMISSIBLE,
+        admissibility_receipt=create_admissibility_receipt(
+            terms=terms,
+            result=res,
+            status=AdmissibilityStatus.ADMISSIBLE,
+            discovery_problem_digests=[p_disc],
+        ),
+    )
+    contract = PairedReplayContract(
+        problem_id="p-qual-disjoint",
+        problem_digest=p_qual,
+        backend_id="lean4",
+        search_policy_kind="MCTS",
+        search_budget={"max_nodes": 10, "max_depth": 5},
+        random_seed=42,
+        corpus_context={},
+        baseline_configuration={},
+        abstracted_configuration={"candidate_id": cand.candidate_id},
+        candidate_id=cand.candidate_id,
+        candidate_enabled_in_abstracted=True,
+    )
+
+    def runner(c, arm):
+        return make_valid_search_execution_bundle(c, arm)
+
+    engine = HeldOutReplayEngine()
+    engine.execute_paired_replay(cand, [contract], runner)
+    assert cand.status == CandidateStatus.CANDIDATE_ONLY
+    assert cand.status != CandidateStatus.QUALIFIED_HELD_OUT
+
+
+def test_candidate_requested_run_exports_functional_benefit_untested():
+    """WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Section 15 & 18.6:
+    Candidate-requested run exports functional_search_benefit = UNTESTED.
+    No R4-R1 canonical test may produce SUPPORTED.
+    """
+    au = StructuralAntiUnifier()
+    terms = [("t1", Term.parse("f(a)")), ("t2", Term.parse("f(b)"))]
+    res = au.anti_unify(terms)
+    p_disc = "8" * 64
+    p_qual = "9" * 64
+    cand = AbstractionCandidate(
+        candidate_id="c-untested-benefit",
+        candidate_kind=AbstractionKind.LEMMA,
+        formal_specification={"name": "lem", "canonical_representation": "f(V1)"},
+        anti_unification_evidence=res,
+        discovery_set_trace_ids=["t1", "t2"],
+        discovery_problem_digests=[p_disc],
+        admissibility_status=AdmissibilityStatus.ADMISSIBLE,
+        admissibility_receipt=create_admissibility_receipt(
+            terms=terms,
+            result=res,
+            status=AdmissibilityStatus.ADMISSIBLE,
+            discovery_problem_digests=[p_disc],
+        ),
+    )
+    contract = PairedReplayContract(
+        problem_id="p-qual-untested",
+        problem_digest=p_qual,
+        backend_id="lean4",
+        search_policy_kind="MCTS",
+        search_budget={"max_nodes": 10, "max_depth": 5},
+        random_seed=42,
+        corpus_context={},
+        baseline_configuration={},
+        abstracted_configuration={"candidate_id": cand.candidate_id},
+        candidate_id=cand.candidate_id,
+        candidate_enabled_in_abstracted=True,
+    )
+
+    def runner(c, arm):
+        return make_valid_search_execution_bundle(c, arm)
+
+    engine = HeldOutReplayEngine()
+    engine.execute_paired_replay(cand, [contract], runner)
+    onto_pkg = OntoExporter.export(cand)
+    assert onto_pkg.functional_search_benefit == "UNTESTED"
+    assert onto_pkg.functional_search_benefit != "SUPPORTED"
+
+
+def test_candidate_artifact_digest_deterministic():
+    """WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Section 13 & 18.7:
+    Candidate artifact digest is deterministic across multiple evaluations.
+    """
+    from msk_formal_discovery.abstraction.candidate import compute_candidate_artifact_digest
+
+    cand_data = {
+        "candidate_id": "cand-det-1",
+        "candidate_kind": "LEMMA",
+        "formal_specification": {"stmt": "forall x, P(x)"},
+        "anti_unification_evidence": {"deterministic_digest": "a" * 64},
+        "admissibility_receipt": {"receipt_digest": "b" * 64},
+    }
+    d1 = compute_candidate_artifact_digest(cand_data)
+    d2 = compute_candidate_artifact_digest(cand_data)
+    assert d1 == d2
+    assert re.match(r"^[0-9a-f]{64}$", d1)
+
+
+def test_candidate_artifact_digest_changes_when_formal_specification_changes():
+    """WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Section 13 & 18.8:
+    Candidate artifact digest changes when formal specification changes.
+    """
+    from msk_formal_discovery.abstraction.candidate import compute_candidate_artifact_digest
+
+    cand_spec_a = {
+        "candidate_id": "cand-spec-test",
+        "candidate_kind": "LEMMA",
+        "formal_specification": {"stmt": "x + 0 = x"},
+        "anti_unification_evidence": {"deterministic_digest": "a" * 64},
+        "admissibility_receipt": {"receipt_digest": "b" * 64},
+    }
+    cand_spec_b = {
+        "candidate_id": "cand-spec-test",
+        "candidate_kind": "LEMMA",
+        "formal_specification": {"stmt": "x * 1 = x"},
+        "anti_unification_evidence": {"deterministic_digest": "a" * 64},
+        "admissibility_receipt": {"receipt_digest": "b" * 64},
+    }
+    d_a = compute_candidate_artifact_digest(cand_spec_a)
+    d_b = compute_candidate_artifact_digest(cand_spec_b)
+    assert d_a != d_b
+
+
+def test_requested_not_applied_digest_cannot_masquerade_as_application_proof():
+    """WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Section 12 & 18.9:
+    REQUESTED_NOT_APPLIED digest establishes what was requested, not application proof.
+    REQUEST_DIGEST != APPLICATION_PROOF.
+    """
+    d_req = compute_candidate_application_digest(
+        status="REQUESTED_NOT_APPLIED",
+        candidate_id="cand-masquerade",
+        candidate_artifact_digest="c" * 64,
+    )
+    assert d_req != CANONICAL_DISABLED_APPLICATION_DIGEST
+    assert re.match(r"^[0-9a-f]{64}$", d_req)
+    assert "REQUESTED_NOT_APPLIED" != "APPLIED"
+
 

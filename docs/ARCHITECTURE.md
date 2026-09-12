@@ -1,30 +1,30 @@
 # Architecture & Pipeline Specification
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01B-R1`
 **Module**: `msk-formal-discovery/docs/ARCHITECTURE.md`
 **Historical 01A Predecessor**: `8d80e82d5936fb0df36afc95ff7bffb7d4915768` (`FORMAL_DISCOVERY_PROTOTYPE_SPINE_ESTABLISHED`)
 **R1 Head**: `96587f8fa379aa972922b7f5e689728e36238f50`
 **R2 Head**: `5a641eee2022d8ba54b20aef8708c6b380f3f987`
 **R3 Head**: `17724487c3e127ff0f6df07e2ad15824712078b4`
 **R4 Head**: `6d80eb75c7949358597022a69eb7536faeafe59d`
-**Final Disposition**: `FORMAL_DISCOVERY_SPINE_ACCEPTED`
+**R4-R1 Head**: `288af1a06fa1d98bd9cf8dd48a9ef6902c36b9f9` (`FORMAL_DISCOVERY_SPINE_ACCEPTED`)
+**01B Historical Head**: `931b6655661da69f8e0f351157e96cbb1c811d1d` (`NONAUTHORITATIVE_DIAGNOSTIC`)
 
 ---
 
-## Historical Disposition & R4-R1 Ratification Record
+## Historical Disposition & 01B-R1 Clean Prospective Replication Record
 
-Under `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`, candidate-application authority was formally closed and sealed, ratifying the formal discovery spine:
-1. **Caller APPLIED Authority Removed**: `SearchExecutor.execute(...)` derives application state itself (`candidate_enabled = False` => `DISABLED`, `candidate_enabled = True` => `REQUESTED_NOT_APPLIED`). No public caller can mint `APPLIED`; attempts are strictly rejected with `AuthorityViolationError`.
-2. **APPLIED Frozen for 01B**: `APPLIED` is reserved as a future state requiring a governed `CandidateApplicator` and `CandidateApplicationReceipt`.
-3. **Action-Generator Parity**: Canonical execution path never passes candidate ID into action generators. Both arms receive identical inputs, ensuring search dynamics parity.
-4. **Qualification Gate Sealed**: `QUALIFIED_HELD_OUT` requires abstracted `candidate_application_status = APPLIED`. Because 01A cannot emit `APPLIED`, candidate-requested runs remain `CANDIDATE_ONLY`.
-5. **ONTO Boundary Sealed**: ONTO export remains `functional_search_benefit = UNTESTED` for all candidate-requested runs.
-6. **Candidate Artifact & Application Digests**: Artifact digests deterministically bind candidate specifications; application digests bind status and artifact with invariant `REQUEST_DIGEST != APPLICATION_PROOF`.
-7. **Process-Local Witness Trust Note**: Frozen: `PROCESS_LOCAL_PROVENANCE_WITNESS != HOSTILE_CODE_ISOLATION`.
-8. **Comprehensive Hostile Verification**: 124 deterministic tests pass with 0 failures under `CLAIM CEILING: NONE` and `CANONICAL LIBRARY MUTATION: PROHIBITED`.
-
-The earned disposition is:
-$$\text{FORMAL\_DISCOVERY\_SPINE\_ACCEPTED}$$
+1. **Historical 01B Diagnostic Execution**:
+   Commit B `931b6655661da69f8e0f351157e96cbb1c811d1d` is permanently classified as `NONAUTHORITATIVE_DIAGNOSTIC`.
+2. **01B-R1 Commit A Freeze**:
+   - Resealed CandidateApplicator identity SHA-256.
+   - Enforced fail-closed empty primitive expansion (never infer fallback).
+   - Sealed 4-level deterministic candidate selector (`select_candidate`) and candidate selection ledger.
+   - Fresh qualification corpus (`seed=271828` for positive, `seed=314159` for negative) strictly disjoint from all contaminated units.
+   - Paired-terminal state capture in `SearchExecutionBundle`.
+   - Native Z3 paired-terminal SMT semantic control (`baseline_terminal != abstracted_terminal`).
+   - Exact eight-way adjudication order without post-hoc 20% decision threshold.
+   - Commit A freeze validated (`R1_FREEZE_VALIDATED`), zero held-out execution receipts recorded.
 
 ---
 
@@ -105,10 +105,15 @@ Sequence violations (such as skipping search, out-of-order execution, or promoti
 ### 3.6 Replay & Qualification Engine
 - **Disjointness Guard**: Verifies canonical experimental unit separation:
   $$\text{DISCOVERY\_PROBLEM\_DIGESTS} \cap \text{QUALIFICATION\_PROBLEM\_DIGESTS} = \emptyset$$
+- **Candidate Applicator Subsystem (`CandidateApplicator`)**:
+  - Implements governed candidate application ([`CandidateApplicator`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/application/applicator.py)).
+  - Emits attested [`CandidateApplicationReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/candidate-application-receipt.v0.1.schema.json) certifying candidate artifact digest, applicator implementation digest, input state digest, substitution witness, primitive expansion digest, pre/post action surface digests, macro action digest, and output state digest.
+  - Verifies application equivalence witness (`macro_output_state_digest == primitive_output_state_digest`) and replaces the redundant primitive entry point while preserving all unrelated actions untouched.
+  - SMT semantic equivalence control executed natively via Z3 (`UNSAT_REFUTED`).
 - **Paired Replay Contract**: [`PairedReplayContract`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/abstraction/replay.py) binds all non-abstraction variables (environment_digest, backend_digest, source_graph_digest, search_policy_digest, problem_digest, budget, seed) identical between baseline and abstracted arms, verified via cryptographic `contract_digest`.
 - **Receipt Validation & Cross-Checking**: Replay run receipts validate against [`ReplayRunReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/replay-run-receipt.v0.1.schema.json) and cross-check against underlying [`SearchExecutionReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/search-execution-receipt.v0.1.schema.json) records.
 - **De-Fabricated Benefit**: Qualification requires genuine observed search reduction from `EXECUTED_SEARCH_RUN` or `CERTIFIED_SEARCH_REPLAY`. `SYNTHETIC_REPLAY_FIXTURE` leaves candidates at `CANDIDATE_ONLY`.
-- **Lifecycle Ratchet**: Candidates transition from `PROPOSED` to `QUALIFIED_HELD_OUT` only after passing empirical replay thresholds under executed paired replay with `admissibility_status == "ADMISSIBLE"` and non-synthetic discovery origin.
+- **Lifecycle Ratchet**: Candidates transition from `PROPOSED` to `QUALIFIED_HELD_OUT` only after passing empirical replay thresholds under executed paired replay with `admissibility_status == "ADMISSIBLE"`, valid `CandidateApplicationReceipt(status="APPLIED")`, and non-synthetic discovery origin.
 
 ### 3.7 Downstream Integration
 - **`msk-onto`**: Receives structural evaluation export packages ([`OntoEvaluationPackage`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/onto/export.py)). Naked booleans and unsupported positive claims are prohibited (`NAKED_BOOLEAN_PROHIBITED`); all positive claims require structured [`OntoEvidenceRef`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/onto/export.py) validated against a resolvable evidence registry.

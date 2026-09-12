@@ -1,0 +1,33 @@
+{
+  "problem_id": "qual-neg-01",
+  "status": "UNSAT_REFUTED",
+  "execution_origin": "EXECUTED_NATIVE",
+  "logical_authority_class": "SOLVER_SAT_OR_UNSAT",
+  "is_equivalent": true,
+  "backend_receipt": {
+    "schema_version": "miskatonic.backend-execution-receipt.v0.1",
+    "receipt_id": "rcpt-z3-smt-qual-neg-01-1789249304",
+    "backend_id": "z3",
+    "backend_family": "SMT_SOLVER",
+    "execution_origin": "EXECUTED_NATIVE",
+    "executable_path": "/home/linuxbrew/.linuxbrew/bin/z3",
+    "executable_version": "Z3 version 5.1.0 - 64 bit",
+    "executable_sha256": "2ef8474af4c27919697ed1dd3011aab8c64d5f3015f4dafa400651298313b645",
+    "command": [
+      "/home/linuxbrew/.linuxbrew/bin/z3",
+      "-in"
+    ],
+    "input_digest": "7f4331e90a73a0ef172f702741d6036371291810cdb9e72ef86b0f7aed7c42b5",
+    "started_at": "2026-09-12T21:41:44.253081+00:00",
+    "completed_at": "2026-09-12T21:41:44.266747+00:00",
+    "exit_code": 0,
+    "timeout_status": false,
+    "stdout_digest": "5c17dfcc2a8f1f30d9e96df6a9825a5030ade046d560332c19de74d93d591a18",
+    "stderr_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "terminal_classification": "UNSAT_REFUTED",
+    "logical_authority_class": "SOLVER_SAT_OR_UNSAT",
+    "execution_metadata": {
+      "raw_output_snippet": "unsat\n"
+    }
+  }
+}

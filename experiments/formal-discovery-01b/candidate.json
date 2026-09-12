@@ -1,0 +1,181 @@
+{
+  "schema_version": "miskatonic.abstraction-candidate.v0.1",
+  "candidate_id": "macro_mul_one_add_zero",
+  "candidate_kind": "TACTIC_MACRO",
+  "status": "PROPOSED",
+  "admissibility_status": "ADMISSIBLE",
+  "formal_specification": {
+    "name": "macro_mul_one_add_zero",
+    "canonical_representation": "seq(rule(MUL_ONE_LEFT, V1), rule(ADD_ZERO_RIGHT, V1))",
+    "statement": "forall V1, seq(rule(MUL_ONE_LEFT, V1), rule(ADD_ZERO_RIGHT, V1))",
+    "parameters": [
+      "V1"
+    ],
+    "signature": "macro_mul_one_add_zero(V1)",
+    "guard": null
+  },
+  "anti_unification_evidence": {
+    "algorithm_version": "miskatonic.structural-lgg-v0.1",
+    "least_general_generalization": "seq(rule(MUL_ONE_LEFT, V1), rule(ADD_ZERO_RIGHT, V1))",
+    "source_trace_ids": [
+      "trace-disc-01",
+      "trace-disc-02",
+      "trace-disc-03",
+      "trace-disc-04",
+      "trace-disc-05",
+      "trace-disc-06",
+      "trace-disc-07",
+      "trace-disc-08"
+    ],
+    "substitution_witnesses": [
+      {
+        "trace_id": "trace-disc-01",
+        "substitutions": {
+          "V1": "a"
+        }
+      },
+      {
+        "trace_id": "trace-disc-02",
+        "substitutions": {
+          "V1": "b"
+        }
+      },
+      {
+        "trace_id": "trace-disc-03",
+        "substitutions": {
+          "V1": "c"
+        }
+      },
+      {
+        "trace_id": "trace-disc-04",
+        "substitutions": {
+          "V1": "d"
+        }
+      },
+      {
+        "trace_id": "trace-disc-05",
+        "substitutions": {
+          "V1": "e"
+        }
+      },
+      {
+        "trace_id": "trace-disc-06",
+        "substitutions": {
+          "V1": "f"
+        }
+      },
+      {
+        "trace_id": "trace-disc-07",
+        "substitutions": {
+          "V1": "g"
+        }
+      },
+      {
+        "trace_id": "trace-disc-08",
+        "substitutions": {
+          "V1": "h"
+        }
+      }
+    ],
+    "deterministic_digest": "52d270b01c9676fda19b328ad50eb32915d3889f36b1254338f8a24300c53952"
+  },
+  "discovery_origin": "EXECUTED_OBSERVED",
+  "discovery_set_trace_ids": [
+    "trace-disc-01",
+    "trace-disc-02",
+    "trace-disc-03",
+    "trace-disc-04",
+    "trace-disc-05",
+    "trace-disc-06",
+    "trace-disc-07",
+    "trace-disc-08"
+  ],
+  "discovery_problem_digests": [
+    "01722f5624d065b78eea1358ba73b1b7f37da7dd75c1133db08ea28ac86c0a57",
+    "1d7f9c06929801ea5a35e1bb2f8ff45ae13c55f5ebcac522a9f9467cf9a52ff8",
+    "9796e686b5ff9e63a9c525406a20ea6a65678964521cd026a34e13a00b3146ca",
+    "508f140e2d5156a0a471976e3dbfffc25c7dae39c8740ece3aba6f7ac97cf46b",
+    "17b4fb6856725389d660ccf2bcbd856faeb899b2897c14f54d45870073441b29",
+    "716214c2d494be326e0245cb9a5a8c81fc1bf2ca13305affa0f1065f46822584",
+    "2e8a33f010ef338af67b823d880f22a53663c675c81e42a8f00acdf1c0205140",
+    "cc2a68c793755122c11637b78e212f88e1530d0034c127957f7caff7970a398d"
+  ],
+  "qualification_problem_ids": [],
+  "qualification_trace_ids": [],
+  "qualification_problem_digests": [],
+  "held_out_evaluation": {
+    "replay_mode": "UNTESTED",
+    "is_held_out_disjoint_from_discovery": false,
+    "supporting_trace_count": 8,
+    "structural_compression_ratio": 1.0,
+    "proof_branch_reduction": 0.0,
+    "candidate_evaluation_reduction": 0.0,
+    "held_out_success_rate_delta": 0.0,
+    "wall_time_delta_pct": 0.0
+  },
+  "blueprint_family": null,
+  "onto_export": {
+    "recurrence_count": 8,
+    "representation_invariance": "UNKNOWN",
+    "cross_search_policy_recurrence": "UNKNOWN",
+    "cross_formal_system_recurrence": "UNKNOWN",
+    "functional_search_benefit": "UNKNOWN"
+  },
+  "primitive_expansion": [
+    "MUL_ONE_LEFT",
+    "ADD_ZERO_RIGHT"
+  ],
+  "authority": "NONE",
+  "admissibility_receipt": {
+    "schema_version": "miskatonic.admissibility-receipt.v0.1",
+    "receipt_id": "adm-rcpt-52d270b01c9676fd",
+    "algorithm_version": "miskatonic.structural-lgg-v0.1",
+    "source_trace_ids": [
+      "trace-disc-01",
+      "trace-disc-02",
+      "trace-disc-03",
+      "trace-disc-04",
+      "trace-disc-05",
+      "trace-disc-06",
+      "trace-disc-07",
+      "trace-disc-08"
+    ],
+    "source_trace_digests": [
+      "31f6bd684aa8a6c37fc96a450df668840c847e7f9b51b039f6e57256d49f37d8",
+      "ac7b3d469b22fc7aea494b0a982ee5cf31c6a3a16e9ffcc9b0ffb95cccd6c828",
+      "5326b4466830ba96ffadc08ce5806264d9868b42f9291bf408021ddfe7f2a487",
+      "9dfe42f97ff7ea98ba57a604864e901de25fe011e202a488cfed1fe38d2239ec",
+      "f99e10518ec52832d5b552f0997b02bf3ed384dc04a55b0a04ae95f6a9670eb1",
+      "6d326f412a887ac8f3d6444ec86b5e0d15b3acab96762866ee6366e0e26aecb4",
+      "3a609abe8a9e28fc048902a9db8a55e4a9ee490bd255fdd61813da58c6df3c7b",
+      "bef83879e1ed352e42af403acaccccadeae441d75e5b74c0ae51c25b582af4ae"
+    ],
+    "discovery_problem_digests": [
+      "01722f5624d065b78eea1358ba73b1b7f37da7dd75c1133db08ea28ac86c0a57",
+      "1d7f9c06929801ea5a35e1bb2f8ff45ae13c55f5ebcac522a9f9467cf9a52ff8",
+      "9796e686b5ff9e63a9c525406a20ea6a65678964521cd026a34e13a00b3146ca",
+      "508f140e2d5156a0a471976e3dbfffc25c7dae39c8740ece3aba6f7ac97cf46b",
+      "17b4fb6856725389d660ccf2bcbd856faeb899b2897c14f54d45870073441b29",
+      "716214c2d494be326e0245cb9a5a8c81fc1bf2ca13305affa0f1065f46822584",
+      "2e8a33f010ef338af67b823d880f22a53663c675c81e42a8f00acdf1c0205140",
+      "cc2a68c793755122c11637b78e212f88e1530d0034c127957f7caff7970a398d"
+    ],
+    "source_term_digests": [
+      "bf159aa3bdbd0dd1c7944467b97279764867eb13d17471b016372b8d856a92f5",
+      "70cccfaceb0f562a9e08ace4243cf35b61907c98041c4846463042650c798eda",
+      "b4e5fe777a0a8d23c8a257c36a50e919e953a9f17ac75389c1ace133f29318dd",
+      "2170897b57725311aa0a0fb72e69183467732b0fa08fa891bba877d4aa7005dd",
+      "524f17eba5f01385f4d6839100939f51b43ac54867254bf84fbe6ee164c40fa1",
+      "ef2fd3a25d1054dd49eed78dea0df8e9b70351e61e456d83f889ad4ee1333ae4",
+      "4fa7338f0fc77f9d33f981329f073a834113a6a9476c81083453294ca93953f7",
+      "85dd6a75c7833f0f29e6009f0e27fd047b43bb5a48092d0aebd5efcc008f7631"
+    ],
+    "lgg_digest": "52d270b01c9676fda19b328ad50eb32915d3889f36b1254338f8a24300c53952",
+    "substitution_witness_digest": "c6c94a58e55fadef1bce55fc4715c4f512bc70917a21a531f25baf08a656fb9d",
+    "branch_guards": [],
+    "semantic_domain_evidence": {},
+    "meaningful_shared_constructor_count": 2,
+    "admissibility_status": "ADMISSIBLE",
+    "receipt_digest": "282bd43ff1d8778a901bf4cfa5e7e0a222097a80dce0347102f2920ab84c929c"
+  }
+}

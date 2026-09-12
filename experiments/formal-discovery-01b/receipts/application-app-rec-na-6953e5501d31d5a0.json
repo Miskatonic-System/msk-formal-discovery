@@ -1,0 +1,30 @@
+{
+  "schema_version": "miskatonic.candidate-application-receipt.v0.1",
+  "application_id": "app-rec-na-6953e5501d31d5a0",
+  "candidate_id": "macro_mul_one_add_zero",
+  "candidate_artifact_digest": "834666fe71dfc1ff51dccf9facb2b19620317a2ad1e5d9e851e50a79edbd59cf",
+  "candidate_kind": "TACTIC_MACRO",
+  "applicator_id": "msk-candidate-applicator-v0.1",
+  "applicator_version": "0.1.0",
+  "applicator_implementation_digest": "04e4418028c480a2963242e678af5cf7070257d2b0f2f38b3a7016ee3c2c5360",
+  "experimental_unit_id": "qual-pos-01",
+  "problem_digest": "89797c2c80fa49053cb2a132c4bd198eb95aeff2ae0043698314c9d12f60ca8f",
+  "input_state_digest": "6927d341459c165fdf4bc3eafe3cffa7fef63c6ab8d83b31faec65c6bad37270",
+  "candidate_pattern_digest": "52d270b01c9676fda19b328ad50eb32915d3889f36b1254338f8a24300c53952",
+  "substitution_witness": {},
+  "primitive_expansion": [
+    "MUL_ONE_LEFT",
+    "ADD_ZERO_RIGHT"
+  ],
+  "primitive_expansion_digest": "a0c0530be492cc6426580e41e90909192e1ac59d0f2e8e0e479d810bbc8642ea",
+  "pre_action_surface_digest": "8ac6fc79ae58a0a312a0bb6384ad934aecd0994a3c99544a3ed46b3ea0fad12a",
+  "post_action_surface_digest": "8ac6fc79ae58a0a312a0bb6384ad934aecd0994a3c99544a3ed46b3ea0fad12a",
+  "output_macro_action_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "output_state_digest": null,
+  "transition_model_digest": "8d54994b9ac66fa1d11dcdf499601d0cbdf41ef43e8e267311d91b7b7e87267c",
+  "application_status": "NOT_APPLICABLE",
+  "started_at": "2026-09-12T21:41:44.442791+00:00",
+  "completed_at": "2026-09-12T21:41:44.442829+00:00",
+  "receipt_digest": "86db54f885b183bbf1e2d699a2a6658eb30924ba481cb54354cb4b9933f8d524",
+  "authority": "NONE"
+}

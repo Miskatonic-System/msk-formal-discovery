@@ -1,0 +1,35 @@
+{
+  "schema_version": "miskatonic.refactoring-proposal.v0.1",
+  "proposal_id": "prop-refactor-macro_mul_one_add_zero",
+  "candidate_id": "macro_mul_one_add_zero",
+  "refactoring_kind": "EXTRACTED_HELPER_LEMMA",
+  "before_state": {
+    "representation": "// Inlined steps across traces: ['trace-disc-01', 'trace-disc-02', 'trace-disc-03', 'trace-disc-04', 'trace-disc-05', 'trace-disc-06', 'trace-disc-07', 'trace-disc-08']",
+    "token_or_ast_size": 13
+  },
+  "proposed_after_state": {
+    "representation": "lemma macro_mul_one_add_zero : seq(rule(MUL_ONE_LEFT, V1), rule(ADD_ZERO_RIGHT, V1))",
+    "token_or_ast_size": 7
+  },
+  "semantic_obligations": [
+    "Prove auxiliary lemma: macro_mul_one_add_zero",
+    "Verify equivalence of inlined subtraces with auxiliary lemma application"
+  ],
+  "affected_traces": [
+    "trace-disc-01",
+    "trace-disc-02",
+    "trace-disc-03",
+    "trace-disc-04",
+    "trace-disc-05",
+    "trace-disc-06",
+    "trace-disc-07",
+    "trace-disc-08"
+  ],
+  "expected_compression": 1.5153846153846153,
+  "replay_plan": {
+    "replay_target_traces": [],
+    "verification_backend": "lean4"
+  },
+  "canonical_library_mutated": false,
+  "authority": "NONE"
+}

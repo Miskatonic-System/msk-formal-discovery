@@ -1,0 +1,9 @@
+{
+  "schema_version": "miskatonic.historical-disposition.v0.1",
+  "historical_head": "931b6655661da69f8e0f351157e96cbb1c811d1d",
+  "historical_disposition": "NONAUTHORITATIVE_DIAGNOSTIC",
+  "historical_observed_node_reduction": "55.35%",
+  "historical_runtime_effect": "large overhead observed",
+  "freeze_invariant": "HISTORICAL_SIGNAL != PROSPECTIVE_REPLICATION_AUTHORITY",
+  "recorded_at": "2026-09-12T14:55:00Z"
+}

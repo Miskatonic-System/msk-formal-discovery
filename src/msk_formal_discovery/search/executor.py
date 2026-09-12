@@ -49,6 +49,18 @@ def get_executor_implementation_digest() -> str:
     return hashlib.sha256(target.read_bytes()).hexdigest()
 
 
+def _make_json_safe(obj: Any) -> Any:
+    if isinstance(obj, dict):
+        return {k: _make_json_safe(v) for k, v in obj.items()}
+    elif isinstance(obj, (list, tuple)):
+        return [_make_json_safe(x) for x in obj]
+    elif isinstance(obj, (str, int, float, bool, type(None))):
+        return obj
+    elif hasattr(obj, "canonical_repr"):
+        return obj.canonical_repr()
+    return str(obj)
+
+
 def compute_initial_state_digest(state: SearchState) -> str:
     """Deterministic SHA-256 digest of initial search state (Section 14)."""
     payload = {
@@ -58,7 +70,7 @@ def compute_initial_state_digest(state: SearchState) -> str:
         "parent_id": state.parent_id,
         "path_cost": float(state.path_cost),
         "heuristic_value": float(state.heuristic_value),
-        "context": getattr(state, "context", {}),
+        "context": _make_json_safe(getattr(state, "context", {})),
         "is_terminal": state.is_terminal,
         "is_solved": state.is_solved,
     }
@@ -154,6 +166,8 @@ class SearchExecutionReceipt:
     search_policy_implementation_digest: str = "0" * 64
     candidate_application_status: str = "DISABLED"
     candidate_application_digest: str = "0" * 64
+    candidate_application_receipt_refs: List[str] = field(default_factory=list)
+    candidate_application_receipt_digests: List[str] = field(default_factory=list)
     receipt_digest: str = ""
 
     def __post_init__(self) -> None:
@@ -195,6 +209,8 @@ class SearchExecutionReceipt:
             "search_policy_implementation_digest": self.search_policy_implementation_digest,
             "candidate_application_status": self.candidate_application_status,
             "candidate_application_digest": self.candidate_application_digest,
+            "candidate_application_receipt_refs": list(self.candidate_application_receipt_refs),
+            "candidate_application_receipt_digests": list(self.candidate_application_receipt_digests),
             "receipt_digest": self.receipt_digest,
         }
 
@@ -287,6 +303,8 @@ class SearchExecutionReceipt:
             search_policy_implementation_digest=data.get("search_policy_implementation_digest", "0" * 64),
             candidate_application_status=data.get("candidate_application_status", "DISABLED"),
             candidate_application_digest=data.get("candidate_application_digest", "0" * 64),
+            candidate_application_receipt_refs=list(data.get("candidate_application_receipt_refs", [])),
+            candidate_application_receipt_digests=list(data.get("candidate_application_receipt_digests", [])),
             receipt_digest=data.get("receipt_digest", ""),
         )
 
@@ -298,6 +316,20 @@ class SearchExecutionBundle:
     receipt: SearchExecutionReceipt
     traces: List[ExecutionTrace] = field(default_factory=list)
     runtime_witness: Optional[SearchExecutionWitness] = None
+    candidate_application_receipts: List[Any] = field(default_factory=list)
+    terminal_state: Optional[SearchState] = None
+
+    @property
+    def terminal_expression(self) -> Optional[Any]:
+        if self.terminal_state and "expression" in self.terminal_state.context:
+            return self.terminal_state.context["expression"]
+        return None
+
+    @property
+    def terminal_expression_digest(self) -> Optional[str]:
+        if self.terminal_state and "expression_digest" in self.terminal_state.context:
+            return self.terminal_state.context["expression_digest"]
+        return None
 
     @property
     def search_execution_receipt(self) -> SearchExecutionReceipt:
@@ -431,10 +463,14 @@ class SearchExecutor:
         transition_model_id: str = "default_discrete_transition_model",
         action_generator: Optional[Any] = None,
         traces: Optional[List[ExecutionTrace]] = None,
+        environment: Optional[Any] = None,
     ) -> SearchExecutionBundle:
         """Execute search policy and generate verifiable execution receipt with runtime witness."""
         started_at = datetime.now(timezone.utc).isoformat()
         start_time = time.time()
+
+        if candidate is not None and candidate_id is None:
+            candidate_id = getattr(candidate, "candidate_id", None)
 
         p_digest = (
             getattr(problem, "problem_digest", None)
@@ -501,6 +537,7 @@ class SearchExecutor:
 
         # Track search traces
         search_traces: List[ExecutionTrace] = list(traces) if traces else []
+        candidate_application_receipts: List[Any] = []
 
         while frontier and nodes_expanded < max_nodes and not solved:
             current = policy.select_next(frontier)
@@ -520,8 +557,27 @@ class SearchExecutor:
                 terminal_status = "BUDGET_REACHED"
                 continue
 
-            # Section 5: Action generator receives identical inputs in baseline and candidate-requested arms
-            if action_generator is not None:
+            # Governed environment action enumeration & candidate applicator (WO-MATH-FORMAL-DISCOVERY-01B Section 20)
+            if environment is not None:
+                primitive_actions = environment.actions(current)
+                if candidate_enabled and candidate is not None:
+                    from msk_formal_discovery.application.applicator import CandidateApplicator
+                    app_res = CandidateApplicator.apply(
+                        candidate=candidate,
+                        state=current,
+                        primitive_actions=primitive_actions,
+                        environment=environment,
+                        problem_digest=p_digest,
+                        experimental_unit_id=problem.problem_id,
+                    )
+                    candidate_application_receipts.append(app_res.receipt)
+                    if app_res.status == "APPLIED":
+                        actions = app_res.transformed_actions
+                    else:
+                        actions = primitive_actions
+                else:
+                    actions = primitive_actions
+            elif action_generator is not None:
                 actions = action_generator(current)
             else:
                 actions = policy.propose_actions(current)
@@ -530,15 +586,18 @@ class SearchExecutor:
             # Expand state with actions
             for act_idx, act in enumerate(actions):
                 nodes_evaluated += 1
-                new_state = SearchState(
-                    state_id=f"{current.state_id}-s{act_idx}",
-                    goal=f"subgoal-{act.operation}",
-                    depth=current.depth + 1,
-                    parent_id=current.state_id,
-                    path_cost=current.path_cost + act.estimated_cost,
-                    heuristic_value=act.prior_probability,
-                    is_solved=(act.operation in ("qed", "solve", "exact")),
-                )
+                if environment is not None:
+                    new_state, _ = environment.transition(current, act)
+                else:
+                    new_state = SearchState(
+                        state_id=f"{current.state_id}-s{act_idx}",
+                        goal=f"subgoal-{act.operation}",
+                        depth=current.depth + 1,
+                        parent_id=current.state_id,
+                        path_cost=current.path_cost + act.estimated_cost,
+                        heuristic_value=act.prior_probability,
+                        is_solved=(act.operation in ("qed", "solve", "exact")),
+                    )
                 frontier.append(new_state)
 
         if nodes_expanded >= max_nodes and not solved:
@@ -559,6 +618,33 @@ class SearchExecutor:
         ]
 
         final_terminal = "SUCCESS" if solved else terminal_status
+
+        # Section 20 & 21: Derive search-level candidate_application_status and receipts
+        applied_receipts = [r for r in candidate_application_receipts if getattr(r, "application_status", "") == "APPLIED"]
+        if applied_receipts:
+            cand_status = "APPLIED"
+            cand_app_refs = [r.application_id for r in applied_receipts]
+            cand_app_receipt_digests = [r.receipt_digest for r in applied_receipts]
+            cand_app_dig = hashlib.sha256(":".join(sorted(cand_app_receipt_digests)).encode("utf-8")).hexdigest()
+        elif candidate_enabled:
+            cand_status = "REQUESTED_NOT_APPLIED"
+            cand_app_refs = [r.application_id for r in candidate_application_receipts]
+            cand_app_receipt_digests = [r.receipt_digest for r in candidate_application_receipts]
+            cand_art_dig = None
+            if candidate is not None:
+                cand_art_dig = compute_candidate_artifact_digest(candidate)
+            elif candidate_id is not None:
+                cand_art_dig = compute_candidate_artifact_digest({"candidate_id": candidate_id})
+            cand_app_dig = compute_candidate_application_digest(
+                status=cand_status,
+                candidate_id=candidate_id or (getattr(candidate, "candidate_id", None) if candidate else None),
+                candidate_artifact_digest=cand_art_dig,
+            )
+        else:
+            cand_status = "DISABLED"
+            cand_app_refs = []
+            cand_app_receipt_digests = []
+            cand_app_dig = CANONICAL_DISABLED_APPLICATION_DIGEST
 
         receipt = SearchExecutionReceipt(
             executor_id=self.executor_id,
@@ -593,6 +679,8 @@ class SearchExecutor:
             search_policy_implementation_digest=policy_impl_dig,
             candidate_application_status=cand_status,
             candidate_application_digest=cand_app_dig,
+            candidate_application_receipt_refs=cand_app_refs,
+            candidate_application_receipt_digests=cand_app_receipt_digests,
         )
         receipt.validate()
 
@@ -630,9 +718,13 @@ class SearchExecutor:
             witness_token=witness_token,
         )
 
+        term_state = current if "current" in locals() else initial_state
+
         return SearchExecutionBundle(
             search_run=search_run,
             receipt=receipt,
             traces=search_traces,
             runtime_witness=witness,
+            candidate_application_receipts=candidate_application_receipts,
+            terminal_state=term_state,
         )

@@ -1,0 +1,111 @@
+{
+  "schema_version": "miskatonic.candidate-selection-ledger.v0.1",
+  "total_patterns_evaluated": 5,
+  "admissible_candidate_count": 5,
+  "candidate_records": [
+    {
+      "candidate_id": "macro_mul_one_add_zero",
+      "source_trace_ids": [
+        "trace-disc-01",
+        "trace-disc-02",
+        "trace-disc-03",
+        "trace-disc-04",
+        "trace-disc-05",
+        "trace-disc-06",
+        "trace-disc-07",
+        "trace-disc-08"
+      ],
+      "distinct_support": 8,
+      "operation_sequence": [
+        "MUL_ONE_LEFT",
+        "ADD_ZERO_RIGHT"
+      ],
+      "operation_sequence_length": 2,
+      "meaningful_shared_constructor_count": 2,
+      "deterministic_digest": "273a1d821e54ba6bf1832a2f1f11b338853aa9d1070d873c8b29345ba5aae903",
+      "final_sort_key": "(-8, -2, -2, 273a1d821e54ba6bf1832a2f1f11b338853aa9d1070d873c8b29345ba5aae903)",
+      "rank": 1
+    },
+    {
+      "candidate_id": "macro_mul_one_add_zero_double_neg",
+      "source_trace_ids": [
+        "trace-disc-04",
+        "trace-disc-07"
+      ],
+      "distinct_support": 2,
+      "operation_sequence": [
+        "MUL_ONE_LEFT",
+        "ADD_ZERO_RIGHT",
+        "DOUBLE_NEG"
+      ],
+      "operation_sequence_length": 3,
+      "meaningful_shared_constructor_count": 3,
+      "deterministic_digest": "7fbdc37e7bf9c6d9e7292ea767031b979104a455af0c72c355f6978ab7a59870",
+      "final_sort_key": "(-2, -3, -3, 7fbdc37e7bf9c6d9e7292ea767031b979104a455af0c72c355f6978ab7a59870)",
+      "rank": 2
+    },
+    {
+      "candidate_id": "macro_mul_one_add_zero_mul_one",
+      "source_trace_ids": [
+        "trace-disc-03",
+        "trace-disc-08"
+      ],
+      "distinct_support": 2,
+      "operation_sequence": [
+        "MUL_ONE_LEFT",
+        "ADD_ZERO_RIGHT",
+        "MUL_ONE_RIGHT"
+      ],
+      "operation_sequence_length": 3,
+      "meaningful_shared_constructor_count": 3,
+      "deterministic_digest": "cf5919d723edf52b3d154b75e051ab7e0307ef15c8a0496a2c67588c01df2ecc",
+      "final_sort_key": "(-2, -3, -3, cf5919d723edf52b3d154b75e051ab7e0307ef15c8a0496a2c67588c01df2ecc)",
+      "rank": 3
+    },
+    {
+      "candidate_id": "macro_add_zero_mul_one",
+      "source_trace_ids": [
+        "trace-disc-03",
+        "trace-disc-08"
+      ],
+      "distinct_support": 2,
+      "operation_sequence": [
+        "ADD_ZERO_RIGHT",
+        "MUL_ONE_RIGHT"
+      ],
+      "operation_sequence_length": 2,
+      "meaningful_shared_constructor_count": 2,
+      "deterministic_digest": "46f6165ee1139a5db2531c670cbf53a4f7ecd44700a628c62ff8e48d5e130550",
+      "final_sort_key": "(-2, -2, -2, 46f6165ee1139a5db2531c670cbf53a4f7ecd44700a628c62ff8e48d5e130550)",
+      "rank": 4
+    },
+    {
+      "candidate_id": "macro_add_zero_double_neg",
+      "source_trace_ids": [
+        "trace-disc-04",
+        "trace-disc-07"
+      ],
+      "distinct_support": 2,
+      "operation_sequence": [
+        "ADD_ZERO_RIGHT",
+        "DOUBLE_NEG"
+      ],
+      "operation_sequence_length": 2,
+      "meaningful_shared_constructor_count": 2,
+      "deterministic_digest": "c3dbf85d51b40145683d4b555fe55e5a7dcebbfc4b1dc118d6560c8d33a77867",
+      "final_sort_key": "(-2, -2, -2, c3dbf85d51b40145683d4b555fe55e5a7dcebbfc4b1dc118d6560c8d33a77867)",
+      "rank": 5
+    }
+  ],
+  "selected_candidate": {
+    "candidate_id": "macro_mul_one_add_zero",
+    "candidate_kind": "TACTIC_MACRO",
+    "primitive_expansion": [
+      "MUL_ONE_LEFT",
+      "ADD_ZERO_RIGHT"
+    ],
+    "artifact_digest": "273a1d821e54ba6bf1832a2f1f11b338853aa9d1070d873c8b29345ba5aae903",
+    "rank": 1
+  },
+  "selector_implementation_digest": "63d7a9a895c44eee503f855f1b89e4b75544873352c57acf1d42e7fc327414db"
+}

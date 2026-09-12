@@ -291,6 +291,12 @@
         }
       }
     },
+    "primitive_expansion": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "authority": {
       "type": "string",
       "const": "NONE"

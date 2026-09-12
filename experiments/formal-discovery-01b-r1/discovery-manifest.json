@@ -1,0 +1,71 @@
+{
+  "schema_version": "miskatonic.discovery-manifest.v0.1",
+  "experiment_id": "formal-discovery-01b-r1",
+  "discovery_problem_count": 8,
+  "discovery_problems": [
+    {
+      "problem_id": "disc-01",
+      "problem_digest": "01722f5624d065b78eea1358ba73b1b7f37da7dd75c1133db08ea28ac86c0a57",
+      "initial_expression": "add(mul(1, a), 0)",
+      "goal_expression": "a",
+      "category": "DISCOVERY",
+      "description": "core motif"
+    },
+    {
+      "problem_id": "disc-02",
+      "problem_digest": "1d7f9c06929801ea5a35e1bb2f8ff45ae13c55f5ebcac522a9f9467cf9a52ff8",
+      "initial_expression": "add(0, add(mul(1, b), 0))",
+      "goal_expression": "b",
+      "category": "DISCOVERY",
+      "description": "outer add-zero-left"
+    },
+    {
+      "problem_id": "disc-03",
+      "problem_digest": "9796e686b5ff9e63a9c525406a20ea6a65678964521cd026a34e13a00b3146ca",
+      "initial_expression": "mul(add(mul(1, c), 0), 1)",
+      "goal_expression": "c",
+      "category": "DISCOVERY",
+      "description": "outer mul-one-right"
+    },
+    {
+      "problem_id": "disc-04",
+      "problem_digest": "508f140e2d5156a0a471976e3dbfffc25c7dae39c8740ece3aba6f7ac97cf46b",
+      "initial_expression": "neg(neg(add(mul(1, d), 0)))",
+      "goal_expression": "d",
+      "category": "DISCOVERY",
+      "description": "outer double-neg"
+    },
+    {
+      "problem_id": "disc-05",
+      "problem_digest": "17b4fb6856725389d660ccf2bcbd856faeb899b2897c14f54d45870073441b29",
+      "initial_expression": "add(add(mul(1, e), 0), 0)",
+      "goal_expression": "e",
+      "category": "DISCOVERY",
+      "description": "outer add-zero-right"
+    },
+    {
+      "problem_id": "disc-06",
+      "problem_digest": "716214c2d494be326e0245cb9a5a8c81fc1bf2ca13305affa0f1065f46822584",
+      "initial_expression": "mul(1, add(mul(1, f), 0))",
+      "goal_expression": "f",
+      "category": "DISCOVERY",
+      "description": "outer mul-one-left"
+    },
+    {
+      "problem_id": "disc-07",
+      "problem_digest": "2e8a33f010ef338af67b823d880f22a53663c675c81e42a8f00acdf1c0205140",
+      "initial_expression": "mul(add(mul(1, g), 0), neg(neg(1)))",
+      "goal_expression": "g",
+      "category": "DISCOVERY",
+      "description": "compound right double-neg"
+    },
+    {
+      "problem_id": "disc-08",
+      "problem_digest": "cc2a68c793755122c11637b78e212f88e1530d0034c127957f7caff7970a398d",
+      "initial_expression": "add(0, mul(add(mul(1, h), 0), 1))",
+      "goal_expression": "h",
+      "category": "DISCOVERY",
+      "description": "nested compound"
+    }
+  ]
+}

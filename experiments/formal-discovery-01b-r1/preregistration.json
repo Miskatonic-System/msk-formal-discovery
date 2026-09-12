@@ -1,0 +1,100 @@
+{
+  "schema_version": "miskatonic.preregistration.v0.1",
+  "experiment_id": "formal-discovery-01b-r1",
+  "title": "Clean Prospective Replication of Abstraction-Effect on Fresh Qualification Corpus",
+  "canonical_predecessor": "288af1a06fa1d98bd9cf8dd48a9ef6902c36b9f9",
+  "canonical_tree": "2e7ccb2cb5750ad2a09ec8feae684a3e8ed5409a",
+  "historical_diagnostic_head": "931b6655661da69f8e0f351157e96cbb1c811d1d",
+  "claim_ceiling": "ENGINEERING_ABSTRACTION_EFFECT_ONLY",
+  "theorem_authority": "NONE",
+  "canonical_library_mutated": false,
+  "frozen_candidate": {
+    "candidate_id": "macro_mul_one_add_zero",
+    "candidate_kind": "TACTIC_MACRO",
+    "primitive_expansion": [
+      "MUL_ONE_LEFT",
+      "ADD_ZERO_RIGHT"
+    ],
+    "artifact_digest": "273a1d821e54ba6bf1832a2f1f11b338853aa9d1070d873c8b29345ba5aae903",
+    "selection_ledger_digest": "22cd29ad4192aad058b7053a1ab11a34be9ef809d9976111855e99b4cfa8cc42",
+    "anti_unification_digest": "52d270b01c9676fda19b328ad50eb32915d3889f36b1254338f8a24300c53952"
+  },
+  "frozen_seeds": {
+    "discovery_seed": 42,
+    "positive_held_out_seed": 271828,
+    "negative_control_seed": 314159
+  },
+  "problem_manifests": {
+    "discovery_manifest_ref": "discovery-manifest.json",
+    "qualification_manifest_ref": "qualification-manifest.json",
+    "discovery_problem_digests": [
+      "01722f5624d065b78eea1358ba73b1b7f37da7dd75c1133db08ea28ac86c0a57",
+      "1d7f9c06929801ea5a35e1bb2f8ff45ae13c55f5ebcac522a9f9467cf9a52ff8",
+      "9796e686b5ff9e63a9c525406a20ea6a65678964521cd026a34e13a00b3146ca",
+      "508f140e2d5156a0a471976e3dbfffc25c7dae39c8740ece3aba6f7ac97cf46b",
+      "17b4fb6856725389d660ccf2bcbd856faeb899b2897c14f54d45870073441b29",
+      "716214c2d494be326e0245cb9a5a8c81fc1bf2ca13305affa0f1065f46822584",
+      "2e8a33f010ef338af67b823d880f22a53663c675c81e42a8f00acdf1c0205140",
+      "cc2a68c793755122c11637b78e212f88e1530d0034c127957f7caff7970a398d"
+    ],
+    "positive_held_out_digests": [
+      "1dec19dae0add463821335af100ca45f3ffbb77541fd098a02ceff35abde2458",
+      "02444a0f7a4bc3629d85fb417ea5720efa35525f1b6f711c5f1079a7bf7eaec9",
+      "130f649e401d83995b75a80cdd71a586ec1c33e941f69e574ec05a17c6571c6f",
+      "f038bd5c6dd5d2c294187694df8ea42fc6682a346a3403241ad429eded7dea9d",
+      "5f694efce529bc67a51c4f82d9bb7eb5d4518e7b5afc40322d98829aa3aafa81",
+      "9388aea7d5e217716c277be83cbc4bf9eea31be197468fd5110ebdd95a17d17b",
+      "c0ce9c5b25c4941c8ab623379b3d269ada8d45dea658e3da4516fb8cca2850be",
+      "a447e6b90b065b7401cfe6d07aa12c7b17c1daf90d0d5a64fa9ee08bcca9c5eb"
+    ],
+    "negative_control_digests": [
+      "0d75812b06662e8b8d723407e3a995f91c8b3a3827ea0212c4c2c340435a798d",
+      "23c0efb8747d88e29eb515e2d19639fc48ae68b607f4559a9fbc59057aec98db",
+      "29919a47342aae56cb20659d102cbc841c3a67f21375c1da76b81f8c2c7d36ab",
+      "c30a6cbb423dd9ce6460a87d3f502e935fb9463359ea331ccc09e0c40d8e5e69"
+    ]
+  },
+  "implementation_digests": {
+    "primitive_ruleset": "76603b5a8dd10da06fb563d673644ef0b3b9d28ac9457b5eda9d727620fb728b",
+    "environment": "08546ee80e7765acd8a4300372e501f99e1a90d843bdf25c5a15a64b84b47f2f",
+    "applicator": "04e4418028c480a2963242e678af5cf7070257d2b0f2f38b3a7016ee3c2c5360",
+    "executor": "11604c8c51ab6e4e953cff839a5655bcb188c5b2e3851b798ab16b3bb563e359",
+    "policy": "af372d4488edb870ad35135027ece8e13bd1313082a3536c889e1261261d3595",
+    "replay": "8b09058e097a7d9817e8530bd3a34d58b2e615f6b4595e34a6586b0e2ef53e3b",
+    "selector": "63d7a9a895c44eee503f855f1b89e4b75544873352c57acf1d42e7fc327414db",
+    "smt_control": "08546ee80e7765acd8a4300372e501f99e1a90d843bdf25c5a15a64b84b47f2f",
+    "adjudicator": "a755644fd1f1b836ea6090231ea49617f49682102cf4c51eb0e942e6ef60d08e"
+  },
+  "primary_metric": "nodes_expanded",
+  "secondary_metrics": [
+    "nodes_evaluated",
+    "branch_count",
+    "wall_time_ms"
+  ],
+  "ordered_adjudication_contract": [
+    "1. EXPERIMENT_INFRASTRUCTURE_BLOCKED",
+    "2. CANDIDATE_DISCOVERY_FAILED",
+    "3. APPLICATION_SEMANTICS_FAILED",
+    "4. SELECTIVITY_FAILURE",
+    "5. CANDIDATE_NOT_APPLIED_ON_POSITIVE_SET",
+    "6. ABSTRACTION_SEARCH_BENEFIT_NOT_OBSERVED",
+    "7. ABSTRACTION_SEARCH_BENEFIT_HETEROGENEOUS",
+    "8. ABSTRACTION_SEARCH_BENEFIT_SUPPORTED"
+  ],
+  "authoritative_support_gates": {
+    "gate_1_solve_rate_parity": "No solved unit in baseline arm becomes unsolved in abstracted arm",
+    "gate_2_median_node_delta": "Median(abstracted_nodes - baseline_nodes) < 0 over positive held-out units",
+    "gate_3_total_node_reduction": "Total abstracted nodes < total baseline nodes over positive held-out units",
+    "gate_4_positive_unit_improvement": "At least 6 of 8 positive units improve in nodes expanded",
+    "gate_5_negative_selectivity_parity": "All 4 negative controls have delta = 0 and 0 candidate applications",
+    "gate_6_paired_terminal_smt": "All 12 units have paired-terminal SMT verdict == UNSAT_REFUTED",
+    "gate_7_paired_replay": "All 24 replay run receipts verified successfully"
+  },
+  "freeze_invariants": [
+    "FROZEN_APPLICATOR_DIGEST == EXECUTED_APPLICATOR_DIGEST",
+    "INITIAL_EXPRESSION_EQUIVALENT_TO_GOAL != PAIRED_TERMINAL_SEMANTIC_EQUIVALENCE",
+    "NODE_EXPANSION_BENEFIT != END_TO_END_RUNTIME_BENEFIT",
+    "HISTORICAL_SIGNAL != PROSPECTIVE_REPLICATION_AUTHORITY",
+    "MISSING_CANDIDATE_EXPANSION != PERMISSION_TO_INVENT_EXPANSION"
+  ]
+}

@@ -1,0 +1,188 @@
+{
+  "experiment_id": "formal-discovery-01b",
+  "work_order": "WO-MATH-FORMAL-DISCOVERY-01B",
+  "claim_ceiling": "ENGINEERING_ABSTRACTION_EFFECT_ONLY",
+  "authority": "NONE",
+  "candidate": {
+    "candidate_id": "macro_mul_one_add_zero",
+    "candidate_kind": "TACTIC_MACRO",
+    "primitive_expansion": [
+      "MUL_ONE_LEFT",
+      "ADD_ZERO_RIGHT"
+    ],
+    "status": "QUALIFIED_HELD_OUT",
+    "artifact_digest": "834666fe71dfc1ff51dccf9facb2b19620317a2ad1e5d9e851e50a79edbd59cf"
+  },
+  "success_gates": {
+    "gate_discovery_traces_generated": true,
+    "gate_candidate_selected_and_admissible": true,
+    "gate_paired_replay_contracts_executed": true,
+    "gate_positive_held_out_search_reduction": true,
+    "gate_negative_control_selectivity_parity": true,
+    "gate_smt_semantic_control_verified": true,
+    "all_gates_passed": true
+  },
+  "adjudication_verdict": "ABSTRACTION_SEARCH_BENEFIT_SUPPORTED",
+  "metrics": {
+    "positive_held_out": {
+      "problem_count": 8,
+      "baseline_nodes_total": 318,
+      "abstracted_nodes_total": 142,
+      "node_reduction_ratio": 0.5535,
+      "node_reduction_pct": 55.35,
+      "baseline_solve_rate": 1.0,
+      "abstracted_solve_rate": 1.0,
+      "applications_count": 8
+    },
+    "negative_control": {
+      "problem_count": 4,
+      "baseline_nodes_total": 15,
+      "abstracted_nodes_total": 15,
+      "node_delta": 0,
+      "parity_maintained": true,
+      "baseline_solve_rate": 1.0,
+      "abstracted_solve_rate": 1.0,
+      "applications_count": 0
+    },
+    "pooled_held_out": {
+      "replay_mode": "EXECUTED_HELD_OUT_REPLAY",
+      "is_held_out_disjoint_from_discovery": true,
+      "supporting_trace_count": 8,
+      "structural_compression_ratio": 2.121,
+      "proof_branch_reduction": 18.5833,
+      "candidate_evaluation_reduction": 0.5285,
+      "held_out_success_rate_delta": 0.0,
+      "wall_time_delta_pct": 4636.0249,
+      "portability_across_instances": 1.0,
+      "portability_across_formal_systems": 0.0,
+      "human_inspectable_representation_size": 280
+    }
+  },
+  "comparisons": [
+    {
+      "problem_id": "qual-pos-01",
+      "problem_type": "POSITIVE_HELD_OUT",
+      "baseline_nodes": 42,
+      "abstracted_nodes": 17,
+      "node_delta": 25,
+      "baseline_solved": true,
+      "abstracted_solved": true,
+      "candidate_application_status": "APPLIED"
+    },
+    {
+      "problem_id": "qual-pos-02",
+      "problem_type": "POSITIVE_HELD_OUT",
+      "baseline_nodes": 42,
+      "abstracted_nodes": 17,
+      "node_delta": 25,
+      "baseline_solved": true,
+      "abstracted_solved": true,
+      "candidate_application_status": "APPLIED"
+    },
+    {
+      "problem_id": "qual-pos-03",
+      "problem_type": "POSITIVE_HELD_OUT",
+      "baseline_nodes": 42,
+      "abstracted_nodes": 17,
+      "node_delta": 25,
+      "baseline_solved": true,
+      "abstracted_solved": true,
+      "candidate_application_status": "APPLIED"
+    },
+    {
+      "problem_id": "qual-pos-04",
+      "problem_type": "POSITIVE_HELD_OUT",
+      "baseline_nodes": 42,
+      "abstracted_nodes": 23,
+      "node_delta": 19,
+      "baseline_solved": true,
+      "abstracted_solved": true,
+      "candidate_application_status": "APPLIED"
+    },
+    {
+      "problem_id": "qual-pos-05",
+      "problem_type": "POSITIVE_HELD_OUT",
+      "baseline_nodes": 42,
+      "abstracted_nodes": 17,
+      "node_delta": 25,
+      "baseline_solved": true,
+      "abstracted_solved": true,
+      "candidate_application_status": "APPLIED"
+    },
+    {
+      "problem_id": "qual-pos-06",
+      "problem_type": "POSITIVE_HELD_OUT",
+      "baseline_nodes": 42,
+      "abstracted_nodes": 23,
+      "node_delta": 19,
+      "baseline_solved": true,
+      "abstracted_solved": true,
+      "candidate_application_status": "APPLIED"
+    },
+    {
+      "problem_id": "qual-pos-07",
+      "problem_type": "POSITIVE_HELD_OUT",
+      "baseline_nodes": 24,
+      "abstracted_nodes": 11,
+      "node_delta": 13,
+      "baseline_solved": true,
+      "abstracted_solved": true,
+      "candidate_application_status": "APPLIED"
+    },
+    {
+      "problem_id": "qual-pos-08",
+      "problem_type": "POSITIVE_HELD_OUT",
+      "baseline_nodes": 42,
+      "abstracted_nodes": 17,
+      "node_delta": 25,
+      "baseline_solved": true,
+      "abstracted_solved": true,
+      "candidate_application_status": "APPLIED"
+    },
+    {
+      "problem_id": "qual-neg-01",
+      "problem_type": "NEGATIVE_CONTROL",
+      "baseline_nodes": 4,
+      "abstracted_nodes": 4,
+      "node_delta": 0,
+      "baseline_solved": true,
+      "abstracted_solved": true,
+      "candidate_application_status": "REQUESTED_NOT_APPLIED"
+    },
+    {
+      "problem_id": "qual-neg-02",
+      "problem_type": "NEGATIVE_CONTROL",
+      "baseline_nodes": 2,
+      "abstracted_nodes": 2,
+      "node_delta": 0,
+      "baseline_solved": true,
+      "abstracted_solved": true,
+      "candidate_application_status": "REQUESTED_NOT_APPLIED"
+    },
+    {
+      "problem_id": "qual-neg-03",
+      "problem_type": "NEGATIVE_CONTROL",
+      "baseline_nodes": 4,
+      "abstracted_nodes": 4,
+      "node_delta": 0,
+      "baseline_solved": true,
+      "abstracted_solved": true,
+      "candidate_application_status": "REQUESTED_NOT_APPLIED"
+    },
+    {
+      "problem_id": "qual-neg-04",
+      "problem_type": "NEGATIVE_CONTROL",
+      "baseline_nodes": 5,
+      "abstracted_nodes": 5,
+      "node_delta": 0,
+      "baseline_solved": true,
+      "abstracted_solved": true,
+      "candidate_application_status": "REQUESTED_NOT_APPLIED"
+    }
+  ],
+  "smt_semantic_verification": {
+    "total_checked": 12,
+    "total_unsat_refuted": 12,
+    "solver": "z3"
+  }
+}

@@ -33,6 +33,13 @@ SEARCH_EXECUTION_RECEIPT_SCHEMA_PATH = SCHEMAS_DIR / "search-execution-receipt.v
 ADMISSIBILITY_RECEIPT_SCHEMA_PATH = SCHEMAS_DIR / "admissibility-receipt.v0.1.schema.json"
 
 
+def get_replay_engine_implementation_digest() -> str:
+    """SHA-256 digest of replay.py file bytes."""
+    path = Path(__file__).resolve()
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+
 @dataclass
 class ReplayRunReceipt:
     """Observed run receipt from executing an arm of a paired replay (Sections 16 & 17)."""
@@ -921,18 +928,13 @@ class HeldOutReplayEngine:
         no_degradation = (success_delta >= 0.0)
         is_non_synthetic_discovery = candidate.discovery_origin in ("EXECUTED_OBSERVED", "CERTIFIED_REPLAY")
 
-        # R4 Section 17 & 20: Check candidate application status
-        base_app_status = (
-            comparisons[0].baseline_receipt.search_execution_receipt.get("candidate_application_status")
-            if (comparisons and comparisons[0].baseline_receipt.search_execution_receipt)
-            else None
+        # Check candidate application status across comparisons
+        is_candidate_applied = any(
+            comp.baseline_receipt.search_execution_receipt.get("candidate_application_status") == "DISABLED"
+            and comp.abstracted_receipt.search_execution_receipt.get("candidate_application_status") == "APPLIED"
+            for comp in comparisons
+            if comp.baseline_receipt.search_execution_receipt and comp.abstracted_receipt.search_execution_receipt
         )
-        abs_app_status = (
-            comparisons[0].abstracted_receipt.search_execution_receipt.get("candidate_application_status")
-            if (comparisons and comparisons[0].abstracted_receipt.search_execution_receipt)
-            else None
-        )
-        is_candidate_applied = (base_app_status == "DISABLED" and abs_app_status == "APPLIED")
 
         if (
             is_admissible

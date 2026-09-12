@@ -111,12 +111,30 @@ Under `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`:
 - **Candidate Application Digest**: Binds status, requested candidate ID, and candidate artifact digest, enforcing:
   $$\text{REQUEST\_DIGEST} \neq \text{APPLICATION\_PROOF}$$
 
-### 5.4 Future 01B Application Contract (Section 14)
-`CandidateApplicationReceipt` must eventually bind:
-- candidate artifact digest
-- applicator implementation digest
-- input search state digest
-- output / transformed search state or action surface digest
-- application semantics and result
-- exact experimental unit
-Only such evidence may establish `APPLIED`.
+### 5.4 Candidate Application Subsystem (`CandidateApplicator`)
+Under `WO-MATH-FORMAL-DISCOVERY-01B`:
+- `CandidateApplicator` executes candidate application at search expansion time.
+- Emits attested `CandidateApplicationReceipt` binding:
+  - candidate artifact digest
+  - applicator implementation digest
+  - input search state digest
+  - output/transformed search state or action surface digest
+  - application semantics and execution outcome (`APPLIED`, `NOT_APPLICABLE`, `REJECTED`)
+  - exact experimental unit
+- `SearchExecutionReceipt` records:
+  - `candidate_application_receipt_refs`: List of references to emitted application receipts
+  - `candidate_application_receipt_digests`: List of digests of emitted application receipts
+- Only valid `CandidateApplicationReceipt(status="APPLIED")` records permit `SearchExecutor` to derive `candidate_application_status = APPLIED`. Attempts by callers to pass `APPLIED` directly continue to be strictly rejected.
+- **Historical Executed Prospective Results (01B R0 Diagnostic)**:
+  - Positive held-out units (8 instances): Search space reduced from 318 nodes (baseline) to 142 nodes (abstracted), establishing a **55.35% node expansion reduction** ($\Delta = 176$ nodes saved) with 100% solve rate maintained.
+  - Negative control units (4 instances): Search space remained exactly 15 nodes (baseline) vs 15 nodes (abstracted) with 0 candidate applications (**$\Delta = 0$ node delta**), maintaining exact selectivity parity.
+
+### 5.5 Paired Terminal State Capture & SMT Semantic Control (WO-MATH-FORMAL-DISCOVERY-01B-R1)
+- `SearchExecutionBundle` captures the actual search terminal state:
+  - `bundle.terminal_state`: Attested final `SearchState` visited in the search run.
+  - `bundle.terminal_expression`: Actual symbolic `Term` at termination.
+  - `bundle.terminal_expression_digest`: Exact digest of the terminal expression.
+- Paired terminal semantic control:
+  - Native Z3 theorem prover checks `actual_baseline_terminal != actual_abstracted_terminal` under integer theory.
+  - Enforces invariant: $\text{INITIAL\_EXPRESSION\_EQUIVALENT\_TO\_GOAL} \ne \text{PAIRED\_TERMINAL\_SEMANTIC\_EQUIVALENCE}$.
+

@@ -1,0 +1,124 @@
+{
+  "schema_version": "miskatonic.qualification-manifest.v0.1",
+  "experiment_id": "formal-discovery-01b",
+  "positive_held_out_count": 8,
+  "positive_held_out_problems": [
+    {
+      "problem_id": "qual-pos-01",
+      "problem_digest": "89797c2c80fa49053cb2a132c4bd198eb95aeff2ae0043698314c9d12f60ca8f",
+      "initial_expression": "add(0, mul(1, add(mul(1, u), 0)))",
+      "goal_expression": "u",
+      "category": "HELD_OUT_POSITIVE",
+      "description": "unseen u compound"
+    },
+    {
+      "problem_id": "qual-pos-02",
+      "problem_digest": "7d8bc8693d48250a29849fe62c134421f1296aeca8d497b512a879eeb8c9946f",
+      "initial_expression": "mul(add(mul(1, v), 0), mul(1, 1))",
+      "goal_expression": "v",
+      "category": "HELD_OUT_POSITIVE",
+      "description": "unseen v mul-one"
+    },
+    {
+      "problem_id": "qual-pos-03",
+      "problem_digest": "a917d513c3f6c6a2f373ac33d0e731b203fd6255180e64dd2d7770a037d6eb07",
+      "initial_expression": "neg(neg(mul(add(mul(1, w), 0), 1)))",
+      "goal_expression": "w",
+      "category": "HELD_OUT_POSITIVE",
+      "description": "unseen w double-neg outer"
+    },
+    {
+      "problem_id": "qual-pos-04",
+      "problem_digest": "4891081346c0467e607f92d4cac6d3f7adcdaf671b657590c9c34a794a48911c",
+      "initial_expression": "add(0, neg(neg(add(mul(1, x), 0))))",
+      "goal_expression": "x",
+      "category": "HELD_OUT_POSITIVE",
+      "description": "unseen x mixed"
+    },
+    {
+      "problem_id": "qual-pos-05",
+      "problem_digest": "fb2342a77f6a4ef786fd7f786d1ddad745762d919dd34d05d5ce45763374b06a",
+      "initial_expression": "mul(1, mul(1, add(mul(1, y), 0)))",
+      "goal_expression": "y",
+      "category": "HELD_OUT_POSITIVE",
+      "description": "unseen y double mul-one"
+    },
+    {
+      "problem_id": "qual-pos-06",
+      "problem_digest": "79e78f2347da5b5e689799c3941850796b537d676b4e39090290df3d36ac6bd8",
+      "initial_expression": "add(add(mul(1, z), 0), add(0, 0))",
+      "goal_expression": "z",
+      "category": "HELD_OUT_POSITIVE",
+      "description": "unseen z add-zero sibling"
+    },
+    {
+      "problem_id": "qual-pos-07",
+      "problem_digest": "4bd8467264857ef4e777e4744f362f2e4bd32a5ca0af0b9fbf2df2b2704c6dc8",
+      "initial_expression": "mul(neg(neg(1)), add(mul(1, p), 0))",
+      "goal_expression": "p",
+      "category": "HELD_OUT_POSITIVE",
+      "description": "unseen p prefix double-neg"
+    },
+    {
+      "problem_id": "qual-pos-08",
+      "problem_digest": "680e4cd184fea8c03db187b1da88874e02b59dd83c475f55f080ed9da92c1f41",
+      "initial_expression": "add(mul(add(mul(1, q), 0), 1), 0)",
+      "goal_expression": "q",
+      "category": "HELD_OUT_POSITIVE",
+      "description": "unseen q post add-zero"
+    }
+  ],
+  "positive_problem_digests": [
+    "89797c2c80fa49053cb2a132c4bd198eb95aeff2ae0043698314c9d12f60ca8f",
+    "7d8bc8693d48250a29849fe62c134421f1296aeca8d497b512a879eeb8c9946f",
+    "a917d513c3f6c6a2f373ac33d0e731b203fd6255180e64dd2d7770a037d6eb07",
+    "4891081346c0467e607f92d4cac6d3f7adcdaf671b657590c9c34a794a48911c",
+    "fb2342a77f6a4ef786fd7f786d1ddad745762d919dd34d05d5ce45763374b06a",
+    "79e78f2347da5b5e689799c3941850796b537d676b4e39090290df3d36ac6bd8",
+    "4bd8467264857ef4e777e4744f362f2e4bd32a5ca0af0b9fbf2df2b2704c6dc8",
+    "680e4cd184fea8c03db187b1da88874e02b59dd83c475f55f080ed9da92c1f41"
+  ],
+  "negative_control_count": 4,
+  "negative_control_problems": [
+    {
+      "problem_id": "qual-neg-01",
+      "problem_digest": "a2652d1e32c52618f2dd93c9ea75f3c69720194b893318f8083466ab0471b019",
+      "initial_expression": "add(0, neg(neg(r)))",
+      "goal_expression": "r",
+      "category": "HELD_OUT_NEGATIVE",
+      "description": "negative control r"
+    },
+    {
+      "problem_id": "qual-neg-02",
+      "problem_digest": "79a131bfb0c30529e1873f48ab3670f51c02c456d2350b63284797d88e5c6765",
+      "initial_expression": "mul(s, 1)",
+      "goal_expression": "s",
+      "category": "HELD_OUT_NEGATIVE",
+      "description": "negative control s"
+    },
+    {
+      "problem_id": "qual-neg-03",
+      "problem_digest": "ac4b2dac5ce79c669b8dfac2e4cc078719850a32946d0620440c34b90d9e9dbf",
+      "initial_expression": "add(0, mul(t, 1))",
+      "goal_expression": "t",
+      "category": "HELD_OUT_NEGATIVE",
+      "description": "negative control t"
+    },
+    {
+      "problem_id": "qual-neg-04",
+      "problem_digest": "5ab4bfca2c12fe55b4c7bdf815ea9d0e39cf57fa842b7f688c2ab456639ceec0",
+      "initial_expression": "neg(neg(neg(neg(n))))",
+      "goal_expression": "n",
+      "category": "HELD_OUT_NEGATIVE",
+      "description": "negative control n quad neg"
+    }
+  ],
+  "negative_control_digests": [
+    "a2652d1e32c52618f2dd93c9ea75f3c69720194b893318f8083466ab0471b019",
+    "79a131bfb0c30529e1873f48ab3670f51c02c456d2350b63284797d88e5c6765",
+    "ac4b2dac5ce79c669b8dfac2e4cc078719850a32946d0620440c34b90d9e9dbf",
+    "5ab4bfca2c12fe55b4c7bdf815ea9d0e39cf57fa842b7f688c2ab456639ceec0"
+  ],
+  "is_disjoint_from_discovery": true,
+  "corpus_digest": "5f540d36aaa041cae0a8a9d741c93609215c0101bd9d920c13d0209e8552645f"
+}

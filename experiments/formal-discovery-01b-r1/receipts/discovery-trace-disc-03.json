@@ -1,0 +1,165 @@
+{
+  "schema_version": "miskatonic.execution-trace.v0.1",
+  "trace_id": "trace-disc-03",
+  "problem_id": "disc-03",
+  "backend_id": "rewrite_environment",
+  "backend_version": "0.1.0",
+  "execution_origin": "EXECUTED_NATIVE",
+  "logical_authority_class": "NONE",
+  "created_at": "2026-09-12T21:55:25.970400+00:00",
+  "events": [
+    {
+      "event_id": "trace-disc-03-ev-0000",
+      "sequence": 0,
+      "event_type": "INITIAL_PROBLEM",
+      "backend_id": "rewrite_environment",
+      "backend_version": "0.1.0",
+      "parent_event_id": null,
+      "state_digest": "6d2c55df9edc5802561f930343c856cc4c15053ea10b53a2f01b7990aa02bce8",
+      "operation": "init",
+      "result_digest": "6d2c55df9edc5802561f930343c856cc4c15053ea10b53a2f01b7990aa02bce8",
+      "provenance": {
+        "timestamp": "2026-09-12T21:55:25.970422+00:00",
+        "origin": "rewrite_environment"
+      },
+      "logical_authority_class": "NONE",
+      "event_origin": "BACKEND_OBSERVED",
+      "payload": {
+        "problem_id": "disc-03",
+        "expression": "mul(add(mul(1, c), 0), 1)"
+      }
+    },
+    {
+      "event_id": "trace-disc-03-ev-0001",
+      "sequence": 1,
+      "event_type": "RULE_APPLICATION",
+      "backend_id": "rewrite_environment",
+      "backend_version": "0.1.0",
+      "parent_event_id": "trace-disc-03-ev-0000",
+      "state_digest": "6d2c55df9edc5802561f930343c856cc4c15053ea10b53a2f01b7990aa02bce8",
+      "operation": "MUL_ONE_LEFT",
+      "result_digest": "d2ad758a5c8fa044c53a60b10d5cfb186b38b9e7252873c580efe6bf0475bffb",
+      "provenance": {
+        "timestamp": "2026-09-12T21:55:25.970428+00:00",
+        "origin": "rewrite_environment"
+      },
+      "logical_authority_class": "NONE",
+      "event_origin": "BACKEND_OBSERVED",
+      "payload": {
+        "operation": "MUL_ONE_LEFT",
+        "expression": "rule(MUL_ONE_LEFT, c)",
+        "tactic": "rule(MUL_ONE_LEFT, c)",
+        "receipt": {
+          "input_state_digest": "6d2c55df9edc5802561f930343c856cc4c15053ea10b53a2f01b7990aa02bce8",
+          "action_id": "act-state-6d2c55df9edc-MUL_ONE_LEFT-0_0",
+          "operation": "MUL_ONE_LEFT",
+          "output_state_digest": "d2ad758a5c8fa044c53a60b10d5cfb186b38b9e7252873c580efe6bf0475bffb",
+          "primitive_rule": "MUL_ONE_LEFT",
+          "rewrite_position": [
+            0,
+            0
+          ],
+          "matched_term_repr": "mul(1, c)",
+          "replacement_term_repr": "c",
+          "transition_implementation_digest": "08546ee80e7765acd8a4300372e501f99e1a90d843bdf25c5a15a64b84b47f2f"
+        }
+      }
+    },
+    {
+      "event_id": "trace-disc-03-ev-0002",
+      "sequence": 2,
+      "event_type": "RULE_APPLICATION",
+      "backend_id": "rewrite_environment",
+      "backend_version": "0.1.0",
+      "parent_event_id": "trace-disc-03-ev-0001",
+      "state_digest": "d2ad758a5c8fa044c53a60b10d5cfb186b38b9e7252873c580efe6bf0475bffb",
+      "operation": "ADD_ZERO_RIGHT",
+      "result_digest": "7154a656d41b211d8353fbeaae6d3cb52da32b031bd777decb5f99d3c4b0f16b",
+      "provenance": {
+        "timestamp": "2026-09-12T21:55:25.970432+00:00",
+        "origin": "rewrite_environment"
+      },
+      "logical_authority_class": "NONE",
+      "event_origin": "BACKEND_OBSERVED",
+      "payload": {
+        "operation": "ADD_ZERO_RIGHT",
+        "expression": "rule(ADD_ZERO_RIGHT, c)",
+        "tactic": "rule(ADD_ZERO_RIGHT, c)",
+        "receipt": {
+          "input_state_digest": "d2ad758a5c8fa044c53a60b10d5cfb186b38b9e7252873c580efe6bf0475bffb",
+          "action_id": "act-state-d2ad758a5c8f-ADD_ZERO_RIGHT-0",
+          "operation": "ADD_ZERO_RIGHT",
+          "output_state_digest": "7154a656d41b211d8353fbeaae6d3cb52da32b031bd777decb5f99d3c4b0f16b",
+          "primitive_rule": "ADD_ZERO_RIGHT",
+          "rewrite_position": [
+            0
+          ],
+          "matched_term_repr": "add(c, 0)",
+          "replacement_term_repr": "c",
+          "transition_implementation_digest": "08546ee80e7765acd8a4300372e501f99e1a90d843bdf25c5a15a64b84b47f2f"
+        }
+      }
+    },
+    {
+      "event_id": "trace-disc-03-ev-0003",
+      "sequence": 3,
+      "event_type": "RULE_APPLICATION",
+      "backend_id": "rewrite_environment",
+      "backend_version": "0.1.0",
+      "parent_event_id": "trace-disc-03-ev-0002",
+      "state_digest": "7154a656d41b211d8353fbeaae6d3cb52da32b031bd777decb5f99d3c4b0f16b",
+      "operation": "MUL_ONE_RIGHT",
+      "result_digest": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+      "provenance": {
+        "timestamp": "2026-09-12T21:55:25.970435+00:00",
+        "origin": "rewrite_environment"
+      },
+      "logical_authority_class": "NONE",
+      "event_origin": "BACKEND_OBSERVED",
+      "payload": {
+        "operation": "MUL_ONE_RIGHT",
+        "expression": "rule(MUL_ONE_RIGHT, c)",
+        "tactic": "rule(MUL_ONE_RIGHT, c)",
+        "receipt": {
+          "input_state_digest": "7154a656d41b211d8353fbeaae6d3cb52da32b031bd777decb5f99d3c4b0f16b",
+          "action_id": "act-state-7154a656d41b-MUL_ONE_RIGHT-root",
+          "operation": "MUL_ONE_RIGHT",
+          "output_state_digest": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+          "primitive_rule": "MUL_ONE_RIGHT",
+          "rewrite_position": [],
+          "matched_term_repr": "mul(c, 1)",
+          "replacement_term_repr": "c",
+          "transition_implementation_digest": "08546ee80e7765acd8a4300372e501f99e1a90d843bdf25c5a15a64b84b47f2f"
+        }
+      }
+    },
+    {
+      "event_id": "trace-disc-03-ev-0004",
+      "sequence": 4,
+      "event_type": "TERMINAL_VERDICT",
+      "backend_id": "rewrite_environment",
+      "backend_version": "0.1.0",
+      "parent_event_id": "trace-disc-03-ev-0003",
+      "state_digest": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+      "operation": "qed",
+      "result_digest": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6",
+      "provenance": {
+        "timestamp": "2026-09-12T21:55:25.970438+00:00",
+        "origin": "rewrite_environment"
+      },
+      "logical_authority_class": "NONE",
+      "event_origin": "BACKEND_OBSERVED",
+      "payload": {
+        "verdict": "PROVEN",
+        "proof_complete": "PROVEN"
+      }
+    }
+  ],
+  "terminal_verdict": "PROVEN",
+  "metrics": {
+    "event_count": 5,
+    "branch_count": 0,
+    "wall_time_ms": 5.0
+  },
+  "problem_digest": "9796e686b5ff9e63a9c525406a20ea6a65678964521cd026a34e13a00b3146ca"
+}

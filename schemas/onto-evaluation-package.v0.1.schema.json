@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "miskatonic.onto-evaluation-package.v0.1",
+  "title": "Miskatonic ONTO Evaluation Package Schema v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "package_id",
+    "candidate_id",
+    "recurrence_count",
+    "representation_invariance",
+    "cross_search_policy_recurrence",
+    "cross_formal_system_recurrence",
+    "functional_search_benefit",
+    "source_traces",
+    "structural_fingerprint",
+    "authority"
+  ],
+  "properties": {
+    "package_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidate_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "recurrence_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "representation_invariance": {
+      "type": "string"
+    },
+    "cross_search_policy_recurrence": {
+      "type": "string"
+    },
+    "cross_formal_system_recurrence": {
+      "type": "string"
+    },
+    "functional_search_benefit": {
+      "type": "string",
+      "enum": ["SUPPORTED", "NOT_SUPPORTED", "UNTESTED", "UNKNOWN"]
+    },
+    "functional_search_benefit_scope": {
+      "type": "string",
+      "enum": ["NODE_EXPANSION_SEARCH_STRUCTURE"]
+    },
+    "end_to_end_runtime_benefit": {
+      "type": "string",
+      "enum": ["SUPPORTED", "NOT_SUPPORTED", "NOT_ESTABLISHED", "UNKNOWN"]
+    },
+    "claim_ceiling": {
+      "type": "string",
+      "const": "ENGINEERING_ABSTRACTION_EFFECT_ONLY"
+    },
+    "source_traces": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "structural_fingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "evidence_kind",
+          "artifact_ref",
+          "artifact_digest",
+          "evidence_status",
+          "source_experimental_units"
+        ],
+        "properties": {
+          "evidence_kind": { "type": "string" },
+          "artifact_ref": { "type": "string" },
+          "artifact_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "evidence_status": { "type": "string" },
+          "source_experimental_units": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "source_repository": { "type": ["string", "null"] },
+          "source_commit": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "authority": {
+      "const": "NONE"
+    }
+  }
+}

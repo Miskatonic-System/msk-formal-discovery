@@ -1,19 +1,34 @@
 # Miskatonic Formal Discovery Engine (`msk-formal-discovery`)
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01B-R1`
 **Repository**: `Miskatonic-System/msk-formal-discovery`
 **Architecture Owner**: `Miskatonic-System/miskatonic-systems`
 **Upstream Sources**: `Miskatonic-System/msk-corpus-intake`, `Miskatonic-System/msk-epistemic-engine`
 **Evaluation Owner**: `Miskatonic-System/msk-onto`
-**Work Type**: `CANDIDATE_APPLICATION_AUTHORITY_REPAIR`
-**Authority**: `NONE` (Zero theorem proof or mathematical claim authority)
-**Canonical Main**: `8d80e82d5936fb0df36afc95ff7bffb7d4915768` (`FORMAL_DISCOVERY_PROTOTYPE_SPINE_ESTABLISHED`)
-**Reviewed R1 Head**: `96587f8fa379aa972922b7f5e689728e36238f50`
-**Reviewed R2 Head**: `5a641eee2022d8ba54b20aef8708c6b380f3f987`
-**Reviewed R3 Head**: `17724487c3e127ff0f6df07e2ad15824712078b4`
-**Reviewed R4 Head**: `6d80eb75c7949358597022a69eb7536faeafe59d`
-**Blocking Source Review**: `5188003849`
-**Earned Final Ratification Disposition**: `FORMAL_DISCOVERY_SPINE_ACCEPTED`
+**Work Type**: `FRESH_PROSPECTIVE_REPLICATION`
+**Claim Ceiling**: `ENGINEERING_ABSTRACTION_EFFECT_ONLY`
+**Authority**: `NONE` (Zero theorem proof or mathematical claim authority; canonical library mutation prohibited)
+**Canonical Predecessor**: `288af1a06fa1d98bd9cf8dd48a9ef6902c36b9f9` (`FORMAL_DISCOVERY_SPINE_ACCEPTED`)
+**Canonical Predecessor Tree**: `2e7ccb2cb5750ad2a09ec8feae684a3e8ed5409a`
+**Historical Diagnostic Head**: `931b6655661da69f8e0f351157e96cbb1c811d1d` (`NONAUTHORITATIVE_DIAGNOSTIC`)
+
+---
+
+## 0. WO-MATH-FORMAL-DISCOVERY-01B-R1: Clean Prospective Replication
+
+### Historical R0 Diagnostic Status
+Historical Commit B (`931b6655661da69f8e0f351157e96cbb1c811d1d`) is retained permanently as `NONAUTHORITATIVE_DIAGNOSTIC` under the invariant:
+$$\text{HISTORICAL\_SIGNAL} \ne \text{PROSPECTIVE\_REPLICATION\_AUTHORITY}$$
+Historical observations noted a 55.35% node reduction with substantial end-to-end runtime overhead.
+
+### R1 Commit A: Repaired Preregistration and Fresh Qualification Freeze
+- **Applicator Reseal**: Implementation SHA-256 bound at freeze; verified against execution receipts.
+- **Fail-Closed Macro Expansion**: Rejects empty expansions; never infers fallback.
+- **4-Level Deterministic Selector**: Highest distinct support, longest sequence, most meaningful constructors, lexical digest tie-break.
+- **Fresh Qualification Corpus**: Generated under seeds `positive: 271828` and `negative: 314159`; verified strictly disjoint from all historical discovery and qualification units.
+- **Paired-Terminal SMT Control**: Native Z3 checks actual baseline terminal expression vs actual abstracted terminal expression (`UNSAT_REFUTED`).
+- **Exact Eight-Way Adjudication**: Evaluated in strict priority order; post-hoc 20% threshold removed from authoritative gates.
+- **Freeze Validation**: Verified zero held-out receipts or result artifacts prior to execution (`R1_FREEZE_VALIDATED`).
 
 ---
 
@@ -24,20 +39,8 @@
 3. **01A-R2 Evidence Chain & Trace Semantics**: Head commit `5a641eee2022d8ba54b20aef8708c6b380f3f987` resolved initial evidence-chain defects across 79 deterministic tests.
 4. **01A-R3 Final Execution Evidence Closure**: Head commit `17724487c3e127ff0f6df07e2ad15824712078b4` sealed evidence custody seams across 99 deterministic tests.
 5. **01A-R4 Production Bridge Final Repair**: Head commit `6d80eb75c7949358597022a69eb7536faeafe59d` sealed production bridges across 115 deterministic tests.
-6. **01A-R4-R1 Candidate-Application Authority Closure & Spine Ratification**: Under `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`, candidate application authority was closed and the formal discovery spine ratified across 124 deterministic tests:
-   - **Caller APPLIED Authority Removed**: `SearchExecutor.execute(...)` derives application state itself; public caller cannot mint `APPLIED`. Attempting to set `APPLIED` is strictly rejected with `AuthorityViolationError`.
-   - **01A Application States Sealed**: `candidate_enabled = False` => `DISABLED`; `candidate_enabled = True` => `REQUESTED_NOT_APPLIED`. No 01A `SearchExecutor` invocation may emit `APPLIED`.
-   - **APPLIED Reserved for 01B**: `APPLIED` is frozen as a reserved future state requiring a governed `CandidateApplicator` and `CandidateApplicationReceipt` binding candidate artifact digest, applicator implementation digest, input state digest, output action surface digest, application semantics, and result.
-   - **Candidate-Aware Action Generator Eliminated**: The canonical execution path does not pass `candidate_id` into action generators. Baseline and candidate-requested arms receive identical inputs.
-   - **Transition Parity Enforced**: Baseline (`DISABLED`) and candidate-requested (`REQUESTED_NOT_APPLIED`) arms use identical action generators, transition models, policies, budgets, seeds, and environments.
-   - **Qualification Gate Sealed**: `QUALIFIED_HELD_OUT` requires abstracted `candidate_application_status = APPLIED`. Because 01A cannot produce `APPLIED`, candidate-requested runs remain `CANDIDATE_ONLY`.
-   - **ONTO Boundary Sealed**: ONTO export remains `functional_search_benefit = UNTESTED` for all candidate-requested runs. No canonical 01A test emits `SUPPORTED`.
-   - **Candidate Artifact Digest**: Deterministically binds `candidate_id`, `candidate_kind`, `formal_specification`, `lgg_digest`, and `admissibility_receipt_digest`.
-   - **Candidate Application Digest**: Explicitly binds status, candidate ID, and candidate artifact digest with invariant `REQUEST_DIGEST != APPLICATION_PROOF`.
-   - **Process-Local Witness Trust Statement**: Frozen: `PROCESS_LOCAL_PROVENANCE_WITNESS != HOSTILE_CODE_ISOLATION`. `SearchExecutionWitness` provides process-local provenance and anti-construction, not arbitrary code sandboxing inside Python.
-
-The verified final disposition is:
-$$\text{FORMAL\_DISCOVERY\_SPINE\_ACCEPTED}$$
+6. **01A-R4-R1 Candidate-Application Authority Closure & Spine Ratification**: Candidate application authority was formally closed and sealed, earning `FORMAL_DISCOVERY_SPINE_ACCEPTED` across 124 deterministic tests.
+7. **01B R0 Diagnostic Execution**: Head commit `931b6655661da69f8e0f351157e96cbb1c811d1d` retained permanently as `NONAUTHORITATIVE_DIAGNOSTIC`.
 
 
 ---

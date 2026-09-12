@@ -16,7 +16,7 @@ from msk_formal_discovery.abstraction.anti_unification import (
     create_admissibility_receipt,
 )
 from msk_formal_discovery.core.exceptions import AntiUnificationError, AuthorityViolationError
-from msk_formal_discovery.core.terms import Term
+from msk_formal_discovery.core.terms import Term, Var
 
 HEX_DIGEST_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
@@ -63,6 +63,7 @@ class AbstractionCandidate:
     held_out_evaluation: Optional[Dict[str, Any]] = None
     blueprint_family: Optional[str] = None
     onto_export: Optional[Dict[str, Any]] = None
+    primitive_expansion: List[str] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         # Validate hex digest patterns on discovery and qualification problem digests
@@ -145,6 +146,7 @@ class AbstractionCandidate:
             "held_out_evaluation": held_out_data,
             "blueprint_family": self.blueprint_family,
             "onto_export": onto_data,
+            "primitive_expansion": list(self.primitive_expansion),
             "authority": self.authority,
         }
         if self.admissibility_receipt is not None:
@@ -154,6 +156,49 @@ class AbstractionCandidate:
     def artifact_digest(self) -> str:
         """Compute deterministic SHA-256 candidate artifact digest (WO-MATH-FORMAL-DISCOVERY-01A-R4-R1 Section 13)."""
         return compute_candidate_artifact_digest(self)
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> AbstractionCandidate:
+        au_data = data.get("anti_unification_evidence", {})
+        lgg_rep = au_data.get("lgg_representation", "")
+        lgg_term = Term.parse(lgg_rep) if lgg_rep else Var("X")
+        subst_map: Dict[str, Dict[str, Term]] = {}
+        for w in au_data.get("substitution_witnesses", []):
+            tid = w.get("source_trace_id", "")
+            substs = {k: Term.parse(str(v)) for k, v in w.get("substitutions", {}).items()}
+            subst_map[tid] = substs
+        au_res = AntiUnificationResult(
+            lgg_term=lgg_term,
+            substitution_witnesses=subst_map,
+            algorithm_version=au_data.get("algorithm_version", "miskatonic.structural-lgg-v0.1"),
+            deterministic_digest=au_data.get("deterministic_digest", ""),
+        )
+        ckind = data.get("candidate_kind", "TACTIC_MACRO")
+        kind_enum = AbstractionKind(ckind) if ckind in AbstractionKind.__members__ else AbstractionKind.TACTIC_MACRO
+        cstatus = data.get("status", "PROPOSED")
+        status_enum = CandidateStatus(cstatus) if cstatus in CandidateStatus.__members__ else CandidateStatus.PROPOSED
+        adm_status = data.get("admissibility_status", "ADMISSIBLE")
+        adm_enum = AdmissibilityStatus(adm_status) if adm_status in AdmissibilityStatus.__members__ else AdmissibilityStatus.ADMISSIBLE
+
+        return cls(
+            candidate_id=data["candidate_id"],
+            candidate_kind=kind_enum,
+            formal_specification=data.get("formal_specification", {}),
+            anti_unification_evidence=au_res,
+            discovery_set_trace_ids=list(data.get("discovery_set_trace_ids", [])),
+            discovery_origin=data.get("discovery_origin", "EXECUTED_OBSERVED"),
+            discovery_problem_digests=list(data.get("discovery_problem_digests", [])),
+            qualification_problem_ids=list(data.get("qualification_problem_ids", [])),
+            qualification_trace_ids=list(data.get("qualification_trace_ids", [])),
+            qualification_problem_digests=list(data.get("qualification_problem_digests", [])),
+            status=status_enum,
+            admissibility_status=adm_enum,
+            admissibility_receipt=data.get("admissibility_receipt"),
+            held_out_evaluation=data.get("held_out_evaluation"),
+            blueprint_family=data.get("blueprint_family"),
+            onto_export=data.get("onto_export"),
+            primitive_expansion=list(data.get("primitive_expansion", [])),
+        )
 
 
 def compute_candidate_artifact_digest(candidate: Any) -> str:
@@ -213,12 +258,20 @@ def compute_candidate_artifact_digest(candidate: Any) -> str:
         lgg_dig = getattr(candidate, "lgg_digest", "0" * 64)
         adm_dig = getattr(candidate, "admissibility_receipt_digest", "0" * 64)
 
+    prim_exp = (
+        getattr(candidate, "primitive_expansion", None)
+        or (candidate.get("primitive_expansion") if isinstance(candidate, dict) else None)
+        or []
+    )
+    prim_exp_dig = hashlib.sha256(json.dumps(prim_exp, sort_keys=True).encode("utf-8")).hexdigest() if prim_exp else ("0" * 64)
+
     payload = {
         "candidate_id": cid,
         "candidate_kind": ckind,
         "formal_specification_digest": hashlib.sha256(spec_str.encode("utf-8")).hexdigest(),
         "lgg_digest": lgg_dig or ("0" * 64),
         "admissibility_receipt_digest": adm_dig or ("0" * 64),
+        "primitive_expansion_digest": prim_exp_dig,
     }
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
 
@@ -325,4 +378,5 @@ class CandidateFactory:
             admissibility_status=status,
             admissibility_receipt=receipt.to_dict(),
             blueprint_family=blueprint_family,
+            primitive_expansion=list(getattr(pattern, "operations", [])),
         )

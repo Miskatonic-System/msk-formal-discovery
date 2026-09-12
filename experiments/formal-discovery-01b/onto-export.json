@@ -1,0 +1,43 @@
+{
+  "package_id": "onto-eval-macro_mul_one_add_zero",
+  "candidate_id": "macro_mul_one_add_zero",
+  "recurrence_count": 8,
+  "representation_invariance": "UNKNOWN",
+  "cross_search_policy_recurrence": "UNKNOWN",
+  "cross_formal_system_recurrence": "UNKNOWN",
+  "functional_search_benefit": "SUPPORTED",
+  "source_traces": [
+    "trace-disc-01",
+    "trace-disc-02",
+    "trace-disc-03",
+    "trace-disc-04",
+    "trace-disc-05",
+    "trace-disc-06",
+    "trace-disc-07",
+    "trace-disc-08"
+  ],
+  "structural_fingerprint": "a0b46b1f618a3b621dafc81885fda040dd5dc5761e8016a45c8f9e8ac8ab0bf3",
+  "evidence_refs": [
+    {
+      "evidence_kind": "HELD_OUT_REPLAY",
+      "artifact_ref": "held-out-replay-macro_mul_one_add_zero",
+      "artifact_digest": "f288a45579d23ea38f194a91d9b3dc4e29817ccafef6bc96b1f5528a317c2e73",
+      "evidence_status": "SUPPORTED",
+      "source_experimental_units": [
+        "89797c2c80fa49053cb2a132c4bd198eb95aeff2ae0043698314c9d12f60ca8f",
+        "7d8bc8693d48250a29849fe62c134421f1296aeca8d497b512a879eeb8c9946f",
+        "a917d513c3f6c6a2f373ac33d0e731b203fd6255180e64dd2d7770a037d6eb07",
+        "4891081346c0467e607f92d4cac6d3f7adcdaf671b657590c9c34a794a48911c",
+        "fb2342a77f6a4ef786fd7f786d1ddad745762d919dd34d05d5ce45763374b06a",
+        "79e78f2347da5b5e689799c3941850796b537d676b4e39090290df3d36ac6bd8",
+        "4bd8467264857ef4e777e4744f362f2e4bd32a5ca0af0b9fbf2df2b2704c6dc8",
+        "680e4cd184fea8c03db187b1da88874e02b59dd83c475f55f080ed9da92c1f41",
+        "a2652d1e32c52618f2dd93c9ea75f3c69720194b893318f8083466ab0471b019",
+        "79a131bfb0c30529e1873f48ab3670f51c02c456d2350b63284797d88e5c6765",
+        "ac4b2dac5ce79c669b8dfac2e4cc078719850a32946d0620440c34b90d9e9dbf",
+        "5ab4bfca2c12fe55b4c7bdf815ea9d0e39cf57fa842b7f688c2ab456639ceec0"
+      ]
+    }
+  ],
+  "authority": "NONE"
+}

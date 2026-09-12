@@ -1,0 +1,186 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "miskatonic.terminal-state-custody-receipt.v0.1",
+  "title": "Miskatonic Terminal State Custody Receipt Schema v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "custody_receipt_id",
+    "custody_mode",
+    "source_experiment_id",
+    "source_work_order",
+    "source_execution_commit",
+    "source_execution_tree",
+    "source_result_ref",
+    "source_result_sha256",
+    "problem_id",
+    "problem_digest",
+    "arm",
+    "candidate_id",
+    "candidate_enabled",
+    "candidate_application_status",
+    "candidate_application_count",
+    "search_run_ref",
+    "search_run_digest",
+    "original_search_receipt_ref",
+    "original_search_receipt_digest",
+    "replay_search_run_ref",
+    "replay_search_run_digest",
+    "terminal_state_id",
+    "terminal_canonical_representation",
+    "terminal_expression_digest",
+    "source_recorded_terminal_digest",
+    "terminal_digest_parity",
+    "nodes_expanded",
+    "nodes_evaluated",
+    "branch_count",
+    "solved",
+    "metric_parity",
+    "application_parity",
+    "implementation_digests",
+    "replayed_at",
+    "authority",
+    "receipt_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "miskatonic.terminal-state-custody-receipt.v0.1"
+    },
+    "custody_receipt_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "custody_mode": {
+      "const": "DETERMINISTIC_EVIDENCE_REPLAY"
+    },
+    "source_experiment_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_work_order": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_execution_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "source_execution_tree": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "source_result_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_result_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "problem_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "problem_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "arm": {
+      "type": "string",
+      "enum": ["BASELINE", "ABSTRACTED"]
+    },
+    "candidate_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidate_enabled": {
+      "type": "boolean"
+    },
+    "candidate_application_status": {
+      "type": "string",
+      "enum": ["DISABLED", "APPLIED", "REQUESTED_NOT_APPLIED", "NOT_APPLICABLE"]
+    },
+    "candidate_application_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "search_run_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "search_run_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "original_search_receipt_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "original_search_receipt_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "replay_search_run_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "replay_search_run_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "terminal_state_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "terminal_canonical_representation": {
+      "type": "string",
+      "minLength": 1
+    },
+    "terminal_expression_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source_recorded_terminal_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "terminal_digest_parity": {
+      "type": "boolean"
+    },
+    "nodes_expanded": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "nodes_evaluated": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "branch_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "solved": {
+      "type": "boolean"
+    },
+    "metric_parity": {
+      "type": "boolean"
+    },
+    "application_parity": {
+      "type": "boolean"
+    },
+    "implementation_digests": {
+      "type": "object"
+    },
+    "replayed_at": {
+      "type": "string"
+    },
+    "authority": {
+      "const": "NONE"
+    },
+    "receipt_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

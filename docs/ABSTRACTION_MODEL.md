@@ -210,7 +210,7 @@ stateDiagram-v2
 - **`UNASSESSED`**: Default initial state upon pattern discovery.
 - **`PROPOSED`**: Formally assessed as admissible, pending held-out replay.
 - **`CANDIDATE_ONLY`**: Evaluated under 01A candidate-requested replay or synthetic fixtures; retains candidate status without positive benefit claim.
-- **`QUALIFIED_HELD_OUT`**: Successfully evaluated under genuine candidate application (`APPLIED`) with observed search reduction. Achieved by `macro_mul_one_add_zero` under `WO-MATH-FORMAL-DISCOVERY-01B` with 55.35% node reduction and 0 negative-control degradation.
+- **`QUALIFIED_HELD_OUT`**: Successfully evaluated under genuine candidate application (`APPLIED`) with observed search reduction. Historically observed in 01B R0 diagnostic (55.35% node reduction, `NONAUTHORITATIVE_DIAGNOSTIC`), and formally replicated prospectively on fresh qualification corpus under `WO-MATH-FORMAL-DISCOVERY-01B-R1`.
 - **`REJECTED`**: Fails admissibility guards, degrades solve rate, or shows negative benefit.
 - **Refactoring Proposal**: Emits [`RefactoringProposal`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/refactoring/proposal.py) specifying:
   - `before_state` vs `proposed_after_state`

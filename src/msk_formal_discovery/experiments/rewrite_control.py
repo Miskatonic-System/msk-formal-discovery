@@ -396,8 +396,24 @@ def generate_discovery_corpus(seed: int = 42) -> List[RewriteProblem]:
 # Section 10: Freeze exactly 8 Held-Out Positive Problems
 def generate_held_out_positive_corpus(seed: int = 1337) -> List[RewriteProblem]:
     """Generate exactly 8 held-out positive problems with unseen variable names and contexts."""
+    if seed == 271828:
+        # WO-MATH-FORMAL-DISCOVERY-01B-R1 Fresh Positive Held-Out Corpus (Section 12)
+        probs = [
+            _make_prob("qual-r1-pos-01", mul(const(1), add(mul(const(1), var("va")), const(0))), var("va"), "HELD_OUT_POSITIVE", "fresh va mul-one prefix"),
+            _make_prob("qual-r1-pos-02", add(add(mul(const(1), var("vb")), const(0)), const(0)), var("vb"), "HELD_OUT_POSITIVE", "fresh vb add-zero suffix"),
+            _make_prob("qual-r1-pos-03", neg(neg(add(mul(const(1), var("vc")), const(0)))), var("vc"), "HELD_OUT_POSITIVE", "fresh vc double-neg outer"),
+            _make_prob("qual-r1-pos-04", mul(add(mul(const(1), var("vd")), const(0)), const(1)), var("vd"), "HELD_OUT_POSITIVE", "fresh vd mul-one suffix"),
+            _make_prob("qual-r1-pos-05", add(const(0), add(mul(const(1), var("ve")), const(0))), var("ve"), "HELD_OUT_POSITIVE", "fresh ve add-zero prefix"),
+            _make_prob("qual-r1-pos-06", mul(const(1), neg(neg(add(mul(const(1), var("vf")), const(0))))), var("vf"), "HELD_OUT_POSITIVE", "fresh vf compound"),
+            _make_prob("qual-r1-pos-07", add(const(0), mul(add(mul(const(1), var("vg")), const(0)), const(1))), var("vg"), "HELD_OUT_POSITIVE", "fresh vg mixed"),
+            _make_prob("qual-r1-pos-08", neg(neg(add(const(0), add(mul(const(1), var("vh")), const(0))))), var("vh"), "HELD_OUT_POSITIVE", "fresh vh nested"),
+        ]
+        assert len(probs) == 8, f"Expected exactly 8 positive held-out problems, got {len(probs)}"
+        return probs
+
+    # Historical 01B Positive Problems (seed=1337)
     # Unseen variables: u, v, w, x, y, z, p, q
-    probs: List[RewriteProblem] = [
+    probs = [
         # q1: add(0, mul(1, add(mul(1, u), 0))) -> u
         _make_prob("qual-pos-01", add(const(0), mul(const(1), add(mul(const(1), var("u")), const(0)))), var("u"), "HELD_OUT_POSITIVE", "unseen u compound"),
         # q2: mul(add(mul(1, v), 0), mul(1, 1)) -> v
@@ -422,8 +438,20 @@ def generate_held_out_positive_corpus(seed: int = 1337) -> List[RewriteProblem]:
 # Section 11: Freeze exactly 4 Held-Out Negative-Control Problems
 def generate_held_out_negative_corpus(seed: int = 2026) -> List[RewriteProblem]:
     """Generate exactly 4 negative control problems lacking the candidate motif."""
+    if seed == 314159:
+        # WO-MATH-FORMAL-DISCOVERY-01B-R1 Fresh Negative-Control Corpus (Section 12)
+        probs = [
+            _make_prob("qual-r1-neg-01", mul(const(1), neg(neg(var("na")))), var("na"), "HELD_OUT_NEGATIVE", "fresh na double-neg"),
+            _make_prob("qual-r1-neg-02", add(const(0), mul(var("nb"), const(1))), var("nb"), "HELD_OUT_NEGATIVE", "fresh nb mul-one"),
+            _make_prob("qual-r1-neg-03", neg(neg(add(var("nc"), const(0)))), var("nc"), "HELD_OUT_NEGATIVE", "fresh nc add-zero"),
+            _make_prob("qual-r1-neg-04", mul(const(1), add(const(0), var("nd"))), var("nd"), "HELD_OUT_NEGATIVE", "fresh nd add-zero prefix"),
+        ]
+        assert len(probs) == 4, f"Expected exactly 4 negative control problems, got {len(probs)}"
+        return probs
+
+    # Historical 01B Negative Problems (seed=2026)
     # These must NOT contain add(mul(1, X), 0)
-    probs: List[RewriteProblem] = [
+    probs = [
         # n1: add(0, neg(neg(r))) -> r
         _make_prob("qual-neg-01", add(const(0), neg(neg(var("r")))), var("r"), "HELD_OUT_NEGATIVE", "negative control r"),
         # n2: mul(s, 1) -> s
@@ -609,3 +637,38 @@ def check_smt_equivalence(
 
     is_equiv = (trace.terminal_verdict == "UNSAT_REFUTED")
     return is_equiv, trace
+
+
+def get_smt_control_implementation_digest() -> str:
+    """SHA-256 digest of SMT control logic in rewrite_control.py."""
+    path = Path(__file__).resolve()
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def check_paired_terminal_smt_equivalence(
+    baseline_bundle: Any,
+    abstracted_bundle: Any,
+    problem_id: str,
+    adapter: Optional[Z3Adapter] = None,
+) -> Tuple[bool, ExecutionTrace]:
+    """Verify semantic equivalence of actual baseline vs actual abstracted terminal expressions via native Z3.
+
+    Freeze invariant (WO-MATH-FORMAL-DISCOVERY-01B-R1 Sections 17 & 18):
+    INITIAL_EXPRESSION_EQUIVALENT_TO_GOAL != PAIRED_TERMINAL_SEMANTIC_EQUIVALENCE.
+    Actual baseline terminal must be compared directly to actual abstracted terminal.
+    """
+    baseline_term = getattr(baseline_bundle, "terminal_expression", None)
+    if baseline_term is None and hasattr(baseline_bundle, "terminal_state") and baseline_bundle.terminal_state:
+        baseline_term = baseline_bundle.terminal_state.context.get("expression")
+
+    abstracted_term = getattr(abstracted_bundle, "terminal_expression", None)
+    if abstracted_term is None and hasattr(abstracted_bundle, "terminal_state") and abstracted_bundle.terminal_state:
+        abstracted_term = abstracted_bundle.terminal_state.context.get("expression")
+
+    if baseline_term is None:
+        raise ValueError(f"MISSING_BASELINE_TERMINAL: Problem {problem_id} search bundle lacks terminal expression")
+    if abstracted_term is None:
+        raise ValueError(f"MISSING_ABSTRACTED_TERMINAL: Problem {problem_id} search bundle lacks terminal expression")
+
+    return check_smt_equivalence(baseline_term, abstracted_term, problem_id=f"paired-{problem_id}", adapter=adapter)
+

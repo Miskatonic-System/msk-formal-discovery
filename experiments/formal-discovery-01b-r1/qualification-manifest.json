@@ -1,0 +1,106 @@
+{
+  "schema_version": "miskatonic.qualification-manifest.v0.1",
+  "experiment_id": "formal-discovery-01b-r1",
+  "positive_held_out_count": 8,
+  "positive_held_out_problems": [
+    {
+      "problem_id": "qual-r1-pos-01",
+      "problem_digest": "1dec19dae0add463821335af100ca45f3ffbb77541fd098a02ceff35abde2458",
+      "initial_expression": "mul(1, add(mul(1, va), 0))",
+      "goal_expression": "va",
+      "category": "HELD_OUT_POSITIVE",
+      "description": "fresh va mul-one prefix"
+    },
+    {
+      "problem_id": "qual-r1-pos-02",
+      "problem_digest": "02444a0f7a4bc3629d85fb417ea5720efa35525f1b6f711c5f1079a7bf7eaec9",
+      "initial_expression": "add(add(mul(1, vb), 0), 0)",
+      "goal_expression": "vb",
+      "category": "HELD_OUT_POSITIVE",
+      "description": "fresh vb add-zero suffix"
+    },
+    {
+      "problem_id": "qual-r1-pos-03",
+      "problem_digest": "130f649e401d83995b75a80cdd71a586ec1c33e941f69e574ec05a17c6571c6f",
+      "initial_expression": "neg(neg(add(mul(1, vc), 0)))",
+      "goal_expression": "vc",
+      "category": "HELD_OUT_POSITIVE",
+      "description": "fresh vc double-neg outer"
+    },
+    {
+      "problem_id": "qual-r1-pos-04",
+      "problem_digest": "f038bd5c6dd5d2c294187694df8ea42fc6682a346a3403241ad429eded7dea9d",
+      "initial_expression": "mul(add(mul(1, vd), 0), 1)",
+      "goal_expression": "vd",
+      "category": "HELD_OUT_POSITIVE",
+      "description": "fresh vd mul-one suffix"
+    },
+    {
+      "problem_id": "qual-r1-pos-05",
+      "problem_digest": "5f694efce529bc67a51c4f82d9bb7eb5d4518e7b5afc40322d98829aa3aafa81",
+      "initial_expression": "add(0, add(mul(1, ve), 0))",
+      "goal_expression": "ve",
+      "category": "HELD_OUT_POSITIVE",
+      "description": "fresh ve add-zero prefix"
+    },
+    {
+      "problem_id": "qual-r1-pos-06",
+      "problem_digest": "9388aea7d5e217716c277be83cbc4bf9eea31be197468fd5110ebdd95a17d17b",
+      "initial_expression": "mul(1, neg(neg(add(mul(1, vf), 0))))",
+      "goal_expression": "vf",
+      "category": "HELD_OUT_POSITIVE",
+      "description": "fresh vf compound"
+    },
+    {
+      "problem_id": "qual-r1-pos-07",
+      "problem_digest": "c0ce9c5b25c4941c8ab623379b3d269ada8d45dea658e3da4516fb8cca2850be",
+      "initial_expression": "add(0, mul(add(mul(1, vg), 0), 1))",
+      "goal_expression": "vg",
+      "category": "HELD_OUT_POSITIVE",
+      "description": "fresh vg mixed"
+    },
+    {
+      "problem_id": "qual-r1-pos-08",
+      "problem_digest": "a447e6b90b065b7401cfe6d07aa12c7b17c1daf90d0d5a64fa9ee08bcca9c5eb",
+      "initial_expression": "neg(neg(add(0, add(mul(1, vh), 0))))",
+      "goal_expression": "vh",
+      "category": "HELD_OUT_POSITIVE",
+      "description": "fresh vh nested"
+    }
+  ],
+  "negative_control_count": 4,
+  "negative_control_problems": [
+    {
+      "problem_id": "qual-r1-neg-01",
+      "problem_digest": "0d75812b06662e8b8d723407e3a995f91c8b3a3827ea0212c4c2c340435a798d",
+      "initial_expression": "mul(1, neg(neg(na)))",
+      "goal_expression": "na",
+      "category": "HELD_OUT_NEGATIVE",
+      "description": "fresh na double-neg"
+    },
+    {
+      "problem_id": "qual-r1-neg-02",
+      "problem_digest": "23c0efb8747d88e29eb515e2d19639fc48ae68b607f4559a9fbc59057aec98db",
+      "initial_expression": "add(0, mul(nb, 1))",
+      "goal_expression": "nb",
+      "category": "HELD_OUT_NEGATIVE",
+      "description": "fresh nb mul-one"
+    },
+    {
+      "problem_id": "qual-r1-neg-03",
+      "problem_digest": "29919a47342aae56cb20659d102cbc841c3a67f21375c1da76b81f8c2c7d36ab",
+      "initial_expression": "neg(neg(add(nc, 0)))",
+      "goal_expression": "nc",
+      "category": "HELD_OUT_NEGATIVE",
+      "description": "fresh nc add-zero"
+    },
+    {
+      "problem_id": "qual-r1-neg-04",
+      "problem_digest": "c30a6cbb423dd9ce6460a87d3f502e935fb9463359ea331ccc09e0c40d8e5e69",
+      "initial_expression": "mul(1, add(0, nd))",
+      "goal_expression": "nd",
+      "category": "HELD_OUT_NEGATIVE",
+      "description": "fresh nd add-zero prefix"
+    }
+  ]
+}

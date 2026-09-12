@@ -1,33 +1,30 @@
 # Architecture & Pipeline Specification
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01B`
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01B-R1`
 **Module**: `msk-formal-discovery/docs/ARCHITECTURE.md`
 **Historical 01A Predecessor**: `8d80e82d5936fb0df36afc95ff7bffb7d4915768` (`FORMAL_DISCOVERY_PROTOTYPE_SPINE_ESTABLISHED`)
 **R1 Head**: `96587f8fa379aa972922b7f5e689728e36238f50`
 **R2 Head**: `5a641eee2022d8ba54b20aef8708c6b380f3f987`
 **R3 Head**: `17724487c3e127ff0f6df07e2ad15824712078b4`
-9. **R4 Head**: `6d80eb75c7949358597022a69eb7536faeafe59d`
-10. **R4-R1 Head**: `288af1a06fa1d98bd9cf8dd48a9ef6902c36b9f9` (`FORMAL_DISCOVERY_SPINE_ACCEPTED`)
-11. **01B Commit A Head**: `0f7b699779b9fc6a702bc3d675ddb555a2c2213a` (`APPLICATION_AND_PREREG_FREEZE`)
-12. **01B Earned Adjudication Disposition**: `ABSTRACTION_SEARCH_BENEFIT_SUPPORTED`
+**R4 Head**: `6d80eb75c7949358597022a69eb7536faeafe59d`
+**R4-R1 Head**: `288af1a06fa1d98bd9cf8dd48a9ef6902c36b9f9` (`FORMAL_DISCOVERY_SPINE_ACCEPTED`)
+**01B Historical Head**: `931b6655661da69f8e0f351157e96cbb1c811d1d` (`NONAUTHORITATIVE_DIAGNOSTIC`)
 
 ---
 
-## Historical Disposition & 01B Experiment Execution Record
+## Historical Disposition & 01B-R1 Clean Prospective Replication Record
 
-Under `WO-MATH-FORMAL-DISCOVERY-01B`, the first governed prospective held-out search experiment was executed:
-1. **Commit A Freeze**: Schemas, `CandidateApplicator`, environment, native Z3 SMT semantic control, and manifests (8 discovery, 8 positive held-out, 4 negative control) were frozen at `0f7b699779b9fc6a702bc3d675ddb555a2c2213a` without held-out outcomes.
-2. **Commit B Execution**:
-   - Mined top candidate `macro_mul_one_add_zero` from 8 discovery traces (100% support, `ADMISSIBLE`).
-   - SMT semantic equivalence control verified 12/12 problems natively via Z3 (`UNSAT_REFUTED`).
-   - Prospective search reduction: 318 baseline nodes -> 142 abstracted nodes (**55.35% node reduction** on positive held-out problems, exceeding 20% threshold).
-   - Negative control exact selectivity: 15 baseline nodes == 15 abstracted nodes (**0 node delta**, exact parity, 0 false applications).
-   - Candidate status promoted to `QUALIFIED_HELD_OUT`.
-   - ONTO export emitted with `functional_search_benefit = SUPPORTED` and verified `OntoEvidenceRef`.
-   - Refactoring proposal generated with `canonical_library_mutated = False` and `authority = NONE`.
-
-The earned adjudication disposition is:
-$$\text{ABSTRACTION\_SEARCH\_BENEFIT\_SUPPORTED}$$
+1. **Historical 01B Diagnostic Execution**:
+   Commit B `931b6655661da69f8e0f351157e96cbb1c811d1d` is permanently classified as `NONAUTHORITATIVE_DIAGNOSTIC`.
+2. **01B-R1 Commit A Freeze**:
+   - Resealed CandidateApplicator identity SHA-256.
+   - Enforced fail-closed empty primitive expansion (never infer fallback).
+   - Sealed 4-level deterministic candidate selector (`select_candidate`) and candidate selection ledger.
+   - Fresh qualification corpus (`seed=271828` for positive, `seed=314159` for negative) strictly disjoint from all contaminated units.
+   - Paired-terminal state capture in `SearchExecutionBundle`.
+   - Native Z3 paired-terminal SMT semantic control (`baseline_terminal != abstracted_terminal`).
+   - Exact eight-way adjudication order without post-hoc 20% decision threshold.
+   - Commit A freeze validated (`R1_FREEZE_VALIDATED`), zero held-out execution receipts recorded.
 
 ---
 

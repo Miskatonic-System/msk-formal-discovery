@@ -33,6 +33,13 @@ SEARCH_EXECUTION_RECEIPT_SCHEMA_PATH = SCHEMAS_DIR / "search-execution-receipt.v
 ADMISSIBILITY_RECEIPT_SCHEMA_PATH = SCHEMAS_DIR / "admissibility-receipt.v0.1.schema.json"
 
 
+def get_replay_engine_implementation_digest() -> str:
+    """SHA-256 digest of replay.py file bytes."""
+    path = Path(__file__).resolve()
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+
 @dataclass
 class ReplayRunReceipt:
     """Observed run receipt from executing an arm of a paired replay (Sections 16 & 17)."""

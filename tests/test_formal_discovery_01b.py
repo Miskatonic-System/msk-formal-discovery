@@ -72,7 +72,7 @@ EXP_DIR = REPO_ROOT / "experiments" / "formal-discovery-01b"
 @pytest.fixture(scope="module")
 def experiment_execution_result():
     """Run the 01B experiment and return the result dictionary."""
-    return run_01b_experiment(exp_dir=EXP_DIR, save_receipts=True)
+    return run_01b_experiment(exp_dir=EXP_DIR, save_receipts=False)
 
 
 # 1. End-to-end pipeline execution and success gates

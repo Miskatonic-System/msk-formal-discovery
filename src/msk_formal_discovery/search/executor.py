@@ -317,6 +317,19 @@ class SearchExecutionBundle:
     traces: List[ExecutionTrace] = field(default_factory=list)
     runtime_witness: Optional[SearchExecutionWitness] = None
     candidate_application_receipts: List[Any] = field(default_factory=list)
+    terminal_state: Optional[SearchState] = None
+
+    @property
+    def terminal_expression(self) -> Optional[Any]:
+        if self.terminal_state and "expression" in self.terminal_state.context:
+            return self.terminal_state.context["expression"]
+        return None
+
+    @property
+    def terminal_expression_digest(self) -> Optional[str]:
+        if self.terminal_state and "expression_digest" in self.terminal_state.context:
+            return self.terminal_state.context["expression_digest"]
+        return None
 
     @property
     def search_execution_receipt(self) -> SearchExecutionReceipt:
@@ -705,10 +718,13 @@ class SearchExecutor:
             witness_token=witness_token,
         )
 
+        term_state = current if "current" in locals() else initial_state
+
         return SearchExecutionBundle(
             search_run=search_run,
             receipt=receipt,
             traces=search_traces,
             runtime_witness=witness,
             candidate_application_receipts=candidate_application_receipts,
+            terminal_state=term_state,
         )

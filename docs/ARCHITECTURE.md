@@ -1,20 +1,26 @@
 # Architecture & Pipeline Specification
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R1`  
-**Module**: `msk-formal-discovery/docs/ARCHITECTURE.md`  
-**Historical 01A Predecessor**: `8d80e82d5936fb0df36afc95ff7bffb7d4915768` (`FORMAL_DISCOVERY_PROTOTYPE_SPINE_ESTABLISHED`)  
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R2`
+**Module**: `msk-formal-discovery/docs/ARCHITECTURE.md`
+**Historical 01A Predecessor**: `8d80e82d5936fb0df36afc95ff7bffb7d4915768` (`FORMAL_DISCOVERY_PROTOTYPE_SPINE_ESTABLISHED`)
+**Reviewed R1 Head**: `96587f8fa379aa972922b7f5e689728e36238f50`
 **Repaired Disposition**: `FORMAL_DISCOVERY_SPINE_READY`
 
 ---
 
-## Historical 01A Disposition Record
+## Historical Disposition & R2 Repair Record
 
-Root commit `8d80e82d5936fb0df36afc95ff7bffb7d4915768` established a prototype architecture for formal discovery. However, `FORMAL_DISCOVERY_SPINE_READY` was not yet earned at 01A because backend execution was simulated, solver refutations lacked verified process receipts, and held-out qualification metrics relied on predetermined formulas (`baseline * 0.7`).
+Under `WO-MATH-FORMAL-DISCOVERY-01A-R2`, all nine blocking review defects (F-FD-R1-01 through F-FD-R1-09) have been comprehensively resolved:
+1. Non-`NONE` authority requires an attested `BackendExecutionReceipt` verified via `derive_authority(...)`.
+2. Trace events distinguish `CLIENT_DECLARED` (caller hints) from `BACKEND_OBSERVED` (checker verdicts); mining excludes client-declared events.
+3. SMT/Z3 adapter uses structural line parsing, non-zero exit codes fail closed, and models/cores are emitted only when requested and parsed.
+4. Canonical experimental units are bound by `problem_digest` across traces, search runs, replay contracts, and candidates.
+5. `ReplayRunReceipt` schema (`schemas/replay-run-receipt.v0.1.schema.json`) enforces arm parity and contract digest validation.
+6. Synthetic replay leaves candidates at `CANDIDATE_ONLY` under mode `SYNTHETIC_REPLAY_FIXTURE`.
+7. Candidate admissibility defaults to `UNASSESSED`, requires `AdmissibilityReceipt`, and rejects vacuous structures like `seq(V1)`.
+8. ONTO exports prohibit naked booleans (`NAKED_BOOLEAN_PROHIBITED`) and require `OntoEvidenceRef`.
 
-The canonical repaired interpretation of `8d80e82` is:
-$$\text{FORMAL\_DISCOVERY\_PROTOTYPE\_SPINE\_ESTABLISHED}$$
-
-Under `WO-MATH-FORMAL-DISCOVERY-01A-R1`, all execution-authority firewalls, real backend receipts, paired replay contracts, admissibility guards, and fail-closed evaluation defaults have been implemented and verified across 56 tests, earning:
+The earned disposition is:
 $$\text{FORMAL\_DISCOVERY\_SPINE\_READY}$$
 
 ---
@@ -57,12 +63,20 @@ Sequence violations (such as skipping search, out-of-order execution, or promoti
 
 ### 3.2 Reasoning Backend Execution Layer
 - **Contract Interface**: [`ReasoningBackend`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/backend/contract.py) provides a provider-neutral interface for problem dispatch, goal tracking, and trace emission.
-- **Authority Enforcement**: Backends are strictly partitioned into Logical Authority Classes. An SMT solver cannot emit deductive proof claims, and model checkers cannot be labeled as interactive theorem provers.
+- **Authority Enforcement**: Backends are strictly partitioned into Logical Authority Classes. An SMT solver cannot emit deductive proof claims, and model checkers cannot be labeled as interactive theorem provers. All authority derivation MUST go through `derive_authority(...)`.
 - **Execution Receipts**: Real backend executions emit attested [`BackendExecutionReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/backend-execution-receipt.v0.1.schema.json) records binding executable path, sha256 digest, command invocation, source input digest, stdout/stderr digests, exit code, and timeout status.
 - **Synthetic Fixture Boundary**: Simulated and synthetic fixture modes always emit authority `NONE` and `proof_complete: NOT_ESTABLISHED`.
+- **Backend Qualification Status**:
+  - `LEAN_CHECKER_VERDICT_EXECUTION: QUALIFIED` (Executable verified locally)
+  - `LEAN_PROOF_STEP_TRACE_EXTRACTION: NOT_YET_QUALIFIED`
+  - `ROCQ_CHECKER_VERDICT_EXECUTION: NOT_QUALIFIED` (Fail-closed due to environment absence)
+  - `ROCQ_PROOF_STEP_TRACE_EXTRACTION: NOT_YET_QUALIFIED`
 
 ### 3.3 Execution Trace IR & Normalization
-- **Trace IR**: [`ExecutionTrace`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/trace/ir.py) records discrete, typed events in a monotonic directed acyclic graph, explicitly typed with `execution_origin` (`EXECUTED_NATIVE`, `EXECUTED_CONTAINERIZED`, `CERTIFIED_REPLAY`, `SYNTHETIC_FIXTURE`, `SIMULATED`).
+- **Trace IR**: [`ExecutionTrace`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/trace/ir.py) records discrete, typed events in a monotonic directed acyclic graph, explicitly typed with `execution_origin` (`EXECUTED_NATIVE`, `EXECUTED_CONTAINERIZED`, `CERTIFIED_REPLAY`, `SYNTHETIC_FIXTURE`, `SIMULATED`) and canonical `problem_digest`.
+- **Event Origins**: Events explicitly distinguish between:
+  - `CLIENT_DECLARED`: Caller-supplied hypotheses, tactics, or search hints.
+  - `BACKEND_OBSERVED`: Structural verdicts and state assertions observed directly from the backend.
 - **Normalizer**: [`TraceNormalizer`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/trace/normalizer.py) backtracks through parent event pointers to extract the minimal successful spine, stripping speculative failures, aborted branches, and lifecycle bookends.
 
 ### 3.4 Search Policies & Guidance Interface
@@ -70,20 +84,27 @@ Sequence violations (such as skipping search, out-of-order execution, or promoti
 - **Corpus-Guided MCTS**: Heuristic retrieval priors shape tree expansion probabilities without granting proof truth:
   $$\text{Search Policy Authority} \equiv \text{NONE}$$
 - **MCTS Capability Boundary**: Rollout evaluation is labeled `SYNTHETIC_PRIOR_ROLLOUT` and carries no formal proof authority.
+- **Canonical Unit Identity**: Every `SearchRun` binds canonical `problem_digest`.
 
 ### 3.5 Abstraction Engine
-- **Subtrace Miner**: Discovers repeated operation patterns appearing with sufficient support across distinct problem traces.
+- **Subtrace Miner**: Discovers repeated operation patterns appearing with sufficient support across distinct problem traces. Caller-provided `CLIENT_DECLARED` events are strictly excluded from abstraction mining.
 - **Structural Anti-Unifier**: Computes the first-order Least General Generalization (LGG) and records deterministic substitution witnesses reconstructing each input term.
-- **Admissibility Guards**: Rejects trivial single-variable generalizations (`STRUCTURAL_GENERALIZATION_TRIVIAL`), semantically incompatible operations (`TRIVIAL_OR_SEMANTICALLY_INCOMPATIBLE_GENERALIZATION`), and guards branch-local patterns (`REQUIRES_BRANCH_GUARD`).
+- **Admissibility Evaluation**: Candidates default to `admissibility_status: "UNASSESSED"`. Admissibility is formally evaluated via an [`AdmissibilityReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/abstraction/anti_unification.py). Guards reject:
+  - Bare single-variable generalizations (`STRUCTURAL_GENERALIZATION_TRIVIAL`)
+  - Vacuous wrapper applications such as `seq(V1)` with no meaningful constructor structure
+  - Semantically incompatible operations (`TRIVIAL_OR_SEMANTICALLY_INCOMPATIBLE_GENERALIZATION`)
+  - Branch-local patterns without guards (`REQUIRES_BRANCH_GUARD`)
 
 ### 3.6 Replay & Qualification Engine
-- **Disjointness Guard**: Verifies $\text{DISCOVERY\_SET} \cap \text{QUALIFICATION\_SET} = \emptyset$.
-- **Paired Replay Contract**: [`PairedReplayContract`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/abstraction/replay.py) binds all non-abstraction variables (backend, problem digest, search budget, random seed, corpus context) identical between baseline and abstracted arms.
-- **De-Fabricated Benefit**: Qualification requires genuine observed search reduction from `EXECUTED_HELD_OUT_REPLAY`. `SYNTHETIC_REPLAY_FIXTURE` leaves candidates at `CANDIDATE_ONLY`.
-- **Lifecycle Ratchet**: Candidates transition from `PROPOSED` to `QUALIFIED_HELD_OUT` only after passing empirical replay thresholds under executed paired replay.
+- **Disjointness Guard**: Verifies canonical experimental unit separation:
+  $$\text{DISCOVERY\_PROBLEM\_DIGESTS} \cap \text{QUALIFICATION\_PROBLEM\_DIGESTS} = \emptyset$$
+- **Paired Replay Contract**: [`PairedReplayContract`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/abstraction/replay.py) binds all non-abstraction variables (backend, problem digest, search budget, random seed, corpus context) identical between baseline and abstracted arms, verified via cryptographic `contract_digest`.
+- **Receipt Validation**: Replay run receipts must validate against [`ReplayRunReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/replay-run-receipt.v0.1.schema.json).
+- **De-Fabricated Benefit**: Qualification requires genuine observed search reduction from `EXECUTED_SEARCH_RUN` or `CERTIFIED_SEARCH_REPLAY`. `SYNTHETIC_REPLAY_FIXTURE` leaves candidates at `CANDIDATE_ONLY`.
+- **Lifecycle Ratchet**: Candidates transition from `PROPOSED` to `QUALIFIED_HELD_OUT` only after passing empirical replay thresholds under executed paired replay with `admissibility_status == "ADMISSIBLE"`.
 
 ### 3.7 Downstream Integration
-- **`msk-onto`**: Receives structural evaluation export packages ([`OntoEvaluationPackage`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/onto/export.py)) containing observed evidence states (`UNKNOWN`/`UNTESTED`) without inventing positive research conclusions.
+- **`msk-onto`**: Receives structural evaluation export packages ([`OntoEvaluationPackage`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/onto/export.py)). Naked booleans and unsupported positive claims are prohibited (`NAKED_BOOLEAN_PROHIBITED`); all positive claims require structured `OntoEvidenceRef`.
 - **Refactoring Proposals**: Emits human-inspectable refactoring proposals ([`RefactoringProposal`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/refactoring/proposal.py)) while strictly maintaining `canonical_library_mutated = False`.
 
 ---

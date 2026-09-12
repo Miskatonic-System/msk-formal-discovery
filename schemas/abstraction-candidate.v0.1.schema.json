@@ -50,6 +50,7 @@
     "admissibility_status": {
       "type": "string",
       "enum": [
+        "UNASSESSED",
         "ADMISSIBLE",
         "STRUCTURAL_GENERALIZATION_TRIVIAL",
         "TRIVIAL_OR_SEMANTICALLY_INCOMPATIBLE_GENERALIZATION",
@@ -145,11 +146,29 @@
         "type": "string"
       }
     },
+    "discovery_problem_digests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "qualification_trace_ids": {
       "type": "array",
       "items": {
         "type": "string"
       }
+    },
+    "qualification_problem_digests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "admissibility_receipt": {
+      "type": [
+        "object",
+        "null"
+      ]
     },
     "held_out_evaluation": {
       "type": [

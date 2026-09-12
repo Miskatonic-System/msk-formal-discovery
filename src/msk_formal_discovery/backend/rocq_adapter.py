@@ -20,7 +20,7 @@ from msk_formal_discovery.backend.contract import (
     derive_authority,
 )
 from msk_formal_discovery.core.exceptions import BackendUnavailableError
-from msk_formal_discovery.trace.events import TraceEventType
+from msk_formal_discovery.trace.events import EventOrigin, TraceEventType
 from msk_formal_discovery.trace.ir import ExecutionTrace
 
 
@@ -165,7 +165,7 @@ class RocqAdapter(ReasoningBackend):
                 terminal_classification=terminal_verdict,
                 logical_authority_class=(
                     LogicalAuthorityClass.DEDUCTIVE_PROOF_AUTHORITY
-                    if terminal_verdict == "PROVEN"
+                    if (terminal_verdict == "PROVEN" and exit_code == 0 and not timeout_status)
                     else LogicalAuthorityClass.NONE
                 ),
             )
@@ -176,10 +176,13 @@ class RocqAdapter(ReasoningBackend):
                 receipt,
                 terminal_verdict,
             )
+            if authority != receipt.logical_authority_class:
+                receipt.logical_authority_class = authority
 
             trace = ExecutionTrace(
                 trace_id=f"trace-{problem.problem_id}-rocq-real",
                 problem_id=problem.problem_id,
+                problem_digest=input_hash,
                 backend_id=self.backend_id,
                 backend_version=self.backend_version,
                 execution_origin=ExecutionOrigin.EXECUTED_NATIVE.value,
@@ -195,15 +198,33 @@ class RocqAdapter(ReasoningBackend):
                 operation="start_lemma",
                 state_digest=input_hash,
                 result_digest=input_hash,
+                event_origin=EventOrigin.CLIENT_DECLARED,
                 payload={"formal_syntax": problem.formal_syntax, "goals": problem.goals},
             )
             last_ev_id = ev_init.event_id
+            tactics = problem.context.get("tactics", [])
+            curr_state = input_hash
+            for i, tac in enumerate(tactics):
+                tac_hash = hashlib.sha256(f"{curr_state}:{tac}".encode("utf-8")).hexdigest()
+                ev_tac = trace.add_event(
+                    event_type=TraceEventType.TACTIC_APPLICATION,
+                    operation=f"tactic_step_{i}",
+                    state_digest=curr_state,
+                    result_digest=tac_hash,
+                    parent_event_id=last_ev_id,
+                    event_origin=EventOrigin.CLIENT_DECLARED,
+                    payload={"tactic": tac, "expression": tac, "caller_hint": True},
+                )
+                last_ev_id = ev_tac.event_id
+                curr_state = tac_hash
+
             trace.add_event(
                 event_type=TraceEventType.TERMINAL_VERDICT,
                 operation="qed" if terminal_verdict == "PROVEN" else "proof_failed",
-                state_digest=input_hash,
+                state_digest=curr_state,
                 result_digest=stdout_hash,
                 parent_event_id=last_ev_id,
+                event_origin=EventOrigin.BACKEND_OBSERVED,
                 payload={"verdict": terminal_verdict, "proof_complete": (terminal_verdict == "PROVEN")},
             )
             return trace
@@ -238,6 +259,7 @@ class RocqAdapter(ReasoningBackend):
             trace = ExecutionTrace(
                 trace_id=f"trace-{problem.problem_id}-rocq-syn",
                 problem_id=problem.problem_id,
+                problem_digest=input_hash,
                 backend_id=self.backend_id,
                 backend_version=self.backend_version,
                 execution_origin=ExecutionOrigin.SYNTHETIC_FIXTURE.value,
@@ -253,15 +275,33 @@ class RocqAdapter(ReasoningBackend):
                 operation="start_lemma",
                 state_digest=input_hash,
                 result_digest=input_hash,
+                event_origin=EventOrigin.CLIENT_DECLARED,
                 payload={"formal_syntax": problem.formal_syntax, "goals": problem.goals},
             )
             last_ev_id = ev_init.event_id
+            tactics = problem.context.get("tactics", [])
+            curr_state = input_hash
+            for i, tac in enumerate(tactics):
+                tac_hash = hashlib.sha256(f"{curr_state}:{tac}".encode("utf-8")).hexdigest()
+                ev_tac = trace.add_event(
+                    event_type=TraceEventType.TACTIC_APPLICATION,
+                    operation=f"tactic_step_{i}",
+                    state_digest=curr_state,
+                    result_digest=tac_hash,
+                    parent_event_id=last_ev_id,
+                    event_origin=EventOrigin.CLIENT_DECLARED,
+                    payload={"tactic": tac, "expression": tac, "caller_hint": True},
+                )
+                last_ev_id = ev_tac.event_id
+                curr_state = tac_hash
+
             trace.add_event(
                 event_type=TraceEventType.TERMINAL_VERDICT,
                 operation="synthetic_verdict",
-                state_digest=input_hash,
+                state_digest=curr_state,
                 result_digest=hashlib.sha256(b"synthetic_receipt").hexdigest(),
                 parent_event_id=last_ev_id,
+                event_origin=EventOrigin.BACKEND_OBSERVED,
                 payload={"verdict": terminal_verdict, "proof_complete": "NOT_ESTABLISHED"},
             )
             return trace

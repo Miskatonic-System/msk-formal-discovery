@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Sequence, Set, Tuple
 
 from msk_formal_discovery.abstraction.anti_unification import (
@@ -10,7 +10,7 @@ from msk_formal_discovery.abstraction.anti_unification import (
     StructuralAntiUnifier,
 )
 from msk_formal_discovery.core.terms import Term
-from msk_formal_discovery.trace.events import ExecutionTraceEvent, TraceEventType
+from msk_formal_discovery.trace.events import EventOrigin, ExecutionTraceEvent, TraceEventType
 from msk_formal_discovery.trace.ir import ExecutionTrace
 from msk_formal_discovery.trace.normalizer import TraceNormalizer
 
@@ -24,6 +24,7 @@ class RecurringSubtracePattern:
     frequency: int
     extracted_terms: Dict[str, Term]  # trace_id -> Term
     anti_unification_result: Optional[AntiUnificationResult] = None
+    branch_guards: List[str] = field(default_factory=list)
 
 
 class SubtraceMiner:
@@ -38,8 +39,20 @@ class SubtraceMiner:
         """Mine successful traces for recurring subtrace patterns."""
         # 1. Slicing successful paths
         sliced_traces: Dict[str, List[ExecutionTraceEvent]] = {}
+        trace_branch_guards: Dict[str, List[str]] = defaultdict(list)
+
         for tr in traces:
             spine = TraceNormalizer.slice_successful_path(tr)
+            # Collect trace-level branch guards
+            for ev in spine:
+                if ev.event_type == TraceEventType.BRANCH and (ev.payload.get("guard") or ev.payload.get("branch_guard") or ev.payload.get("branch_condition")):
+                    g = ev.payload.get("guard") or ev.payload.get("branch_guard") or ev.payload.get("branch_condition")
+                    trace_branch_guards[tr.trace_id].append(str(g))
+                elif ev.payload.get("branch_guard") or ev.payload.get("branch_condition") or ev.payload.get("guard"):
+                    g = ev.payload.get("branch_guard") or ev.payload.get("branch_condition") or ev.payload.get("guard")
+                    trace_branch_guards[tr.trace_id].append(str(g))
+
+            # Section 3: CLIENT_DECLARED events must NOT be mined as executed reasoning
             tactical_events = [
                 e for e in spine
                 if e.event_type not in (
@@ -47,6 +60,7 @@ class SubtraceMiner:
                     TraceEventType.TERMINAL_VERDICT,
                     TraceEventType.RESOURCE_OBSERVATION,
                 )
+                and e.event_origin != EventOrigin.CLIENT_DECLARED
             ]
             if tactical_events:
                 sliced_traces[tr.trace_id] = tactical_events
@@ -55,8 +69,8 @@ class SubtraceMiner:
             return []
 
         # 2. Extract n-gram subtrace sequences
-        # Map: operations_tuple -> list of (trace_id, start_idx, extracted_term)
-        patterns_map: Dict[Tuple[str, ...], List[Tuple[str, int, Term]]] = defaultdict(list)
+        # Map: operations_tuple -> list of (trace_id, start_idx, extracted_term, guards)
+        patterns_map: Dict[Tuple[str, ...], List[Tuple[str, int, Term, List[str]]]] = defaultdict(list)
 
         for trace_id, events in sliced_traces.items():
             ops = [e.operation for e in events]
@@ -67,7 +81,11 @@ class SubtraceMiner:
                     # Construct composite term representation for this subtrace
                     sub_events = events[start : start + length]
                     expr_terms = []
+                    sub_guards = list(trace_branch_guards.get(trace_id, []))
                     for ev in sub_events:
+                        g = ev.payload.get("guard") or ev.payload.get("branch_guard") or ev.payload.get("branch_condition")
+                        if g and str(g) not in sub_guards:
+                            sub_guards.append(str(g))
                         val = (
                             ev.payload.get("expression")
                             or ev.payload.get("tactic")
@@ -85,7 +103,7 @@ class SubtraceMiner:
                     # Wrap in composite sequence application
                     from msk_formal_discovery.core.terms import App
                     composite_term = App("seq", tuple(expr_terms))
-                    patterns_map[sub_ops].append((trace_id, start, composite_term))
+                    patterns_map[sub_ops].append((trace_id, start, composite_term, sub_guards))
 
         # 3. Filter by min_support (must appear in distinct traces)
         discovered: List[RecurringSubtracePattern] = []
@@ -98,10 +116,14 @@ class SubtraceMiner:
                 # Gather one representative term per distinct trace
                 trace_term_map: Dict[str, Term] = {}
                 occ_list: List[Tuple[str, int]] = []
-                for tid, s_idx, t_obj in occurrences:
+                pat_guards: List[str] = []
+                for tid, s_idx, t_obj, g_list in occurrences:
                     occ_list.append((tid, s_idx))
                     if tid not in trace_term_map:
                         trace_term_map[tid] = t_obj
+                    for g in g_list:
+                        if g not in pat_guards:
+                            pat_guards.append(g)
 
                 # Anti-unify terms across participating traces
                 au_res: Optional[AntiUnificationResult] = None
@@ -118,6 +140,7 @@ class SubtraceMiner:
                     frequency=len(distinct_traces),
                     extracted_terms=trace_term_map,
                     anti_unification_result=au_res,
+                    branch_guards=pat_guards,
                 )
                 discovered.append(pattern)
 

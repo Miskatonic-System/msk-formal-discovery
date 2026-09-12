@@ -7,14 +7,19 @@ Demonstrates:
 """
 from pathlib import Path
 import json
+import hashlib
 import pytest
 import jsonschema
 
 from fixtures.fixture_matrix import make_sample_trace
-from msk_formal_discovery.abstraction.anti_unification import StructuralAntiUnifier
+from msk_formal_discovery.abstraction.anti_unification import (
+    AdmissibilityStatus,
+    StructuralAntiUnifier,
+)
 from msk_formal_discovery.abstraction.candidate import (
     AbstractionCandidate,
     AbstractionKind,
+    CandidateFactory,
     CandidateStatus,
 )
 from msk_formal_discovery.abstraction.replay import (
@@ -25,7 +30,7 @@ from msk_formal_discovery.abstraction.replay import (
 from msk_formal_discovery.abstraction.subtrace_miner import SubtraceMiner
 from msk_formal_discovery.backend.registry import BackendRegistry
 from msk_formal_discovery.core.pipeline import CANONICAL_PIPELINE_SEQUENCE, verify_pipeline_sequence
-from msk_formal_discovery.onto.export import OntoExporter
+from msk_formal_discovery.onto.export import OntoEvidenceRef, OntoExporter
 from msk_formal_discovery.refactoring.proposal import (
     RefactoringKind,
     RefactoringProposalGenerator,
@@ -119,28 +124,24 @@ def test_end_to_end_discovery_pipeline_demonstration():
     assert str(au_result.lgg_term) == "seq(mul_add(V1, V2, V3), add_assoc(V1, V2, V3))"
     assert len(au_result.substitution_witnesses) == 2
 
-    # 6. Synthesize Abstraction Candidate
-    candidate = AbstractionCandidate(
-        candidate_id="cand-macro-algebraic-01",
+    # 6. Synthesize Abstraction Candidate via governed synthesis path (Section 27)
+    candidate = CandidateFactory.from_pattern(
+        top_pattern,
         candidate_kind=AbstractionKind.LEMMA,
-        formal_specification={
-            "name": "distrib_assoc_bridge",
-            "statement": "forall V1 V2 V3, mul_add(V1, V2, V3) /\\ add_assoc(V1, V2, V3)",
-            "canonical_representation": str(au_result.lgg_term),
-        },
-        anti_unification_evidence=au_result,
-        discovery_set_trace_ids=["trace-disc-1", "trace-disc-2"],
-        status=CandidateStatus.PROPOSED,
+        candidate_id="cand-macro-algebraic-01",
+        discovery_problem_digests=["prob-algebra-1", "prob-algebra-2"],
         blueprint_family="MICRO_LEMMA",
     )
     assert candidate.authority == "NONE"
+    assert candidate.admissibility_status == AdmissibilityStatus.ADMISSIBLE
+    assert candidate.admissibility_receipt is not None
     jsonschema.validate(candidate.to_dict(), CANDIDATE_SCHEMA)
 
     # 7. Held-Out Replay Qualification (enforcing disjointness and genuine measurement)
     contracts = [
         PairedReplayContract(
             problem_id="trace-qual-1",
-            problem_digest="sha256_qual_1",
+            problem_digest="0" * 63 + "1",
             backend_id="lean4",
             search_policy_kind="MCTS",
             search_budget={"max_expansions": 50, "timeout_ms": 1000},
@@ -153,7 +154,7 @@ def test_end_to_end_discovery_pipeline_demonstration():
         ),
         PairedReplayContract(
             problem_id="trace-qual-2",
-            problem_digest="sha256_qual_2",
+            problem_digest="0" * 63 + "2",
             backend_id="lean4",
             search_policy_kind="MCTS",
             search_budget={"max_expansions": 50, "timeout_ms": 1000},
@@ -167,28 +168,26 @@ def test_end_to_end_discovery_pipeline_demonstration():
     ]
 
     def runner_fn(contract: PairedReplayContract, arm: str) -> ReplayRunReceipt:
-        if arm == "BASELINE":
-            return ReplayRunReceipt(
-                run_id=f"run-base-{contract.problem_id}",
-                arm="BASELINE",
-                problem_id=contract.problem_id,
-                nodes_expanded=50,
-                nodes_evaluated=70,
-                branch_count=10,
-                solved=True,
-                wall_time_ms=100.0,
-            )
-        else:
-            return ReplayRunReceipt(
-                run_id=f"run-abs-{contract.problem_id}",
-                arm="ABSTRACTED",
-                problem_id=contract.problem_id,
-                nodes_expanded=30,
-                nodes_evaluated=40,
-                branch_count=6,
-                solved=True,
-                wall_time_ms=65.0,
-            )
+        return ReplayRunReceipt(
+            receipt_id=f"run-{arm.lower()}-{contract.problem_id}",
+            arm=arm,
+            problem_id=contract.problem_id,
+            problem_digest=contract.problem_digest,
+            paired_contract_digest=contract.contract_digest(),
+            backend_id=contract.backend_id,
+            search_policy_kind=contract.search_policy_kind,
+            candidate_id=contract.candidate_id,
+            candidate_enabled=(arm == "ABSTRACTED"),
+            random_seed=contract.random_seed,
+            search_budget_digest=hashlib.sha256(json.dumps(contract.search_budget, sort_keys=True).encode("utf-8")).hexdigest(),
+            corpus_context_digest=hashlib.sha256(json.dumps(contract.corpus_context, sort_keys=True).encode("utf-8")).hexdigest(),
+            nodes_expanded=50 if arm == "BASELINE" else 30,
+            nodes_evaluated=70 if arm == "BASELINE" else 40,
+            branch_count=10 if arm == "BASELINE" else 6,
+            solved=True,
+            wall_time_ms=100.0 if arm == "BASELINE" else 65.0,
+            evidence_origin="SYNTHETIC_FIXTURE",
+        )
 
     replay_engine = HeldOutReplayEngine()
     value_report = replay_engine.execute_paired_replay(
@@ -201,15 +200,27 @@ def test_end_to_end_discovery_pipeline_demonstration():
     assert value_report.structural_compression_ratio > 1.0
     assert value_report.candidate_evaluation_reduction > 0.0
     assert value_report.wall_time_delta_pct < 0.0
-    assert candidate.status == CandidateStatus.QUALIFIED_HELD_OUT
+    # Section 24: synthetic replay leaves candidate at CANDIDATE_ONLY
+    assert candidate.status == CandidateStatus.CANDIDATE_ONLY
     assert candidate.qualification_trace_ids == ["trace-qual-1", "trace-qual-2"]
     jsonschema.validate(candidate.to_dict(), CANDIDATE_SCHEMA)
 
-    # 8. ONTO structural evaluation export
-    onto_pkg = OntoExporter.export(candidate, functional_evidence=True)
+    # 8. ONTO structural evaluation export (Section 31 & 32: no naked booleans)
+    onto_pkg = OntoExporter.export(candidate)
     assert onto_pkg.authority == "NONE"
     assert onto_pkg.recurrence_count == 2
-    assert onto_pkg.functional_search_benefit is True
+    assert onto_pkg.functional_search_benefit in ("UNTESTED", "UNKNOWN")
+
+    # Providing verified OntoEvidenceRef
+    ev_ref = OntoEvidenceRef(
+        evidence_kind="HELD_OUT_REPLAY",
+        artifact_ref="run-abs-trace-qual-1",
+        artifact_digest=hashlib.sha256(b"replay_artifact").hexdigest(),
+        evidence_status="SUPPORTED",
+        source_experimental_units=["trace-qual-1", "trace-qual-2"],
+    )
+    onto_pkg_with_ref = OntoExporter.export(candidate, functional_evidence=ev_ref)
+    assert onto_pkg_with_ref.functional_search_benefit == "SUPPORTED"
 
     # 9. Non-authoritative Refactoring Proposal Generation
     proposal = RefactoringProposalGenerator.generate(

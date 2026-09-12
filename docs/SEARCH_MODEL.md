@@ -1,6 +1,6 @@
 # Search Policy Interfaces & Guidance Firewalls
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R1`  
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R2`
 **Module**: `msk-formal-discovery/docs/SEARCH_MODEL.md`
 
 ---
@@ -72,9 +72,9 @@ The corpus guidance interface:
 ## 4. Search Run Record Specification
 
 Search runs are persisted and validated against `schemas/search-run.v0.1.schema.json`:
-- `run_id`, `problem_id`, `search_policy`
-- `policy_configuration`
-- `replay_mode`: Explicitly records `EXECUTED_HELD_OUT_REPLAY` or `SYNTHETIC_REPLAY_FIXTURE` (when used in replay experiments)
+- `run_id`, `problem_id`, `problem_digest` (canonical experimental-unit identity)
+- `search_policy` and `policy_configuration`
+- `replay_mode`: Explicitly records `EXECUTED_SEARCH_RUN`, `CERTIFIED_SEARCH_REPLAY`, or `SYNTHETIC_REPLAY_FIXTURE`
 - `paired_contract_ref`: Optional reference to the binding `PairedReplayContract`
 - `corpus_guidance` (if present)
 - `resulting_trace_id`

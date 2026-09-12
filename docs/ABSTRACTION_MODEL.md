@@ -1,6 +1,6 @@
 # Automated Abstraction & Anti-Unification Model
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R1`  
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R2`
 **Module**: `msk-formal-discovery/docs/ABSTRACTION_MODEL.md`
 
 ---
@@ -11,7 +11,7 @@ Automated abstraction is the algorithmic process of identifying recurring struct
 
 The engine requires that abstraction candidates satisfy three criteria:
 1. **Syntactic Generalization**: Structural anti-unification must produce a well-formed Least General Generalization (LGG) with verifiable substitution witnesses and pass all admissibility guards.
-2. **Held-Out Generalization**: The candidate must accelerate problem resolution or compress search representations on strictly disjoint problem instances ($\text{DISCOVERY\_SET} \cap \text{QUALIFICATION\_SET} = \emptyset$).
+2. **Held-Out Generalization**: The candidate must accelerate problem resolution or compress search representations on strictly disjoint problem instances ($\text{DISCOVERY\_PROBLEM\_DIGESTS} \cap \text{QUALIFICATION\_PROBLEM\_DIGESTS} = \emptyset$).
 3. **Multi-Metric Measured Benefit**: Proof length compression alone is insufficient. A valid candidate must demonstrate observed branch pruning, node expansion reduction, or wall-time improvement under real paired replay.
 
 ---
@@ -19,7 +19,7 @@ The engine requires that abstraction candidates satisfy three criteria:
 ## 2. Term Representation Terminology & Type Status
 
 > [!IMPORTANT]
-> **IR Typing Status: `UNTYPED FIRST_ORDER_STRUCTURAL_AST`**  
+> **IR Typing Status: `UNTYPED FIRST_ORDER_STRUCTURAL_AST`**
 > Current Term IR is strictly an **untyped first-order structural abstract syntax tree**. It does **not** implement:
 > - Higher-Order Logic (HOL)
 > - Dependent Type Theory (DTT)
@@ -55,17 +55,23 @@ Before any candidate is emitted, the engine verifies the reconstruction identity
 $$\text{LGG}(t_1, \dots, t_N)\sigma_i = t_i \quad \forall i \in \{1, \dots, N\}$$
 Failure to reconstruct raises `AntiUnificationError`.
 
-### 3.3 Generalization Admissibility Guards
+### 3.3 Admissibility Evaluation & Guards
 
-Syntactic anti-unification alone can produce over-generalized or domain-incoherent patterns. The kernel evaluates candidate terms against strict admissibility guards before synthesis:
+Every newly generated candidate defaults to:
+$$\text{admissibility\_status} \equiv \text{"UNASSESSED"}$$
 
+Admissibility must be formally evaluated, generating an attested [`AdmissibilityReceipt`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/abstraction/anti_unification.py). Candidates with `UNASSESSED` admissibility are prohibited from held-out qualification.
+
+The kernel evaluates terms against strict structural guards:
 1. **Trivial Variable Guard (`STRUCTURAL_GENERALIZATION_TRIVIAL`)**:
-   If the computed LGG term collapses to a bare variable $\text{Var}(V)$, all structural information has been lost. Such terms are rejected as macro/lemma candidates (`is_trivial_variable = True`).
-2. **Semantic Domain Incompatibility Guard (`TRIVIAL_OR_SEMANTICALLY_INCOMPATIBLE_GENERALIZATION`)**:
-   Generalizations crossing incompatible mathematical domains (e.g. anti-unifying integer addition `int_plus` with boolean XOR `bool_xor`) are rejected as mathematically un-typed and non-generalizable.
-3. **Branch-Local Pattern Guard (`REQUIRES_BRANCH_GUARD`)**:
-   Patterns discovered within specific branching contexts cannot be exported globally without branch precondition guards.
-4. **Non-Globalizable Patterns (`NON_GLOBALIZABLE`)**:
+   If the computed LGG term collapses to a bare variable $\text{Var}(V)$, all structural information has been lost. Such terms are rejected (`is_trivial_variable = True`).
+2. **Vacuous Wrapper Guard**:
+   Wrapper-only terms like `seq(V1)` or `sequence(V1)` possessing zero non-wrapper meaningful constructors are rejected as trivial generalization.
+3. **Semantic Domain Incompatibility Guard (`TRIVIAL_OR_SEMANTICALLY_INCOMPATIBLE_GENERALIZATION`)**:
+   Generalizations crossing incompatible mathematical domains (e.g. integer addition `int_plus` with boolean XOR `bool_xor`) are rejected as mathematically un-typed and non-generalizable.
+4. **Branch-Local Pattern Guard (`REQUIRES_BRANCH_GUARD`)**:
+   Patterns discovered within specific branching contexts cannot be exported globally without explicit branch precondition guards.
+5. **Non-Globalizable Patterns (`NON_GLOBALIZABLE`)**:
    Patterns tied to contradictory premise sets cannot be ratcheted into global lemma repositories.
 
 ---
@@ -75,41 +81,43 @@ Syntactic anti-unification alone can produce over-generalized or domain-incohere
 The [`SubtraceMiner`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/abstraction/subtrace_miner.py) discovers recurring n-gram sequences:
 1. Slices successful proof paths via `TraceNormalizer.slice_successful_path`.
 2. Strips lifecycle framing events (`INITIAL_PROBLEM`, `TERMINAL_VERDICT`, `RESOURCE_OBSERVATION`).
-3. Extracts contiguous operation sub-sequences of length $L \in [\text{min\_length}, \text{min\_length} + 4]$.
-4. Evaluates support across distinct trace IDs. Subtraces appearing in $\ge \text{min\_support}$ distinct traces are fed to the anti-unifier.
+3. **Excludes Caller Tactics**: Events tagged with `event_origin == EventOrigin.CLIENT_DECLARED` are strictly excluded from mining. Only `BACKEND_OBSERVED` events are eligible for abstraction.
+4. Extracts contiguous operation sub-sequences of length $L \in [\text{min\_length}, \text{min\_length} + 4]$.
+5. Evaluates support across distinct trace IDs and canonical `problem_digests`. Subtraces appearing in $\ge \text{min\_support}$ distinct traces are fed to the anti-unifier.
 
 ---
 
 ## 5. De-Fabricated Held-Out Replay & Paired Contracts
 
 ### 5.1 Prohibition of Fabricated Benefit Formulas
-Predetermined improvement formulas:
-$$\text{abstracted\_nodes} = \text{baseline} \times 0.7, \quad \text{abstracted\_time} = \text{baseline} \times 0.75$$
-are strictly prohibited. All qualification metrics must be **empirically observed** from search execution receipts or explicitly marked synthetic.
+Predetermined improvement formulas (`baseline * 0.7`) are strictly prohibited. All qualification metrics must be **empirically observed** from search execution receipts or explicitly marked synthetic.
 
-### 5.2 Paired Replay Contract
+### 5.2 Paired Replay Contract & Cryptographic Binding
 For every held-out problem instance, a [`PairedReplayContract`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/abstraction/replay.py) binds identical execution variables:
-- Identical problem digest
+- Canonical `problem_digest`
 - Identical backend ID and version
 - Identical search policy kind and budget
 - Identical random seed (for stochastic policies like MCTS)
 - Identical corpus context
 
-The contract enforces:
+The contract computes a SHA-256 `contract_digest` enforcing:
 $$\text{ALL NON-ABSTRACTION VARIABLES IDENTICAL}$$
+Any configuration drift between baseline and abstracted arms raises `PairedReplayViolationError`.
 
-Two independent run receipts are collected:
-- `BASELINE`: Search executed without candidate abstraction.
-- `ABSTRACTED`: Search executed with candidate abstraction explicitly enabled.
+### 5.3 Replay Run Receipts & Schema Validation
+Replay runs produce attested receipts validating against [`schemas/replay-run-receipt.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/replay-run-receipt.v0.1.schema.json). Receipts verify:
+- Exact contract digest match
+- Consistency between search run metrics and receipt metrics
+- Disjointness between discovery problem digests and qualification problem digests
 
-### 5.3 Replay Modes & Qualification Gating
+### 5.4 Replay Modes & Qualification Gating
 
 1. **`SYNTHETIC_REPLAY_FIXTURE`**:
    - Uses fixture data or synthetic runs.
    - Authority is strictly `NONE`.
    - **Cannot** qualify candidate into `QUALIFIED_HELD_OUT` (leaves status at `CANDIDATE_ONLY`).
    - Cannot establish functional search benefit.
-2. **`EXECUTED_HELD_OUT_REPLAY`**:
+2. **`EXECUTED_SEARCH_RUN` / `CERTIFIED_SEARCH_REPLAY`**:
    - Genuinely executes search across held-out instances under paired replay contracts.
    - Evaluates observed compression ratio, evaluation reduction, and branch reduction.
    - Only this mode may promote candidate to `QUALIFIED_HELD_OUT`.
@@ -120,14 +128,17 @@ Two independent run receipts are collected:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> PROPOSED : Anti-Unification Discovery
+    [*] --> UNASSESSED : Anti-Unification Discovery
+    UNASSESSED --> PROPOSED : Admissibility Receipt (ADMISSIBLE)
+    UNASSESSED --> REJECTED : Admissibility Receipt (TRIVIAL / INCOMPATIBLE)
     PROPOSED --> QUALIFIED_HELD_OUT : Executed Paired Replay Success
     PROPOSED --> CANDIDATE_ONLY : Synthetic Replay Fixture
-    PROPOSED --> REJECTED : Admissibility Violation / Replay Failure
+    PROPOSED --> REJECTED : Replay Failure / Degradation
     QUALIFIED_HELD_OUT --> CANDIDATE_ONLY : Emitted Refactoring Proposal
 ```
 
-- **`PROPOSED`**: Discovered from traces, pending replay.
+- **`UNASSESSED`**: Default initial state upon pattern discovery.
+- **`PROPOSED`**: Formally assessed as admissible, pending held-out replay.
 - **`QUALIFIED_HELD_OUT`**: Successfully evaluated on held-out traces with genuine observed search reduction.
 - **`CANDIDATE_ONLY`**: Evaluated under synthetic fixture or retained as non-qualified artifact.
 - **`REJECTED`**: Fails admissibility guards, degrades solve rate, or shows negative benefit.

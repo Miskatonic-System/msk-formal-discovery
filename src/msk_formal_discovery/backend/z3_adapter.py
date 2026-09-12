@@ -20,7 +20,7 @@ from msk_formal_discovery.backend.contract import (
     derive_authority,
 )
 from msk_formal_discovery.core.exceptions import BackendUnavailableError
-from msk_formal_discovery.trace.events import TraceEventType
+from msk_formal_discovery.trace.events import EventOrigin, TraceEventType
 from msk_formal_discovery.trace.ir import ExecutionTrace
 
 
@@ -137,19 +137,30 @@ class Z3Adapter(ReasoningBackend):
             stdout_hash = hashlib.sha256(stdout_text.encode("utf-8")).hexdigest()
             stderr_hash = hashlib.sha256(stderr_text.encode("utf-8")).hexdigest()
 
-            output_lower = stdout_text.lower()
-            if "unsat" in output_lower and not ("error" in output_lower or "unsupported" in output_lower):
-                verdict = "UNSAT_REFUTED"
-                auth = LogicalAuthorityClass.SOLVER_SAT_OR_UNSAT
-            elif "sat" in output_lower and not ("error" in output_lower or "unsupported" in output_lower):
-                verdict = "REFUTED_SAT"
-                auth = LogicalAuthorityClass.SOLVER_SAT_OR_UNSAT
-            elif timeout_status:
+            output_lines = [l.strip() for l in stdout_text.splitlines() if l.strip() and not l.strip().startswith(";")]
+            has_error = any(l.lower().startswith("(error ") for l in output_lines) or (exit_code != 0)
+            verdict_lines = [l.lower() for l in output_lines if l.lower() in ("sat", "unsat", "unknown")]
+
+            if timeout_status:
                 verdict = "TIMEOUT"
-                auth = LogicalAuthorityClass.NONE
-            else:
+            elif has_error or len(verdict_lines) != 1:
                 verdict = "FAILED"
-                auth = LogicalAuthorityClass.NONE
+            else:
+                raw_v = verdict_lines[0]
+                if raw_v == "sat":
+                    verdict = "REFUTED_SAT"
+                elif raw_v == "unsat":
+                    verdict = "UNSAT_REFUTED"
+                elif raw_v == "unknown":
+                    verdict = "UNKNOWN"
+                else:
+                    verdict = "FAILED"
+
+            authority_if_valid = (
+                LogicalAuthorityClass.SOLVER_SAT_OR_UNSAT
+                if (verdict in ("REFUTED_SAT", "UNSAT_REFUTED") and exit_code == 0 and not timeout_status)
+                else LogicalAuthorityClass.NONE
+            )
 
             receipt = BackendExecutionReceipt(
                 receipt_id=f"rcpt-z3-{problem.problem_id}-{int(start_time)}",
@@ -168,18 +179,28 @@ class Z3Adapter(ReasoningBackend):
                 stdout_digest=stdout_hash,
                 stderr_digest=stderr_hash,
                 terminal_classification=verdict,
-                logical_authority_class=auth,
+                logical_authority_class=authority_if_valid,
                 execution_metadata={"raw_output_snippet": stdout_text[:200]},
             )
+
+            authority = derive_authority(
+                self.backend_family,
+                ExecutionOrigin.EXECUTED_NATIVE,
+                receipt,
+                verdict,
+            )
+            if authority != receipt.logical_authority_class:
+                receipt.logical_authority_class = authority
 
             trace = ExecutionTrace(
                 trace_id=f"trace-{problem.problem_id}-z3-real",
                 problem_id=problem.problem_id,
+                problem_digest=input_hash,
                 backend_id=self.backend_id,
                 backend_version=self.backend_version,
                 execution_origin=ExecutionOrigin.EXECUTED_NATIVE.value,
                 execution_receipt=receipt.to_dict(),
-                logical_authority_class=auth.value,
+                logical_authority_class=authority.value,
                 created_at=start_iso,
                 terminal_verdict=verdict,
                 wall_time_ms=elapsed,
@@ -190,29 +211,50 @@ class Z3Adapter(ReasoningBackend):
                 operation="load_problem",
                 state_digest=input_hash,
                 result_digest=input_hash,
+                event_origin=EventOrigin.CLIENT_DECLARED,
                 payload={"formal_syntax": problem.formal_syntax, "goals": problem.goals},
             )
             last_ev_id = ev_init.event_id
 
-            if verdict == "UNSAT_REFUTED":
-                trace.add_event(
-                    event_type=TraceEventType.UNSAT_CORE,
-                    operation="get_unsat_core",
-                    state_digest=input_hash,
-                    result_digest=stdout_hash,
-                    parent_event_id=last_ev_id,
-                    payload={"raw_output": stdout_text.strip()},
-                )
-            elif verdict == "REFUTED_SAT":
-                trace.add_event(
-                    event_type=TraceEventType.SAT_MODEL,
-                    operation="get_model",
-                    state_digest=input_hash,
-                    result_digest=stdout_hash,
-                    parent_event_id=last_ev_id,
-                    payload={"raw_output": stdout_text.strip()},
-                )
+            # Section 13: Emit SAT_MODEL only if get-model was requested and parsed
+            if verdict == "REFUTED_SAT" and "(get-model)" in problem.formal_syntax:
+                model_lines = [l for l in stdout_text.splitlines() if "(model" in l or "define-fun" in l]
+                if model_lines:
+                    ev_model = trace.add_event(
+                        event_type=TraceEventType.SAT_MODEL,
+                        operation="get_model",
+                        state_digest=input_hash,
+                        result_digest=stdout_hash,
+                        parent_event_id=last_ev_id,
+                        event_origin=EventOrigin.BACKEND_OBSERVED,
+                        payload={"raw_output": stdout_text.strip()},
+                    )
+                    last_ev_id = ev_model.event_id
 
+            # Emit UNSAT_CORE only if get-unsat-core was requested and parsed
+            if verdict == "UNSAT_REFUTED" and "(get-unsat-core)" in problem.formal_syntax:
+                core_lines = [l for l in stdout_text.splitlines() if l.strip().startswith("(") and "error" not in l]
+                if core_lines:
+                    ev_core = trace.add_event(
+                        event_type=TraceEventType.UNSAT_CORE,
+                        operation="get_unsat_core",
+                        state_digest=input_hash,
+                        result_digest=stdout_hash,
+                        parent_event_id=last_ev_id,
+                        event_origin=EventOrigin.BACKEND_OBSERVED,
+                        payload={"raw_output": stdout_text.strip()},
+                    )
+                    last_ev_id = ev_core.event_id
+
+            trace.add_event(
+                event_type=TraceEventType.TERMINAL_VERDICT,
+                operation="check_sat",
+                state_digest=input_hash,
+                result_digest=stdout_hash,
+                parent_event_id=last_ev_id,
+                event_origin=EventOrigin.BACKEND_OBSERVED,
+                payload={"verdict": verdict},
+            )
             return trace
 
         else:
@@ -250,6 +292,7 @@ class Z3Adapter(ReasoningBackend):
             trace = ExecutionTrace(
                 trace_id=f"trace-{problem.problem_id}-z3-sim",
                 problem_id=problem.problem_id,
+                problem_digest=input_hash,
                 backend_id=self.backend_id,
                 backend_version=self.backend_version,
                 execution_origin=ExecutionOrigin.SIMULATED.value,
@@ -265,6 +308,7 @@ class Z3Adapter(ReasoningBackend):
                 operation="load_problem",
                 state_digest=input_hash,
                 result_digest=input_hash,
+                event_origin=EventOrigin.SYNTHETIC_FIXTURE,
                 payload={"formal_syntax": problem.formal_syntax, "goals": problem.goals},
             )
             last_ev_id = ev_init.event_id
@@ -276,6 +320,7 @@ class Z3Adapter(ReasoningBackend):
                 state_digest=input_hash,
                 result_digest=hashlib.sha256(b"simulated_verdict").hexdigest(),
                 parent_event_id=last_ev_id,
+                event_origin=EventOrigin.SYNTHETIC_FIXTURE,
                 payload={"verdict": verdict, "simulated": True},
             )
             return trace

@@ -76,6 +76,7 @@ class SearchRun:
     problem_id: str
     search_policy: SearchPolicyKind
     policy_configuration: Dict[str, Any]
+    problem_digest: str = ""
     nodes_expanded: int = 0
     nodes_evaluated: int = 0
     max_depth_reached: int = 0
@@ -90,7 +91,7 @@ class SearchRun:
         return "NONE"
 
     def to_dict(self) -> Dict[str, Any]:
-        return {
+        d = {
             "schema_version": "miskatonic.search-run.v0.1",
             "run_id": self.run_id,
             "problem_id": self.problem_id,
@@ -108,3 +109,6 @@ class SearchRun:
             "terminal_status": self.terminal_status,
             "authority": self.authority,
         }
+        if self.problem_digest:
+            d["problem_digest"] = self.problem_digest
+        return d

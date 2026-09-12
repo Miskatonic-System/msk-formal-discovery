@@ -29,6 +29,12 @@
       "type": "string",
       "minLength": 1
     },
+    "problem_digest": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "backend_id": {
       "type": "string",
       "minLength": 1
@@ -84,9 +90,31 @@
           "operation",
           "result_digest",
           "provenance",
-          "logical_authority_class"
+          "logical_authority_class",
+          "event_origin"
         ],
         "properties": {
+          "event_origin": {
+            "type": "string",
+            "enum": [
+              "BACKEND_OBSERVED",
+              "CLIENT_DECLARED",
+              "DERIVED_NORMALIZATION",
+              "SYNTHETIC_FIXTURE"
+            ]
+          },
+          "evidence_ref": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_digest": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "event_id": {
             "type": "string",
             "minLength": 1
@@ -234,5 +262,43 @@
         }
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "execution_origin": {
+            "enum": [
+              "EXECUTED_NATIVE",
+              "EXECUTED_CONTAINERIZED",
+              "CERTIFIED_REPLAY"
+            ]
+          },
+          "logical_authority_class": {
+            "enum": [
+              "DEDUCTIVE_PROOF_AUTHORITY",
+              "SOLVER_SAT_OR_UNSAT",
+              "BOUNDED_EXHAUSTIVE_VERDICT",
+              "SYMBOLIC_IDENTITY",
+              "EMPIRICAL_EXECUTION"
+            ]
+          }
+        },
+        "required": [
+          "execution_origin",
+          "logical_authority_class"
+        ]
+      },
+      "then": {
+        "required": [
+          "execution_receipt"
+        ],
+        "properties": {
+          "execution_receipt": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  ]
 }

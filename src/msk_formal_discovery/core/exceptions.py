@@ -38,3 +38,7 @@ class ReplayContractError(FormalDiscoveryError):
 
 class RefactoringError(FormalDiscoveryError):
     """Raised when an automated refactoring proposal violates safety or mutates canonical source."""
+
+
+class ReceiptValidationError(FormalDiscoveryError):
+    """Raised when an execution or replay receipt fails schema or consistency invariants."""

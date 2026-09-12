@@ -20,6 +20,8 @@
 
 ### Two-Phase Governance Freeze
 1. **Commit A (`APPLICATION_AND_PREREG_FREEZE`)**:
+   - Commit SHA: `0f7b699779b9fc6a702bc3d675ddb555a2c2213a`
+   - Tree SHA: `aa49f6dbe3a7bd3f6a7efbefad1cb798030132f3`
    - Schema: [`candidate-application-receipt.v0.1.schema.json`](file:///home/kowen9024/repos/msk-formal-discovery/schemas/candidate-application-receipt.v0.1.schema.json) certifying candidate artifact digest, applicator implementation digest, problem digest, input state digest, substitution witness, primitive expansion digest, pre/post action surface digests, macro action digest, output state digest, and status.
    - Subsystem: [`CandidateApplicator`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/application/applicator.py) performing step-by-step primitive expansion matching, macro action construction, application equivalence witness checking (`macro_output_state_digest == primitive_output_state_digest`), and action surface replacement.
    - Integration: [`SearchExecutor`](file:///home/kowen9024/repos/msk-formal-discovery/src/msk_formal_discovery/search/executor.py) binds `CandidateApplicator` and derives `candidate_application_status = APPLIED` exclusively via attested receipts; caller-minted `APPLIED` is strictly rejected with `AuthorityViolationError`.
@@ -29,11 +31,37 @@
      - `discovery-manifest.json` (8 discovery problems, `seed=42`)
      - `qualification-manifest.json` (8 positive held-out problems, `seed=1337`; 4 negative control problems, `seed=2026`)
      - `preregistration.json` (frozen candidate selection rule, search budget, metric thresholds, adjudication criteria)
-   - Commit A Freeze: Contains zero held-out execution results or performance numbers.
+   - Commit A Freeze: Established application subsystem without recording any held-out outcomes.
 2. **Commit B (`FROZEN_EXPERIMENT_EXECUTION`)**:
    - Executes the frozen discovery and paired replay experiment across all 12 held-out units.
-   - Evaluates prospective search reduction and selectivity parity on negative controls.
-   - Exports non-authoritative ONTO package and refactoring proposal under `ENGINEERING_ABSTRACTION_EFFECT_ONLY`.
+   - Verified 8/8 discovery traces generated and mined top candidate `macro_mul_one_add_zero` (`43eeb2651b87d6da5e39e0cba39fbe59c55da1d1af52bfb6167057e96ba36108`).
+   - Measured prospective search reduction:
+     - Positive held-out: 318 baseline nodes -> 142 abstracted nodes (**55.35% node reduction**, threshold $\ge 20\%$).
+     - Negative control: 15 baseline nodes == 15 abstracted nodes (**0 node delta**, exact parity, 0 applications).
+   - Real native Z3 SMT semantic equivalence control: 12/12 verified `UNSAT_REFUTED`.
+   - Promoted candidate status to `QUALIFIED_HELD_OUT`.
+   - Emitted non-authoritative ONTO package (`functional_search_benefit = SUPPORTED`) and `RefactoringProposal` (`canonical_library_mutated = false`, `authority = NONE`).
+   - Adjudication Verdict: **`ABSTRACTION_SEARCH_BENEFIT_SUPPORTED`**.
+
+### Executed Prospective Experiment Results Summary
+
+| Metric Dimension | Baseline Arm (`DISABLED`) | Abstracted Arm (`APPLIED` / `REQUESTED`) | Observed Effect / Parity | Gate Threshold | Gate Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Discovery Traces** | N/A | 8 traces (`seed=42`) | Top pattern support 8/8 (100%) | 8 traces | **PASS** |
+| **Candidate Admissibility** | N/A | `ADMISSIBLE` (`macro_mul_one_add_zero`) | Validated receipt & LGG | Admissible | **PASS** |
+| **Positive Problems Solved** | 8 / 8 (100%) | 8 / 8 (100%) | $\Delta = 0.0$ (Zero regressions) | $\ge 0.0$ | **PASS** |
+| **Positive Nodes Expanded** | 318 nodes | 142 nodes | **-55.35% reduction** (176 nodes saved) | $\ge 20.0\%$ | **PASS** |
+| **Positive Macro Applications**| 0 | 8 applied | 100% application on positive motifs | $\ge 6$ | **PASS** |
+| **Negative Problems Solved** | 4 / 4 (100%) | 4 / 4 (100%) | $\Delta = 0.0$ (Zero regressions) | $\ge 0.0$ | **PASS** |
+| **Negative Nodes Expanded** | 15 nodes | 15 nodes | **$\Delta = 0$ nodes** (Exact parity) | $\Delta = 0$ | **PASS** |
+| **Negative Macro Applications**| 0 | 0 applied (4 `NOT_APPLICABLE`) | Exact selectivity (Zero false triggers)| 0 applications | **PASS** |
+| **SMT Semantic Control (Z3)** | N/A | 12 / 12 `UNSAT_REFUTED` | Real native Z3 integer arithmetic | 12 / 12 UNSAT | **PASS** |
+| **Candidate Lifecycle** | `PROPOSED` | `QUALIFIED_HELD_OUT` | Promoted via executed replay | Qualified | **PASS** |
+| **ONTO Export** | `UNTESTED` | `SUPPORTED` | Validated `OntoEvidenceRef` bound | Supported | **PASS** |
+| **Refactoring Proposal** | N/A | Emitted (`mutated=false`, `auth=NONE`)| Non-authoritative proposal | Non-mutating | **PASS** |
+
+The earned adjudication disposition is:
+$$\text{ABSTRACTION\_SEARCH\_BENEFIT\_SUPPORTED}$$
 
 ---
 

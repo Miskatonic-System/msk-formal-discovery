@@ -90,6 +90,35 @@ class CandidateApplicationReceipt:
             "authority": "NONE",
         }
 
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> CandidateApplicationReceipt:
+        return cls(
+            application_id=data["application_id"],
+            candidate_id=data["candidate_id"],
+            candidate_artifact_digest=data["candidate_artifact_digest"],
+            candidate_kind=data["candidate_kind"],
+            applicator_id=data["applicator_id"],
+            applicator_version=data["applicator_version"],
+            applicator_implementation_digest=data["applicator_implementation_digest"],
+            experimental_unit_id=data["experimental_unit_id"],
+            problem_digest=data["problem_digest"],
+            input_state_digest=data["input_state_digest"],
+            candidate_pattern_digest=data["candidate_pattern_digest"],
+            substitution_witness=data.get("substitution_witness", {}),
+            primitive_expansion=list(data.get("primitive_expansion", [])),
+            primitive_expansion_digest=data["primitive_expansion_digest"],
+            pre_action_surface_digest=data["pre_action_surface_digest"],
+            post_action_surface_digest=data["post_action_surface_digest"],
+            output_macro_action_digest=data["output_macro_action_digest"],
+            output_state_digest=data.get("output_state_digest"),
+            transition_model_digest=data["transition_model_digest"],
+            application_status=data["application_status"],
+            started_at=data["started_at"],
+            completed_at=data["completed_at"],
+            receipt_digest=data.get("receipt_digest", ""),
+            authority=data.get("authority", "NONE"),
+        )
+
     def compute_digest(self) -> str:
         d = self.to_dict()
         d.pop("receipt_digest", None)
@@ -165,18 +194,18 @@ class CandidateApplicator:
             getattr(candidate.anti_unification_evidence, "deterministic_digest", None)
             or ("0" * 64)
         )
-        primitive_expansion = list(getattr(candidate, "primitive_expansion", []))
-        if not primitive_expansion:
-            # Cannot apply candidate without defined primitive expansion sequence
-            primitive_expansion = ["MUL_ONE_LEFT", "ADD_ZERO_RIGHT"]
-
-        prim_exp_dig = hashlib.sha256(json.dumps(primitive_expansion, sort_keys=True).encode("utf-8")).hexdigest()
-
-        # Compute pre-action surface digest
+        # Compute pre-action surface digest & transition model digest
         pre_actions_repr = [a.action_id for a in primitive_actions]
         pre_surface_dig = hashlib.sha256(json.dumps(pre_actions_repr, sort_keys=True).encode("utf-8")).hexdigest()
-
         trans_model_dig = hashlib.sha256(f"discrete_rewrite_model:{environment.implementation_digest}".encode("utf-8")).hexdigest()
+
+        primitive_expansion = list(getattr(candidate, "primitive_expansion", []))
+        if not primitive_expansion:
+            raise ValueError(
+                "EMPTY_PRIMITIVE_EXPANSION: AbstractionCandidate must define a non-empty primitive_expansion sequence to be applied"
+            )
+
+        prim_exp_dig = hashlib.sha256(json.dumps(primitive_expansion, sort_keys=True).encode("utf-8")).hexdigest()
 
         # Step 1: Replay primitive expansion step-by-step from input state (Section 18)
         curr_t = current_expr

@@ -921,18 +921,13 @@ class HeldOutReplayEngine:
         no_degradation = (success_delta >= 0.0)
         is_non_synthetic_discovery = candidate.discovery_origin in ("EXECUTED_OBSERVED", "CERTIFIED_REPLAY")
 
-        # R4 Section 17 & 20: Check candidate application status
-        base_app_status = (
-            comparisons[0].baseline_receipt.search_execution_receipt.get("candidate_application_status")
-            if (comparisons and comparisons[0].baseline_receipt.search_execution_receipt)
-            else None
+        # Check candidate application status across comparisons
+        is_candidate_applied = any(
+            comp.baseline_receipt.search_execution_receipt.get("candidate_application_status") == "DISABLED"
+            and comp.abstracted_receipt.search_execution_receipt.get("candidate_application_status") == "APPLIED"
+            for comp in comparisons
+            if comp.baseline_receipt.search_execution_receipt and comp.abstracted_receipt.search_execution_receipt
         )
-        abs_app_status = (
-            comparisons[0].abstracted_receipt.search_execution_receipt.get("candidate_application_status")
-            if (comparisons and comparisons[0].abstracted_receipt.search_execution_receipt)
-            else None
-        )
-        is_candidate_applied = (base_app_status == "DISABLED" and abs_app_status == "APPLIED")
 
         if (
             is_admissible

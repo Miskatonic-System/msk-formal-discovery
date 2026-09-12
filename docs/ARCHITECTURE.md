@@ -1,30 +1,33 @@
 # Architecture & Pipeline Specification
 
-**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`
+**Work Order**: `WO-MATH-FORMAL-DISCOVERY-01B`
 **Module**: `msk-formal-discovery/docs/ARCHITECTURE.md`
 **Historical 01A Predecessor**: `8d80e82d5936fb0df36afc95ff7bffb7d4915768` (`FORMAL_DISCOVERY_PROTOTYPE_SPINE_ESTABLISHED`)
 **R1 Head**: `96587f8fa379aa972922b7f5e689728e36238f50`
 **R2 Head**: `5a641eee2022d8ba54b20aef8708c6b380f3f987`
 **R3 Head**: `17724487c3e127ff0f6df07e2ad15824712078b4`
-**R4 Head**: `6d80eb75c7949358597022a69eb7536faeafe59d`
-**Final Disposition**: `FORMAL_DISCOVERY_SPINE_ACCEPTED`
+9. **R4 Head**: `6d80eb75c7949358597022a69eb7536faeafe59d`
+10. **R4-R1 Head**: `288af1a06fa1d98bd9cf8dd48a9ef6902c36b9f9` (`FORMAL_DISCOVERY_SPINE_ACCEPTED`)
+11. **01B Commit A Head**: `0f7b699779b9fc6a702bc3d675ddb555a2c2213a` (`APPLICATION_AND_PREREG_FREEZE`)
+12. **01B Earned Adjudication Disposition**: `ABSTRACTION_SEARCH_BENEFIT_SUPPORTED`
 
 ---
 
-## Historical Disposition & R4-R1 Ratification Record
+## Historical Disposition & 01B Experiment Execution Record
 
-Under `WO-MATH-FORMAL-DISCOVERY-01A-R4-R1`, candidate-application authority was formally closed and sealed, ratifying the formal discovery spine:
-1. **Caller APPLIED Authority Removed**: `SearchExecutor.execute(...)` derives application state itself (`candidate_enabled = False` => `DISABLED`, `candidate_enabled = True` => `REQUESTED_NOT_APPLIED`). No public caller can mint `APPLIED`; attempts are strictly rejected with `AuthorityViolationError`.
-2. **APPLIED Frozen for 01B**: `APPLIED` is reserved as a future state requiring a governed `CandidateApplicator` and `CandidateApplicationReceipt`.
-3. **Action-Generator Parity**: Canonical execution path never passes candidate ID into action generators. Both arms receive identical inputs, ensuring search dynamics parity.
-4. **Qualification Gate Sealed**: `QUALIFIED_HELD_OUT` requires abstracted `candidate_application_status = APPLIED`. Because 01A cannot emit `APPLIED`, candidate-requested runs remain `CANDIDATE_ONLY`.
-5. **ONTO Boundary Sealed**: ONTO export remains `functional_search_benefit = UNTESTED` for all candidate-requested runs.
-6. **Candidate Artifact & Application Digests**: Artifact digests deterministically bind candidate specifications; application digests bind status and artifact with invariant `REQUEST_DIGEST != APPLICATION_PROOF`.
-7. **Process-Local Witness Trust Note**: Frozen: `PROCESS_LOCAL_PROVENANCE_WITNESS != HOSTILE_CODE_ISOLATION`.
-8. **Comprehensive Hostile Verification**: 124 deterministic tests pass with 0 failures under `CLAIM CEILING: NONE` and `CANONICAL LIBRARY MUTATION: PROHIBITED`.
+Under `WO-MATH-FORMAL-DISCOVERY-01B`, the first governed prospective held-out search experiment was executed:
+1. **Commit A Freeze**: Schemas, `CandidateApplicator`, environment, native Z3 SMT semantic control, and manifests (8 discovery, 8 positive held-out, 4 negative control) were frozen at `0f7b699779b9fc6a702bc3d675ddb555a2c2213a` without held-out outcomes.
+2. **Commit B Execution**:
+   - Mined top candidate `macro_mul_one_add_zero` from 8 discovery traces (100% support, `ADMISSIBLE`).
+   - SMT semantic equivalence control verified 12/12 problems natively via Z3 (`UNSAT_REFUTED`).
+   - Prospective search reduction: 318 baseline nodes -> 142 abstracted nodes (**55.35% node reduction** on positive held-out problems, exceeding 20% threshold).
+   - Negative control exact selectivity: 15 baseline nodes == 15 abstracted nodes (**0 node delta**, exact parity, 0 false applications).
+   - Candidate status promoted to `QUALIFIED_HELD_OUT`.
+   - ONTO export emitted with `functional_search_benefit = SUPPORTED` and verified `OntoEvidenceRef`.
+   - Refactoring proposal generated with `canonical_library_mutated = False` and `authority = NONE`.
 
-The earned disposition is:
-$$\text{FORMAL\_DISCOVERY\_SPINE\_ACCEPTED}$$
+The earned adjudication disposition is:
+$$\text{ABSTRACTION\_SEARCH\_BENEFIT\_SUPPORTED}$$
 
 ---
 

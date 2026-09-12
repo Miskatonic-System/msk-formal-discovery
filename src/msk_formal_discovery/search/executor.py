@@ -456,6 +456,9 @@ class SearchExecutor:
         started_at = datetime.now(timezone.utc).isoformat()
         start_time = time.time()
 
+        if candidate is not None and candidate_id is None:
+            candidate_id = getattr(candidate, "candidate_id", None)
+
         p_digest = (
             getattr(problem, "problem_digest", None)
             or (

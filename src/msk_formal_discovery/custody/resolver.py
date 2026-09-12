@@ -517,8 +517,8 @@ class CustodyGraphResolver:
                         has_closure_ref = True
                         if closure_manifest_obj:
                             valid_digests = {closure_manifest_obj.closure_digest}
-                            if closure_manifest_path and closure_manifest_path.is_file():
-                                valid_digests.add(hashlib.sha256(closure_manifest_path.read_bytes()).hexdigest())
+                            if closure_path and closure_path.is_file():
+                                valid_digests.add(hashlib.sha256(closure_path.read_bytes()).hexdigest())
                             if r.artifact_digest not in valid_digests:
                                 handle_error(f"ONTO_CLOSURE_DIGEST_MISMATCH: {r.artifact_digest} not in {valid_digests}")
 

@@ -408,3 +408,70 @@ def test_closure_manifest_fails_on_paired_manifest_digest_mismatch():
     )
     with pytest.raises(ReceiptValidationError, match="PAIRED_MANIFEST_DIGEST_MISMATCH"):
         manifest.validate()
+
+
+# 17. Default-path end-to-end custody graph resolution succeeds (WO-MATH-FORMAL-DISCOVERY-01B-R3-R1)
+def test_default_path_custody_graph_resolution():
+    resolver = CustodyGraphResolver()
+    report = resolver.resolve_and_verify(fail_fast=True)
+
+    assert report.resolution_status == "RESOLVED_AND_VERIFIED"
+    assert report.r1_result_resolved is True
+    assert report.frozen_r1_result_resolved is True
+
+    assert report.original_search_receipts_resolved == 24
+    assert report.original_smt_receipts_resolved == 12
+    assert report.replay_search_receipts_resolved == 24
+    assert report.custody_receipts_resolved == 24
+
+    assert report.paired_manifest_resolved is True
+    assert report.closure_manifest_resolved is True
+    assert report.onto_package_resolved is True
+
+    assert report.terminal_digest_parity_count == 24
+    assert report.metric_parity_count == 24
+    assert report.application_parity_count == 24
+    assert report.paired_terminal_parity_count == 12
+
+    assert report.all_original_search_refs_resolved is True
+    assert report.all_replay_search_receipts_resolved is True
+    assert report.all_replay_receipts_resolved is True
+    assert report.all_smt_receipts_resolved is True
+
+    assert report.terminal_canonical_forms_durably_bound == "YES"
+    assert report.source_science_mutated is False
+    assert report.errors == []
+
+
+# 18. Equivalence between default-path and explicit-path resolution (WO-MATH-FORMAL-DISCOVERY-01B-R3-R1)
+def test_default_and_explicit_path_equivalence():
+    resolver = CustodyGraphResolver()
+    rep_default = resolver.resolve_and_verify(fail_fast=True)
+    rep_explicit = resolver.resolve_and_verify(
+        closure_manifest_path=Path("experiments/formal-discovery-01b-r3/r1-terminal-custody-closure.v0.1.json"),
+        onto_package_path=Path("experiments/formal-discovery-01b-r3/onto-export-scoped.json"),
+        paired_manifest_path=Path("experiments/formal-discovery-01b-r3/paired-terminal-custody-manifest.v0.1.json"),
+        fail_fast=True,
+    )
+    assert rep_default.to_dict() == rep_explicit.to_dict()
+
+
+# 19. Hostile control: tampering ONTO closure artifact digest fails closed (WO-MATH-FORMAL-DISCOVERY-01B-R3-R1)
+@pytest.mark.parametrize("bad_digest", [
+    "1" * 64,  # wrong file SHA
+    "2" * 64,  # wrong internal closure digest
+    "deadbeef" * 8,  # arbitrary corrupted digest
+])
+def test_resolver_rejects_tampered_onto_closure_digest(tmp_path: Path, bad_digest: str):
+    onto_file = REPO_ROOT / "experiments" / "formal-discovery-01b-r3" / "onto-export-scoped.json"
+    onto_data = json.loads(onto_file.read_text(encoding="utf-8"))
+    for ref in onto_data["evidence_refs"]:
+        if ref["evidence_kind"] == "TERMINAL_STATE_CUSTODY_CLOSURE":
+            ref["artifact_digest"] = bad_digest
+    tampered_onto = tmp_path / "onto-export-tampered.json"
+    tampered_onto.write_text(json.dumps(onto_data), encoding="utf-8")
+
+    resolver = CustodyGraphResolver()
+    with pytest.raises(CustodyGraphResolutionError, match="ARTIFACT_DIGEST_MISMATCH|ONTO_CLOSURE_DIGEST_MISMATCH"):
+        resolver.resolve_and_verify(onto_package_path=tampered_onto, fail_fast=True)
+

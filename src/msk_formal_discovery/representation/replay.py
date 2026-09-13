@@ -46,6 +46,13 @@ class ApplicationAttemptCustodyLedger:
     terminal_status_parity: bool
     exact_original_resolved_count: int
     overwritten_unresolved_count: int
+    replay_search_receipt_ref: str = ""
+    replay_search_receipt_digest: str = ""
+    search_budget_digest: str = ""
+    search_budget_parity: bool = True
+    original_applied_count: int = 0
+    replay_applied_count: int = 0
+    replay_application_attempts: List[Dict[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -67,6 +74,13 @@ class ApplicationAttemptCustodyLedger:
             "terminal_status_parity": self.terminal_status_parity,
             "exact_original_resolved_count": self.exact_original_resolved_count,
             "overwritten_unresolved_count": self.overwritten_unresolved_count,
+            "replay_search_receipt_ref": self.replay_search_receipt_ref,
+            "replay_search_receipt_digest": self.replay_search_receipt_digest,
+            "search_budget_digest": self.search_budget_digest,
+            "search_budget_parity": self.search_budget_parity,
+            "original_applied_count": self.original_applied_count,
+            "replay_applied_count": self.replay_applied_count,
+            "replay_application_attempts": [dict(a) for a in self.replay_application_attempts],
         }
 
     @classmethod
@@ -90,6 +104,13 @@ class ApplicationAttemptCustodyLedger:
             terminal_status_parity=data["terminal_status_parity"],
             exact_original_resolved_count=data["exact_original_resolved_count"],
             overwritten_unresolved_count=data["overwritten_unresolved_count"],
+            replay_search_receipt_ref=data.get("replay_search_receipt_ref", ""),
+            replay_search_receipt_digest=data.get("replay_search_receipt_digest", ""),
+            search_budget_digest=data.get("search_budget_digest", ""),
+            search_budget_parity=data.get("search_budget_parity", True),
+            original_applied_count=data.get("original_applied_count", 0),
+            replay_applied_count=data.get("replay_applied_count", 0),
+            replay_application_attempts=list(data.get("replay_application_attempts", [])),
         )
 
 
@@ -177,6 +198,10 @@ def audit_original_application_attempts(
     }
 
 
+FROZEN_SEARCH_BUDGET = {"max_expansions": 100}
+FROZEN_SEARCH_BUDGET_DIGEST = "33e3063843806441f4193971b31f4c3093393af722d83f8f95cc11ff669f9635"
+
+
 def replay_single_abstracted_search(
     problem: Any,
     candidate: Any,
@@ -185,7 +210,9 @@ def replay_single_abstracted_search(
     original_search_digest: str,
     receipts_out_dir: Path,
     audit_info: Dict[str, Any],
-) -> Tuple[ApplicationAttemptCustodyLedger, List[CandidateApplicationReceipt]]:
+    original_manifest_applied_count: int = 0,
+    receipts_rel_dir: str = "experiments/formal-discovery-01c-r1-r1/receipts",
+) -> Tuple[ApplicationAttemptCustodyLedger, List[CandidateApplicationReceipt], SearchExecutionReceipt]:
     """Deterministically replay a single abstracted search and persist collision-free replay application receipts."""
     env = RewriteSearchEnvironment(problem.problem_id, problem.problem_digest, problem.goal_expression)
     init_state = env.create_initial_state(problem.initial_expression)
@@ -204,7 +231,7 @@ def replay_single_abstracted_search(
         policy=policy,
         problem=pdef,
         initial_state=init_state,
-        budget={"max_nodes": 100},
+        budget=dict(FROZEN_SEARCH_BUDGET),
         candidate_enabled=True,
         candidate=candidate,
         environment=env,
@@ -213,31 +240,94 @@ def replay_single_abstracted_search(
     orig_app_refs = original_search_data.get("candidate_application_receipt_refs", [])
     orig_app_digs = original_search_data.get("candidate_application_receipt_digests", [])
 
+    receipts_out_dir.mkdir(parents=True, exist_ok=True)
+
+    # 1. Persist Replay Search Execution Receipt (Finding F-FD-01C-R1-03)
+    search_replay_filename = f"search-replay-{problem.problem_id}.json"
+    search_replay_path = receipts_out_dir / search_replay_filename
+    search_replay_ref = f"{receipts_rel_dir}/{search_replay_filename}"
+    bundle.receipt.validate()
+    search_replay_digest = bundle.receipt.compute_digest()
+    bundle.receipt.receipt_digest = search_replay_digest
+    search_replay_path.write_text(json.dumps(bundle.receipt.to_dict(), indent=2), encoding="utf-8")
+
+    # 2. Extract and Validate Matching CandidateApplicationReceipt bodies (Finding F-FD-01C-R1-01)
+    if bundle.receipt.candidate_application_status == "APPLIED":
+        relevant_receipts = [r for r in bundle.candidate_application_receipts if getattr(r, "application_status", "") == "APPLIED"]
+    else:
+        relevant_receipts = list(bundle.candidate_application_receipts)
+
+    if len(relevant_receipts) != len(bundle.receipt.candidate_application_receipt_refs):
+        raise ReceiptValidationError(
+            f"REPLAY_RECEIPT_CARDINALITY_MISMATCH: bundle {len(relevant_receipts)} != receipt refs {len(bundle.receipt.candidate_application_receipt_refs)}"
+        )
+    if len(relevant_receipts) != len(bundle.receipt.candidate_application_receipt_digests):
+        raise ReceiptValidationError(
+            f"REPLAY_DIGEST_CARDINALITY_MISMATCH: bundle {len(relevant_receipts)} != receipt digests {len(bundle.receipt.candidate_application_receipt_digests)}"
+        )
+
     replay_rcpts: List[CandidateApplicationReceipt] = []
     replay_app_ids: List[str] = []
     replay_app_refs: List[str] = []
     replay_app_digs: List[str] = []
+    replay_app_attempts: List[Dict[str, Any]] = []
 
-    receipts_out_dir.mkdir(parents=True, exist_ok=True)
+    for ordinal, r in enumerate(relevant_receipts):
+        expected_app_id = bundle.receipt.candidate_application_receipt_refs[ordinal]
+        expected_dig = bundle.receipt.candidate_application_receipt_digests[ordinal]
+        if r.application_id != expected_app_id:
+            raise ReceiptValidationError(
+                f"REPLAY_APP_ID_MISMATCH: receipt {r.application_id} != expected {expected_app_id}"
+            )
+        if r.receipt_digest != expected_dig:
+            raise ReceiptValidationError(
+                f"REPLAY_RECEIPT_DIGEST_MISMATCH: receipt {r.receipt_digest} != expected {expected_dig}"
+            )
+        r.validate()
+        recomputed_dig = r.compute_digest()
+        if recomputed_dig != r.receipt_digest:
+            raise ReceiptValidationError(
+                f"REPLAY_RECOMPUTED_DIGEST_MISMATCH: computed {recomputed_dig} != stored {r.receipt_digest}"
+            )
 
-    # In SearchExecutor, every application receipt is validated and captured in the bundle
-    # We retrieve the captured candidate application receipts from the executor search run
-    cand_app_refs_replay = bundle.receipt.candidate_application_receipt_refs
-    cand_app_digs_replay = bundle.receipt.candidate_application_receipt_digests
+        replay_filename = f"application-replay-{problem.problem_id}-{ordinal:04d}-{r.receipt_digest[:16]}.json"
+        out_file = receipts_out_dir / replay_filename
+        out_file.write_text(json.dumps(r.to_dict(), indent=2), encoding="utf-8")
+        replay_ref = f"{receipts_rel_dir}/{replay_filename}"
 
-    # For collision-free storage, we record replay attempts
-    # We also verify parity with original sequence
-    app_id_parity = (orig_app_refs == cand_app_refs_replay)
+        replay_rcpts.append(r)
+        replay_app_ids.append(r.application_id)
+        replay_app_refs.append(replay_ref)
+        replay_app_digs.append(r.receipt_digest)
+        replay_app_attempts.append({
+            "ordinal": ordinal,
+            "application_id": r.application_id,
+            "receipt_ref": replay_ref,
+            "receipt_digest": r.receipt_digest,
+            "application_status": r.application_status,
+        })
+
+    # 3. Parity Verifications
+    app_id_parity = (orig_app_refs == replay_app_ids)
     metric_parity = (
         bundle.receipt.nodes_expanded == original_search_data.get("nodes_expanded")
         and bundle.receipt.nodes_evaluated == original_search_data.get("nodes_evaluated")
+        and bundle.receipt.branch_count == original_search_data.get("branch_count")
     )
     status_parity = (bundle.receipt.candidate_application_status == original_search_data.get("candidate_application_status"))
 
-    orig_applied_count = sum(1 for d in orig_app_digs if d in original_search_data.get("candidate_application_digest", ""))
-    # Count applied in replay
-    replay_applied = sum(1 for ref in bundle.receipt.candidate_application_receipt_refs if "applied" in ref)
-    applied_count_parity = (bundle.receipt.candidate_application_status == original_search_data.get("candidate_application_status"))
+    # 4. Applied Count Parity (Finding F-FD-01C-R1-02)
+    orig_id_applied_count = sum(1 for a in orig_app_refs if a.startswith("app-rec-applied-"))
+    replay_body_applied_count = sum(1 for r in relevant_receipts if r.application_status == "APPLIED")
+    replay_id_applied_count = sum(1 for a in replay_app_ids if a.startswith("app-rec-applied-"))
+    applied_count_parity = (
+        original_manifest_applied_count == orig_id_applied_count == replay_body_applied_count == replay_id_applied_count
+    )
+
+    # 5. Search Budget Parity (Finding F-FD-01C-R1-03)
+    search_budget_parity = (
+        bundle.receipt.search_budget_digest == original_search_data.get("search_budget_digest") == FROZEN_SEARCH_BUDGET_DIGEST
+    )
 
     terminal_parity = (bundle.receipt.terminal_status == original_search_data.get("terminal_status") == "SUCCESS")
 
@@ -248,35 +338,6 @@ def replay_single_abstracted_search(
             resolved_in_this_run += 1
         else:
             overwritten_in_this_run += 1
-
-    # Persist collision-free replay receipts
-    # Re-execute application loop or extract receipts
-    # Since SearchExecutor creates candidate application receipts during search:
-    # To get the exact receipt objects, we can run candidate applicator or trace:
-    # Let's inspect SearchExecutor: it already verified and recorded cand_app_refs and cand_app_digs.
-    for ordinal, (app_id, dig) in enumerate(zip(cand_app_refs_replay, cand_app_digs_replay)):
-        replay_filename = f"application-replay-{problem.problem_id}-{ordinal:04d}-{dig[:16]}.json"
-        replay_ref = f"experiments/formal-discovery-01c-r1/receipts/{replay_filename}"
-        replay_app_ids.append(app_id)
-        replay_app_refs.append(replay_ref)
-        replay_app_digs.append(dig)
-
-        # Write replay record
-        replay_record = {
-            "schema_version": "miskatonic.candidate-application-receipt.v0.1",
-            "replay_mode": "DETERMINISTIC_EVIDENCE_REPLAY",
-            "problem_id": problem.problem_id,
-            "problem_digest": problem.problem_digest,
-            "ordinal": ordinal,
-            "application_id": app_id,
-            "receipt_digest": dig,
-            "candidate_id": candidate.candidate_id,
-            "candidate_artifact_digest": candidate.artifact_digest(),
-            "status": "REPLAY_APPLICATION_ATTEMPT_CONFIRMED",
-            "authority": "NONE",
-        }
-        out_file = receipts_out_dir / replay_filename
-        out_file.write_text(json.dumps(replay_record, indent=2), encoding="utf-8")
 
     ledger = ApplicationAttemptCustodyLedger(
         original_search_receipt_ref=original_search_ref,
@@ -297,6 +358,13 @@ def replay_single_abstracted_search(
         terminal_status_parity=terminal_parity,
         exact_original_resolved_count=resolved_in_this_run,
         overwritten_unresolved_count=overwritten_in_this_run,
+        replay_search_receipt_ref=search_replay_ref,
+        replay_search_receipt_digest=search_replay_digest,
+        search_budget_digest=bundle.receipt.search_budget_digest,
+        search_budget_parity=search_budget_parity,
+        original_applied_count=orig_id_applied_count,
+        replay_applied_count=replay_body_applied_count,
+        replay_application_attempts=replay_app_attempts,
     )
 
-    return ledger, replay_rcpts
+    return ledger, replay_rcpts, bundle.receipt

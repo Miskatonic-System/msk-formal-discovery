@@ -1,4 +1,4 @@
-"""Superseding custody graph resolver and independent evidence verifier (WO-MATH-FORMAL-DISCOVERY-01C-R1 Findings F-FD-01C-01 to F-FD-01C-05)."""
+"""Superseding custody graph resolver and independent evidence verifier (WO-MATH-FORMAL-DISCOVERY-01C-R1 & R1-R1)."""
 from __future__ import annotations
 
 import hashlib
@@ -32,6 +32,11 @@ PINNED_01C_COMMIT_B = "712f0d3ce27dbf4578d79f58b938bdc22ba69eeb"
 PINNED_01C_TREE_A = "f6c6eb396ce8298cf3370a8916d827d2fe0b2eec"
 PINNED_01C_TREE_B = "75c1f3ceb199f1ed23d7a14d277f1ba550a1f1c2"
 
+PINNED_01C_R1_COMMIT_A = "89fc1d6e4f290af0e8b4a61bc753efce04170526"
+PINNED_01C_R1_COMMIT_B = "1097bd5c1b165184bdfdd7323f8e2e7c25699f3c"
+PINNED_01C_R1_TREE_A = "231b157807531345e792ab13a3fb3d1730137693"
+PINNED_01C_R1_TREE_B = "11de77b7b2f679212f0cb630cc071da8d3291010"
+
 FROZEN_01C_CANDIDATE_DIGEST = "273a1d821e54ba6bf1832a2f1f11b338853aa9d1070d873c8b29345ba5aae903"
 FROZEN_01C_CANDIDATE_FILE_SHA256 = "4794cc897bc60ddd928b3abdecd25bbb343c2388b3d3bf6a466d1b5656c65d31"
 FROZEN_01C_PREREGISTRATION_FILE_SHA256 = "bd30fa638f7691c63d395337d9cf770a4d720596dae9647905662f533ed5ed15"
@@ -41,8 +46,17 @@ FROZEN_01C_ONTO_FILE_SHA256 = "7357580c96371a1512a9a8598caeb77f7bf6d1d78d587f8c3
 FROZEN_01C_PAIRED_MANIFEST_SHA256 = "671e7069aad34d4b776312a293c54e7d0798c20fedb3ee9079aa241f84cfdb93"
 FROZEN_01C_CLOSURE_MANIFEST_SHA256 = "896588d4b34e44222eb5f982335b7e6bbbe9a5ac9f1d3c473bbec525764e3186"
 
+FROZEN_01C_R1_APPLICATION_REPLAY_MANIFEST_SHA256 = "5b7756eabd4f488ff5e0b3e747226dfb9574d4ab02a39e98c4ecf0c2c8b97e6f"
+FROZEN_01C_R1_CLOSURE_MANIFEST_SHA256 = "d5d92178da7473690b0bd4520ce0d7492d49f97c830887ca63a8e0e3375a1d2c"
+FROZEN_01C_R1_CLOSURE_DIGEST = "ac06e32b19eb4c27fa240211e7ecc043dd00f132b0a926ab7b52d3e3241fd6e3"
+FROZEN_01C_R1_WHOLE_PROBLEM_MANIFEST_SHA256 = "12f14b366dbf5264158379c1de47f8b80cab25ad985e5490875a5f89f342d0da"
+FROZEN_01C_R1_ONTO_FILE_SHA256 = "48a9ba5309c7e8ad0f97dbbd5f44466900614cc4543ba22c0d889a3dd339c748"
+
 FROZEN_TRANSFORM_IMPL_DIGEST = "5c85f28d268f138ffbf2ec8d9fe400d72a1378ed09223ddff43a802ccd809d4a"
 FROZEN_APPLICATOR_IMPL_DIGEST = "04e4418028c480a2963242e678af5cf7070257d2b0f2f38b3a7016ee3c2c5360"
+
+FROZEN_SEARCH_BUDGET = {"max_expansions": 100}
+FROZEN_SEARCH_BUDGET_DIGEST = "33e3063843806441f4193971b31f4c3093393af722d83f8f95cc11ff669f9635"
 
 
 @dataclass
@@ -70,6 +84,13 @@ class RepresentationCustodyRepairReport:
     per_stratum_dispositions: Dict[str, str]
     global_disposition: str
     errors: List[str] = field(default_factory=list)
+    search_replay_receipts_verified_count: int = 0
+    application_replay_receipts_verified_count: int = 0
+    all_applied_count_parity_verified: bool = False
+    all_search_budget_parity_verified: bool = False
+    search_budget_digest_verified: bool = False
+    original_attempt_body_custody: str = "PARTIAL_AND_EXPLICIT"
+    deterministic_replay_attempt_body_custody: str = "COMPLETE"
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -95,6 +116,13 @@ class RepresentationCustodyRepairReport:
             "per_stratum_dispositions": dict(self.per_stratum_dispositions),
             "global_disposition": self.global_disposition,
             "errors": list(self.errors),
+            "search_replay_receipts_verified_count": self.search_replay_receipts_verified_count,
+            "application_replay_receipts_verified_count": self.application_replay_receipts_verified_count,
+            "all_applied_count_parity_verified": self.all_applied_count_parity_verified,
+            "all_search_budget_parity_verified": self.all_search_budget_parity_verified,
+            "search_budget_digest_verified": self.search_budget_digest_verified,
+            "original_attempt_body_custody": self.original_attempt_body_custody,
+            "deterministic_replay_attempt_body_custody": self.deterministic_replay_attempt_body_custody,
         }
 
     @property
@@ -103,7 +131,7 @@ class RepresentationCustodyRepairReport:
 
 
 class RepresentationCustodyRepairResolver:
-    """Independent custody graph verifier for WO-MATH-FORMAL-DISCOVERY-01C-R1."""
+    """Independent custody graph verifier for WO-MATH-FORMAL-DISCOVERY-01C-R1 and 01C-R1-R1."""
 
     def __init__(self, repo_root: Optional[Path] = None) -> None:
         self.repo_root = repo_root or Path(__file__).resolve().parents[3]
@@ -123,9 +151,13 @@ class RepresentationCustodyRepairResolver:
     ) -> RepresentationCustodyRepairReport:
         errors: List[str] = []
 
-        target_closure = closure_manifest_path or (
-            self.repo_root / "experiments" / "formal-discovery-01c-r1" / "representation-custody-closure.v0.1.json"
-        )
+        if closure_manifest_path:
+            target_closure = closure_manifest_path
+        elif (self.repo_root / "experiments" / "formal-discovery-01c-r1-r1" / "representation-custody-closure.v0.1.json").is_file():
+            target_closure = self.repo_root / "experiments" / "formal-discovery-01c-r1-r1" / "representation-custody-closure.v0.1.json"
+        else:
+            target_closure = self.repo_root / "experiments" / "formal-discovery-01c-r1" / "representation-custody-closure.v0.1.json"
+
         if not target_closure.is_file():
             raise CustodyGraphResolutionError(f"CUSTODY_CLOSURE_NOT_FOUND: {target_closure}")
 
@@ -152,6 +184,25 @@ class RepresentationCustodyRepairResolver:
         if closure.original_01c_commit_b_tree != PINNED_01C_TREE_B:
             errors.append(f"Tree B mismatch: {closure.original_01c_commit_b_tree} != {PINNED_01C_TREE_B}")
 
+        is_r1_r1 = (closure.work_order == "WO-MATH-FORMAL-DISCOVERY-01C-R1-R1")
+        if is_r1_r1:
+            if closure.original_r1_commit_a != PINNED_01C_R1_COMMIT_A:
+                errors.append(f"R1 Commit A mismatch: {closure.original_r1_commit_a} != {PINNED_01C_R1_COMMIT_A}")
+            if closure.original_r1_commit_b != PINNED_01C_R1_COMMIT_B:
+                errors.append(f"R1 Commit B mismatch: {closure.original_r1_commit_b} != {PINNED_01C_R1_COMMIT_B}")
+            if closure.original_r1_commit_a_tree != PINNED_01C_R1_TREE_A:
+                errors.append(f"R1 Tree A mismatch: {closure.original_r1_commit_a_tree} != {PINNED_01C_R1_TREE_A}")
+            if closure.original_r1_commit_b_tree != PINNED_01C_R1_TREE_B:
+                errors.append(f"R1 Tree B mismatch: {closure.original_r1_commit_b_tree} != {PINNED_01C_R1_TREE_B}")
+            if closure.predecessor_head != PINNED_01C_R1_COMMIT_B:
+                errors.append(f"Predecessor head mismatch: {closure.predecessor_head} != {PINNED_01C_R1_COMMIT_B}")
+            if closure.search_budget_digest != FROZEN_SEARCH_BUDGET_DIGEST:
+                errors.append(f"Closure search budget digest mismatch: {closure.search_budget_digest} != {FROZEN_SEARCH_BUDGET_DIGEST}")
+            if closure.original_attempt_body_custody != "PARTIAL_AND_EXPLICIT":
+                errors.append(f"Original attempt body custody must be PARTIAL_AND_EXPLICIT, got {closure.original_attempt_body_custody}")
+            if closure.deterministic_replay_attempt_body_custody != "COMPLETE":
+                errors.append(f"Deterministic replay attempt body custody must be COMPLETE, got {closure.deterministic_replay_attempt_body_custody}")
+
         # 2. Independent Parse and Verification of Historical result.json (Finding F-FD-01C-05)
         result_path = self._resolve_path(closure.original_result_ref)
         result_verified = False
@@ -165,7 +216,6 @@ class RepresentationCustodyRepairResolver:
             elif res_sha != FROZEN_01C_RESULT_FILE_SHA256:
                 errors.append(f"Original result.json file SHA mismatch against pin: {res_sha} != {FROZEN_01C_RESULT_FILE_SHA256}")
             else:
-                # Parse body and independently cross-check all fields
                 try:
                     res_json = json.loads(res_bytes.decode("utf-8"))
                     if res_json.get("experiment_id") != "formal-discovery-01c":
@@ -181,7 +231,6 @@ class RepresentationCustodyRepairResolver:
                     if res_json.get("authority") != "NONE":
                         errors.append(f"result.json authority mismatch")
                     
-                    # Verify dispositions
                     adj = res_json.get("adjudication", {})
                     if adj.get("r0_evaluation", {}).get("disposition") != "REPRESENTATION_STRATUM_INVARIANT":
                         errors.append("result.json R0 disposition mismatch")
@@ -194,7 +243,6 @@ class RepresentationCustodyRepairResolver:
                     if adj.get("global_disposition") != "REPRESENTATION_INVARIANCE_NOT_SUPPORTED":
                         errors.append("result.json global_disposition mismatch")
 
-                    # Cross-check manifest and onto references
                     if res_json.get("closure_manifest_ref") != closure.original_closure_manifest_ref:
                         errors.append("result.json closure manifest ref mismatch")
                     if res_json.get("closure_manifest_digest") != closure.original_closure_manifest_digest:
@@ -229,7 +277,6 @@ class RepresentationCustodyRepairResolver:
                 all_frozen_verified = False
             else:
                 fsha = hashlib.sha256(fpath.read_bytes()).hexdigest()
-                # For candidate.json, check both artifact digest and file sha256
                 if fname == "candidate.json":
                     if stored_dig != FROZEN_01C_CANDIDATE_DIGEST:
                         errors.append(f"Candidate artifact digest mismatch: {stored_dig}")
@@ -242,6 +289,35 @@ class RepresentationCustodyRepairResolver:
                         errors.append(f"Frozen artifact {fname} SHA mismatch: {fsha} != stored {stored_dig} / pin {pin_sha}")
                         all_frozen_verified = False
 
+        if is_r1_r1:
+            r1_frozen_checks = [
+                ("application-replay-custody-manifest.v0.1.json", FROZEN_01C_R1_APPLICATION_REPLAY_MANIFEST_SHA256),
+                ("representation-custody-closure.v0.1.json", FROZEN_01C_R1_CLOSURE_MANIFEST_SHA256),
+                ("whole-problem-transform-manifest.v0.1.json", FROZEN_01C_R1_WHOLE_PROBLEM_MANIFEST_SHA256),
+                ("onto-export-scoped.json", FROZEN_01C_R1_ONTO_FILE_SHA256),
+            ]
+            for fname, pin_sha in r1_frozen_checks:
+                fpath = self.repo_root / "experiments" / "formal-discovery-01c-r1" / fname
+                if not fpath.is_file():
+                    errors.append(f"Historical 01C-R1 artifact missing: {fname}")
+                    all_frozen_verified = False
+                else:
+                    fsha = hashlib.sha256(fpath.read_bytes()).hexdigest()
+                    if fsha != pin_sha:
+                        errors.append(f"Historical 01C-R1 artifact {fname} SHA mismatch: {fsha} != pin {pin_sha}")
+                        all_frozen_verified = False
+
+            if closure.original_r1_closure_manifest_ref:
+                r1_c_p = self._resolve_path(closure.original_r1_closure_manifest_ref)
+                if not r1_c_p:
+                    errors.append(f"R1 closure manifest missing: {closure.original_r1_closure_manifest_ref}")
+                else:
+                    r1_c_data = json.loads(r1_c_p.read_text(encoding="utf-8"))
+                    if r1_c_data.get("closure_digest") != closure.original_r1_closure_manifest_digest:
+                        errors.append("R1 closure manifest digest mismatch against closure")
+                    if r1_c_data.get("closure_digest") != FROZEN_01C_R1_CLOSURE_DIGEST:
+                        errors.append("R1 closure manifest digest mismatch against pin")
+
         # 4. Independent Receipt Body Integrity Verification (Finding F-FD-01C-01)
         paired_manifest_path = self._resolve_path(closure.original_paired_manifest_ref)
         if not paired_manifest_path:
@@ -249,6 +325,10 @@ class RepresentationCustodyRepairResolver:
         paired_manifest = PairedRepresentationOrbitManifest.from_dict(
             json.loads(paired_manifest_path.read_text(encoding="utf-8"))
         )
+        try:
+            paired_manifest.validate(repo_root=self.repo_root)
+        except Exception as e:
+            errors.append(f"Paired manifest validation error: {e}")
 
         orig_trans_verified = 0
         orig_search_verified = 0
@@ -260,7 +340,7 @@ class RepresentationCustodyRepairResolver:
                 t_ref = s_info.get("transform_receipt_ref")
                 t_dig = s_info.get("transform_receipt_digest")
                 if not t_ref:
-                    errors.append(f"Missing transform_receipt_ref in paired manifest for {fam_id} {s_name}")
+                    errors.append(f"Missing transform_receipt_ref for {fam_id}:{s_name}")
                     continue
                 p = self._resolve_path(t_ref)
                 if not p:
@@ -269,33 +349,14 @@ class RepresentationCustodyRepairResolver:
                 
                 try:
                     raw = json.loads(p.read_text(encoding="utf-8"))
-                    # Reconstruct RepresentationTransformReceipt
-                    tr = RepresentationTransformReceipt(
-                        receipt_id=raw["receipt_id"],
-                        family_id=raw["family_id"],
-                        stratum=raw["stratum"],
-                        source_expression=raw["source_expression"],
-                        transformed_expression=raw["transformed_expression"],
-                        source_expression_digest=raw["source_expression_digest"],
-                        transformed_expression_digest=raw["transformed_expression_digest"],
-                        variable_bijection=dict(raw["variable_bijection"]),
-                        transform_implementation_digest=raw["transform_implementation_digest"],
-                        smt_certificate_ref=raw["smt_certificate_ref"],
-                        smt_certificate_digest=raw["smt_certificate_digest"],
-                        smt_verdict=raw.get("smt_verdict", "UNSAT_REFUTED"),
-                        semantic_equivalence_certified=raw.get("semantic_equivalence_certified", True),
-                        authority=raw.get("authority", "NONE"),
-                        receipt_digest=raw.get("receipt_digest", ""),
-                    )
-                    # Validate schema & structural invariants
+                    tr = RepresentationTransformReceipt.from_dict(raw)
                     tr.validate()
-                    # Recompute digest from body
-                    body_computed = tr.compute_digest()
-                    if body_computed != raw.get("receipt_digest"):
-                        errors.append(f"Transform receipt body digest mismatch for {t_ref}: computed {body_computed} != stored {raw.get('receipt_digest')}")
+                    body_dig = tr.compute_digest()
+                    if body_dig != raw.get("receipt_digest"):
+                        errors.append(f"Transform receipt body digest mismatch for {t_ref}: computed {body_dig} != stored {raw.get('receipt_digest')}")
                         continue
-                    if body_computed != t_dig:
-                        errors.append(f"Transform receipt digest mismatch against manifest for {t_ref}: {body_computed} != manifest {t_dig}")
+                    if body_dig != t_dig:
+                        errors.append(f"Transform receipt digest mismatch against manifest for {t_ref}: {body_dig} != manifest {t_dig}")
                         continue
                     if tr.family_id != fam_id:
                         errors.append(f"Transform receipt family_id mismatch: {tr.family_id} != {fam_id}")
@@ -310,7 +371,6 @@ class RepresentationCustodyRepairResolver:
                         errors.append(f"Transform implementation digest drift in {t_ref}")
                         continue
                     
-                    # Verify SMT certificate
                     smt_p = self._resolve_path(tr.smt_certificate_ref)
                     if not smt_p:
                         errors.append(f"SMT certificate file missing: {tr.smt_certificate_ref}")
@@ -370,12 +430,10 @@ class RepresentationCustodyRepairResolver:
                             errors.append(f"Search terminal_status not SUCCESS in {s_ref}: {sr.terminal_status}")
                             continue
                         
-                        # Cardinality check
                         if len(sr.candidate_application_receipt_refs) != len(sr.candidate_application_receipt_digests):
                             errors.append(f"Candidate application refs/digests cardinality mismatch in {s_ref}")
                             continue
 
-                        # Semantics check
                         if kind == "BASELINE":
                             if sr.candidate_enabled or sr.candidate_application_status != "DISABLED":
                                 errors.append(f"Baseline search candidate enabled or status not DISABLED in {s_ref}")
@@ -400,13 +458,18 @@ class RepresentationCustodyRepairResolver:
                     except Exception as e:
                         errors.append(f"Failed to independently verify search receipt {s_ref}: {e}")
 
-        # 5. Application-Attempt Audit and Replay Parity (Finding F-FD-01C-02)
+        # 5. Application-Attempt Audit and Replay Parity (Finding F-FD-01C-02 & F-FD-01C-R1-01 to 03)
         replay_manifest_path = self._resolve_path(closure.application_replay_manifest_ref)
         replay_runs_verified = 0
         all_seq_parity = False
         all_metric_parity = False
+        all_app_cnt_parity = False
+        all_search_budget_parity = False
+        search_budget_digest_verified = False
         exact_app_resolved = 0
         overwritten_app_recorded = 0
+        replay_search_rcpts_verified = 0
+        replay_app_rcpts_verified = 0
 
         if not replay_manifest_path:
             errors.append(f"Application replay manifest missing: {closure.application_replay_manifest_ref}")
@@ -430,21 +493,152 @@ class RepresentationCustodyRepairResolver:
 
             seq_parities = []
             met_parities = []
+            app_cnt_parities = []
+            s_budget_parities = []
+
             for ledger in replay_manifest.ledgers:
                 p_seq = ledger.get("application_id_sequence_parity", False)
                 p_met = ledger.get("search_metric_parity", False)
                 p_stat = ledger.get("candidate_application_status_parity", False)
                 p_app = ledger.get("applied_count_parity", False)
                 p_term = ledger.get("terminal_status_parity", False)
+                
                 seq_parities.append(p_seq)
                 met_parities.append(p_met)
-                if p_seq and p_met and p_stat and p_app and p_term:
+                app_cnt_parities.append(p_app)
+
+                # 4-Way Applied Count Equality Check (Finding F-FD-01C-R1-02)
+                orig_id_app_count = sum(1 for a in ledger.get("ordered_original_application_ids", []) if a.startswith("app-rec-applied-"))
+                rep_id_app_count = sum(1 for a in ledger.get("ordered_replay_application_ids", []) if a.startswith("app-rec-applied-"))
+                
+                if "original_applied_count" in ledger and "replay_applied_count" in ledger:
+                    orig_applied_field = ledger["original_applied_count"]
+                    replay_applied_field = ledger["replay_applied_count"]
+                    if not (orig_applied_field == orig_id_app_count == replay_applied_field == rep_id_app_count):
+                        errors.append(
+                            f"Applied count parity failed in problem {ledger.get('problem_id')}: "
+                            f"orig_app={orig_applied_field}, orig_id={orig_id_app_count}, "
+                            f"rep_app={replay_applied_field}, rep_id={rep_id_app_count}"
+                        )
+
+                # Search Budget Parity Check (Finding F-FD-01C-R1-03)
+                if "search_budget_parity" in ledger:
+                    p_budget = ledger["search_budget_parity"]
+                    s_budget_parities.append(p_budget)
+                    if ledger.get("search_budget_digest") != FROZEN_SEARCH_BUDGET_DIGEST:
+                        errors.append(f"Replay search budget digest mismatch in ledger {ledger.get('problem_id')}")
+                else:
+                    p_budget = True
+
+                if p_seq and p_met and p_stat and p_app and p_term and p_budget:
                     replay_runs_verified += 1
                 else:
                     errors.append(f"Replay parity failure in problem {ledger.get('problem_id')}")
 
+                # Verify Replay Search Receipt if referenced (R1-R1)
+                replay_s_ref = ledger.get("replay_search_receipt_ref")
+                replay_s_dig = ledger.get("replay_search_receipt_digest")
+                if replay_s_ref:
+                    rsp = self._resolve_path(replay_s_ref)
+                    if not rsp:
+                        errors.append(f"Replay search receipt missing: {replay_s_ref}")
+                    else:
+                        try:
+                            sraw = json.loads(rsp.read_text(encoding="utf-8"))
+                            rsr = SearchExecutionReceipt.from_dict(sraw)
+                            rsr.validate()
+                            rcomp_dig = rsr.compute_digest()
+                            if rcomp_dig != sraw.get("receipt_digest"):
+                                errors.append(f"Replay search receipt body digest mismatch for {replay_s_ref}")
+                            elif rcomp_dig != replay_s_dig:
+                                errors.append(f"Replay search receipt digest mismatch against ledger for {replay_s_ref}: {rcomp_dig} != {replay_s_dig}")
+                            elif rsr.problem_id != ledger.get("problem_id"):
+                                errors.append(f"Replay search receipt problem_id mismatch: {rsr.problem_id} != {ledger.get('problem_id')}")
+                            elif rsr.search_budget_digest != FROZEN_SEARCH_BUDGET_DIGEST:
+                                errors.append(f"Replay search receipt budget digest mismatch in {replay_s_ref}: {rsr.search_budget_digest}")
+                            else:
+                                replay_search_rcpts_verified += 1
+                        except Exception as e:
+                            errors.append(f"Failed to independently verify replay search receipt {replay_s_ref}: {e}")
+
+                # Verify Replay Candidate Application Receipts (Finding F-FD-01C-R1-01)
+                replay_app_attempts = ledger.get("replay_application_attempts")
+                if replay_app_attempts is not None:
+                    # Cardinality checks
+                    if len(replay_app_attempts) != ledger.get("replay_attempt_count"):
+                        errors.append(f"Replay attempt count mismatch in {ledger.get('problem_id')}: {len(replay_app_attempts)} != {ledger.get('replay_attempt_count')}")
+                    if len(replay_app_attempts) != len(ledger.get("ordered_replay_application_receipt_refs", [])):
+                        errors.append(f"Replay receipt refs count mismatch in {ledger.get('problem_id')}")
+                    if len(replay_app_attempts) != len(ledger.get("ordered_replay_application_receipt_digests", [])):
+                        errors.append(f"Replay receipt digests count mismatch in {ledger.get('problem_id')}")
+
+                    body_applied_count = sum(1 for a in replay_app_attempts if a.get("application_status") == "APPLIED")
+                    if "replay_applied_count" in ledger and body_applied_count != ledger["replay_applied_count"]:
+                        errors.append(f"Replay body applied count mismatch in {ledger.get('problem_id')}: {body_applied_count} != {ledger['replay_applied_count']}")
+
+                    for attempt in replay_app_attempts:
+                        ord_idx = attempt.get("ordinal", 0)
+                        a_ref = attempt.get("receipt_ref")
+                        a_dig = attempt.get("receipt_digest")
+                        a_id = attempt.get("application_id")
+                        a_stat = attempt.get("application_status")
+
+                        if a_ref != ledger["ordered_replay_application_receipt_refs"][ord_idx]:
+                            errors.append(f"Replay attempt ref mismatch at ordinal {ord_idx} in {ledger.get('problem_id')}")
+                            continue
+                        if a_dig != ledger["ordered_replay_application_receipt_digests"][ord_idx]:
+                            errors.append(f"Replay attempt digest mismatch at ordinal {ord_idx} in {ledger.get('problem_id')}")
+                            continue
+
+                        ap = self._resolve_path(a_ref)
+                        if not ap:
+                            errors.append(f"Replay application receipt missing: {a_ref}")
+                            continue
+
+                        try:
+                            araw = json.loads(ap.read_text(encoding="utf-8"))
+                            # Masquerade check: ensure full v0.1 receipt body
+                            required_receipt_keys = {
+                                "schema_version", "application_id", "candidate_id",
+                                "candidate_artifact_digest", "experimental_unit_id", "problem_digest",
+                                "application_status", "applicator_implementation_digest", "receipt_digest"
+                            }
+                            if not required_receipt_keys.issubset(araw.keys()):
+                                errors.append(f"Partial/summary masquerade detected in replay receipt: {a_ref}")
+                                continue
+
+                            car = CandidateApplicationReceipt.from_dict(araw)
+                            car.validate()
+                            car_comp_dig = car.compute_digest()
+
+                            if car_comp_dig != araw.get("receipt_digest"):
+                                errors.append(f"Replay application receipt body digest mismatch for {a_ref}")
+                            elif car_comp_dig != a_dig:
+                                errors.append(f"Replay application receipt digest mismatch against attempt for {a_ref}: {car_comp_dig} != {a_dig}")
+                            elif car.application_id != a_id:
+                                errors.append(f"Replay application receipt id mismatch in {a_ref}: {car.application_id} != {a_id}")
+                            elif car.experimental_unit_id != ledger.get("problem_id"):
+                                errors.append(f"Replay application receipt problem_id mismatch in {a_ref}: {car.experimental_unit_id} != {ledger.get('problem_id')}")
+                            elif car.problem_digest != ledger.get("problem_digest"):
+                                errors.append(f"Replay application receipt problem_digest mismatch in {a_ref}")
+                            elif car.candidate_id != "macro_mul_one_add_zero":
+                                errors.append(f"Replay application receipt candidate_id mismatch in {a_ref}: {car.candidate_id}")
+                            elif car.candidate_artifact_digest != FROZEN_01C_CANDIDATE_DIGEST:
+                                errors.append(f"Replay application receipt candidate artifact digest mismatch in {a_ref}")
+                            elif car.applicator_implementation_digest != FROZEN_APPLICATOR_IMPL_DIGEST:
+                                errors.append(f"Applicator implementation digest drift in {a_ref}: {car.applicator_implementation_digest}")
+                            elif car.application_status != a_stat:
+                                errors.append(f"Application status mismatch in {a_ref}: {car.application_status} != {a_stat}")
+                            else:
+                                replay_app_rcpts_verified += 1
+                        except Exception as e:
+                            errors.append(f"Failed to independently verify replay application receipt {a_ref}: {e}")
+
             all_seq_parity = all(seq_parities) if seq_parities else False
             all_metric_parity = all(met_parities) if met_parities else False
+            all_app_cnt_parity = all(app_cnt_parities) if app_cnt_parities else False
+            all_search_budget_parity = all(s_budget_parities) if s_budget_parities else True
+            search_budget_digest_verified = (replay_manifest.search_budget_digest == FROZEN_SEARCH_BUDGET_DIGEST) if replay_manifest.search_budget_digest else True
 
         # 6. Whole-Problem Transform Manifest and SMT Verification (Finding F-FD-01C-03)
         whole_manifest_path = self._resolve_path(closure.whole_problem_transform_manifest_ref)
@@ -500,10 +694,14 @@ class RepresentationCustodyRepairResolver:
                     errors.append(f"Whole problem SMT trace error {smt_ref}: {e}")
 
         # 7. Scoped ONTO Package Verification
-        onto_path = self.repo_root / "experiments" / "formal-discovery-01c-r1" / "onto-export-scoped.json"
+        if is_r1_r1:
+            onto_path = self.repo_root / "experiments" / "formal-discovery-01c-r1-r1" / "onto-export-scoped.json"
+        else:
+            onto_path = self.repo_root / "experiments" / "formal-discovery-01c-r1" / "onto-export-scoped.json"
+
         onto_verified = False
         if not onto_path.is_file():
-            errors.append(f"R1 ONTO package missing at {onto_path}")
+            errors.append(f"ONTO package missing at {onto_path}")
         else:
             try:
                 onto_raw = json.loads(onto_path.read_text(encoding="utf-8"))
@@ -511,7 +709,7 @@ class RepresentationCustodyRepairResolver:
                 onto_pkg.validate()
                 onto_verified = True
             except Exception as e:
-                errors.append(f"R1 ONTO package validation error: {e}")
+                errors.append(f"ONTO package validation error: {e}")
 
         # 8. Final Status Determination (Finding F-FD-01C-04)
         if errors:
@@ -542,4 +740,11 @@ class RepresentationCustodyRepairResolver:
             per_stratum_dispositions=closure.per_stratum_dispositions,
             global_disposition=closure.global_disposition,
             errors=errors,
+            search_replay_receipts_verified_count=replay_search_rcpts_verified,
+            application_replay_receipts_verified_count=replay_app_rcpts_verified,
+            all_applied_count_parity_verified=all_app_cnt_parity,
+            all_search_budget_parity_verified=all_search_budget_parity,
+            search_budget_digest_verified=search_budget_digest_verified,
+            original_attempt_body_custody=closure.original_attempt_body_custody or "PARTIAL_AND_EXPLICIT",
+            deterministic_replay_attempt_body_custody=closure.deterministic_replay_attempt_body_custody or "COMPLETE",
         )

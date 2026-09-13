@@ -118,6 +118,11 @@ class ApplicationReplayCustodyManifest:
     all_terminal_status_parity_verified: bool
     ledgers: List[Dict[str, Any]]
     authority: str = "NONE"
+    all_search_budget_parity_verified: Optional[bool] = None
+    search_budget_digest: Optional[str] = None
+    search_replay_receipt_count: Optional[int] = None
+    all_replay_search_receipts_verified: Optional[bool] = None
+    all_replay_application_receipts_verified: Optional[bool] = None
     schema_version: str = "miskatonic.application-replay-custody-manifest.v0.1"
     manifest_digest: str = ""
 
@@ -131,7 +136,7 @@ class ApplicationReplayCustodyManifest:
         return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
     def to_dict(self) -> Dict[str, Any]:
-        return {
+        res = {
             "schema_version": self.schema_version,
             "manifest_id": self.manifest_id,
             "work_order": self.work_order,
@@ -152,6 +157,17 @@ class ApplicationReplayCustodyManifest:
             "authority": self.authority,
             "manifest_digest": self.manifest_digest,
         }
+        if self.all_search_budget_parity_verified is not None:
+            res["all_search_budget_parity_verified"] = self.all_search_budget_parity_verified
+        if self.search_budget_digest is not None:
+            res["search_budget_digest"] = self.search_budget_digest
+        if self.search_replay_receipt_count is not None:
+            res["search_replay_receipt_count"] = self.search_replay_receipt_count
+        if self.all_replay_search_receipts_verified is not None:
+            res["all_replay_search_receipts_verified"] = self.all_replay_search_receipts_verified
+        if self.all_replay_application_receipts_verified is not None:
+            res["all_replay_application_receipts_verified"] = self.all_replay_application_receipts_verified
+        return res
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> ApplicationReplayCustodyManifest:
@@ -174,6 +190,11 @@ class ApplicationReplayCustodyManifest:
             all_terminal_status_parity_verified=data["all_terminal_status_parity_verified"],
             ledgers=list(data["ledgers"]),
             authority=data.get("authority", "NONE"),
+            all_search_budget_parity_verified=data.get("all_search_budget_parity_verified"),
+            search_budget_digest=data.get("search_budget_digest"),
+            search_replay_receipt_count=data.get("search_replay_receipt_count"),
+            all_replay_search_receipts_verified=data.get("all_replay_search_receipts_verified"),
+            all_replay_application_receipts_verified=data.get("all_replay_application_receipts_verified"),
             manifest_digest=data.get("manifest_digest", ""),
         )
 
@@ -247,6 +268,21 @@ class RepresentationCustodyClosureManifest:
     claim_ceiling: str = "ENGINEERING_ABSTRACTION_EFFECT_ONLY"
     authority: str = "NONE"
     closure_status: str = "REPRESENTATION_CUSTODY_GRAPH_CLOSED"
+    original_r1_commit_a: Optional[str] = None
+    original_r1_commit_b: Optional[str] = None
+    original_r1_commit_a_tree: Optional[str] = None
+    original_r1_commit_b_tree: Optional[str] = None
+    original_r1_closure_manifest_ref: Optional[str] = None
+    original_r1_closure_manifest_digest: Optional[str] = None
+    search_replay_receipt_count: Optional[int] = None
+    application_replay_receipt_count: Optional[int] = None
+    all_replay_search_receipts_verified: Optional[bool] = None
+    all_replay_application_receipts_verified: Optional[bool] = None
+    all_applied_count_parity_verified: Optional[bool] = None
+    all_search_budget_parity_verified: Optional[bool] = None
+    search_budget_digest: Optional[str] = None
+    original_attempt_body_custody: Optional[str] = None
+    deterministic_replay_attempt_body_custody: Optional[str] = None
     schema_version: str = "miskatonic.representation-custody-closure.v0.1"
     closure_digest: str = ""
 
@@ -260,7 +296,7 @@ class RepresentationCustodyClosureManifest:
         return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
     def to_dict(self) -> Dict[str, Any]:
-        return {
+        res = {
             "schema_version": self.schema_version,
             "closure_id": self.closure_id,
             "work_order": self.work_order,
@@ -303,6 +339,37 @@ class RepresentationCustodyClosureManifest:
             "closure_status": self.closure_status,
             "closure_digest": self.closure_digest,
         }
+        if self.original_r1_commit_a is not None:
+            res["original_r1_commit_a"] = self.original_r1_commit_a
+        if self.original_r1_commit_b is not None:
+            res["original_r1_commit_b"] = self.original_r1_commit_b
+        if self.original_r1_commit_a_tree is not None:
+            res["original_r1_commit_a_tree"] = self.original_r1_commit_a_tree
+        if self.original_r1_commit_b_tree is not None:
+            res["original_r1_commit_b_tree"] = self.original_r1_commit_b_tree
+        if self.original_r1_closure_manifest_ref is not None:
+            res["original_r1_closure_manifest_ref"] = self.original_r1_closure_manifest_ref
+        if self.original_r1_closure_manifest_digest is not None:
+            res["original_r1_closure_manifest_digest"] = self.original_r1_closure_manifest_digest
+        if self.search_replay_receipt_count is not None:
+            res["search_replay_receipt_count"] = self.search_replay_receipt_count
+        if self.application_replay_receipt_count is not None:
+            res["application_replay_receipt_count"] = self.application_replay_receipt_count
+        if self.all_replay_search_receipts_verified is not None:
+            res["all_replay_search_receipts_verified"] = self.all_replay_search_receipts_verified
+        if self.all_replay_application_receipts_verified is not None:
+            res["all_replay_application_receipts_verified"] = self.all_replay_application_receipts_verified
+        if self.all_applied_count_parity_verified is not None:
+            res["all_applied_count_parity_verified"] = self.all_applied_count_parity_verified
+        if self.all_search_budget_parity_verified is not None:
+            res["all_search_budget_parity_verified"] = self.all_search_budget_parity_verified
+        if self.search_budget_digest is not None:
+            res["search_budget_digest"] = self.search_budget_digest
+        if self.original_attempt_body_custody is not None:
+            res["original_attempt_body_custody"] = self.original_attempt_body_custody
+        if self.deterministic_replay_attempt_body_custody is not None:
+            res["deterministic_replay_attempt_body_custody"] = self.deterministic_replay_attempt_body_custody
+        return res
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> RepresentationCustodyClosureManifest:
@@ -347,6 +414,21 @@ class RepresentationCustodyClosureManifest:
             claim_ceiling=data.get("claim_ceiling", "ENGINEERING_ABSTRACTION_EFFECT_ONLY"),
             authority=data.get("authority", "NONE"),
             closure_status=data.get("closure_status", "REPRESENTATION_CUSTODY_GRAPH_CLOSED"),
+            original_r1_commit_a=data.get("original_r1_commit_a"),
+            original_r1_commit_b=data.get("original_r1_commit_b"),
+            original_r1_commit_a_tree=data.get("original_r1_commit_a_tree"),
+            original_r1_commit_b_tree=data.get("original_r1_commit_b_tree"),
+            original_r1_closure_manifest_ref=data.get("original_r1_closure_manifest_ref"),
+            original_r1_closure_manifest_digest=data.get("original_r1_closure_manifest_digest"),
+            search_replay_receipt_count=data.get("search_replay_receipt_count"),
+            application_replay_receipt_count=data.get("application_replay_receipt_count"),
+            all_replay_search_receipts_verified=data.get("all_replay_search_receipts_verified"),
+            all_replay_application_receipts_verified=data.get("all_replay_application_receipts_verified"),
+            all_applied_count_parity_verified=data.get("all_applied_count_parity_verified"),
+            all_search_budget_parity_verified=data.get("all_search_budget_parity_verified"),
+            search_budget_digest=data.get("search_budget_digest"),
+            original_attempt_body_custody=data.get("original_attempt_body_custody"),
+            deterministic_replay_attempt_body_custody=data.get("deterministic_replay_attempt_body_custody"),
             closure_digest=data.get("closure_digest", ""),
         )
 

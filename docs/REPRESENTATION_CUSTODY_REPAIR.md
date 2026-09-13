@@ -43,3 +43,39 @@ Deterministic replay is conducted strictly for evidence custody reconstruction a
 ### F-FD-01C-05: Exact Result Artifact Binding & Superseding Closure
 - **Defect**: Historical result resolution was existence-only.
 - **Remedy**: `result.json` is parsed and independently validated by exact file SHA-256 (`1455687bb385b75a01fb9c8c29158b3de6151878e0124c1af7c8a5faab7f68a8`), verifying all fields, candidate identity, and manifest/ONTO references. All historical frozen artifacts are bound by exact SHA-256 in the superseding closure manifest.
+
+---
+
+# WO-MATH-FORMAL-DISCOVERY-01C-R1-R1: Exact Replay Application-Receipt Custody & Applied-Count Parity Repair
+
+## 1. Scope and Invariants
+This work order repairs the deterministic-replay custody seam identified in blocking source review 5188829114:
+- Historical evidence namespaces `experiments/formal-discovery-01c/**` and `experiments/formal-discovery-01c-r1/**` are strictly immutable.
+- All new artifacts are isolated under `experiments/formal-discovery-01c-r1-r1/**`.
+- Scientific status remains identical and unchanged:
+  - `R0_CANONICAL_CONTROL`: `REPRESENTATION_STRATUM_INVARIANT`
+  - `R1_ALPHA_RENAMED`: `REPRESENTATION_STRATUM_INVARIANT`
+  - `R2_ASSOCIATIVE_REGROUPED`: `REPRESENTATION_STRATUM_INVARIANT`
+  - `R3_COMMUTATIVE_MIRROR`: `REPRESENTATION_STRATUM_SENSITIVE`
+  - `GLOBAL`: `REPRESENTATION_INVARIANCE_NOT_SUPPORTED`
+- Claim Ceiling: `ENGINEERING_ABSTRACTION_EFFECT_ONLY`, Authority: `NONE`.
+
+## 2. Custody Findings and Remedies
+
+### F-FD-01C-R1-01: Exact Replay Application-Receipt Body Custody
+- **Defect**: The R1 replay persisted 13-field summary records rather than full `miskatonic.candidate-application-receipt.v0.1` instances.
+- **Remedy**: Full `CandidateApplicationReceipt` instances produced by the replay search engine are validated and persisted in complete v0.1 format at occurrence-addressed filenames (`application-replay-<problem-id>-<ordinal:04d>-<digest[:16]>.json`). Across all 48 replay runs, exactly 528 receipts are verified and dereferenced.
+- **Durable Custody Statement**:
+  - `ORIGINAL_ATTEMPT_BODY_CUSTODY = PARTIAL_AND_EXPLICIT` (169 original bodies preserved, 359 unresolvable due to historical in-place overwriting in 01C Commit B).
+  - `DETERMINISTIC_REPLAY_ATTEMPT_BODY_CUSTODY = COMPLETE` (528 collision-free application receipts deterministically re-executed, verified, and sealed).
+
+### F-FD-01C-R1-02: 4-Way Applied-Count Parity Verification
+- **Defect**: Replay previously verified candidate application status matching without validating numeric parity between paired manifest counts and actual attempt bodies.
+- **Remedy**: Enforces strict 4-way equality:
+  `ORIGINAL_MANIFEST_APPLIED_COUNT == ORIGINAL_APPLICATION_ID_APPLIED_COUNT == REPLAY_RECEIPT_BODY_APPLIED_COUNT == REPLAY_APPLICATION_ID_APPLIED_COUNT`.
+  Fails closed if aggregate status matches but applied counts diverge.
+
+### F-FD-01C-R1-03: Frozen Search-Budget Identity & Replay Search Receipts
+- **Defect**: Replay previously used `max_nodes: 100` rather than the preregistered `max_expansions: 100`.
+- **Remedy**: Search budget pinned to exact preregistration dictionary `{"max_expansions": 100}` with canonical SHA-256 digest `33e3063843806441f4193971b31f4c3093393af722d83f8f95cc11ff669f9635`. Replay persists all 48 full `SearchExecutionReceipt` bodies (`search-replay-<problem-id>.json`), validating search budget parity and metric parity across all runs.
+

@@ -192,7 +192,7 @@ def run_01c_r1_execution(
             s_enum = RepresentationStratum[s_name]
             rk_prob, bijection = represented[fam_id][s_enum]
 
-            ledger, replay_rcpts = replay_single_abstracted_search(
+            ledger, replay_rcpts, *_ = replay_single_abstracted_search(
                 problem=rk_prob,
                 candidate=cand,
                 original_search_data=orig_sdata,

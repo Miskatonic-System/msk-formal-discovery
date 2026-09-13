@@ -117,6 +117,21 @@
     "claim_ceiling": { "type": "string", "const": "ENGINEERING_ABSTRACTION_EFFECT_ONLY" },
     "authority": { "const": "NONE" },
     "closure_status": { "type": "string", "const": "REPRESENTATION_CUSTODY_GRAPH_CLOSED" },
-    "closure_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+    "closure_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "original_r1_commit_a": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "original_r1_commit_b": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "original_r1_commit_a_tree": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "original_r1_commit_b_tree": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "original_r1_closure_manifest_ref": { "type": "string" },
+    "original_r1_closure_manifest_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "search_replay_receipt_count": { "type": "integer" },
+    "application_replay_receipt_count": { "type": "integer" },
+    "all_replay_search_receipts_verified": { "type": "boolean" },
+    "all_replay_application_receipts_verified": { "type": "boolean" },
+    "all_applied_count_parity_verified": { "type": "boolean" },
+    "all_search_budget_parity_verified": { "type": "boolean" },
+    "search_budget_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "original_attempt_body_custody": { "type": "string", "enum": ["PARTIAL_AND_EXPLICIT"] },
+    "deterministic_replay_attempt_body_custody": { "type": "string", "enum": ["COMPLETE"] }
   }
 }

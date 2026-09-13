@@ -143,9 +143,32 @@
           "applied_count_parity": { "type": "boolean" },
           "terminal_status_parity": { "type": "boolean" },
           "exact_original_resolved_count": { "type": "integer" },
-          "overwritten_unresolved_count": { "type": "integer" }
+          "overwritten_unresolved_count": { "type": "integer" },
+          "replay_search_receipt_ref": { "type": "string" },
+          "replay_search_receipt_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "search_budget_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "search_budget_parity": { "type": "boolean" },
+          "original_applied_count": { "type": "integer" },
+          "replay_applied_count": { "type": "integer" },
+          "replay_application_attempts": { "type": "array" }
         }
       }
+    },
+    "all_search_budget_parity_verified": {
+      "type": "boolean"
+    },
+    "search_budget_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "search_replay_receipt_count": {
+      "type": "integer"
+    },
+    "all_replay_search_receipts_verified": {
+      "type": "boolean"
+    },
+    "all_replay_application_receipts_verified": {
+      "type": "boolean"
     },
     "authority": {
       "const": "NONE"

@@ -97,11 +97,29 @@ class RepresentationOrbitResolver:
         If 01C-R1 superseding closure exists, delegates to RepresentationCustodyRepairResolver
         while also running complete independent checks.
         """
+        r1_r1_closure = self.repo_root / "experiments" / "formal-discovery-01c-r1-r1" / "representation-custody-closure.v0.1.json"
         r1_closure = self.repo_root / "experiments" / "formal-discovery-01c-r1" / "representation-custody-closure.v0.1.json"
-        if closure_manifest_path is None and r1_closure.is_file():
-            from msk_formal_discovery.representation.custody_resolver import RepresentationCustodyRepairResolver
-            r1_resolver = RepresentationCustodyRepairResolver(repo_root=self.repo_root)
-            return r1_resolver.resolve_and_verify(closure_manifest_path=r1_closure)
+        if closure_manifest_path is None:
+            if r1_r1_closure.is_file():
+                from msk_formal_discovery.representation.custody_resolver import RepresentationCustodyRepairResolver
+                r1_r1_resolver = RepresentationCustodyRepairResolver(repo_root=self.repo_root)
+                return r1_r1_resolver.resolve_and_verify(closure_manifest_path=r1_r1_closure)
+            if r1_closure.is_file():
+                from msk_formal_discovery.representation.custody_resolver import RepresentationCustodyRepairResolver
+                r1_resolver = RepresentationCustodyRepairResolver(repo_root=self.repo_root)
+                return r1_resolver.resolve_and_verify(closure_manifest_path=r1_closure)
+        else:
+            c_explicit = Path(closure_manifest_path)
+            if not c_explicit.is_file():
+                raise CustodyGraphResolutionError(f"CLOSURE_NOT_FOUND: Representation closure missing at {c_explicit}")
+            try:
+                c_check = json.loads(c_explicit.read_text(encoding="utf-8"))
+                if c_check.get("schema_version") == "miskatonic.representation-custody-closure.v0.1":
+                    from msk_formal_discovery.representation.custody_resolver import RepresentationCustodyRepairResolver
+                    return RepresentationCustodyRepairResolver(repo_root=self.repo_root).resolve_and_verify(closure_manifest_path=c_explicit)
+            except Exception as e:
+                if isinstance(e, CustodyGraphResolutionError):
+                    raise
 
         errors: List[str] = []
 

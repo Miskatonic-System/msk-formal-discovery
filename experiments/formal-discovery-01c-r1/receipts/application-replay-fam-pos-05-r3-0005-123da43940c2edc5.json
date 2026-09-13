@@ -1,0 +1,13 @@
+{
+  "schema_version": "miskatonic.candidate-application-receipt.v0.1",
+  "replay_mode": "DETERMINISTIC_EVIDENCE_REPLAY",
+  "problem_id": "fam-pos-05-r3",
+  "problem_digest": "e6bf053399289eb79440f6232cc02ba0a73f580e4404b382fe11ffc58fe8d4c1",
+  "ordinal": 5,
+  "application_id": "app-rec-na-25c607de1b9ffee0",
+  "receipt_digest": "123da43940c2edc59e888e9fc099c4769ae09c68b36c5a9f25622eb61926164c",
+  "candidate_id": "macro_mul_one_add_zero",
+  "candidate_artifact_digest": "273a1d821e54ba6bf1832a2f1f11b338853aa9d1070d873c8b29345ba5aae903",
+  "status": "REPLAY_APPLICATION_ATTEMPT_CONFIRMED",
+  "authority": "NONE"
+}

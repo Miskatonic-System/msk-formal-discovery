@@ -1,0 +1,33 @@
+{
+  "schema_version": "miskatonic.representation-problem-custody-receipt.v0.2",
+  "receipt_id": "problem-custody-fam-neg-02-R3_COMMUTATIVE_MIRROR",
+  "family_id": "fam-neg-02",
+  "representation_stratum": "R3_COMMUTATIVE_MIRROR",
+  "source_problem_id": "fam-neg-02-r0",
+  "source_problem_digest": "0eb0e6fb6264352bac5fc0f7f96a3b05fef92c14fdbda5e45f87cfb95baaefda",
+  "transformed_problem_id": "fam-neg-02-r3",
+  "transformed_problem_digest": "d7e50bb159f3918c3b4213b7ac55d72feec56bc45c1e5c6ad65e8fac1e27c7aa",
+  "source_initial_expression": "mul(1, mul(1, qb))",
+  "source_initial_expression_digest": "cd92c46f8bbcdd9b63351db40b0b6cf7047d6c27e588f4fb9eb9c1a0c7cbea61",
+  "transformed_initial_expression": "mul(mul(qb, 1), 1)",
+  "transformed_initial_expression_digest": "06b98f8488b601b035801a0fc54104311700499c86a0843413edcb56b1c2314d",
+  "source_goal_expression": "qb",
+  "source_goal_digest": "22d1fb414b6d62b69391bb42b9b94314a5b2fa77a7e8abd507cf3152ed4fa38e",
+  "transformed_goal_expression": "qb",
+  "transformed_goal_digest": "22d1fb414b6d62b69391bb42b9b94314a5b2fa77a7e8abd507cf3152ed4fa38e",
+  "variable_bijection": {
+    "qb": "qb"
+  },
+  "transform_parameters": {
+    "stratum": "R3_COMMUTATIVE_MIRROR"
+  },
+  "transform_implementation_digest": "5c85f28d268f138ffbf2ec8d9fe400d72a1378ed09223ddff43a802ccd809d4a",
+  "original_v0_1_transform_receipt_ref": "experiments/formal-discovery-01c/receipts/transform-fam-neg-02-R3_COMMUTATIVE_MIRROR.json",
+  "original_v0_1_transform_receipt_digest": "e0815a505ac6522eb747dd82131c845781a8850340431f02d5264a57eb60d66d",
+  "original_initial_semantics_smt_ref": "experiments/formal-discovery-01c/receipts/smt-transform-fam-neg-02-R3_COMMUTATIVE_MIRROR.json",
+  "original_initial_semantics_smt_digest": "27ef5940e5c5eaa9221b46fbaeb8c0619d6316663c6c452a6026726a9d1e1da3",
+  "whole_problem_semantics_smt_ref": "experiments/formal-discovery-01c-r1/receipts/smt-whole-problem-fam-neg-02-R3_COMMUTATIVE_MIRROR.json",
+  "whole_problem_semantics_smt_digest": "2b654a21e20b644153701a03a602231f1915ed8ed5e4010cc6cb61e3692b14b3",
+  "authority": "NONE",
+  "receipt_digest": "70681e942139a6d8b150fe33c4519d7a746d1406567fca74bbfb6ee59f0580d5"
+}

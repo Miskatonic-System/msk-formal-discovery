@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "miskatonic.paired-representation-orbit-manifest.v0.1",
+  "title": "Miskatonic Paired Representation Orbit Manifest Schema v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "manifest_id",
+    "experiment_id",
+    "canonical_predecessor_commit",
+    "candidate_id",
+    "candidate_artifact_digest",
+    "positive_family_seed",
+    "negative_family_seed",
+    "families",
+    "authority",
+    "manifest_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "miskatonic.paired-representation-orbit-manifest.v0.1"
+    },
+    "manifest_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "experiment_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "canonical_predecessor_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "candidate_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidate_artifact_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "positive_family_seed": {
+      "type": "integer"
+    },
+    "negative_family_seed": {
+      "type": "integer"
+    },
+    "families": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "family_id",
+          "category",
+          "canonical_variable",
+          "strata"
+        ],
+        "properties": {
+          "family_id": { "type": "string" },
+          "category": { "type": "string", "enum": ["HELD_OUT_POSITIVE", "HELD_OUT_NEGATIVE"] },
+          "canonical_variable": { "type": "string" },
+          "strata": {
+            "type": "object",
+            "required": [
+              "R0_CANONICAL_CONTROL",
+              "R1_ALPHA_RENAMED",
+              "R2_ASSOCIATIVE_REGROUPED",
+              "R3_COMMUTATIVE_MIRROR"
+            ],
+            "additionalProperties": {
+              "type": "object",
+              "required": [
+                "stratum",
+                "problem_id",
+                "problem_digest",
+                "initial_expression",
+                "goal_expression",
+                "transform_receipt_ref",
+                "transform_receipt_digest",
+                "smt_certificate_ref",
+                "smt_certificate_digest",
+                "baseline_search_receipt_ref",
+                "baseline_search_receipt_digest",
+                "abstracted_search_receipt_ref",
+                "abstracted_search_receipt_digest",
+                "paired_terminal_smt_receipt_ref",
+                "paired_terminal_smt_receipt_digest",
+                "baseline_nodes_expanded",
+                "abstracted_nodes_expanded",
+                "node_delta",
+                "candidate_application_status",
+                "candidate_applications_count",
+                "solved_baseline",
+                "solved_abstracted",
+                "paired_terminal_equality",
+                "smt_terminal_verdict"
+              ],
+              "properties": {
+                "stratum": { "type": "string" },
+                "problem_id": { "type": "string" },
+                "problem_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+                "initial_expression": { "type": "string" },
+                "goal_expression": { "type": "string" },
+                "transform_receipt_ref": { "type": "string" },
+                "transform_receipt_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+                "smt_certificate_ref": { "type": "string" },
+                "smt_certificate_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+                "baseline_search_receipt_ref": { "type": "string" },
+                "baseline_search_receipt_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+                "abstracted_search_receipt_ref": { "type": "string" },
+                "abstracted_search_receipt_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+                "paired_terminal_smt_receipt_ref": { "type": "string" },
+                "paired_terminal_smt_receipt_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+                "baseline_nodes_expanded": { "type": "integer" },
+                "abstracted_nodes_expanded": { "type": "integer" },
+                "node_delta": { "type": "integer" },
+                "candidate_application_status": { "type": "string" },
+                "candidate_applications_count": { "type": "integer" },
+                "solved_baseline": { "type": "boolean" },
+                "solved_abstracted": { "type": "boolean" },
+                "paired_terminal_equality": { "type": "boolean" },
+                "smt_terminal_verdict": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "authority": {
+      "const": "NONE"
+    },
+    "manifest_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

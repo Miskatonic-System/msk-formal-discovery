@@ -1,0 +1,20 @@
+{
+  "schema_version": "miskatonic.representation-transform-receipt.v0.1",
+  "receipt_id": "transform-fam-neg-03-R1_ALPHA_RENAMED",
+  "family_id": "fam-neg-03",
+  "stratum": "R1_ALPHA_RENAMED",
+  "source_expression": "add(add(qc, 0), 0)",
+  "transformed_expression": "add(add(alpha_qc, 0), 0)",
+  "source_expression_digest": "37cbe263bbeff1b2412ba6bba761973b275149adca0a0a897268f8baa399038b",
+  "transformed_expression_digest": "01471b4e2bf2ad770a3ddbe548ec74149542617ba24d1a8cab662a5a5342eaee",
+  "variable_bijection": {
+    "qc": "alpha_qc"
+  },
+  "transform_implementation_digest": "5c85f28d268f138ffbf2ec8d9fe400d72a1378ed09223ddff43a802ccd809d4a",
+  "smt_certificate_ref": "experiments/formal-discovery-01c/receipts/smt-transform-fam-neg-03-R1_ALPHA_RENAMED.json",
+  "smt_certificate_digest": "a438675276eb146d79474450e0d22931d41fec6408d0a1c828385439765eefe7",
+  "smt_verdict": "UNSAT_REFUTED",
+  "semantic_equivalence_certified": true,
+  "authority": "NONE",
+  "receipt_digest": "a0dfd33a00ab3dcbad7f6d38235b2667ccfd1ae0ece1080af3a6c0e22b7dbbdb"
+}

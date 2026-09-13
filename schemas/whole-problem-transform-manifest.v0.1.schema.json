@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "miskatonic.whole-problem-transform-manifest.v0.1",
+  "title": "Miskatonic Whole-Problem Transform Manifest Schema v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "manifest_id",
+    "work_order",
+    "problem_receipt_count",
+    "whole_problem_smt_count",
+    "all_whole_problem_certificates_verified",
+    "receipts",
+    "authority",
+    "manifest_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "miskatonic.whole-problem-transform-manifest.v0.1"
+    },
+    "manifest_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "work_order": {
+      "type": "string",
+      "minLength": 1
+    },
+    "problem_receipt_count": {
+      "type": "integer",
+      "const": 48
+    },
+    "whole_problem_smt_count": {
+      "type": "integer",
+      "const": 48
+    },
+    "all_whole_problem_certificates_verified": {
+      "const": true
+    },
+    "receipts": {
+      "type": "array",
+      "minItems": 48,
+      "maxItems": 48,
+      "items": {
+        "type": "object",
+        "required": [
+          "family_id",
+          "stratum",
+          "problem_id",
+          "problem_digest",
+          "receipt_ref",
+          "receipt_digest",
+          "whole_problem_smt_ref",
+          "whole_problem_smt_digest",
+          "smt_verdict"
+        ],
+        "properties": {
+          "family_id": { "type": "string" },
+          "stratum": {
+            "type": "string",
+            "enum": [
+              "R0_CANONICAL_CONTROL",
+              "R1_ALPHA_RENAMED",
+              "R2_ASSOCIATIVE_REGROUPED",
+              "R3_COMMUTATIVE_MIRROR"
+            ]
+          },
+          "problem_id": { "type": "string" },
+          "problem_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "receipt_ref": { "type": "string" },
+          "receipt_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "whole_problem_smt_ref": { "type": "string" },
+          "whole_problem_smt_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "smt_verdict": { "type": "string", "enum": ["UNSAT_REFUTED"] }
+        }
+      }
+    },
+    "authority": {
+      "const": "NONE"
+    },
+    "manifest_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

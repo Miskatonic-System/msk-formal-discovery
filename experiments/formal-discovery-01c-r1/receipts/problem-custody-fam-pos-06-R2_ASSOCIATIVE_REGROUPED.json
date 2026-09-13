@@ -1,0 +1,33 @@
+{
+  "schema_version": "miskatonic.representation-problem-custody-receipt.v0.2",
+  "receipt_id": "problem-custody-fam-pos-06-R2_ASSOCIATIVE_REGROUPED",
+  "family_id": "fam-pos-06",
+  "representation_stratum": "R2_ASSOCIATIVE_REGROUPED",
+  "source_problem_id": "fam-pos-06-r0",
+  "source_problem_digest": "be2819816e74822ae0f0f054dfc6d48c5e2addf6e51dc178ea7ec452b194f07e",
+  "transformed_problem_id": "fam-pos-06-r2",
+  "transformed_problem_digest": "8d67c7c8f6be6ef29d48a62f22ef2d6a22c052b8fea9dfa3dad49d9024a8efa2",
+  "source_initial_expression": "add(0, add(0, mul(1, add(kf, 0))))",
+  "source_initial_expression_digest": "034a65f0cfc4f08699b9d8f08a7b468e1f7f15801d37742d248bd8f0dbe112e5",
+  "transformed_initial_expression": "add(add(0, 0), mul(1, add(kf, 0)))",
+  "transformed_initial_expression_digest": "7f5a09bfec5135a75fb24161f4acb642e7fcc880a84dfa99d94f36e49ed122da",
+  "source_goal_expression": "kf",
+  "source_goal_digest": "fa37be71bea1abe989546295b5d10f6a34598aa7ce90cfed1f870131e8e30c9e",
+  "transformed_goal_expression": "kf",
+  "transformed_goal_digest": "fa37be71bea1abe989546295b5d10f6a34598aa7ce90cfed1f870131e8e30c9e",
+  "variable_bijection": {
+    "kf": "kf"
+  },
+  "transform_parameters": {
+    "stratum": "R2_ASSOCIATIVE_REGROUPED"
+  },
+  "transform_implementation_digest": "5c85f28d268f138ffbf2ec8d9fe400d72a1378ed09223ddff43a802ccd809d4a",
+  "original_v0_1_transform_receipt_ref": "experiments/formal-discovery-01c/receipts/transform-fam-pos-06-R2_ASSOCIATIVE_REGROUPED.json",
+  "original_v0_1_transform_receipt_digest": "23c9d95347076ad3799ee15f370e5f23be103a243767adf357d3594b3a5c41c2",
+  "original_initial_semantics_smt_ref": "experiments/formal-discovery-01c/receipts/smt-transform-fam-pos-06-R2_ASSOCIATIVE_REGROUPED.json",
+  "original_initial_semantics_smt_digest": "0966b7e22b6929cb82d4d716d9c55cc94b1f258fe83b793c97a9bfbf27ce102f",
+  "whole_problem_semantics_smt_ref": "experiments/formal-discovery-01c-r1/receipts/smt-whole-problem-fam-pos-06-R2_ASSOCIATIVE_REGROUPED.json",
+  "whole_problem_semantics_smt_digest": "281db66f79653618e7684bc7869baf043e03ea35d32bedbd2b270801025b9727",
+  "authority": "NONE",
+  "receipt_digest": "79ddb504bf9a07d12b99119205fe065debcb57da43a7f5bdcbee2221141f6ab9"
+}

@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "miskatonic.application-replay-custody-manifest.v0.1",
+  "title": "Miskatonic Application Replay Custody Manifest Schema v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "manifest_id",
+    "work_order",
+    "search_run_count",
+    "total_original_application_attempt_refs",
+    "total_original_application_attempt_digests",
+    "unique_application_ids",
+    "duplicated_application_ids",
+    "exact_original_application_attempts_resolved",
+    "overwritten_or_unresolvable_application_attempts",
+    "total_replay_application_receipts",
+    "all_search_metric_parity_verified",
+    "all_application_id_sequence_parity_verified",
+    "all_candidate_status_parity_verified",
+    "all_applied_count_parity_verified",
+    "all_terminal_status_parity_verified",
+    "ledgers",
+    "authority",
+    "manifest_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "miskatonic.application-replay-custody-manifest.v0.1"
+    },
+    "manifest_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "work_order": {
+      "type": "string",
+      "minLength": 1
+    },
+    "search_run_count": {
+      "type": "integer",
+      "const": 48
+    },
+    "total_original_application_attempt_refs": {
+      "type": "integer",
+      "const": 528
+    },
+    "total_original_application_attempt_digests": {
+      "type": "integer",
+      "const": 528
+    },
+    "unique_application_ids": {
+      "type": "integer",
+      "const": 169
+    },
+    "duplicated_application_ids": {
+      "type": "integer",
+      "const": 100
+    },
+    "exact_original_application_attempts_resolved": {
+      "type": "integer",
+      "const": 169
+    },
+    "overwritten_or_unresolvable_application_attempts": {
+      "type": "integer",
+      "const": 359
+    },
+    "total_replay_application_receipts": {
+      "type": "integer",
+      "const": 528
+    },
+    "all_search_metric_parity_verified": {
+      "const": true
+    },
+    "all_application_id_sequence_parity_verified": {
+      "const": true
+    },
+    "all_candidate_status_parity_verified": {
+      "const": true
+    },
+    "all_applied_count_parity_verified": {
+      "const": true
+    },
+    "all_terminal_status_parity_verified": {
+      "const": true
+    },
+    "ledgers": {
+      "type": "array",
+      "minItems": 48,
+      "maxItems": 48,
+      "items": {
+        "type": "object",
+        "required": [
+          "original_search_receipt_ref",
+          "original_search_receipt_digest",
+          "problem_id",
+          "problem_digest",
+          "ordered_original_application_ids",
+          "ordered_original_application_digests",
+          "ordered_replay_application_ids",
+          "ordered_replay_application_receipt_refs",
+          "ordered_replay_application_receipt_digests",
+          "original_attempt_count",
+          "replay_attempt_count",
+          "application_id_sequence_parity",
+          "search_metric_parity",
+          "candidate_application_status_parity",
+          "applied_count_parity",
+          "terminal_status_parity",
+          "exact_original_resolved_count",
+          "overwritten_unresolved_count"
+        ],
+        "properties": {
+          "original_search_receipt_ref": { "type": "string" },
+          "original_search_receipt_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "problem_id": { "type": "string" },
+          "problem_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "ordered_original_application_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "ordered_original_application_digests": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+          },
+          "ordered_replay_application_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "ordered_replay_application_receipt_refs": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "ordered_replay_application_receipt_digests": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+          },
+          "original_attempt_count": { "type": "integer" },
+          "replay_attempt_count": { "type": "integer" },
+          "application_id_sequence_parity": { "type": "boolean" },
+          "search_metric_parity": { "type": "boolean" },
+          "candidate_application_status_parity": { "type": "boolean" },
+          "applied_count_parity": { "type": "boolean" },
+          "terminal_status_parity": { "type": "boolean" },
+          "exact_original_resolved_count": { "type": "integer" },
+          "overwritten_unresolved_count": { "type": "integer" },
+          "replay_search_receipt_ref": { "type": "string" },
+          "replay_search_receipt_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "search_budget_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "search_budget_parity": { "type": "boolean" },
+          "original_applied_count": { "type": "integer" },
+          "replay_applied_count": { "type": "integer" },
+          "replay_application_attempts": { "type": "array" }
+        }
+      }
+    },
+    "all_search_budget_parity_verified": {
+      "type": "boolean"
+    },
+    "search_budget_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "search_replay_receipt_count": {
+      "type": "integer"
+    },
+    "all_replay_search_receipts_verified": {
+      "type": "boolean"
+    },
+    "all_replay_application_receipts_verified": {
+      "type": "boolean"
+    },
+    "authority": {
+      "const": "NONE"
+    },
+    "manifest_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

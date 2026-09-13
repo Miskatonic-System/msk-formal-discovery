@@ -111,6 +111,10 @@ class OntoEvaluationPackage:
     structural_fingerprint: str
     evidence_refs: List[OntoEvidenceRef] = field(default_factory=list)
     functional_search_benefit_scope: Optional[str] = None
+    representation_invariance_scope: Optional[str] = None
+    alpha_renaming_invariance: Optional[str] = None
+    associative_regrouping_invariance: Optional[str] = None
+    commutative_mirror_invariance: Optional[str] = None
     end_to_end_runtime_benefit: str = "NOT_ESTABLISHED"
     claim_ceiling: str = "ENGINEERING_ABSTRACTION_EFFECT_ONLY"
     authority: str = "NONE"
@@ -127,10 +131,25 @@ class OntoEvaluationPackage:
                 "UNEARNED_RUNTIME_BENEFIT: end_to_end_runtime_benefit cannot be inferred as SUPPORTED from node expansion"
             )
 
-        if self.representation_invariance not in ("UNKNOWN", "UNTESTED", "NOT_SUPPORTED"):
+        valid_rep_invariance = {"UNKNOWN", "UNTESTED", "NOT_SUPPORTED", "SUPPORTED"}
+        if self.representation_invariance not in valid_rep_invariance:
             raise ValueError(
-                f"UNEARNED_REPRESENTATION_INVARIANCE: representation_invariance '{self.representation_invariance}' cannot be promoted without cross-representation evaluation"
+                f"UNEARNED_REPRESENTATION_INVARIANCE: representation_invariance '{self.representation_invariance}' not in {valid_rep_invariance}"
             )
+        if self.representation_invariance == "SUPPORTED":
+            if not self.representation_invariance_scope:
+                raise ValueError(
+                    "UNEARNED_REPRESENTATION_INVARIANCE: representation_invariance SUPPORTED requires representation_invariance_scope"
+                )
+            if self.representation_invariance_scope != "ALPHA_ASSOCIATIVE_COMMUTATIVE_IDENTITY_ORBIT_V0_1":
+                raise ValueError(
+                    f"INVALID_REPRESENTATION_INVARIANCE_SCOPE: Allowed positive scope is 'ALPHA_ASSOCIATIVE_COMMUTATIVE_IDENTITY_ORBIT_V0_1', got '{self.representation_invariance_scope}'"
+                )
+        if self.representation_invariance_scope is not None and self.representation_invariance_scope != "ALPHA_ASSOCIATIVE_COMMUTATIVE_IDENTITY_ORBIT_V0_1":
+            raise ValueError(
+                f"INVALID_REPRESENTATION_INVARIANCE_SCOPE: Got '{self.representation_invariance_scope}'"
+            )
+
         if self.cross_search_policy_recurrence not in ("UNKNOWN", "UNTESTED", "NOT_SUPPORTED"):
             raise ValueError(
                 f"UNEARNED_CROSS_POLICY_RECURRENCE: cross_search_policy_recurrence '{self.cross_search_policy_recurrence}' cannot be promoted without cross-policy evaluation"
@@ -162,15 +181,15 @@ class OntoEvaluationPackage:
 
         repo_root = Path(__file__).resolve().parents[3]
         for r in self.evidence_refs:
-            if r.evidence_kind == "TERMINAL_STATE_CUSTODY_CLOSURE":
+            if r.evidence_kind in ("TERMINAL_STATE_CUSTODY_CLOSURE", "REPRESENTATION_INVARIANCE_CLOSURE"):
                 ref_lower = r.artifact_ref.lower()
                 if "freeze" in ref_lower or (Path(r.artifact_ref).name.lower() == "result.json" or ("result" in Path(r.artifact_ref).name.lower() and "closure" not in Path(r.artifact_ref).name.lower())):
                     raise ReceiptValidationError(
-                        f"EVIDENCE_KIND_TARGET_MISMATCH: TERMINAL_STATE_CUSTODY_CLOSURE cannot target result freeze artifact '{r.artifact_ref}'"
+                        f"EVIDENCE_KIND_TARGET_MISMATCH: {r.evidence_kind} cannot target result freeze artifact '{r.artifact_ref}'"
                     )
                 if "closure" not in ref_lower:
                     raise ReceiptValidationError(
-                        f"EVIDENCE_KIND_TARGET_MISMATCH: TERMINAL_STATE_CUSTODY_CLOSURE must target a closure manifest, got '{r.artifact_ref}'"
+                        f"EVIDENCE_KIND_TARGET_MISMATCH: {r.evidence_kind} must target a closure manifest, got '{r.artifact_ref}'"
                     )
                 p = Path(r.artifact_ref)
                 if not p.is_file():
@@ -231,6 +250,14 @@ class OntoEvaluationPackage:
         }
         if self.functional_search_benefit_scope is not None:
             data["functional_search_benefit_scope"] = self.functional_search_benefit_scope
+        if self.representation_invariance_scope is not None:
+            data["representation_invariance_scope"] = self.representation_invariance_scope
+        if self.alpha_renaming_invariance is not None:
+            data["alpha_renaming_invariance"] = self.alpha_renaming_invariance
+        if self.associative_regrouping_invariance is not None:
+            data["associative_regrouping_invariance"] = self.associative_regrouping_invariance
+        if self.commutative_mirror_invariance is not None:
+            data["commutative_mirror_invariance"] = self.commutative_mirror_invariance
         data["end_to_end_runtime_benefit"] = self.end_to_end_runtime_benefit
         data["claim_ceiling"] = self.claim_ceiling
         return data
@@ -261,6 +288,10 @@ class OntoEvaluationPackage:
             structural_fingerprint=data.get("structural_fingerprint", "0" * 64),
             evidence_refs=evidence_refs,
             functional_search_benefit_scope=data.get("functional_search_benefit_scope"),
+            representation_invariance_scope=data.get("representation_invariance_scope"),
+            alpha_renaming_invariance=data.get("alpha_renaming_invariance"),
+            associative_regrouping_invariance=data.get("associative_regrouping_invariance"),
+            commutative_mirror_invariance=data.get("commutative_mirror_invariance"),
             end_to_end_runtime_benefit=data.get("end_to_end_runtime_benefit", "NOT_ESTABLISHED"),
             claim_ceiling=data.get("claim_ceiling", "ENGINEERING_ABSTRACTION_EFFECT_ONLY"),
             authority=data.get("authority", "NONE"),

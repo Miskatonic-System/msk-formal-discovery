@@ -32,6 +32,19 @@
     "representation_invariance": {
       "type": "string"
     },
+    "representation_invariance_scope": {
+      "type": "string",
+      "enum": ["ALPHA_ASSOCIATIVE_COMMUTATIVE_IDENTITY_ORBIT_V0_1"]
+    },
+    "alpha_renaming_invariance": {
+      "type": "string"
+    },
+    "associative_regrouping_invariance": {
+      "type": "string"
+    },
+    "commutative_mirror_invariance": {
+      "type": "string"
+    },
     "cross_search_policy_recurrence": {
       "type": "string"
     },

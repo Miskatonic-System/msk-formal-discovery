@@ -1,0 +1,20 @@
+{
+  "schema_version": "miskatonic.representation-transform-receipt.v0.1",
+  "receipt_id": "transform-fam-pos-04-R1_ALPHA_RENAMED",
+  "family_id": "fam-pos-04",
+  "stratum": "R1_ALPHA_RENAMED",
+  "source_expression": "mul(mul(add(mul(1, kd), 0), 1), 1)",
+  "transformed_expression": "mul(mul(add(mul(1, alpha_kd), 0), 1), 1)",
+  "source_expression_digest": "3ce45aee3d274cfc17aa3f2055aa2932b6f249c5ae680591237e2356a99fa93b",
+  "transformed_expression_digest": "365ed81cc6a7d7f26027bb88211d90532770fbc26812a84246e7013fc5039bee",
+  "variable_bijection": {
+    "kd": "alpha_kd"
+  },
+  "transform_implementation_digest": "5c85f28d268f138ffbf2ec8d9fe400d72a1378ed09223ddff43a802ccd809d4a",
+  "smt_certificate_ref": "experiments/formal-discovery-01c/receipts/smt-transform-fam-pos-04-R1_ALPHA_RENAMED.json",
+  "smt_certificate_digest": "a7a6c68900d9f0587baed001fdbad8de60ae0765676aae26e420d1131df76090",
+  "smt_verdict": "UNSAT_REFUTED",
+  "semantic_equivalence_certified": true,
+  "authority": "NONE",
+  "receipt_digest": "74fb5201e9cd55708bf62a4c998a16dea7cab9200139296921610681c78e64bd"
+}

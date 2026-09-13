@@ -1,0 +1,119 @@
+{
+  "package_id": "onto-eval-formal-discovery-01c-r1",
+  "candidate_id": "macro_mul_one_add_zero",
+  "recurrence_count": 8,
+  "representation_invariance": "NOT_SUPPORTED",
+  "cross_search_policy_recurrence": "UNKNOWN",
+  "cross_formal_system_recurrence": "UNKNOWN",
+  "functional_search_benefit": "SUPPORTED",
+  "source_traces": [
+    "trace-fam-01",
+    "trace-fam-02",
+    "trace-fam-03",
+    "trace-fam-04",
+    "trace-fam-05",
+    "trace-fam-06",
+    "trace-fam-07",
+    "trace-fam-08",
+    "trace-fam-09",
+    "trace-fam-10",
+    "trace-fam-11",
+    "trace-fam-12"
+  ],
+  "structural_fingerprint": "273a1d821e54ba6bf1832a2f1f11b338853aa9d1070d873c8b29345ba5aae903",
+  "evidence_refs": [
+    {
+      "evidence_kind": "REPRESENTATION_CUSTODY_CLOSURE",
+      "artifact_ref": "experiments/formal-discovery-01c-r1/representation-custody-closure.v0.1.json",
+      "artifact_digest": "d5d92178da7473690b0bd4520ce0d7492d49f97c830887ca63a8e0e3375a1d2c",
+      "evidence_status": "SUPPORTED",
+      "source_experimental_units": [
+        "fam-pos-01",
+        "fam-pos-02",
+        "fam-pos-03",
+        "fam-pos-04",
+        "fam-pos-05",
+        "fam-pos-06",
+        "fam-pos-07",
+        "fam-pos-08",
+        "fam-neg-01",
+        "fam-neg-02",
+        "fam-neg-03",
+        "fam-neg-04"
+      ],
+      "source_repository": "Miskatonic-System/msk-formal-discovery"
+    },
+    {
+      "evidence_kind": "WHOLE_PROBLEM_TRANSFORM_MANIFEST",
+      "artifact_ref": "experiments/formal-discovery-01c-r1/whole-problem-transform-manifest.v0.1.json",
+      "artifact_digest": "12f14b366dbf5264158379c1de47f8b80cab25ad985e5490875a5f89f342d0da",
+      "evidence_status": "SUPPORTED",
+      "source_experimental_units": [
+        "fam-pos-01",
+        "fam-pos-02",
+        "fam-pos-03",
+        "fam-pos-04",
+        "fam-pos-05",
+        "fam-pos-06",
+        "fam-pos-07",
+        "fam-pos-08",
+        "fam-neg-01",
+        "fam-neg-02",
+        "fam-neg-03",
+        "fam-neg-04"
+      ],
+      "source_repository": "Miskatonic-System/msk-formal-discovery"
+    },
+    {
+      "evidence_kind": "APPLICATION_REPLAY_CUSTODY_MANIFEST",
+      "artifact_ref": "experiments/formal-discovery-01c-r1/application-replay-custody-manifest.v0.1.json",
+      "artifact_digest": "5b7756eabd4f488ff5e0b3e747226dfb9574d4ab02a39e98c4ecf0c2c8b97e6f",
+      "evidence_status": "SUPPORTED",
+      "source_experimental_units": [
+        "fam-pos-01",
+        "fam-pos-02",
+        "fam-pos-03",
+        "fam-pos-04",
+        "fam-pos-05",
+        "fam-pos-06",
+        "fam-pos-07",
+        "fam-pos-08",
+        "fam-neg-01",
+        "fam-neg-02",
+        "fam-neg-03",
+        "fam-neg-04"
+      ],
+      "source_repository": "Miskatonic-System/msk-formal-discovery"
+    },
+    {
+      "evidence_kind": "ORIGINAL_01C_CLOSURE",
+      "artifact_ref": "experiments/formal-discovery-01c/representation-invariance-closure.v0.1.json",
+      "artifact_digest": "896588d4b34e44222eb5f982335b7e6bbbe9a5ac9f1d3c473bbec525764e3186",
+      "evidence_status": "SUPPORTED",
+      "source_experimental_units": [
+        "fam-pos-01",
+        "fam-pos-02",
+        "fam-pos-03",
+        "fam-pos-04",
+        "fam-pos-05",
+        "fam-pos-06",
+        "fam-pos-07",
+        "fam-pos-08",
+        "fam-neg-01",
+        "fam-neg-02",
+        "fam-neg-03",
+        "fam-neg-04"
+      ],
+      "source_repository": "Miskatonic-System/msk-formal-discovery",
+      "source_commit": "712f0d3ce27dbf4578d79f58b938bdc22ba69eeb"
+    }
+  ],
+  "authority": "NONE",
+  "functional_search_benefit_scope": "NODE_EXPANSION_SEARCH_STRUCTURE",
+  "representation_invariance_scope": "ALPHA_ASSOCIATIVE_COMMUTATIVE_IDENTITY_ORBIT_V0_1",
+  "alpha_renaming_invariance": "SUPPORTED_WITHIN_TESTED_ORBIT",
+  "associative_regrouping_invariance": "SUPPORTED_WITHIN_TESTED_ORBIT",
+  "commutative_mirror_invariance": "NOT_SUPPORTED_WITHIN_TESTED_ORBIT",
+  "end_to_end_runtime_benefit": "NOT_ESTABLISHED",
+  "claim_ceiling": "ENGINEERING_ABSTRACTION_EFFECT_ONLY"
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": "miskatonic.representation-problem-custody-receipt.v0.2",
+  "receipt_id": "problem-custody-fam-pos-04-R3_COMMUTATIVE_MIRROR",
+  "family_id": "fam-pos-04",
+  "representation_stratum": "R3_COMMUTATIVE_MIRROR",
+  "source_problem_id": "fam-pos-04-r0",
+  "source_problem_digest": "bd10074a860ebd3f747e67d9f826d7f470c583f88b5218c1a7c6cbc5d28e2400",
+  "transformed_problem_id": "fam-pos-04-r3",
+  "transformed_problem_digest": "a34eeb1b13b510aa3aa94a4edc8921123d722e5ffa6d8eac3f17c9abf51d26e0",
+  "source_initial_expression": "mul(mul(add(mul(1, kd), 0), 1), 1)",
+  "source_initial_expression_digest": "3ce45aee3d274cfc17aa3f2055aa2932b6f249c5ae680591237e2356a99fa93b",
+  "transformed_initial_expression": "mul(1, mul(1, add(0, mul(kd, 1))))",
+  "transformed_initial_expression_digest": "8e947ba586ce0bd3d72380388fe871dbb8397487d3912fe435d8df35013c8867",
+  "source_goal_expression": "kd",
+  "source_goal_digest": "f66025c51e65b02ffdaf55ea9460656a0b79598cb7db1514dc7a23a81b4cf1aa",
+  "transformed_goal_expression": "kd",
+  "transformed_goal_digest": "f66025c51e65b02ffdaf55ea9460656a0b79598cb7db1514dc7a23a81b4cf1aa",
+  "variable_bijection": {
+    "kd": "kd"
+  },
+  "transform_parameters": {
+    "stratum": "R3_COMMUTATIVE_MIRROR"
+  },
+  "transform_implementation_digest": "5c85f28d268f138ffbf2ec8d9fe400d72a1378ed09223ddff43a802ccd809d4a",
+  "original_v0_1_transform_receipt_ref": "experiments/formal-discovery-01c/receipts/transform-fam-pos-04-R3_COMMUTATIVE_MIRROR.json",
+  "original_v0_1_transform_receipt_digest": "af796599868f999eafe676f7ab930d1c77ccad025ab43b93c6a8b3c7ff92ed82",
+  "original_initial_semantics_smt_ref": "experiments/formal-discovery-01c/receipts/smt-transform-fam-pos-04-R3_COMMUTATIVE_MIRROR.json",
+  "original_initial_semantics_smt_digest": "8dae489761227e09e81db1f67321251ee6fbf244ab612c6e91bce7a959367c38",
+  "whole_problem_semantics_smt_ref": "experiments/formal-discovery-01c-r1/receipts/smt-whole-problem-fam-pos-04-R3_COMMUTATIVE_MIRROR.json",
+  "whole_problem_semantics_smt_digest": "2c7563b0bcd211042e1e7c17c01ffbffa76fc1d9c5db4d9bc7f11659398ce43c",
+  "authority": "NONE",
+  "receipt_digest": "575bd610431654bb71df1631785d03299ded6a80d9a2a862cac3ba0adf99b163"
+}

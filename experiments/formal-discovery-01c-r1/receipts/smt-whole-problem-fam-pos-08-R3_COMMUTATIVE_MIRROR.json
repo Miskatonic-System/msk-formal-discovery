@@ -1,0 +1,88 @@
+{
+  "schema_version": "miskatonic.execution-trace.v0.1",
+  "trace_id": "trace-smt-whole-problem-fam-pos-08-R3_COMMUTATIVE_MIRROR-z3-real",
+  "problem_id": "smt-whole-problem-fam-pos-08-R3_COMMUTATIVE_MIRROR",
+  "backend_id": "z3",
+  "backend_version": "Z3 version 5.1.0 - 64 bit",
+  "execution_origin": "EXECUTED_NATIVE",
+  "logical_authority_class": "SOLVER_SAT_OR_UNSAT",
+  "created_at": "2026-09-13T00:16:30.694185+00:00",
+  "events": [
+    {
+      "event_id": "trace-smt-whole-problem-fam-pos-08-R3_COMMUTATIVE_MIRROR-z3-real-ev-0000",
+      "sequence": 0,
+      "event_type": "INITIAL_PROBLEM",
+      "backend_id": "z3",
+      "backend_version": "Z3 version 5.1.0 - 64 bit",
+      "parent_event_id": null,
+      "state_digest": "90dcac22d1a17ef8d74a1b723055399996933da89c40eca30e79ae16c15d2061",
+      "operation": "load_problem",
+      "result_digest": "90dcac22d1a17ef8d74a1b723055399996933da89c40eca30e79ae16c15d2061",
+      "provenance": {
+        "timestamp": "2026-09-13T00:16:30.722577+00:00",
+        "origin": "z3"
+      },
+      "logical_authority_class": "NONE",
+      "event_origin": "CLIENT_DECLARED",
+      "payload": {
+        "formal_syntax": "; Whole-Problem Semantic Certification (WO-MATH-FORMAL-DISCOVERY-01C-R1)\n; Family: fam-pos-08, Stratum: R3_COMMUTATIVE_MIRROR\n; Problem: fam-pos-08-r3\n(declare-const kh Int)\n(assert (or (not (= (* (* (* 1 (+ kh 0)) 1) 1) (* 1 (* 1 (* (+ 0 kh) 1))))) (not (= kh kh))))\n(check-sat)\n",
+        "goals": [
+          "check-sat"
+        ]
+      }
+    },
+    {
+      "event_id": "trace-smt-whole-problem-fam-pos-08-R3_COMMUTATIVE_MIRROR-z3-real-ev-0001",
+      "sequence": 1,
+      "event_type": "TERMINAL_VERDICT",
+      "backend_id": "z3",
+      "backend_version": "Z3 version 5.1.0 - 64 bit",
+      "parent_event_id": "trace-smt-whole-problem-fam-pos-08-R3_COMMUTATIVE_MIRROR-z3-real-ev-0000",
+      "state_digest": "90dcac22d1a17ef8d74a1b723055399996933da89c40eca30e79ae16c15d2061",
+      "operation": "check_sat",
+      "result_digest": "5c17dfcc2a8f1f30d9e96df6a9825a5030ade046d560332c19de74d93d591a18",
+      "provenance": {
+        "timestamp": "2026-09-13T00:16:30.722596+00:00",
+        "origin": "z3"
+      },
+      "logical_authority_class": "SOLVER_SAT_OR_UNSAT",
+      "event_origin": "BACKEND_OBSERVED",
+      "payload": {
+        "verdict": "UNSAT_REFUTED"
+      }
+    }
+  ],
+  "terminal_verdict": "UNSAT_REFUTED",
+  "metrics": {
+    "event_count": 2,
+    "branch_count": 0,
+    "wall_time_ms": 10.13040542602539
+  },
+  "problem_digest": "90dcac22d1a17ef8d74a1b723055399996933da89c40eca30e79ae16c15d2061",
+  "execution_receipt": {
+    "schema_version": "miskatonic.backend-execution-receipt.v0.1",
+    "receipt_id": "rcpt-z3-smt-whole-problem-fam-pos-08-R3_COMMUTATIVE_MIRROR-1789258590",
+    "backend_id": "z3",
+    "backend_family": "SMT_SOLVER",
+    "execution_origin": "EXECUTED_NATIVE",
+    "executable_path": "/home/linuxbrew/.linuxbrew/bin/z3",
+    "executable_version": "Z3 version 5.1.0 - 64 bit",
+    "executable_sha256": "2ef8474af4c27919697ed1dd3011aab8c64d5f3015f4dafa400651298313b645",
+    "command": [
+      "/home/linuxbrew/.linuxbrew/bin/z3",
+      "-in"
+    ],
+    "input_digest": "90dcac22d1a17ef8d74a1b723055399996933da89c40eca30e79ae16c15d2061",
+    "started_at": "2026-09-13T00:16:30.694185+00:00",
+    "completed_at": "2026-09-13T00:16:30.704316+00:00",
+    "exit_code": 0,
+    "timeout_status": false,
+    "stdout_digest": "5c17dfcc2a8f1f30d9e96df6a9825a5030ade046d560332c19de74d93d591a18",
+    "stderr_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "terminal_classification": "UNSAT_REFUTED",
+    "logical_authority_class": "SOLVER_SAT_OR_UNSAT",
+    "execution_metadata": {
+      "raw_output_snippet": "unsat\n"
+    }
+  }
+}

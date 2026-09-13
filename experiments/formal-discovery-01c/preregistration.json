@@ -1,0 +1,57 @@
+{
+  "schema_version": "miskatonic.representation-preregistration.v0.1",
+  "experiment_id": "formal-discovery-01c",
+  "work_order": "WO-MATH-FORMAL-DISCOVERY-01C",
+  "canonical_predecessor_commit": "292cbd26075b4a831e516d6f15eca3c1222f6e71",
+  "canonical_predecessor_tree": "99c810fc01f727495a23984eba2662fe18c7833f",
+  "candidate_id": "macro_mul_one_add_zero",
+  "candidate_artifact_digest": "273a1d821e54ba6bf1832a2f1f11b338853aa9d1070d873c8b29345ba5aae903",
+  "positive_family_seed": 161803,
+  "negative_family_seed": 141421,
+  "representation_strata": [
+    "R0_CANONICAL_CONTROL",
+    "R1_ALPHA_RENAMED",
+    "R2_ASSOCIATIVE_REGROUPED",
+    "R3_COMMUTATIVE_MIRROR"
+  ],
+  "primary_measure": "nodes_expanded",
+  "search_policy": "DeterministicFrontierSearch",
+  "search_budget": {
+    "max_expansions": 100
+  },
+  "positive_gate_criteria": {
+    "representation_certificates_required": "8/8",
+    "solve_status_required": "8/8",
+    "paired_terminal_smt_required": "8/8 UNSAT_REFUTED",
+    "solve_regressions_allowed": 0,
+    "candidate_application_status_required": "APPLIED",
+    "minimum_improved_units": 6,
+    "median_delta_nodes_threshold": "< 0",
+    "total_node_reduction_required": true
+  },
+  "negative_control_criteria": {
+    "solve_status_required": "4/4",
+    "candidate_applications_allowed": 0,
+    "candidate_application_status_required": "REQUESTED_NOT_APPLIED",
+    "total_node_delta_required": 0,
+    "solve_regressions_allowed": 0
+  },
+  "adjudication_order": "R0_FIRST_THEN_INDEPENDENT_R1_R2_R3",
+  "representation_invariance_scope": "ALPHA_ASSOCIATIVE_COMMUTATIVE_IDENTITY_ORBIT_V0_1",
+  "functional_search_benefit_scope": "NODE_EXPANSION_SEARCH_STRUCTURE",
+  "end_to_end_runtime_benefit": "NOT_ESTABLISHED",
+  "claim_ceiling": "ENGINEERING_ABSTRACTION_EFFECT_ONLY",
+  "authority": "NONE",
+  "implementation_digests": {
+    "transform": "5c85f28d268f138ffbf2ec8d9fe400d72a1378ed09223ddff43a802ccd809d4a",
+    "families": "d3cf34a2ba2f22cd5998ee76e40086aae383ed03c0bf07239088a6e6674616db",
+    "certification": "2f227b8fefac53fb8424f3a1d1382dc088ee458fb39fb7ce1598e904d3db3688",
+    "adjudicator": "33aa5f25c0afcf47fa121b30deca91e5a78e8f0a2de1e9029a8f9db78efc1cbc",
+    "applicator": "04e4418028c480a2963242e678af5cf7070257d2b0f2f38b3a7016ee3c2c5360",
+    "executor": "11604c8c51ab6e4e953cff839a5655bcb188c5b2e3851b798ab16b3bb563e359",
+    "policy": "af372d4488edb870ad35135027ece8e13bd1313082a3536c889e1261261d3595",
+    "environment": "08546ee80e7765acd8a4300372e501f99e1a90d843bdf25c5a15a64b84b47f2f",
+    "smt_control": "08546ee80e7765acd8a4300372e501f99e1a90d843bdf25c5a15a64b84b47f2f",
+    "ruleset": "76603b5a8dd10da06fb563d673644ef0b3b9d28ac9457b5eda9d727620fb728b"
+  }
+}

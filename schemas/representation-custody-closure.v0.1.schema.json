@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "miskatonic.representation-custody-closure.v0.1",
+  "title": "Miskatonic Representation Custody Closure Schema v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "closure_id",
+    "work_order",
+    "predecessor_head",
+    "original_01c_commit_a",
+    "original_01c_commit_b",
+    "original_01c_commit_a_tree",
+    "original_01c_commit_b_tree",
+    "candidate_id",
+    "candidate_artifact_digest",
+    "original_preregistration_ref",
+    "original_preregistration_digest",
+    "original_semantic_families_ref",
+    "original_semantic_families_digest",
+    "original_result_ref",
+    "original_result_digest",
+    "original_paired_manifest_ref",
+    "original_paired_manifest_digest",
+    "original_closure_manifest_ref",
+    "original_closure_manifest_digest",
+    "original_onto_export_ref",
+    "original_onto_export_digest",
+    "whole_problem_transform_manifest_ref",
+    "whole_problem_transform_manifest_digest",
+    "application_replay_manifest_ref",
+    "application_replay_manifest_digest",
+    "transform_receipt_count",
+    "search_receipt_count",
+    "all_original_transform_receipts_verified",
+    "all_original_search_receipts_verified",
+    "exact_original_application_attempts_resolved",
+    "overwritten_or_unresolvable_application_attempts",
+    "per_stratum_dispositions",
+    "global_disposition",
+    "representation_invariance_scope",
+    "functional_search_benefit_scope",
+    "end_to_end_runtime_benefit",
+    "claim_ceiling",
+    "authority",
+    "closure_status",
+    "closure_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "miskatonic.representation-custody-closure.v0.1"
+    },
+    "closure_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "work_order": {
+      "type": "string",
+      "minLength": 1
+    },
+    "predecessor_head": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "original_01c_commit_a": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "original_01c_commit_b": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "original_01c_commit_a_tree": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "original_01c_commit_b_tree": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "candidate_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidate_artifact_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "original_preregistration_ref": { "type": "string" },
+    "original_preregistration_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "original_semantic_families_ref": { "type": "string" },
+    "original_semantic_families_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "original_result_ref": { "type": "string" },
+    "original_result_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "original_paired_manifest_ref": { "type": "string" },
+    "original_paired_manifest_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "original_closure_manifest_ref": { "type": "string" },
+    "original_closure_manifest_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "original_onto_export_ref": { "type": "string" },
+    "original_onto_export_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "whole_problem_transform_manifest_ref": { "type": "string" },
+    "whole_problem_transform_manifest_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "application_replay_manifest_ref": { "type": "string" },
+    "application_replay_manifest_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "transform_receipt_count": { "type": "integer", "const": 48 },
+    "search_receipt_count": { "type": "integer", "const": 96 },
+    "all_original_transform_receipts_verified": { "const": true },
+    "all_original_search_receipts_verified": { "const": true },
+    "exact_original_application_attempts_resolved": { "type": "integer", "const": 169 },
+    "overwritten_or_unresolvable_application_attempts": { "type": "integer", "const": 359 },
+    "per_stratum_dispositions": { "type": "object" },
+    "global_disposition": { "type": "string", "enum": ["REPRESENTATION_INVARIANCE_NOT_SUPPORTED", "REPRESENTATION_INVARIANCE_SUPPORTED"] },
+    "representation_invariance_scope": { "type": "string" },
+    "functional_search_benefit_scope": { "type": "string" },
+    "end_to_end_runtime_benefit": { "type": "string" },
+    "claim_ceiling": { "type": "string", "const": "ENGINEERING_ABSTRACTION_EFFECT_ONLY" },
+    "authority": { "const": "NONE" },
+    "closure_status": { "type": "string", "const": "REPRESENTATION_CUSTODY_GRAPH_CLOSED" },
+    "closure_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "original_r1_commit_a": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "original_r1_commit_b": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "original_r1_commit_a_tree": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "original_r1_commit_b_tree": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "original_r1_closure_manifest_ref": { "type": "string" },
+    "original_r1_closure_manifest_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "search_replay_receipt_count": { "type": "integer" },
+    "application_replay_receipt_count": { "type": "integer" },
+    "all_replay_search_receipts_verified": { "type": "boolean" },
+    "all_replay_application_receipts_verified": { "type": "boolean" },
+    "all_applied_count_parity_verified": { "type": "boolean" },
+    "all_search_budget_parity_verified": { "type": "boolean" },
+    "search_budget_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "original_attempt_body_custody": { "type": "string", "enum": ["PARTIAL_AND_EXPLICIT"] },
+    "deterministic_replay_attempt_body_custody": { "type": "string", "enum": ["COMPLETE"] }
+  }
+}

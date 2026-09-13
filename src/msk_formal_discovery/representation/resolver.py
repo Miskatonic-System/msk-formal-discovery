@@ -81,11 +81,13 @@ class RepresentationOrbitResolver:
 
     def _resolve_path(self, rel_or_abs: str) -> Optional[Path]:
         p = Path(rel_or_abs)
-        if p.is_file():
-            return p
+        if p.is_absolute():
+            return p if p.is_file() else None
         alt = self.repo_root / rel_or_abs
         if alt.is_file():
             return alt
+        if p.is_file():
+            return p
         return None
 
     def resolve_and_verify(

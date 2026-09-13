@@ -2,7 +2,9 @@
 import copy
 import hashlib
 import json
+import os
 from pathlib import Path
+import shutil
 from typing import Any, Dict
 
 import pytest
@@ -240,3 +242,338 @@ def test_01c_r1_r1_freeze_validator(tmp_path: Path):
     (d / "representation-custody-closure.v0.1.json").write_text("{}", encoding="utf-8")
     with pytest.raises(ValueError, match="01C_R1_R1_FREEZE_FAILED: R1-R1 closure manifest pre-exists"):
         validate_01c_r1_r1_freeze(exp_r1_r1_dir=d)
+
+
+def _setup_isolated_graph(tmp_path: Path) -> Path:
+    """Set up an isolated repo_root in tmp_path with symlinked 01c/01c-r1 and copied 01c-r1-r1."""
+    exp_dir = tmp_path / "experiments"
+    exp_dir.mkdir(parents=True)
+    os.symlink(REPO_ROOT / "experiments" / "formal-discovery-01c", exp_dir / "formal-discovery-01c")
+    os.symlink(REPO_ROOT / "experiments" / "formal-discovery-01c-r1", exp_dir / "formal-discovery-01c-r1")
+    shutil.copytree(REPO_ROOT / "experiments" / "formal-discovery-01c-r1-r1", exp_dir / "formal-discovery-01c-r1-r1")
+    return exp_dir / "formal-discovery-01c-r1-r1" / "representation-custody-closure.v0.1.json"
+
+
+def _reseal_replay_manifest_and_closure(tmp_path: Path) -> Path:
+    """Recompute manifest_digest and closure_digest in the isolated graph."""
+    exp_r1_r1 = tmp_path / "experiments" / "formal-discovery-01c-r1-r1"
+    rep_m_p = exp_r1_r1 / "application-replay-custody-manifest.v0.1.json"
+    rep_data = json.loads(rep_m_p.read_text(encoding="utf-8"))
+    rep_manifest = ApplicationReplayCustodyManifest.from_dict(rep_data)
+    rep_manifest.manifest_digest = rep_manifest.compute_digest()
+    rep_m_p.write_text(json.dumps(rep_manifest.to_dict(), indent=2), encoding="utf-8")
+
+    closure_p = exp_r1_r1 / "representation-custody-closure.v0.1.json"
+    closure_data = json.loads(closure_p.read_text(encoding="utf-8"))
+    closure = RepresentationCustodyClosureManifest.from_dict(closure_data)
+    closure.application_replay_manifest_digest = rep_manifest.manifest_digest
+    closure.closure_digest = closure.compute_digest()
+    closure_p.write_text(json.dumps(closure.to_dict(), indent=2), encoding="utf-8")
+    return closure_p
+
+
+# 18. End-to-end hostile test: ledger application_id_sequence_parity=True while original/replay sequences differ
+def test_hostile_resolver_sequence_parity_mismatch_fails_closed(tmp_path: Path):
+    _setup_isolated_graph(tmp_path)
+    sr_path = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "receipts" / "search-replay-fam-pos-01-r0.json"
+    sr_data = json.loads(sr_path.read_text(encoding="utf-8"))
+    sr = SearchExecutionReceipt.from_dict(sr_data)
+    sr.candidate_application_receipt_refs[0] = "app-rec-applied-tampered-id"
+    sr.receipt_digest = sr.compute_digest()
+    sr_path.write_text(json.dumps(sr.to_dict(), indent=2), encoding="utf-8")
+
+    rep_m_p = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "application-replay-custody-manifest.v0.1.json"
+    rep_data = json.loads(rep_m_p.read_text(encoding="utf-8"))
+    rep_data["ledgers"][0]["replay_search_receipt_digest"] = sr.receipt_digest
+    rep_data["ledgers"][0]["application_id_sequence_parity"] = True
+    rep_m_p.write_text(json.dumps(rep_data, indent=2), encoding="utf-8")
+
+    closure_p = _reseal_replay_manifest_and_closure(tmp_path)
+    resolver = RepresentationCustodyRepairResolver(repo_root=tmp_path)
+    report = resolver.resolve_and_verify(closure_manifest_path=closure_p)
+    assert report.valid is False
+    assert report.resolution_status == "REPRESENTATION_CUSTODY_REPAIR_FAILED"
+    assert any("sequence parity" in e.lower() for e in report.errors)
+
+
+# 19. End-to-end hostile test: ledger search_metric_parity=True while replay nodes_expanded differs from original
+def test_hostile_resolver_metric_parity_mismatch_fails_closed(tmp_path: Path):
+    _setup_isolated_graph(tmp_path)
+    sr_path = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "receipts" / "search-replay-fam-pos-01-r0.json"
+    sr_data = json.loads(sr_path.read_text(encoding="utf-8"))
+    sr = SearchExecutionReceipt.from_dict(sr_data)
+    sr.nodes_expanded = 999
+    sr.receipt_digest = sr.compute_digest()
+    sr_path.write_text(json.dumps(sr.to_dict(), indent=2), encoding="utf-8")
+
+    rep_m_p = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "application-replay-custody-manifest.v0.1.json"
+    rep_data = json.loads(rep_m_p.read_text(encoding="utf-8"))
+    rep_data["ledgers"][0]["replay_search_receipt_digest"] = sr.receipt_digest
+    rep_data["ledgers"][0]["search_metric_parity"] = True
+    rep_m_p.write_text(json.dumps(rep_data, indent=2), encoding="utf-8")
+
+    closure_p = _reseal_replay_manifest_and_closure(tmp_path)
+    resolver = RepresentationCustodyRepairResolver(repo_root=tmp_path)
+    report = resolver.resolve_and_verify(closure_manifest_path=closure_p)
+    assert report.valid is False
+    assert report.resolution_status == "REPRESENTATION_CUSTODY_REPAIR_FAILED"
+    assert any("metric parity" in e.lower() for e in report.errors)
+
+
+# 20. End-to-end hostile test: ledger candidate status parity=True while replay status differs
+def test_hostile_resolver_candidate_status_parity_mismatch_fails_closed(tmp_path: Path):
+    _setup_isolated_graph(tmp_path)
+    sr_path = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "receipts" / "search-replay-fam-pos-01-r0.json"
+    sr_data = json.loads(sr_path.read_text(encoding="utf-8"))
+    sr = SearchExecutionReceipt.from_dict(sr_data)
+    sr.candidate_application_status = "REQUESTED_NOT_APPLIED"
+    sr.receipt_digest = sr.compute_digest()
+    sr_path.write_text(json.dumps(sr.to_dict(), indent=2), encoding="utf-8")
+
+    rep_m_p = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "application-replay-custody-manifest.v0.1.json"
+    rep_data = json.loads(rep_m_p.read_text(encoding="utf-8"))
+    rep_data["ledgers"][0]["replay_search_receipt_digest"] = sr.receipt_digest
+    rep_data["ledgers"][0]["candidate_application_status_parity"] = True
+    rep_m_p.write_text(json.dumps(rep_data, indent=2), encoding="utf-8")
+
+    closure_p = _reseal_replay_manifest_and_closure(tmp_path)
+    resolver = RepresentationCustodyRepairResolver(repo_root=tmp_path)
+    report = resolver.resolve_and_verify(closure_manifest_path=closure_p)
+    assert report.valid is False
+    assert report.resolution_status == "REPRESENTATION_CUSTODY_REPAIR_FAILED"
+    assert any("candidate status parity" in e.lower() for e in report.errors)
+
+
+# 21. End-to-end hostile test: ledger terminal parity=True while replay terminal_status differs
+def test_hostile_resolver_terminal_status_parity_mismatch_fails_closed(tmp_path: Path):
+    _setup_isolated_graph(tmp_path)
+    sr_path = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "receipts" / "search-replay-fam-pos-01-r0.json"
+    sr_data = json.loads(sr_path.read_text(encoding="utf-8"))
+    sr = SearchExecutionReceipt.from_dict(sr_data)
+    sr.terminal_status = "FAILED"
+    sr.receipt_digest = sr.compute_digest()
+    sr_path.write_text(json.dumps(sr.to_dict(), indent=2), encoding="utf-8")
+
+    rep_m_p = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "application-replay-custody-manifest.v0.1.json"
+    rep_data = json.loads(rep_m_p.read_text(encoding="utf-8"))
+    rep_data["ledgers"][0]["replay_search_receipt_digest"] = sr.receipt_digest
+    rep_data["ledgers"][0]["terminal_status_parity"] = True
+    rep_m_p.write_text(json.dumps(rep_data, indent=2), encoding="utf-8")
+
+    closure_p = _reseal_replay_manifest_and_closure(tmp_path)
+    resolver = RepresentationCustodyRepairResolver(repo_root=tmp_path)
+    report = resolver.resolve_and_verify(closure_manifest_path=closure_p)
+    assert report.valid is False
+    assert report.resolution_status == "REPRESENTATION_CUSTODY_REPAIR_FAILED"
+    assert any("terminal status parity" in e.lower() for e in report.errors)
+
+
+# 22. End-to-end hostile test: ledger original_applied_count changed to agree with replay while immutable paired-manifest count differs
+def test_hostile_resolver_applied_count_ledger_tampering_fails_closed(tmp_path: Path):
+    _setup_isolated_graph(tmp_path)
+    rep_m_p = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "application-replay-custody-manifest.v0.1.json"
+    rep_data = json.loads(rep_m_p.read_text(encoding="utf-8"))
+    rep_data["ledgers"][0]["original_applied_count"] = 5
+    rep_data["ledgers"][0]["replay_applied_count"] = 5
+    rep_data["ledgers"][0]["applied_count_parity"] = True
+    rep_m_p.write_text(json.dumps(rep_data, indent=2), encoding="utf-8")
+
+    closure_p = _reseal_replay_manifest_and_closure(tmp_path)
+    resolver = RepresentationCustodyRepairResolver(repo_root=tmp_path)
+    report = resolver.resolve_and_verify(closure_manifest_path=closure_p)
+    assert report.valid is False
+    assert report.resolution_status == "REPRESENTATION_CUSTODY_REPAIR_FAILED"
+    assert any("applied_count" in e.lower() or "applied count" in e.lower() for e in report.errors)
+
+
+# 23. End-to-end hostile test: replay search problem_digest mismatch
+def test_hostile_resolver_problem_digest_mismatch_fails_closed(tmp_path: Path):
+    _setup_isolated_graph(tmp_path)
+    sr_path = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "receipts" / "search-replay-fam-pos-01-r0.json"
+    sr_data = json.loads(sr_path.read_text(encoding="utf-8"))
+    sr = SearchExecutionReceipt.from_dict(sr_data)
+    sr.problem_digest = "f" * 64
+    sr.receipt_digest = sr.compute_digest()
+    sr_path.write_text(json.dumps(sr.to_dict(), indent=2), encoding="utf-8")
+
+    rep_m_p = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "application-replay-custody-manifest.v0.1.json"
+    rep_data = json.loads(rep_m_p.read_text(encoding="utf-8"))
+    rep_data["ledgers"][0]["replay_search_receipt_digest"] = sr.receipt_digest
+    rep_m_p.write_text(json.dumps(rep_data, indent=2), encoding="utf-8")
+
+    closure_p = _reseal_replay_manifest_and_closure(tmp_path)
+    resolver = RepresentationCustodyRepairResolver(repo_root=tmp_path)
+    report = resolver.resolve_and_verify(closure_manifest_path=closure_p)
+    assert report.valid is False
+    assert report.resolution_status == "REPRESENTATION_CUSTODY_REPAIR_FAILED"
+    assert any("search substrate parity" in e.lower() for e in report.errors)
+
+
+# 24. End-to-end hostile test: replay search policy mismatch
+def test_hostile_resolver_search_policy_mismatch_fails_closed(tmp_path: Path):
+    _setup_isolated_graph(tmp_path)
+    sr_path = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "receipts" / "search-replay-fam-pos-01-r0.json"
+    sr_data = json.loads(sr_path.read_text(encoding="utf-8"))
+    sr = SearchExecutionReceipt.from_dict(sr_data)
+    sr.search_policy = "DEPTH_FIRST"
+    sr.receipt_digest = sr.compute_digest()
+    sr_path.write_text(json.dumps(sr.to_dict(), indent=2), encoding="utf-8")
+
+    rep_m_p = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "application-replay-custody-manifest.v0.1.json"
+    rep_data = json.loads(rep_m_p.read_text(encoding="utf-8"))
+    rep_data["ledgers"][0]["replay_search_receipt_digest"] = sr.receipt_digest
+    rep_m_p.write_text(json.dumps(rep_data, indent=2), encoding="utf-8")
+
+    closure_p = _reseal_replay_manifest_and_closure(tmp_path)
+    resolver = RepresentationCustodyRepairResolver(repo_root=tmp_path)
+    report = resolver.resolve_and_verify(closure_manifest_path=closure_p)
+    assert report.valid is False
+    assert report.resolution_status == "REPRESENTATION_CUSTODY_REPAIR_FAILED"
+    assert any("search substrate parity" in e.lower() for e in report.errors)
+
+
+# 25. End-to-end hostile test: replay search policy implementation digest mismatch
+def test_hostile_resolver_policy_impl_digest_mismatch_fails_closed(tmp_path: Path):
+    _setup_isolated_graph(tmp_path)
+    sr_path = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "receipts" / "search-replay-fam-pos-01-r0.json"
+    sr_data = json.loads(sr_path.read_text(encoding="utf-8"))
+    sr = SearchExecutionReceipt.from_dict(sr_data)
+    sr.search_policy_implementation_digest = "e" * 64
+    sr.receipt_digest = sr.compute_digest()
+    sr_path.write_text(json.dumps(sr.to_dict(), indent=2), encoding="utf-8")
+
+    rep_m_p = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "application-replay-custody-manifest.v0.1.json"
+    rep_data = json.loads(rep_m_p.read_text(encoding="utf-8"))
+    rep_data["ledgers"][0]["replay_search_receipt_digest"] = sr.receipt_digest
+    rep_m_p.write_text(json.dumps(rep_data, indent=2), encoding="utf-8")
+
+    closure_p = _reseal_replay_manifest_and_closure(tmp_path)
+    resolver = RepresentationCustodyRepairResolver(repo_root=tmp_path)
+    report = resolver.resolve_and_verify(closure_manifest_path=closure_p)
+    assert report.valid is False
+    assert report.resolution_status == "REPRESENTATION_CUSTODY_REPAIR_FAILED"
+    assert any("search substrate parity" in e.lower() for e in report.errors)
+
+
+# 26. End-to-end hostile test: replay environment identity mismatch
+def test_hostile_resolver_environment_identity_mismatch_fails_closed(tmp_path: Path):
+    _setup_isolated_graph(tmp_path)
+    sr_path = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "receipts" / "search-replay-fam-pos-01-r0.json"
+    sr_data = json.loads(sr_path.read_text(encoding="utf-8"))
+    sr = SearchExecutionReceipt.from_dict(sr_data)
+    sr.environment_identity_digest = "d" * 64
+    sr.receipt_digest = sr.compute_digest()
+    sr_path.write_text(json.dumps(sr.to_dict(), indent=2), encoding="utf-8")
+
+    rep_m_p = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "application-replay-custody-manifest.v0.1.json"
+    rep_data = json.loads(rep_m_p.read_text(encoding="utf-8"))
+    rep_data["ledgers"][0]["replay_search_receipt_digest"] = sr.receipt_digest
+    rep_m_p.write_text(json.dumps(rep_data, indent=2), encoding="utf-8")
+
+    closure_p = _reseal_replay_manifest_and_closure(tmp_path)
+    resolver = RepresentationCustodyRepairResolver(repo_root=tmp_path)
+    report = resolver.resolve_and_verify(closure_manifest_path=closure_p)
+    assert report.valid is False
+    assert report.resolution_status == "REPRESENTATION_CUSTODY_REPAIR_FAILED"
+    assert any("search substrate parity" in e.lower() for e in report.errors)
+
+
+# 27. End-to-end hostile test: replay candidate identity mismatch
+def test_hostile_resolver_candidate_identity_mismatch_fails_closed(tmp_path: Path):
+    _setup_isolated_graph(tmp_path)
+    sr_path = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "receipts" / "search-replay-fam-pos-01-r0.json"
+    sr_data = json.loads(sr_path.read_text(encoding="utf-8"))
+    sr = SearchExecutionReceipt.from_dict(sr_data)
+    sr.candidate_id = "wrong_macro_candidate"
+    sr.receipt_digest = sr.compute_digest()
+    sr_path.write_text(json.dumps(sr.to_dict(), indent=2), encoding="utf-8")
+
+    rep_m_p = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "application-replay-custody-manifest.v0.1.json"
+    rep_data = json.loads(rep_m_p.read_text(encoding="utf-8"))
+    rep_data["ledgers"][0]["replay_search_receipt_digest"] = sr.receipt_digest
+    rep_m_p.write_text(json.dumps(rep_data, indent=2), encoding="utf-8")
+
+    closure_p = _reseal_replay_manifest_and_closure(tmp_path)
+    resolver = RepresentationCustodyRepairResolver(repo_root=tmp_path)
+    report = resolver.resolve_and_verify(closure_manifest_path=closure_p)
+    assert report.valid is False
+    assert report.resolution_status == "REPRESENTATION_CUSTODY_REPAIR_FAILED"
+    assert any("candidate status parity" in e.lower() for e in report.errors)
+
+
+# 28. End-to-end hostile test: replay candidate-enabled mismatch
+def test_hostile_resolver_candidate_enabled_mismatch_fails_closed(tmp_path: Path):
+    _setup_isolated_graph(tmp_path)
+    sr_path = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "receipts" / "search-replay-fam-pos-01-r0.json"
+    sr_data = json.loads(sr_path.read_text(encoding="utf-8"))
+    sr = SearchExecutionReceipt.from_dict(sr_data)
+    sr.candidate_enabled = False
+    sr.receipt_digest = sr.compute_digest()
+    sr_path.write_text(json.dumps(sr.to_dict(), indent=2), encoding="utf-8")
+
+    rep_m_p = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "application-replay-custody-manifest.v0.1.json"
+    rep_data = json.loads(rep_m_p.read_text(encoding="utf-8"))
+    rep_data["ledgers"][0]["replay_search_receipt_digest"] = sr.receipt_digest
+    rep_m_p.write_text(json.dumps(rep_data, indent=2), encoding="utf-8")
+
+    closure_p = _reseal_replay_manifest_and_closure(tmp_path)
+    resolver = RepresentationCustodyRepairResolver(repo_root=tmp_path)
+    report = resolver.resolve_and_verify(closure_manifest_path=closure_p)
+    assert report.valid is False
+    assert report.resolution_status == "REPRESENTATION_CUSTODY_REPAIR_FAILED"
+    assert any("candidate status parity" in e.lower() for e in report.errors)
+
+
+# 29. End-to-end hostile test: replay search-budget mismatch
+def test_hostile_resolver_search_budget_mismatch_fails_closed(tmp_path: Path):
+    _setup_isolated_graph(tmp_path)
+    sr_path = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "receipts" / "search-replay-fam-pos-01-r0.json"
+    sr_data = json.loads(sr_path.read_text(encoding="utf-8"))
+    sr = SearchExecutionReceipt.from_dict(sr_data)
+    sr.search_budget_digest = "b" * 64
+    sr.receipt_digest = sr.compute_digest()
+    sr_path.write_text(json.dumps(sr.to_dict(), indent=2), encoding="utf-8")
+
+    rep_m_p = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "application-replay-custody-manifest.v0.1.json"
+    rep_data = json.loads(rep_m_p.read_text(encoding="utf-8"))
+    rep_data["ledgers"][0]["replay_search_receipt_digest"] = sr.receipt_digest
+    rep_m_p.write_text(json.dumps(rep_data, indent=2), encoding="utf-8")
+
+    closure_p = _reseal_replay_manifest_and_closure(tmp_path)
+    resolver = RepresentationCustodyRepairResolver(repo_root=tmp_path)
+    report = resolver.resolve_and_verify(closure_manifest_path=closure_p)
+    assert report.valid is False
+    assert report.resolution_status == "REPRESENTATION_CUSTODY_REPAIR_FAILED"
+    assert any("search substrate parity" in e.lower() or "search budget" in e.lower() for e in report.errors)
+
+
+# 30. End-to-end hostile test: any final manifest parity gate set false
+def test_hostile_resolver_manifest_parity_gate_false_fails_closed(tmp_path: Path):
+    _setup_isolated_graph(tmp_path)
+    rep_m_p = tmp_path / "experiments" / "formal-discovery-01c-r1-r1" / "application-replay-custody-manifest.v0.1.json"
+    rep_data = json.loads(rep_m_p.read_text(encoding="utf-8"))
+    rep_data["all_applied_count_parity_verified"] = False
+    rep_m_p.write_text(json.dumps(rep_data, indent=2), encoding="utf-8")
+
+    closure_p = _reseal_replay_manifest_and_closure(tmp_path)
+    resolver = RepresentationCustodyRepairResolver(repo_root=tmp_path)
+    report = resolver.resolve_and_verify(closure_manifest_path=closure_p)
+    assert report.valid is False
+    assert report.resolution_status == "REPRESENTATION_CUSTODY_REPAIR_FAILED"
+    assert any("PARITY_VERIFICATION_FAILED" in e or "disagrees with derived parity" in e for e in report.errors)
+
+
+# 31. End-to-end production verification: un-tampered clean graph completely verifies
+def test_production_resolver_clean_graph_passes(tmp_path: Path):
+    closure_p = _setup_isolated_graph(tmp_path)
+    resolver = RepresentationCustodyRepairResolver(repo_root=tmp_path)
+    report = resolver.resolve_and_verify(closure_manifest_path=closure_p)
+    assert report.valid is True
+    assert report.resolution_status == "REPRESENTATION_CUSTODY_GRAPH_VERIFIED"
+    assert len(report.errors) == 0
+    assert report.derived_sequence_parity_count == 48
+    assert report.derived_search_metric_parity_count == 48
+    assert report.derived_candidate_status_parity_count == 48
+    assert report.derived_terminal_status_parity_count == 48
+    assert report.derived_search_substrate_parity_count == 48
+    assert report.derived_applied_count_parity_count == 48

@@ -23,6 +23,8 @@ APPLICATION_REPLAY_MANIFEST_SCHEMA_PATH = (
 REPRESENTATION_CUSTODY_CLOSURE_SCHEMA_PATH = (
     Path(__file__).resolve().parents[3] / "schemas" / "representation-custody-closure.v0.1.schema.json"
 )
+FROZEN_SEARCH_BUDGET_DIGEST = "33e3063843806441f4193971b31f4c3093393af722d83f8f95cc11ff669f9635"
+
 
 
 @dataclass
@@ -209,8 +211,33 @@ class ApplicationReplayCustodyManifest:
             raise ReceiptValidationError(f"INVALID_RESOLVED_COUNT: Expected 169, got {self.exact_original_application_attempts_resolved}")
         if self.overwritten_or_unresolvable_application_attempts != 359:
             raise ReceiptValidationError(f"INVALID_OVERWRITTEN_COUNT: Expected 359, got {self.overwritten_or_unresolvable_application_attempts}")
-        if not self.all_search_metric_parity_verified or not self.all_application_id_sequence_parity_verified:
+        if (
+            not self.all_search_metric_parity_verified
+            or not self.all_application_id_sequence_parity_verified
+            or not self.all_candidate_status_parity_verified
+            or not self.all_applied_count_parity_verified
+            or not self.all_terminal_status_parity_verified
+        ):
             raise ReceiptValidationError("PARITY_VERIFICATION_FAILED")
+
+        is_r1_r1 = (
+            self.work_order == "WO-MATH-FORMAL-DISCOVERY-01C-R1-R1"
+            or self.all_search_budget_parity_verified is not None
+            or self.search_replay_receipt_count is not None
+        )
+        if is_r1_r1:
+            if not self.all_search_budget_parity_verified:
+                raise ReceiptValidationError("SEARCH_BUDGET_PARITY_NOT_VERIFIED")
+            if not self.all_replay_search_receipts_verified:
+                raise ReceiptValidationError("REPLAY_SEARCH_RECEIPTS_NOT_VERIFIED")
+            if not self.all_replay_application_receipts_verified:
+                raise ReceiptValidationError("REPLAY_APPLICATION_RECEIPTS_NOT_VERIFIED")
+            if self.search_replay_receipt_count != 48:
+                raise ReceiptValidationError(f"INVALID_SEARCH_REPLAY_RECEIPT_COUNT: Expected 48, got {self.search_replay_receipt_count}")
+            if self.total_replay_application_receipts != 528:
+                raise ReceiptValidationError(f"INVALID_TOTAL_REPLAY_RECEIPTS: Expected 528, got {self.total_replay_application_receipts}")
+            if self.search_budget_digest != FROZEN_SEARCH_BUDGET_DIGEST:
+                raise ReceiptValidationError(f"SEARCH_BUDGET_DIGEST_MISMATCH: Expected {FROZEN_SEARCH_BUDGET_DIGEST}, got {self.search_budget_digest}")
 
         if APPLICATION_REPLAY_MANIFEST_SCHEMA_PATH.is_file():
             schema_data = json.loads(APPLICATION_REPLAY_MANIFEST_SCHEMA_PATH.read_text(encoding="utf-8"))
@@ -439,6 +466,31 @@ class RepresentationCustodyClosureManifest:
             raise ReceiptValidationError(f"INVALID_CLOSURE_STATUS: {self.closure_status}")
         if not self.all_original_transform_receipts_verified or not self.all_original_search_receipts_verified:
             raise ReceiptValidationError("ALL_ORIGINAL_RECEIPTS_NOT_VERIFIED")
+
+        is_r1_r1 = (
+            self.work_order == "WO-MATH-FORMAL-DISCOVERY-01C-R1-R1"
+            or self.all_search_budget_parity_verified is not None
+            or self.search_replay_receipt_count is not None
+        )
+        if is_r1_r1:
+            if not self.all_replay_search_receipts_verified:
+                raise ReceiptValidationError("REPLAY_SEARCH_RECEIPTS_NOT_VERIFIED")
+            if not self.all_replay_application_receipts_verified:
+                raise ReceiptValidationError("REPLAY_APPLICATION_RECEIPTS_NOT_VERIFIED")
+            if not self.all_applied_count_parity_verified:
+                raise ReceiptValidationError("APPLIED_COUNT_PARITY_NOT_VERIFIED")
+            if not self.all_search_budget_parity_verified:
+                raise ReceiptValidationError("SEARCH_BUDGET_PARITY_NOT_VERIFIED")
+            if self.search_replay_receipt_count != 48:
+                raise ReceiptValidationError(f"INVALID_SEARCH_REPLAY_RECEIPT_COUNT: Expected 48, got {self.search_replay_receipt_count}")
+            if self.application_replay_receipt_count != 528:
+                raise ReceiptValidationError(f"INVALID_APPLICATION_REPLAY_RECEIPT_COUNT: Expected 528, got {self.application_replay_receipt_count}")
+            if self.search_budget_digest != FROZEN_SEARCH_BUDGET_DIGEST:
+                raise ReceiptValidationError(f"SEARCH_BUDGET_DIGEST_MISMATCH: Expected {FROZEN_SEARCH_BUDGET_DIGEST}, got {self.search_budget_digest}")
+            if self.original_attempt_body_custody != "PARTIAL_AND_EXPLICIT":
+                raise ReceiptValidationError(f"ORIGINAL_ATTEMPT_BODY_CUSTODY_INVALID: Expected PARTIAL_AND_EXPLICIT, got {self.original_attempt_body_custody}")
+            if self.deterministic_replay_attempt_body_custody != "COMPLETE":
+                raise ReceiptValidationError(f"REPLAY_ATTEMPT_BODY_CUSTODY_INVALID: Expected COMPLETE, got {self.deterministic_replay_attempt_body_custody}")
 
         if REPRESENTATION_CUSTODY_CLOSURE_SCHEMA_PATH.is_file():
             schema_data = json.loads(REPRESENTATION_CUSTODY_CLOSURE_SCHEMA_PATH.read_text(encoding="utf-8"))

@@ -91,6 +91,12 @@ class RepresentationCustodyRepairReport:
     search_budget_digest_verified: bool = False
     original_attempt_body_custody: str = "PARTIAL_AND_EXPLICIT"
     deterministic_replay_attempt_body_custody: str = "COMPLETE"
+    derived_sequence_parity_count: int = 0
+    derived_search_metric_parity_count: int = 0
+    derived_candidate_status_parity_count: int = 0
+    derived_terminal_status_parity_count: int = 0
+    derived_search_substrate_parity_count: int = 0
+    derived_applied_count_parity_count: int = 0
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -123,6 +129,12 @@ class RepresentationCustodyRepairReport:
             "search_budget_digest_verified": self.search_budget_digest_verified,
             "original_attempt_body_custody": self.original_attempt_body_custody,
             "deterministic_replay_attempt_body_custody": self.deterministic_replay_attempt_body_custody,
+            "derived_sequence_parity_count": self.derived_sequence_parity_count,
+            "derived_search_metric_parity_count": self.derived_search_metric_parity_count,
+            "derived_candidate_status_parity_count": self.derived_candidate_status_parity_count,
+            "derived_terminal_status_parity_count": self.derived_terminal_status_parity_count,
+            "derived_search_substrate_parity_count": self.derived_search_substrate_parity_count,
+            "derived_applied_count_parity_count": self.derived_applied_count_parity_count,
         }
 
     @property
@@ -138,11 +150,13 @@ class RepresentationCustodyRepairResolver:
 
     def _resolve_path(self, rel_or_abs: str) -> Optional[Path]:
         p = Path(rel_or_abs)
-        if p.is_file():
-            return p
+        if p.is_absolute():
+            return p if p.is_file() else None
         alt = self.repo_root / rel_or_abs
         if alt.is_file():
             return alt
+        if p.is_file():
+            return p
         return None
 
     def resolve_and_verify(
@@ -389,8 +403,14 @@ class RepresentationCustodyRepairResolver:
                     errors.append(f"Failed to independently verify transform receipt {t_ref}: {e}")
 
         # Step 4B: Independent Search Receipt Verification
+        paired_strata_by_problem_id: Dict[str, Dict[str, Any]] = {}
+        original_abstracted_search_receipts: Dict[str, SearchExecutionReceipt] = {}
+
         for fam in paired_manifest.families:
             for s_name, s_info in fam["strata"].items():
+                p_id = s_info.get("problem_id")
+                if p_id:
+                    paired_strata_by_problem_id[p_id] = s_info
                 for kind, ref_key, dig_key, nodes_key in [
                     ("BASELINE", "baseline_search_receipt_ref", "baseline_search_receipt_digest", "baseline_nodes_expanded"),
                     ("ABSTRACTED", "abstracted_search_receipt_ref", "abstracted_search_receipt_digest", "abstracted_nodes_expanded"),
@@ -453,23 +473,33 @@ class RepresentationCustodyRepairResolver:
                                 if sr.candidate_application_status != "APPLIED":
                                     errors.append(f"Abstracted positive R0/R1/R2 candidate status must be APPLIED, got {sr.candidate_application_status} in {s_ref}")
                                     continue
+                            original_abstracted_search_receipts[sr.problem_id] = sr
 
                         orig_search_verified += 1
                     except Exception as e:
                         errors.append(f"Failed to independently verify search receipt {s_ref}: {e}")
 
-        # 5. Application-Attempt Audit and Replay Parity (Finding F-FD-01C-02 & F-FD-01C-R1-01 to 03)
+        # 5. Application-Attempt Audit and Replay Parity (Finding F-FD-01C-02, F-FD-01C-R1-01 to 03, F-FD-01C-R1-R1-01)
         replay_manifest_path = self._resolve_path(closure.application_replay_manifest_ref)
         replay_runs_verified = 0
         all_seq_parity = False
         all_metric_parity = False
-        all_app_cnt_parity = False
+        all_candidate_status_parity = False
+        all_terminal_status_parity = False
         all_search_budget_parity = False
+        all_app_cnt_parity = False
         search_budget_digest_verified = False
         exact_app_resolved = 0
         overwritten_app_recorded = 0
         replay_search_rcpts_verified = 0
         replay_app_rcpts_verified = 0
+
+        seq_parities: List[bool] = []
+        met_parities: List[bool] = []
+        stat_parities: List[bool] = []
+        term_parities: List[bool] = []
+        sub_parities: List[bool] = []
+        app_cnt_parities: List[bool] = []
 
         if not replay_manifest_path:
             errors.append(f"Application replay manifest missing: {closure.application_replay_manifest_ref}")
@@ -482,99 +512,97 @@ class RepresentationCustodyRepairResolver:
                 errors.append(f"Application replay manifest validation error: {e}")
 
             if replay_manifest.total_original_application_attempt_refs != 528:
-                errors.append(f"Total original application attempt refs != 528")
+                errors.append("Total original application attempt refs != 528")
             if replay_manifest.exact_original_application_attempts_resolved != 169:
-                errors.append(f"Exact original resolved attempts != 169")
+                errors.append("Exact original resolved attempts != 169")
             if replay_manifest.overwritten_or_unresolvable_application_attempts != 359:
-                errors.append(f"Overwritten unresolvable attempts != 359")
+                errors.append("Overwritten unresolvable attempts != 359")
+            if replay_manifest.search_budget_digest != FROZEN_SEARCH_BUDGET_DIGEST:
+                errors.append(f"Replay manifest search budget digest mismatch: {replay_manifest.search_budget_digest} != {FROZEN_SEARCH_BUDGET_DIGEST}")
+            else:
+                search_budget_digest_verified = True
 
             exact_app_resolved = replay_manifest.exact_original_application_attempts_resolved
             overwritten_app_recorded = replay_manifest.overwritten_or_unresolvable_application_attempts
 
-            seq_parities = []
-            met_parities = []
-            app_cnt_parities = []
-            s_budget_parities = []
-
             for ledger in replay_manifest.ledgers:
-                p_seq = ledger.get("application_id_sequence_parity", False)
-                p_met = ledger.get("search_metric_parity", False)
-                p_stat = ledger.get("candidate_application_status_parity", False)
-                p_app = ledger.get("applied_count_parity", False)
-                p_term = ledger.get("terminal_status_parity", False)
-                
-                seq_parities.append(p_seq)
-                met_parities.append(p_met)
-                app_cnt_parities.append(p_app)
+                prob_id = ledger.get("problem_id", "")
+                if not prob_id:
+                    errors.append("Ledger missing problem_id")
+                    continue
 
-                # 4-Way Applied Count Equality Check (Finding F-FD-01C-R1-02)
-                orig_id_app_count = sum(1 for a in ledger.get("ordered_original_application_ids", []) if a.startswith("app-rec-applied-"))
-                rep_id_app_count = sum(1 for a in ledger.get("ordered_replay_application_ids", []) if a.startswith("app-rec-applied-"))
-                
-                if "original_applied_count" in ledger and "replay_applied_count" in ledger:
-                    orig_applied_field = ledger["original_applied_count"]
-                    replay_applied_field = ledger["replay_applied_count"]
-                    if not (orig_applied_field == orig_id_app_count == replay_applied_field == rep_id_app_count):
-                        errors.append(
-                            f"Applied count parity failed in problem {ledger.get('problem_id')}: "
-                            f"orig_app={orig_applied_field}, orig_id={orig_id_app_count}, "
-                            f"rep_app={replay_applied_field}, rep_id={rep_id_app_count}"
-                        )
+                s_info = paired_strata_by_problem_id.get(prob_id)
+                if not s_info:
+                    errors.append(f"Problem {prob_id} missing from paired manifest strata")
+                    continue
 
-                # Search Budget Parity Check (Finding F-FD-01C-R1-03)
-                if "search_budget_parity" in ledger:
-                    p_budget = ledger["search_budget_parity"]
-                    s_budget_parities.append(p_budget)
-                    if ledger.get("search_budget_digest") != FROZEN_SEARCH_BUDGET_DIGEST:
-                        errors.append(f"Replay search budget digest mismatch in ledger {ledger.get('problem_id')}")
-                else:
-                    p_budget = True
+                # 1. Resolve immutable original abstracted search receipt
+                orig_sr = original_abstracted_search_receipts.get(prob_id)
+                if not orig_sr:
+                    orig_s_ref = s_info.get("abstracted_search_receipt_ref") or ledger.get("original_search_receipt_ref")
+                    orig_sp = self._resolve_path(orig_s_ref) if orig_s_ref else None
+                    if not orig_sp:
+                        errors.append(f"Original abstracted search receipt missing for problem {prob_id}: {orig_s_ref}")
+                        continue
+                    try:
+                        orig_raw = json.loads(orig_sp.read_text(encoding="utf-8"))
+                        orig_sr = SearchExecutionReceipt.from_dict(orig_raw)
+                        orig_sr.validate()
+                        if orig_sr.compute_digest() != orig_raw.get("receipt_digest"):
+                            errors.append(f"Original search receipt digest mismatch for {orig_s_ref}")
+                            continue
+                    except Exception as e:
+                        errors.append(f"Failed to load original search receipt {orig_s_ref}: {e}")
+                        continue
 
-                if p_seq and p_met and p_stat and p_app and p_term and p_budget:
-                    replay_runs_verified += 1
-                else:
-                    errors.append(f"Replay parity failure in problem {ledger.get('problem_id')}")
-
-                # Verify Replay Search Receipt if referenced (R1-R1)
+                # 2. Resolve persisted replay search receipt
                 replay_s_ref = ledger.get("replay_search_receipt_ref")
                 replay_s_dig = ledger.get("replay_search_receipt_digest")
-                if replay_s_ref:
+                rep_sr: Optional[SearchExecutionReceipt] = None
+                if not replay_s_ref:
+                    if is_r1_r1:
+                        errors.append(f"Missing replay_search_receipt_ref in ledger for {prob_id}")
+                else:
                     rsp = self._resolve_path(replay_s_ref)
                     if not rsp:
                         errors.append(f"Replay search receipt missing: {replay_s_ref}")
                     else:
                         try:
                             sraw = json.loads(rsp.read_text(encoding="utf-8"))
-                            rsr = SearchExecutionReceipt.from_dict(sraw)
-                            rsr.validate()
-                            rcomp_dig = rsr.compute_digest()
+                            rep_sr = SearchExecutionReceipt.from_dict(sraw)
+                            rep_sr.validate()
+                            rcomp_dig = rep_sr.compute_digest()
                             if rcomp_dig != sraw.get("receipt_digest"):
                                 errors.append(f"Replay search receipt body digest mismatch for {replay_s_ref}")
+                                rep_sr = None
                             elif rcomp_dig != replay_s_dig:
                                 errors.append(f"Replay search receipt digest mismatch against ledger for {replay_s_ref}: {rcomp_dig} != {replay_s_dig}")
-                            elif rsr.problem_id != ledger.get("problem_id"):
-                                errors.append(f"Replay search receipt problem_id mismatch: {rsr.problem_id} != {ledger.get('problem_id')}")
-                            elif rsr.search_budget_digest != FROZEN_SEARCH_BUDGET_DIGEST:
-                                errors.append(f"Replay search receipt budget digest mismatch in {replay_s_ref}: {rsr.search_budget_digest}")
+                                rep_sr = None
                             else:
                                 replay_search_rcpts_verified += 1
                         except Exception as e:
                             errors.append(f"Failed to independently verify replay search receipt {replay_s_ref}: {e}")
+                            rep_sr = None
 
-                # Verify Replay Candidate Application Receipts (Finding F-FD-01C-R1-01)
+                # 3. Resolve all persisted replay CandidateApplicationReceipt bodies
                 replay_app_attempts = ledger.get("replay_application_attempts")
-                if replay_app_attempts is not None:
-                    # Cardinality checks
-                    if len(replay_app_attempts) != ledger.get("replay_attempt_count"):
-                        errors.append(f"Replay attempt count mismatch in {ledger.get('problem_id')}: {len(replay_app_attempts)} != {ledger.get('replay_attempt_count')}")
-                    if len(replay_app_attempts) != len(ledger.get("ordered_replay_application_receipt_refs", [])):
-                        errors.append(f"Replay receipt refs count mismatch in {ledger.get('problem_id')}")
-                    if len(replay_app_attempts) != len(ledger.get("ordered_replay_application_receipt_digests", [])):
-                        errors.append(f"Replay receipt digests count mismatch in {ledger.get('problem_id')}")
+                valid_replay_car_bodies: List[CandidateApplicationReceipt] = []
+                car_bodies_valid = True
 
-                    body_applied_count = sum(1 for a in replay_app_attempts if a.get("application_status") == "APPLIED")
-                    if "replay_applied_count" in ledger and body_applied_count != ledger["replay_applied_count"]:
-                        errors.append(f"Replay body applied count mismatch in {ledger.get('problem_id')}: {body_applied_count} != {ledger['replay_applied_count']}")
+                if replay_app_attempts is None:
+                    if is_r1_r1:
+                        errors.append(f"Missing replay_application_attempts in ledger for {prob_id}")
+                        car_bodies_valid = False
+                else:
+                    if len(replay_app_attempts) != ledger.get("replay_attempt_count"):
+                        errors.append(f"Replay attempt count mismatch in {prob_id}: {len(replay_app_attempts)} != {ledger.get('replay_attempt_count')}")
+                        car_bodies_valid = False
+                    if len(replay_app_attempts) != len(ledger.get("ordered_replay_application_receipt_refs", [])):
+                        errors.append(f"Replay receipt refs count mismatch in {prob_id}")
+                        car_bodies_valid = False
+                    if len(replay_app_attempts) != len(ledger.get("ordered_replay_application_receipt_digests", [])):
+                        errors.append(f"Replay receipt digests count mismatch in {prob_id}")
+                        car_bodies_valid = False
 
                     for attempt in replay_app_attempts:
                         ord_idx = attempt.get("ordinal", 0)
@@ -583,21 +611,23 @@ class RepresentationCustodyRepairResolver:
                         a_id = attempt.get("application_id")
                         a_stat = attempt.get("application_status")
 
-                        if a_ref != ledger["ordered_replay_application_receipt_refs"][ord_idx]:
-                            errors.append(f"Replay attempt ref mismatch at ordinal {ord_idx} in {ledger.get('problem_id')}")
+                        if not ledger.get("ordered_replay_application_receipt_refs") or ord_idx >= len(ledger["ordered_replay_application_receipt_refs"]) or a_ref != ledger["ordered_replay_application_receipt_refs"][ord_idx]:
+                            errors.append(f"Replay attempt ref mismatch at ordinal {ord_idx} in {prob_id}")
+                            car_bodies_valid = False
                             continue
-                        if a_dig != ledger["ordered_replay_application_receipt_digests"][ord_idx]:
-                            errors.append(f"Replay attempt digest mismatch at ordinal {ord_idx} in {ledger.get('problem_id')}")
+                        if not ledger.get("ordered_replay_application_receipt_digests") or ord_idx >= len(ledger["ordered_replay_application_receipt_digests"]) or a_dig != ledger["ordered_replay_application_receipt_digests"][ord_idx]:
+                            errors.append(f"Replay attempt digest mismatch at ordinal {ord_idx} in {prob_id}")
+                            car_bodies_valid = False
                             continue
 
                         ap = self._resolve_path(a_ref)
                         if not ap:
                             errors.append(f"Replay application receipt missing: {a_ref}")
+                            car_bodies_valid = False
                             continue
 
                         try:
                             araw = json.loads(ap.read_text(encoding="utf-8"))
-                            # Masquerade check: ensure full v0.1 receipt body
                             required_receipt_keys = {
                                 "schema_version", "application_id", "candidate_id",
                                 "candidate_artifact_digest", "experimental_unit_id", "problem_digest",
@@ -605,6 +635,7 @@ class RepresentationCustodyRepairResolver:
                             }
                             if not required_receipt_keys.issubset(araw.keys()):
                                 errors.append(f"Partial/summary masquerade detected in replay receipt: {a_ref}")
+                                car_bodies_valid = False
                                 continue
 
                             car = CandidateApplicationReceipt.from_dict(araw)
@@ -613,32 +644,260 @@ class RepresentationCustodyRepairResolver:
 
                             if car_comp_dig != araw.get("receipt_digest"):
                                 errors.append(f"Replay application receipt body digest mismatch for {a_ref}")
+                                car_bodies_valid = False
                             elif car_comp_dig != a_dig:
                                 errors.append(f"Replay application receipt digest mismatch against attempt for {a_ref}: {car_comp_dig} != {a_dig}")
+                                car_bodies_valid = False
                             elif car.application_id != a_id:
                                 errors.append(f"Replay application receipt id mismatch in {a_ref}: {car.application_id} != {a_id}")
-                            elif car.experimental_unit_id != ledger.get("problem_id"):
-                                errors.append(f"Replay application receipt problem_id mismatch in {a_ref}: {car.experimental_unit_id} != {ledger.get('problem_id')}")
+                                car_bodies_valid = False
+                            elif car.experimental_unit_id != prob_id:
+                                errors.append(f"Replay application receipt problem_id mismatch in {a_ref}: {car.experimental_unit_id} != {prob_id}")
+                                car_bodies_valid = False
                             elif car.problem_digest != ledger.get("problem_digest"):
                                 errors.append(f"Replay application receipt problem_digest mismatch in {a_ref}")
+                                car_bodies_valid = False
                             elif car.candidate_id != "macro_mul_one_add_zero":
                                 errors.append(f"Replay application receipt candidate_id mismatch in {a_ref}: {car.candidate_id}")
+                                car_bodies_valid = False
                             elif car.candidate_artifact_digest != FROZEN_01C_CANDIDATE_DIGEST:
                                 errors.append(f"Replay application receipt candidate artifact digest mismatch in {a_ref}")
+                                car_bodies_valid = False
                             elif car.applicator_implementation_digest != FROZEN_APPLICATOR_IMPL_DIGEST:
                                 errors.append(f"Applicator implementation digest drift in {a_ref}: {car.applicator_implementation_digest}")
+                                car_bodies_valid = False
                             elif car.application_status != a_stat:
                                 errors.append(f"Application status mismatch in {a_ref}: {car.application_status} != {a_stat}")
+                                car_bodies_valid = False
                             else:
+                                valid_replay_car_bodies.append(car)
                                 replay_app_rcpts_verified += 1
                         except Exception as e:
                             errors.append(f"Failed to independently verify replay application receipt {a_ref}: {e}")
+                            car_bodies_valid = False
 
-            all_seq_parity = all(seq_parities) if seq_parities else False
-            all_metric_parity = all(met_parities) if met_parities else False
-            all_app_cnt_parity = all(app_cnt_parities) if app_cnt_parities else False
-            all_search_budget_parity = all(s_budget_parities) if s_budget_parities else True
-            search_budget_digest_verified = (replay_manifest.search_budget_digest == FROZEN_SEARCH_BUDGET_DIGEST) if replay_manifest.search_budget_digest else True
+                # 4. Independent Replay-Parity Derivations (Finding F-FD-01C-R1-R1-01)
+                is_pos_applied = (
+                    "fam-pos" in s_info.get("problem_id", "")
+                    and s_info.get("stratum") != "R3_COMMUTATIVE_MIRROR"
+                )
+                exp_cand_status = "APPLIED" if is_pos_applied else "REQUESTED_NOT_APPLIED"
+
+                if is_r1_r1:
+                    if rep_sr is None or orig_sr is None:
+                        seq_parities.append(False)
+                        met_parities.append(False)
+                        stat_parities.append(False)
+                        term_parities.append(False)
+                        sub_parities.append(False)
+                        app_cnt_parities.append(False)
+                        continue
+
+                    # A. Application ID Sequence Parity
+                    orig_app_ids = list(orig_sr.candidate_application_receipt_refs)
+                    rep_app_ids = list(rep_sr.candidate_application_receipt_refs)
+                    ledger_orig_ids = list(ledger.get("ordered_original_application_ids", []))
+                    ledger_rep_ids = list(ledger.get("ordered_replay_application_ids", []))
+                    attempt_app_ids = [a.get("application_id") for a in (replay_app_attempts or [])]
+                    body_app_ids = [c.application_id for c in valid_replay_car_bodies]
+
+                    derived_seq_parity = bool(
+                        car_bodies_valid
+                        and orig_app_ids == rep_app_ids == ledger_orig_ids == ledger_rep_ids == attempt_app_ids == body_app_ids
+                    )
+                    if not derived_seq_parity:
+                        errors.append(f"Derived application ID sequence parity failed for {prob_id}")
+                    if ledger.get("application_id_sequence_parity") != derived_seq_parity:
+                        errors.append(
+                            f"Application ID sequence parity ledger mismatch for {prob_id}: "
+                            f"ledger={ledger.get('application_id_sequence_parity')} != derived={derived_seq_parity}"
+                        )
+
+                    # B. Search Metric Parity
+                    exp_nodes = s_info.get("abstracted_nodes_expanded")
+                    derived_met_parity = bool(
+                        orig_sr.nodes_expanded == rep_sr.nodes_expanded == exp_nodes
+                        and orig_sr.nodes_evaluated == rep_sr.nodes_evaluated
+                        and orig_sr.branch_count == rep_sr.branch_count
+                    )
+                    if not derived_met_parity:
+                        errors.append(
+                            f"Derived search metric parity failed for {prob_id}: "
+                            f"orig_nodes={orig_sr.nodes_expanded}, rep_nodes={rep_sr.nodes_expanded}, exp={exp_nodes}, "
+                            f"orig_eval={orig_sr.nodes_evaluated}, rep_eval={rep_sr.nodes_evaluated}, "
+                            f"orig_branch={orig_sr.branch_count}, rep_branch={rep_sr.branch_count}"
+                        )
+                    if ledger.get("search_metric_parity") != derived_met_parity:
+                        errors.append(
+                            f"Search metric parity ledger mismatch for {prob_id}: "
+                            f"ledger={ledger.get('search_metric_parity')} != derived={derived_met_parity}"
+                        )
+
+                    # C. Candidate Application Status Parity
+                    derived_stat_parity = bool(
+                        orig_sr.candidate_enabled is True
+                        and rep_sr.candidate_enabled is True
+                        and orig_sr.candidate_id == "macro_mul_one_add_zero"
+                        and rep_sr.candidate_id == "macro_mul_one_add_zero"
+                        and orig_sr.candidate_application_status == rep_sr.candidate_application_status == exp_cand_status
+                    )
+                    if not derived_stat_parity:
+                        errors.append(
+                            f"Derived candidate status parity failed for {prob_id}: "
+                            f"orig_status={orig_sr.candidate_application_status}, rep_status={rep_sr.candidate_application_status}, exp={exp_cand_status}, "
+                            f"orig_id={orig_sr.candidate_id}, rep_id={rep_sr.candidate_id}, "
+                            f"orig_enabled={orig_sr.candidate_enabled}, rep_enabled={rep_sr.candidate_enabled}"
+                        )
+                    if ledger.get("candidate_application_status_parity") != derived_stat_parity:
+                        errors.append(
+                            f"Candidate status parity ledger mismatch for {prob_id}: "
+                            f"ledger={ledger.get('candidate_application_status_parity')} != derived={derived_stat_parity}"
+                        )
+
+                    # D. Terminal Status Parity
+                    derived_term_parity = bool(
+                        orig_sr.terminal_status == "SUCCESS"
+                        and rep_sr.terminal_status == "SUCCESS"
+                    )
+                    if not derived_term_parity:
+                        errors.append(
+                            f"Derived terminal status parity failed for {prob_id}: "
+                            f"orig_term={orig_sr.terminal_status}, rep_term={rep_sr.terminal_status}"
+                        )
+                    if ledger.get("terminal_status_parity") != derived_term_parity:
+                        errors.append(
+                            f"Terminal status parity ledger mismatch for {prob_id}: "
+                            f"ledger={ledger.get('terminal_status_parity')} != derived={derived_term_parity}"
+                        )
+
+                    # E. Search Substrate Parity (Frozen Substrate)
+                    derived_sub_parity = bool(
+                        orig_sr.problem_id == rep_sr.problem_id == s_info.get("problem_id") == ledger.get("problem_id")
+                        and orig_sr.problem_digest == rep_sr.problem_digest == s_info.get("problem_digest") == ledger.get("problem_digest")
+                        and orig_sr.search_policy == rep_sr.search_policy
+                        and orig_sr.search_policy_implementation_digest == rep_sr.search_policy_implementation_digest
+                        and orig_sr.environment_identity_digest == rep_sr.environment_identity_digest
+                        and orig_sr.search_budget_digest == rep_sr.search_budget_digest == FROZEN_SEARCH_BUDGET_DIGEST
+                        and ledger.get("search_budget_digest") == FROZEN_SEARCH_BUDGET_DIGEST
+                    )
+                    if not derived_sub_parity:
+                        errors.append(
+                            f"Derived search substrate parity failed for {prob_id}: "
+                            f"p_id=({orig_sr.problem_id}, {rep_sr.problem_id}, {s_info.get('problem_id')}, {ledger.get('problem_id')}), "
+                            f"p_dig=({orig_sr.problem_digest[:8]}, {rep_sr.problem_digest[:8]}, {s_info.get('problem_digest', '')[:8]}), "
+                            f"policy=({orig_sr.search_policy}, {rep_sr.search_policy}), "
+                            f"policy_impl=({orig_sr.search_policy_implementation_digest[:8]}, {rep_sr.search_policy_implementation_digest[:8]}), "
+                            f"env=({orig_sr.environment_identity_digest[:8]}, {rep_sr.environment_identity_digest[:8]}), "
+                            f"budget=({orig_sr.search_budget_digest[:8]}, {rep_sr.search_budget_digest[:8]}, {FROZEN_SEARCH_BUDGET_DIGEST[:8]})"
+                        )
+                    if "search_budget_parity" in ledger and ledger.get("search_budget_parity") != derived_sub_parity:
+                        errors.append(
+                            f"Search budget parity ledger mismatch for {prob_id}: "
+                            f"ledger={ledger.get('search_budget_parity')} != derived={derived_sub_parity}"
+                        )
+
+                    # F. 4-Way Applied Count Numerical Equality Parity
+                    paired_count = s_info.get("candidate_applications_count")
+                    orig_app_cnt = sum(1 for ref in orig_sr.candidate_application_receipt_refs if ref.startswith("app-rec-applied-"))
+                    rep_body_app_cnt = sum(1 for c in valid_replay_car_bodies if c.application_status == "APPLIED")
+                    rep_app_cnt = sum(1 for ref in rep_sr.candidate_application_receipt_refs if ref.startswith("app-rec-applied-"))
+
+                    derived_app_cnt_parity = bool(
+                        car_bodies_valid
+                        and paired_count == orig_app_cnt == rep_body_app_cnt == rep_app_cnt
+                    )
+                    if not derived_app_cnt_parity:
+                        errors.append(
+                            f"Derived applied count parity failed for {prob_id}: "
+                            f"paired={paired_count}, orig_sr={orig_app_cnt}, rep_bodies={rep_body_app_cnt}, rep_sr={rep_app_cnt}"
+                        )
+                    if ledger.get("applied_count_parity") != derived_app_cnt_parity:
+                        errors.append(
+                            f"Applied count parity ledger mismatch for {prob_id}: "
+                            f"ledger={ledger.get('applied_count_parity')} != derived={derived_app_cnt_parity}"
+                        )
+                    if "original_applied_count" in ledger and ledger["original_applied_count"] != paired_count:
+                        errors.append(
+                            f"Ledger original_applied_count {ledger['original_applied_count']} != paired manifest count {paired_count} for {prob_id}"
+                        )
+                    if "replay_applied_count" in ledger and ledger["replay_applied_count"] != rep_body_app_cnt:
+                        errors.append(
+                            f"Ledger replay_applied_count {ledger['replay_applied_count']} != derived replay body count {rep_body_app_cnt} for {prob_id}"
+                        )
+                else:
+                    # Backward compatibility for historical 01C-R1
+                    orig_app_ids = list(orig_sr.candidate_application_receipt_refs) if orig_sr else []
+                    derived_seq_parity = bool(
+                        orig_app_ids == ledger.get("ordered_original_application_ids", []) == ledger.get("ordered_replay_application_ids", [])
+                    )
+                    exp_nodes = s_info.get("abstracted_nodes_expanded")
+                    derived_met_parity = bool(orig_sr and orig_sr.nodes_expanded == exp_nodes)
+                    derived_stat_parity = bool(orig_sr and orig_sr.candidate_application_status == exp_cand_status)
+                    derived_term_parity = bool(orig_sr and orig_sr.terminal_status == "SUCCESS")
+                    derived_sub_parity = True
+                    paired_count = s_info.get("candidate_applications_count")
+                    orig_app_cnt = sum(1 for ref in orig_sr.candidate_application_receipt_refs if ref.startswith("app-rec-applied-")) if orig_sr else 0
+                    derived_app_cnt_parity = bool(
+                        ledger.get("original_applied_count") == paired_count == orig_app_cnt == ledger.get("replay_applied_count")
+                    )
+
+                seq_parities.append(derived_seq_parity)
+                met_parities.append(derived_met_parity)
+                stat_parities.append(derived_stat_parity)
+                term_parities.append(derived_term_parity)
+                sub_parities.append(derived_sub_parity)
+                app_cnt_parities.append(derived_app_cnt_parity)
+
+                if (
+                    derived_seq_parity
+                    and derived_met_parity
+                    and derived_stat_parity
+                    and derived_term_parity
+                    and derived_sub_parity
+                    and derived_app_cnt_parity
+                ):
+                    replay_runs_verified += 1
+
+            all_seq_parity = (len(seq_parities) == 48 and all(seq_parities))
+            all_metric_parity = (len(met_parities) == 48 and all(met_parities))
+            all_candidate_status_parity = (len(stat_parities) == 48 and all(stat_parities))
+            all_terminal_status_parity = (len(term_parities) == 48 and all(term_parities))
+            all_search_budget_parity = (len(sub_parities) == 48 and all(sub_parities))
+            all_app_cnt_parity = (len(app_cnt_parities) == 48 and all(app_cnt_parities))
+
+            if not all_seq_parity:
+                errors.append("Not all replay sequence parities verified across 48 runs")
+            if not all_metric_parity:
+                errors.append("Not all replay metric parities verified across 48 runs")
+            if not all_candidate_status_parity:
+                errors.append("Not all candidate status parities verified across 48 runs")
+            if not all_terminal_status_parity:
+                errors.append("Not all terminal status parities verified across 48 runs")
+            if not all_search_budget_parity:
+                errors.append("Not all search budget parities verified across 48 runs")
+            if not all_app_cnt_parity:
+                errors.append("Not all applied count parities verified across 48 runs")
+
+            if replay_manifest.all_application_id_sequence_parity_verified != all_seq_parity:
+                errors.append("Manifest all_application_id_sequence_parity_verified disagrees with derived parity")
+            if replay_manifest.all_search_metric_parity_verified != all_metric_parity:
+                errors.append("Manifest all_search_metric_parity_verified disagrees with derived parity")
+            if replay_manifest.all_candidate_status_parity_verified != all_candidate_status_parity:
+                errors.append("Manifest all_candidate_status_parity_verified disagrees with derived parity")
+            if replay_manifest.all_terminal_status_parity_verified != all_terminal_status_parity:
+                errors.append("Manifest all_terminal_status_parity_verified disagrees with derived parity")
+            if replay_manifest.all_applied_count_parity_verified != all_app_cnt_parity:
+                errors.append("Manifest all_applied_count_parity_verified disagrees with derived parity")
+            if replay_manifest.all_search_budget_parity_verified is not None and replay_manifest.all_search_budget_parity_verified != all_search_budget_parity:
+                errors.append("Manifest all_search_budget_parity_verified disagrees with derived parity")
+            if replay_manifest.search_budget_digest != FROZEN_SEARCH_BUDGET_DIGEST:
+                errors.append("Manifest search_budget_digest does not match frozen digest")
+
+            if is_r1_r1:
+                if closure.all_applied_count_parity_verified != all_app_cnt_parity:
+                    errors.append("Closure all_applied_count_parity_verified disagrees with derived parity")
+                if closure.all_search_budget_parity_verified != all_search_budget_parity:
+                    errors.append("Closure all_search_budget_parity_verified disagrees with derived parity")
 
         # 6. Whole-Problem Transform Manifest and SMT Verification (Finding F-FD-01C-03)
         whole_manifest_path = self._resolve_path(closure.whole_problem_transform_manifest_ref)
@@ -747,4 +1006,10 @@ class RepresentationCustodyRepairResolver:
             search_budget_digest_verified=search_budget_digest_verified,
             original_attempt_body_custody=closure.original_attempt_body_custody or "PARTIAL_AND_EXPLICIT",
             deterministic_replay_attempt_body_custody=closure.deterministic_replay_attempt_body_custody or "COMPLETE",
+            derived_sequence_parity_count=sum(1 for p in seq_parities if p),
+            derived_search_metric_parity_count=sum(1 for p in met_parities if p),
+            derived_candidate_status_parity_count=sum(1 for p in stat_parities if p),
+            derived_terminal_status_parity_count=sum(1 for p in term_parities if p),
+            derived_search_substrate_parity_count=sum(1 for p in sub_parities if p),
+            derived_applied_count_parity_count=sum(1 for p in app_cnt_parities if p),
         )

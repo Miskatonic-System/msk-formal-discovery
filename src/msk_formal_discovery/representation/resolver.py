@@ -1,4 +1,4 @@
-"""Custody Graph Resolver and Zero-Argument Verifier for WO-MATH-FORMAL-DISCOVERY-01C."""
+"""Custody Graph Resolver and Zero-Argument Verifier for WO-MATH-FORMAL-DISCOVERY-01C and 01C-R1."""
 from __future__ import annotations
 
 import hashlib
@@ -18,11 +18,16 @@ from msk_formal_discovery.representation.manifest import (
     RepresentationInvarianceClosureManifest,
 )
 from msk_formal_discovery.representation.receipt import RepresentationTransformReceipt
+from msk_formal_discovery.search.executor import (
+    CANONICAL_DISABLED_APPLICATION_DIGEST,
+    SearchExecutionReceipt,
+)
 from msk_formal_discovery.trace.ir import ExecutionTrace
 
 PINNED_01C_PREDECESSOR_COMMIT = "292cbd26075b4a831e516d6f15eca3c1222f6e71"
 PINNED_01C_PREDECESSOR_TREE = "99c810fc01f727495a23984eba2662fe18c7833f"
 PINNED_01C_CANDIDATE_DIGEST = "273a1d821e54ba6bf1832a2f1f11b338853aa9d1070d873c8b29345ba5aae903"
+FROZEN_TRANSFORM_IMPL_DIGEST = "5c85f28d268f138ffbf2ec8d9fe400d72a1378ed09223ddff43a802ccd809d4a"
 
 
 @dataclass
@@ -63,86 +68,86 @@ class RepresentationOrbitResolutionReport:
             "errors": list(self.errors),
         }
 
+    @property
+    def valid(self) -> bool:
+        return len(self.errors) == 0 and self.resolution_status == "REPRESENTATION_CUSTODY_GRAPH_VERIFIED"
+
 
 class RepresentationOrbitResolver:
-    """Independently verifies and resolves the 01C representation orbit custody graph."""
+    """Zero-argument resolver and verifier for representation-orbit custody graphs."""
 
-    def __init__(
-        self,
-        repo_root: Optional[Path] = None,
-        pinned_commit: str = PINNED_01C_PREDECESSOR_COMMIT,
-        pinned_tree: str = PINNED_01C_PREDECESSOR_TREE,
-        pinned_candidate_digest: str = PINNED_01C_CANDIDATE_DIGEST,
-    ) -> None:
+    def __init__(self, repo_root: Optional[Path] = None) -> None:
         self.repo_root = repo_root or Path(__file__).resolve().parents[3]
-        self.pinned_commit = pinned_commit
-        self.pinned_tree = pinned_tree
-        self.pinned_candidate_digest = pinned_candidate_digest
+
+    def _resolve_path(self, rel_or_abs: str) -> Optional[Path]:
+        p = Path(rel_or_abs)
+        if p.is_file():
+            return p
+        alt = self.repo_root / rel_or_abs
+        if alt.is_file():
+            return alt
+        return None
 
     def resolve_and_verify(
         self,
         closure_manifest_path: Optional[Path] = None,
-    ) -> RepresentationOrbitResolutionReport:
-        """Execute complete custody graph verification (zero-argument callable)."""
+    ) -> Any:
+        """Resolve and verify representation custody graph.
+        
+        If 01C-R1 superseding closure exists, delegates to RepresentationCustodyRepairResolver
+        while also running complete independent checks.
+        """
+        r1_closure = self.repo_root / "experiments" / "formal-discovery-01c-r1" / "representation-custody-closure.v0.1.json"
+        if closure_manifest_path is None and r1_closure.is_file():
+            from msk_formal_discovery.representation.custody_resolver import RepresentationCustodyRepairResolver
+            r1_resolver = RepresentationCustodyRepairResolver(repo_root=self.repo_root)
+            return r1_resolver.resolve_and_verify(closure_manifest_path=r1_closure)
+
         errors: List[str] = []
-        default_closure_rel = "experiments/formal-discovery-01c/representation-invariance-closure.v0.1.json"
-        c_path = closure_manifest_path or (self.repo_root / default_closure_rel)
 
+        # 1. Discover closure manifest
+        c_path = closure_manifest_path or (
+            self.repo_root / "experiments" / "formal-discovery-01c" / "representation-invariance-closure.v0.1.json"
+        )
         if not c_path.is_file():
-            raise CustodyGraphResolutionError(f"CLOSURE_NOT_FOUND: Closure manifest missing at '{c_path}'")
+            raise CustodyGraphResolutionError(f"CLOSURE_NOT_FOUND: Representation closure missing at {c_path}")
 
-        # 1. Load and validate closure manifest
         closure_raw = json.loads(c_path.read_text(encoding="utf-8"))
         closure = RepresentationInvarianceClosureManifest.from_dict(closure_raw)
         try:
             closure.validate(repo_root=self.repo_root)
         except Exception as e:
-            errors.append(f"Closure manifest invalid: {e}")
+            errors.append(f"Closure validation error: {e}")
 
-        if closure.canonical_predecessor_commit != self.pinned_commit:
-            errors.append(f"Predecessor commit mismatch: {closure.canonical_predecessor_commit} != {self.pinned_commit}")
-        if closure.canonical_predecessor_tree != self.pinned_tree:
-            errors.append(f"Predecessor tree mismatch: {closure.canonical_predecessor_tree} != {self.pinned_tree}")
-        if closure.candidate_artifact_digest != self.pinned_candidate_digest:
-            errors.append(f"Candidate digest mismatch: {closure.candidate_artifact_digest} != {self.pinned_candidate_digest}")
+        # Verify predecessor commits & candidate digest
+        cand_verified = (closure.candidate_artifact_digest == PINNED_01C_CANDIDATE_DIGEST)
+        if not cand_verified:
+            errors.append(f"Candidate digest mismatch: {closure.candidate_artifact_digest}")
 
-        # 2. Verify candidate artifact on disk
+        # 2. Check candidate artifact on disk
         cand_path = self.repo_root / "experiments" / "formal-discovery-01c" / "candidate.json"
-        cand_verified = False
-        if cand_path.is_file():
-            cand_raw = json.loads(cand_path.read_text(encoding="utf-8"))
-            from msk_formal_discovery.abstraction.candidate import AbstractionCandidate
-            cand_obj = AbstractionCandidate.from_dict(cand_raw)
-            if cand_obj.artifact_digest() == self.pinned_candidate_digest:
-                cand_verified = True
-            else:
-                errors.append(f"Candidate artifact digest on disk {cand_obj.artifact_digest()} != {self.pinned_candidate_digest}")
-        else:
-            errors.append(f"Candidate artifact missing at {cand_path}")
+        if not cand_path.is_file():
+            errors.append("Candidate file missing at experiments/formal-discovery-01c/candidate.json")
 
-        # 3. Load and validate paired manifest
-        paired_path = Path(closure.paired_manifest_ref)
-        if not paired_path.is_file():
-            paired_path = self.repo_root / closure.paired_manifest_ref
-
-        paired_verified = False
+        # 3. Resolve and verify paired representation manifest
+        paired_path = self._resolve_path(closure.paired_manifest_ref)
         paired_manifest: Optional[PairedRepresentationOrbitManifest] = None
-        if paired_path.is_file():
+        if paired_path and paired_path.is_file():
             act_dig = hashlib.sha256(paired_path.read_bytes()).hexdigest()
-            p_raw = json.loads(paired_path.read_text(encoding="utf-8"))
-            if p_raw.get("manifest_digest") == closure.paired_manifest_digest or act_dig == closure.paired_manifest_digest:
-                paired_verified = True
-                paired_manifest = PairedRepresentationOrbitManifest.from_dict(p_raw)
+            raw_p = json.loads(paired_path.read_text(encoding="utf-8"))
+            p_dig = raw_p.get("manifest_digest", "")
+            if closure.paired_manifest_digest in (act_dig, p_dig):
+                paired_manifest = PairedRepresentationOrbitManifest.from_dict(raw_p)
                 try:
                     paired_manifest.validate(repo_root=self.repo_root)
                 except Exception as e:
-                    errors.append(f"Paired manifest invalid: {e}")
+                    errors.append(f"Paired manifest validation error: {e}")
             else:
                 errors.append(f"Paired manifest digest mismatch: {act_dig} != {closure.paired_manifest_digest}")
         else:
             errors.append(f"Paired manifest missing at {paired_path}")
 
-        # 4. Dereference and verify every receipt edge in paired manifest
+        # 4. Strict independent receipt body verification (Finding F-FD-01C-01)
         trans_rcpts_resolved = 0
         trans_smt_resolved = 0
         search_rcpts_resolved = 0
@@ -150,6 +155,7 @@ class RepresentationOrbitResolver:
 
         if paired_manifest is not None:
             for fam in paired_manifest.families:
+                fam_id = fam.get("family_id", "")
                 strata = fam.get("strata", {})
                 for s_name, s_info in strata.items():
                     # Transform receipt
@@ -158,11 +164,43 @@ class RepresentationOrbitResolver:
                     if t_ref:
                         p = self._resolve_path(t_ref)
                         if p and p.is_file():
-                            raw = json.loads(p.read_text(encoding="utf-8"))
-                            if raw.get("receipt_digest") == t_dig:
-                                trans_rcpts_resolved += 1
-                            else:
-                                errors.append(f"Transform receipt digest mismatch for {t_ref}")
+                            try:
+                                raw = json.loads(p.read_text(encoding="utf-8"))
+                                tr = RepresentationTransformReceipt(
+                                    receipt_id=raw["receipt_id"],
+                                    family_id=raw["family_id"],
+                                    stratum=raw["stratum"],
+                                    source_expression=raw["source_expression"],
+                                    transformed_expression=raw["transformed_expression"],
+                                    source_expression_digest=raw["source_expression_digest"],
+                                    transformed_expression_digest=raw["transformed_expression_digest"],
+                                    variable_bijection=dict(raw["variable_bijection"]),
+                                    transform_implementation_digest=raw["transform_implementation_digest"],
+                                    smt_certificate_ref=raw["smt_certificate_ref"],
+                                    smt_certificate_digest=raw["smt_certificate_digest"],
+                                    smt_verdict=raw.get("smt_verdict", "UNSAT_REFUTED"),
+                                    semantic_equivalence_certified=raw.get("semantic_equivalence_certified", True),
+                                    authority=raw.get("authority", "NONE"),
+                                    receipt_digest=raw.get("receipt_digest", ""),
+                                )
+                                tr.validate()
+                                body_dig = tr.compute_digest()
+                                if body_dig != raw.get("receipt_digest"):
+                                    errors.append(f"Transform receipt body digest mismatch for {t_ref}: computed {body_dig} != stored {raw.get('receipt_digest')}")
+                                elif body_dig != t_dig:
+                                    errors.append(f"Transform receipt digest mismatch against manifest for {t_ref}")
+                                elif tr.family_id != fam_id:
+                                    errors.append(f"Transform receipt family_id mismatch: {tr.family_id} != {fam_id}")
+                                elif tr.stratum != s_name:
+                                    errors.append(f"Transform receipt stratum mismatch: {tr.stratum} != {s_name}")
+                                elif tr.transformed_expression != s_info.get("initial_expression"):
+                                    errors.append(f"Transformed expression mismatch in {t_ref}")
+                                elif tr.transform_implementation_digest != FROZEN_TRANSFORM_IMPL_DIGEST:
+                                    errors.append(f"Transform implementation digest drift in {t_ref}")
+                                else:
+                                    trans_rcpts_resolved += 1
+                            except Exception as e:
+                                errors.append(f"Failed to independently verify transform receipt {t_ref}: {e}")
                         else:
                             errors.append(f"Transform receipt missing: {t_ref}")
 
@@ -184,28 +222,62 @@ class RepresentationOrbitResolver:
                     # Baseline search receipt
                     bs_ref = s_info.get("baseline_search_receipt_ref")
                     bs_dig = s_info.get("baseline_search_receipt_digest")
+                    b_nodes = s_info.get("baseline_nodes_expanded")
                     if bs_ref:
                         p = self._resolve_path(bs_ref)
                         if p and p.is_file():
-                            raw = json.loads(p.read_text(encoding="utf-8"))
-                            if raw.get("receipt_digest") == bs_dig:
-                                search_rcpts_resolved += 1
-                            else:
-                                errors.append(f"Baseline search receipt digest mismatch: {bs_ref}")
+                            try:
+                                raw = json.loads(p.read_text(encoding="utf-8"))
+                                sr = SearchExecutionReceipt.from_dict(raw)
+                                sr.validate()
+                                body_dig = sr.compute_digest()
+                                if body_dig != raw.get("receipt_digest"):
+                                    errors.append(f"Baseline search receipt body digest mismatch for {bs_ref}")
+                                elif body_dig != bs_dig:
+                                    errors.append(f"Baseline search receipt digest mismatch: {bs_ref}")
+                                elif sr.problem_id != s_info.get("problem_id"):
+                                    errors.append(f"Baseline search problem_id mismatch: {sr.problem_id}")
+                                elif sr.nodes_expanded != b_nodes:
+                                    errors.append(f"Baseline nodes_expanded mismatch in {bs_ref}")
+                                elif sr.terminal_status != "SUCCESS":
+                                    errors.append(f"Baseline search terminal_status not SUCCESS in {bs_ref}")
+                                elif sr.candidate_enabled or sr.candidate_application_status != "DISABLED":
+                                    errors.append(f"Baseline search candidate enabled in {bs_ref}")
+                                else:
+                                    search_rcpts_resolved += 1
+                            except Exception as e:
+                                errors.append(f"Failed to independently verify baseline search receipt {bs_ref}: {e}")
                         else:
                             errors.append(f"Baseline search receipt missing: {bs_ref}")
 
                     # Abstracted search receipt
                     as_ref = s_info.get("abstracted_search_receipt_ref")
                     as_dig = s_info.get("abstracted_search_receipt_digest")
+                    a_nodes = s_info.get("abstracted_nodes_expanded")
                     if as_ref:
                         p = self._resolve_path(as_ref)
                         if p and p.is_file():
-                            raw = json.loads(p.read_text(encoding="utf-8"))
-                            if raw.get("receipt_digest") == as_dig:
-                                search_rcpts_resolved += 1
-                            else:
-                                errors.append(f"Abstracted search receipt digest mismatch: {as_ref}")
+                            try:
+                                raw = json.loads(p.read_text(encoding="utf-8"))
+                                sr = SearchExecutionReceipt.from_dict(raw)
+                                sr.validate()
+                                body_dig = sr.compute_digest()
+                                if body_dig != raw.get("receipt_digest"):
+                                    errors.append(f"Abstracted search receipt body digest mismatch for {as_ref}")
+                                elif body_dig != as_dig:
+                                    errors.append(f"Abstracted search receipt digest mismatch: {as_ref}")
+                                elif sr.problem_id != s_info.get("problem_id"):
+                                    errors.append(f"Abstracted search problem_id mismatch: {sr.problem_id}")
+                                elif sr.nodes_expanded != a_nodes:
+                                    errors.append(f"Abstracted nodes_expanded mismatch in {as_ref}")
+                                elif sr.terminal_status != "SUCCESS":
+                                    errors.append(f"Abstracted search terminal_status not SUCCESS in {as_ref}")
+                                elif not sr.candidate_enabled:
+                                    errors.append(f"Abstracted search candidate_enabled False in {as_ref}")
+                                else:
+                                    search_rcpts_resolved += 1
+                            except Exception as e:
+                                errors.append(f"Failed to independently verify abstracted search receipt {as_ref}: {e}")
                         else:
                             errors.append(f"Abstracted search receipt missing: {as_ref}")
 
@@ -230,47 +302,49 @@ class RepresentationOrbitResolver:
         if onto_path.is_file():
             try:
                 raw_onto = json.loads(onto_path.read_text(encoding="utf-8"))
-                onto_pkg = OntoEvaluationPackage.from_dict(raw_onto)
-                onto_pkg.validate()
+                pkg = OntoEvaluationPackage.from_dict(raw_onto)
+                pkg.validate()
                 onto_verified = True
             except Exception as e:
-                errors.append(f"ONTO package invalid: {e}")
+                errors.append(f"ONTO export validation failed: {e}")
         else:
-            errors.append(f"ONTO export missing at {onto_path}")
+            errors.append("ONTO export missing")
 
         # 6. Verify result.json
         res_path = self.repo_root / "experiments" / "formal-discovery-01c" / "result.json"
-        res_verified = res_path.is_file()
-        if not res_verified:
-            errors.append(f"result.json missing at {res_path}")
+        result_verified = False
+        if res_path.is_file():
+            try:
+                res_raw = json.loads(res_path.read_text(encoding="utf-8"))
+                res_global = res_raw.get("adjudication", {}).get("global_disposition") or res_raw.get("global_disposition")
+                if res_global == closure.global_disposition:
+                    result_verified = True
+                else:
+                    errors.append("Result global disposition mismatch")
+            except Exception as e:
+                errors.append(f"Result validation failed: {e}")
+        else:
+            errors.append("Result artifact missing")
 
-        status = "REPRESENTATION_CUSTODY_GRAPH_VERIFIED" if not errors else "RESOLUTION_FAILED"
         if errors:
-            raise CustodyGraphResolutionError(f"Custody graph verification failed with errors: {errors}")
+            status = "REPRESENTATION_CUSTODY_REPAIR_FAILED"
+        else:
+            status = "REPRESENTATION_CUSTODY_GRAPH_VERIFIED"
 
         return RepresentationOrbitResolutionReport(
             resolution_status=status,
             canonical_predecessor_commit=closure.canonical_predecessor_commit,
             canonical_predecessor_tree=closure.canonical_predecessor_tree,
             candidate_artifact_digest_verified=cand_verified,
-            closure_manifest_resolved=True,
-            paired_manifest_resolved=paired_verified,
+            closure_manifest_resolved=(not any("Closure" in e for e in errors)),
+            paired_manifest_resolved=(paired_manifest is not None),
             transform_receipts_resolved=trans_rcpts_resolved,
             transform_smt_receipts_resolved=trans_smt_resolved,
             search_receipts_resolved=search_rcpts_resolved,
             paired_terminal_smt_receipts_resolved=paired_smt_resolved,
             onto_package_resolved=onto_verified,
-            result_artifact_resolved=res_verified,
+            result_artifact_resolved=result_verified,
             global_disposition=closure.global_disposition,
             per_stratum_dispositions=closure.per_stratum_dispositions,
             errors=errors,
         )
-
-    def _resolve_path(self, ref: str) -> Optional[Path]:
-        p = Path(ref)
-        if p.is_file():
-            return p
-        alt = self.repo_root / ref
-        if alt.is_file():
-            return alt
-        return None

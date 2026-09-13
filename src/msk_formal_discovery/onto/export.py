@@ -112,6 +112,9 @@ class OntoEvaluationPackage:
     evidence_refs: List[OntoEvidenceRef] = field(default_factory=list)
     functional_search_benefit_scope: Optional[str] = None
     representation_invariance_scope: Optional[str] = None
+    alpha_renaming_invariance: Optional[str] = None
+    associative_regrouping_invariance: Optional[str] = None
+    commutative_mirror_invariance: Optional[str] = None
     end_to_end_runtime_benefit: str = "NOT_ESTABLISHED"
     claim_ceiling: str = "ENGINEERING_ABSTRACTION_EFFECT_ONLY"
     authority: str = "NONE"
@@ -249,6 +252,12 @@ class OntoEvaluationPackage:
             data["functional_search_benefit_scope"] = self.functional_search_benefit_scope
         if self.representation_invariance_scope is not None:
             data["representation_invariance_scope"] = self.representation_invariance_scope
+        if self.alpha_renaming_invariance is not None:
+            data["alpha_renaming_invariance"] = self.alpha_renaming_invariance
+        if self.associative_regrouping_invariance is not None:
+            data["associative_regrouping_invariance"] = self.associative_regrouping_invariance
+        if self.commutative_mirror_invariance is not None:
+            data["commutative_mirror_invariance"] = self.commutative_mirror_invariance
         data["end_to_end_runtime_benefit"] = self.end_to_end_runtime_benefit
         data["claim_ceiling"] = self.claim_ceiling
         return data
@@ -280,6 +289,9 @@ class OntoEvaluationPackage:
             evidence_refs=evidence_refs,
             functional_search_benefit_scope=data.get("functional_search_benefit_scope"),
             representation_invariance_scope=data.get("representation_invariance_scope"),
+            alpha_renaming_invariance=data.get("alpha_renaming_invariance"),
+            associative_regrouping_invariance=data.get("associative_regrouping_invariance"),
+            commutative_mirror_invariance=data.get("commutative_mirror_invariance"),
             end_to_end_runtime_benefit=data.get("end_to_end_runtime_benefit", "NOT_ESTABLISHED"),
             claim_ceiling=data.get("claim_ceiling", "ENGINEERING_ABSTRACTION_EFFECT_ONLY"),
             authority=data.get("authority", "NONE"),

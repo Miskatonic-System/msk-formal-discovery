@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "miskatonic.representation-problem-custody-receipt.v0.2",
+  "title": "Miskatonic Representation Problem Custody Receipt Schema v0.2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "family_id",
+    "representation_stratum",
+    "source_problem_id",
+    "source_problem_digest",
+    "transformed_problem_id",
+    "transformed_problem_digest",
+    "source_initial_expression",
+    "source_initial_expression_digest",
+    "transformed_initial_expression",
+    "transformed_initial_expression_digest",
+    "source_goal_expression",
+    "source_goal_digest",
+    "transformed_goal_expression",
+    "transformed_goal_digest",
+    "variable_bijection",
+    "transform_parameters",
+    "transform_implementation_digest",
+    "original_v0_1_transform_receipt_ref",
+    "original_v0_1_transform_receipt_digest",
+    "original_initial_semantics_smt_ref",
+    "original_initial_semantics_smt_digest",
+    "whole_problem_semantics_smt_ref",
+    "whole_problem_semantics_smt_digest",
+    "authority",
+    "receipt_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "miskatonic.representation-problem-custody-receipt.v0.2"
+    },
+    "receipt_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "family_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "representation_stratum": {
+      "type": "string",
+      "enum": [
+        "R0_CANONICAL_CONTROL",
+        "R1_ALPHA_RENAMED",
+        "R2_ASSOCIATIVE_REGROUPED",
+        "R3_COMMUTATIVE_MIRROR"
+      ]
+    },
+    "source_problem_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_problem_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "transformed_problem_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "transformed_problem_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source_initial_expression": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_initial_expression_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "transformed_initial_expression": {
+      "type": "string",
+      "minLength": 1
+    },
+    "transformed_initial_expression_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source_goal_expression": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_goal_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "transformed_goal_expression": {
+      "type": "string",
+      "minLength": 1
+    },
+    "transformed_goal_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "variable_bijection": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "transform_parameters": {
+      "type": "object"
+    },
+    "transform_implementation_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "original_v0_1_transform_receipt_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "original_v0_1_transform_receipt_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "original_initial_semantics_smt_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "original_initial_semantics_smt_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "whole_problem_semantics_smt_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "whole_problem_semantics_smt_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "authority": {
+      "const": "NONE"
+    },
+    "receipt_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

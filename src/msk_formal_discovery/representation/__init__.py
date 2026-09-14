@@ -27,6 +27,9 @@ from msk_formal_discovery.representation.adjudication import (
     get_representation_adjudicator_implementation_digest,
 )
 from msk_formal_discovery.representation.runner import (
+    PersistenceCollisionError,
+    compute_primary_candidate_application_receipt_filename,
+    persist_primary_candidate_application_receipt,
     validate_01c_freeze,
     run_01c_execution,
 )
@@ -53,6 +56,9 @@ __all__ = [
     "adjudicate_representation_orbit",
     "adjudicate_stratum",
     "get_representation_adjudicator_implementation_digest",
+    "PersistenceCollisionError",
+    "compute_primary_candidate_application_receipt_filename",
+    "persist_primary_candidate_application_receipt",
     "validate_01c_freeze",
     "run_01c_execution",
     "RepresentationOrbitResolver",

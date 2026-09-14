@@ -13,8 +13,13 @@ from msk_formal_discovery.abstraction.candidate import (
     compute_candidate_artifact_digest,
 )
 from msk_formal_discovery.application.applicator import (
+    CandidateApplicationReceipt,
     CandidateApplicator,
     get_applicator_implementation_digest,
+)
+from msk_formal_discovery.core.exceptions import (
+    FormalDiscoveryError,
+    ReceiptValidationError,
 )
 from msk_formal_discovery.backend.contract import ProblemDefinition
 from msk_formal_discovery.backend.z3_adapter import Z3Adapter
@@ -64,6 +69,97 @@ PINNED_01B_CANDIDATE_DIGEST = "273a1d821e54ba6bf1832a2f1f11b338853aa9d1070d873c8
 PINNED_CANONICAL_PREDECESSOR_COMMIT = "292cbd26075b4a831e516d6f15eca3c1222f6e71"
 PINNED_CANONICAL_PREDECESSOR_TREE = "99c810fc01f727495a23984eba2662fe18c7833f"
 DEFAULT_01C_DIR = Path(__file__).resolve().parents[3] / "experiments" / "formal-discovery-01c"
+
+
+class PersistenceCollisionError(FileExistsError, FormalDiscoveryError):
+    """Raised when an occurrence-addressed receipt target path already exists."""
+
+
+def compute_primary_candidate_application_receipt_filename(
+    problem_id: str,
+    ordinal: int,
+    receipt_digest: str,
+) -> str:
+    """Compute deterministic occurrence-addressed filename for primary candidate application receipt.
+
+    Format: application-{problem_id}-{ordinal:04d}-{receipt_digest[:16]}.json
+    """
+    if not isinstance(ordinal, int) or isinstance(ordinal, bool) or ordinal < 0:
+        raise ValueError(f"INVALID_ORDINAL: ordinal must be a non-negative integer, got {ordinal!r}")
+    if not problem_id or not isinstance(problem_id, str):
+        raise ValueError(f"INVALID_PROBLEM_ID: problem_id must be a non-empty string, got {problem_id!r}")
+    if not receipt_digest or not isinstance(receipt_digest, str) or len(receipt_digest) < 16:
+        raise ValueError(f"INVALID_RECEIPT_DIGEST: receipt_digest must be at least 16 hex characters, got {receipt_digest!r}")
+
+    digest_prefix = receipt_digest[:16]
+    return f"application-{problem_id}-{ordinal:04d}-{digest_prefix}.json"
+
+
+def persist_primary_candidate_application_receipt(
+    receipt: CandidateApplicationReceipt,
+    problem_id: str,
+    ordinal: int,
+    receipts_dir: Path,
+) -> Path:
+    """Persist a single CandidateApplicationReceipt with occurrence-unique addressing.
+
+    Enforces:
+    - Receipt schema validation
+    - Receipt digest integrity before persistence (computed == stored)
+    - Deterministic occurrence-unique naming: application-{problem_id}-{ordinal:04d}-{receipt_digest[:16]}.json
+    - No overwrite: fails closed if target path already exists (PersistenceCollisionError)
+    - Post-write readback integrity validation (SHA-256 and field preservation)
+    """
+    if not isinstance(ordinal, int) or isinstance(ordinal, bool) or ordinal < 0:
+        raise ValueError(f"INVALID_ORDINAL: ordinal must be a non-negative integer, got {ordinal!r}")
+
+    # Validate schema
+    receipt.validate()
+
+    # Verify digest integrity before persistence
+    computed_digest = receipt.compute_digest()
+    if receipt.receipt_digest and receipt.receipt_digest != computed_digest:
+        raise ReceiptValidationError(
+            f"RECEIPT_DIGEST_MISMATCH: computed digest {computed_digest} does not match stored {receipt.receipt_digest}"
+        )
+    if not receipt.receipt_digest:
+        receipt.receipt_digest = computed_digest
+
+    filename = compute_primary_candidate_application_receipt_filename(
+        problem_id=problem_id,
+        ordinal=ordinal,
+        receipt_digest=computed_digest,
+    )
+    target_path = receipts_dir / filename
+
+    # Fail closed if target path already exists
+    if target_path.exists():
+        raise PersistenceCollisionError(
+            f"PERSISTENCE_COLLISION: Target receipt path already exists: {target_path}"
+        )
+
+    # Serialize without mutating receipt semantic fields
+    serialized_dict = receipt.to_dict()
+    serialized_bytes = json.dumps(serialized_dict, indent=2).encode("utf-8")
+    expected_file_sha256 = hashlib.sha256(serialized_bytes).hexdigest()
+
+    # Write to target path
+    receipts_dir.mkdir(parents=True, exist_ok=True)
+    target_path.write_bytes(serialized_bytes)
+
+    # Post-persistence readback integrity validation
+    readback_bytes = target_path.read_bytes()
+    if hashlib.sha256(readback_bytes).hexdigest() != expected_file_sha256:
+        target_path.unlink(missing_ok=True)
+        raise IOError(f"READBACK_VALIDATION_FAILED: Hash mismatch on readback for {target_path}")
+
+    readback_dict = json.loads(readback_bytes.decode("utf-8"))
+    readback_receipt = CandidateApplicationReceipt.from_dict(readback_dict)
+    if readback_receipt.compute_digest() != computed_digest:
+        target_path.unlink(missing_ok=True)
+        raise IOError(f"READBACK_DIGEST_MISMATCH: Recomputed digest mismatch on readback for {target_path}")
+
+    return target_path
 
 
 def validate_01c_freeze(exp_dir: Optional[Path] = None) -> Dict[str, Any]:
@@ -277,9 +373,13 @@ def run_01c_execution(
                 (receipts_dir / f"smt-paired-{rk_prob.problem_id}.json").write_text(
                     json.dumps(paired_smt_trace.to_dict(), indent=2), encoding="utf-8"
                 )
-                for app_rcpt in bundle_abs.candidate_application_receipts:
-                    app_path = receipts_dir / f"application-{app_rcpt.application_id}.json"
-                    app_path.write_text(json.dumps(app_rcpt.to_dict(), indent=2), encoding="utf-8")
+                for ordinal, app_rcpt in enumerate(bundle_abs.candidate_application_receipts):
+                    persist_primary_candidate_application_receipt(
+                        receipt=app_rcpt,
+                        problem_id=rk_prob.problem_id,
+                        ordinal=ordinal,
+                        receipts_dir=receipts_dir,
+                    )
 
             base_term_dig = bundle_base.terminal_expression_digest
             abs_term_dig = bundle_abs.terminal_expression_digest

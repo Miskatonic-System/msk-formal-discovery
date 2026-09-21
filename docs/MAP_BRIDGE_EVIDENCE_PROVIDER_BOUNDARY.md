@@ -233,3 +233,33 @@ INDEPENDENT_COMPOSITION
 ## Nonclaims
 
 This boundary does not establish that every bridge can be formalized, every useful analogy should be rejected, a map-composition receipt proves the source theorems, automated bridge review replaces mathematical judgment, or Formal Discovery owns domain-specific maps.
+
+
+## Specialized bridge family: Squeeze Bridge
+
+The generic bridge registry now recognizes a theorem-scoped order/sandwich specialization documented in:
+
+```text
+docs/SQUEEZE_BRIDGE_EVIDENCE_PROVIDER_BOUNDARY.md
+```
+
+Additional admissible bridge/evidence classes include:
+
+```text
+ORDER_BOUNDED_BRIDGE
+STOCHASTIC_DOMINATION_BRIDGE
+COUPLING_SANDWICH_CERTIFICATE
+COMPARISON_PRINCIPLE_CERTIFICATE
+MONOTONICITY_WITNESS
+SQUEEZE_TRANSFER_RECEIPT
+```
+
+Permanent:
+
+```text
+SQUEEZE_BRIDGE
+!=
+MODEL_EQUIVALENCE
+```
+
+A Squeeze Bridge may discharge a target obligation through order-compatible property transfer without establishing a bidirectional representation map.

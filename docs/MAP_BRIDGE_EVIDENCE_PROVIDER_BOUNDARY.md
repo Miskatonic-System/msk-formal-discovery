@@ -263,3 +263,33 @@ MODEL_EQUIVALENCE
 ```
 
 A Squeeze Bridge may discharge a target obligation through order-compatible property transfer without establishing a bidirectional representation map.
+
+
+## Specialized bridge families: Topological Galois and Hamiltonian variational transport
+
+Additional future evidence boundaries are registered in:
+
+```text
+docs/TOPOLOGICAL_GALOIS_BRIDGE_EVIDENCE_BOUNDARY.md
+docs/HAMILTONIAN_VARIATIONAL_GALOIS_BRIDGE_EVIDENCE_BOUNDARY.md
+```
+
+These boundaries add exact transport records for:
+
+```text
+coefficient/discriminant complement
+-> root configuration
+-> braid group
+-> permutation monodromy
+-> Galois/derived-series maps
+```
+
+and separately define the currently missing bridge into Hamiltonian variational differential-Galois data.
+
+Permanent:
+
+```text
+TOPOLOGICAL_MONODROMY_BRIDGE
+!=
+HAMILTONIAN_VARIATIONAL_GALOIS_BRIDGE
+```

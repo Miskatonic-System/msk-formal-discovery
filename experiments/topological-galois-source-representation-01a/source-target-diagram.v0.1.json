@@ -1,0 +1,33 @@
+{
+  "source_side": {
+    "B_n": "pi_1(UConf_n(C)) — parameter loops",
+    "pi_perm: B_n -> S_n": "S1",
+    "alpha: B_n -> Aut(F_n)": "S2"
+  },
+  "target_side": {
+    "F_n": "pi_1(P^1_q minus (roots of f_{a,E} + infinity))",
+    "rho_tgt: F_n -> GL_2(C)": "monodromy of the algebraic NVE (NOT computed here)",
+    "G_diff": "Zariski closure scope required (NOT computed here)"
+  },
+  "only_allowed_structural_relation": "B_n acts on F_n through alpha; hence B_n acts on Hom(F_n, GL_2(C))/conj by (beta . [rho]) = [rho o alpha(beta^{-1})] — the frozen LEFT Hurwitz action, exact on tuples (certificate HURWITZ)",
+  "what_it_does_NOT_establish": [
+    "rho_src = rho_tgt",
+    "B_n = F_n",
+    "Burau = NVE monodromy",
+    "source representation determines G_diff"
+  ],
+  "diagram": "B_n --alpha--> Aut(F_n)      and separately      rho_tgt : F_n -> GL_2(C)      ;  B_n acts on Hom(F_n, GL_2(C))/conj",
+  "remaining_bridge_obligation": {
+    "BO-1_structural": "exhibit the parameter-braid -> monodromy-tuple transport as the map beta -> beta . [rho_tgt] and state its domain of validity (which parameter loops, which basepoint conventions). Expected TRUE; now STATABLE with S1 + S2 only.",
+    "BO-2_predicate_transport": "decide whether 'G^0 abelian' is a function of (n, pi_perm data, alpha-orbit data) alone. Expected FALSE. Falsification design: fix (n, a, E) hence the root configuration and all source data; vary (mu, lambda); ask whether the predicate changes. Nothing on the source side sees (mu, lambda).",
+    "BO-3_residual": "with the coupling class fixed, ask whether any degree-distinguishing source invariant constrains G. UNKNOWN.",
+    "not_executed_here": [
+      "Kovacic on CAND-1",
+      "G_diff",
+      "G^0 classification",
+      "(mu, lambda) sweep",
+      "Morales-Ramis",
+      "integrability/chaos claims"
+    ]
+  }
+}

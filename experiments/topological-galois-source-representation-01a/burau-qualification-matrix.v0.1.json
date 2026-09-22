@@ -1,0 +1,103 @@
+{
+  "schema_version": "miskatonic.formal-discovery.tg-burau-qualification-matrix.v0.1",
+  "work_order": "WO-FORMAL-TOPOLOGICAL-GALOIS-SOURCE-REPRESENTATION-01A",
+  "rows": {
+    "3": {
+      "relations_hold_t=-1": true,
+      "relations_hold_t=2_control": true,
+      "invariant_alternating_forms": {
+        "BB_reduced": {
+          "solution_space_dimension": 1,
+          "rank_of_solution": 2,
+          "nondegenerate": true
+        },
+        "BB_reduced_dual": {
+          "solution_space_dimension": 1,
+          "rank_of_solution": 2,
+          "nondegenerate": true
+        },
+        "00A_matrices": {
+          "solution_space_dimension": 1,
+          "rank_of_solution": 2,
+          "nondegenerate": true
+        },
+        "dimension_n_minus_1": 2
+      },
+      "symplectic_interpretation": "CONTROL_ONLY, source-bound (BMP, n = 2g+1)",
+      "00A_matrices_relation_to_BB_reduced": "equivalent (self-dual)"
+    },
+    "4": {
+      "relations_hold_t=-1": true,
+      "relations_hold_t=2_control": true,
+      "invariant_alternating_forms": {
+        "BB_reduced": {
+          "solution_space_dimension": 0,
+          "rank_of_solution": null,
+          "nondegenerate": false
+        },
+        "BB_reduced_dual": {
+          "solution_space_dimension": 1,
+          "rank_of_solution": 2,
+          "nondegenerate": false
+        },
+        "00A_matrices": {
+          "solution_space_dimension": 1,
+          "rank_of_solution": 2,
+          "nondegenerate": false
+        },
+        "dimension_n_minus_1": 3
+      },
+      "symplectic_interpretation": "LOCAL_ALGEBRA_CONTROL_ONLY (SOURCE_INSUFFICIENT); exists only for the dual convention",
+      "00A_matrices_relation_to_BB_reduced": "equivalent to the DUAL only"
+    },
+    "5": {
+      "relations_hold_t=-1": true,
+      "relations_hold_t=2_control": true,
+      "invariant_alternating_forms": {
+        "BB_reduced": {
+          "solution_space_dimension": 1,
+          "rank_of_solution": 4,
+          "nondegenerate": true
+        },
+        "BB_reduced_dual": {
+          "solution_space_dimension": 1,
+          "rank_of_solution": 4,
+          "nondegenerate": true
+        },
+        "00A_matrices": {
+          "solution_space_dimension": 1,
+          "rank_of_solution": 4,
+          "nondegenerate": true
+        },
+        "dimension_n_minus_1": 4
+      },
+      "symplectic_interpretation": "CONTROL_ONLY, source-bound (BMP, n = 2g+1)",
+      "00A_matrices_relation_to_BB_reduced": "equivalent (self-dual)"
+    },
+    "6": {
+      "relations_hold_t=-1": true,
+      "relations_hold_t=2_control": true,
+      "invariant_alternating_forms": {
+        "BB_reduced": {
+          "solution_space_dimension": 0,
+          "rank_of_solution": null,
+          "nondegenerate": false
+        },
+        "BB_reduced_dual": {
+          "solution_space_dimension": 1,
+          "rank_of_solution": 4,
+          "nondegenerate": false
+        },
+        "00A_matrices": {
+          "solution_space_dimension": 1,
+          "rank_of_solution": 4,
+          "nondegenerate": false
+        },
+        "dimension_n_minus_1": 5
+      },
+      "symplectic_interpretation": "LOCAL_ALGEBRA_CONTROL_ONLY (SOURCE_INSUFFICIENT); exists only for the dual convention",
+      "00A_matrices_relation_to_BB_reduced": "equivalent to the DUAL only"
+    }
+  },
+  "BURAU_ROLE": "CONTROL_ONLY"
+}

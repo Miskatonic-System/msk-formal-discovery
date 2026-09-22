@@ -1,0 +1,52 @@
+{
+  "3": {
+    "word": "sigma_1^2",
+    "pi_perm_image_is_identity": true,
+    "artin_image_is_identity": false,
+    "artin_image": {
+      "x1": "x2^-1 x1 x2",
+      "x2": "x2^-1 x1^-1 x2 x1 x2",
+      "x3": "x3"
+    },
+    "conclusion": "sigma_1^2 in ker(pi_perm) and alpha(sigma_1^2) != id, hence sigma_1^2 != 1 and pi_perm is NOT faithful (uses only that alpha is a homomorphism, not Artin's faithfulness theorem)"
+  },
+  "4": {
+    "word": "sigma_1^2",
+    "pi_perm_image_is_identity": true,
+    "artin_image_is_identity": false,
+    "artin_image": {
+      "x1": "x2^-1 x1 x2",
+      "x2": "x2^-1 x1^-1 x2 x1 x2",
+      "x3": "x3",
+      "x4": "x4"
+    },
+    "conclusion": "sigma_1^2 in ker(pi_perm) and alpha(sigma_1^2) != id, hence sigma_1^2 != 1 and pi_perm is NOT faithful (uses only that alpha is a homomorphism, not Artin's faithfulness theorem)"
+  },
+  "5": {
+    "word": "sigma_1^2",
+    "pi_perm_image_is_identity": true,
+    "artin_image_is_identity": false,
+    "artin_image": {
+      "x1": "x2^-1 x1 x2",
+      "x2": "x2^-1 x1^-1 x2 x1 x2",
+      "x3": "x3",
+      "x4": "x4",
+      "x5": "x5"
+    },
+    "conclusion": "sigma_1^2 in ker(pi_perm) and alpha(sigma_1^2) != id, hence sigma_1^2 != 1 and pi_perm is NOT faithful (uses only that alpha is a homomorphism, not Artin's faithfulness theorem)"
+  },
+  "6": {
+    "word": "sigma_1^2",
+    "pi_perm_image_is_identity": true,
+    "artin_image_is_identity": false,
+    "artin_image": {
+      "x1": "x2^-1 x1 x2",
+      "x2": "x2^-1 x1^-1 x2 x1 x2",
+      "x3": "x3",
+      "x4": "x4",
+      "x5": "x5",
+      "x6": "x6"
+    },
+    "conclusion": "sigma_1^2 in ker(pi_perm) and alpha(sigma_1^2) != id, hence sigma_1^2 != 1 and pi_perm is NOT faithful (uses only that alpha is a homomorphism, not Artin's faithfulness theorem)"
+  }
+}

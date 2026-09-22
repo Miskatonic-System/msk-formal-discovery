@@ -1,0 +1,83 @@
+{
+  "schema_version": "miskatonic.formal-discovery.tg-dependency-determination.v0.1",
+  "work_order": "WO-FORMAL-TOPOLOGICAL-GALOIS-SOURCE-REPRESENTATION-01A",
+  "rule": "an object is LOAD_BEARING iff at least one frozen bridge obligation (BO-1, BO-2, BO-3 of CAND-1) cannot be STATED without it; INTERESTING_STRUCTURE != NECESSARY_STRUCTURE",
+  "objects": {
+    "S1_pi_perm": {
+      "classification": "LOAD_BEARING",
+      "used_by": [
+        "BO-1 (relabelling of roots / of conjugacy classes in a monodromy tuple under a parameter braid)",
+        "BO-3 (the degree-ladder source invariants live on S_n)"
+      ],
+      "certificate": "certificates/s1-permutation-quotient.v0.1.json"
+    },
+    "S2_artin_hurwitz": {
+      "classification": "LOAD_BEARING",
+      "used_by": [
+        "BO-1 (the B_n-equivariant monodromy-data map is DEFINED through alpha: (beta . rho) = rho o alpha(beta^{-1}))",
+        "BO-2, BO-3 (transport of tuples is the only proposed structural relation)"
+      ],
+      "certificate": "certificates/s2-artin-action.v0.1.json, certificates/hurwitz-action.v0.1.json"
+    },
+    "S3_burau": {
+      "classification": "CONTROL_ONLY",
+      "reason": "no bridge obligation mentions beta_n; BO-1..BO-3 are stated entirely with pi_perm and alpha. Retained as (i) the overlap control with 00A S1 and (ii) the source-side carrier of the odd-n symplectic reading (S4)",
+      "certificate": "certificates/s3-burau.v0.1.json",
+      "removed_from_bridge_critical_path": true
+    },
+    "S4_symplectic_interpretation": {
+      "odd_n_(3,5)": {
+        "classification": "CONTROL_ONLY",
+        "custody": "src-hmc-brendle-margalit-putman-2015 (BOUND, SHA-256 in the 00A ledger consumed by git blob 4cafe426d4b23b82a93b74d7c946d97bb95c0b41); statement scope n = 2g+1",
+        "local_confirmation": "reduced Burau at t=-1 carries a unique nondegenerate invariant alternating form (rank n-1) for n = 3, 5"
+      },
+      "even_n_(4,6)": {
+        "classification": "SOURCE_INSUFFICIENT",
+        "status": "LOCAL_ALGEBRA_CONTROL_ONLY",
+        "custody": "no source bound in this WO (none was sought: Burau is not load-bearing, and the work order forbids adding dependencies for symmetry)",
+        "local_fact": {
+          "n=4": {
+            "BB_reduced": {
+              "solution_space_dimension": 0,
+              "rank_of_solution": null,
+              "nondegenerate": false
+            },
+            "BB_reduced_dual": {
+              "solution_space_dimension": 1,
+              "rank_of_solution": 2,
+              "nondegenerate": false
+            }
+          },
+          "n=6": {
+            "BB_reduced": {
+              "solution_space_dimension": 0,
+              "rank_of_solution": null,
+              "nondegenerate": false
+            },
+            "BB_reduced_dual": {
+              "solution_space_dimension": 1,
+              "rank_of_solution": 4,
+              "nondegenerate": false
+            }
+          }
+        },
+        "note": "the local rank-2g form exists only for the dual convention; this is why a local alternating form is not a theorem"
+      }
+    }
+  },
+  "minimal_package": {
+    "LOAD_BEARING": [
+      "B_n -> S_n permutation quotient (S1)",
+      "Artin/Hurwitz action of B_n on F_n (S2)"
+    ],
+    "CONTROL_ONLY": [
+      "reduced/unreduced Burau at t = -1 (S3)",
+      "odd-n symplectic reading (S4, BMP)"
+    ],
+    "SOURCE_INSUFFICIENT": [
+      "even-n symplectic reading (S4)"
+    ]
+  },
+  "BURAU_ROLE": "CONTROL_ONLY",
+  "expected_dependency_hypothesis_of_the_work_order": "EARNED (not inherited): the hypothesis matched, and the even-n dual-convention finding is new evidence in its favour"
+}

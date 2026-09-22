@@ -107,3 +107,28 @@ A composition receipt should identify:
 ## Nonclaims
 
 No new theorem, arbitrary-n claim, Hamiltonian bridge, or G60 connection is established here.
+
+
+## Executed qualification: source representation (01A)
+
+`WO-FORMAL-TOPOLOGICAL-GALOIS-SOURCE-REPRESENTATION-01A` qualified the exact
+source package for the frozen Hamiltonian bridge candidate CAND-1:
+
+```text
+docs/TOPOLOGICAL_GALOIS_SOURCE_REPRESENTATION_01A.md
+experiments/topological-galois-source-representation-01a/
+```
+
+Minimal package: `B_n -> S_n` and the Artin/Hurwitz action of `B_n` on `F_n`
+are `LOAD_BEARING`; the Burau representation is `CONTROL_ONLY`.
+
+Permanent:
+
+```text
+B_n != F_n
+SOURCE_GROUP_ACTION != TARGET_MONODROMY_REPRESENTATION
+GROUP_ACTION != REPRESENTATION_VALUE
+```
+
+No theorem, no differential Galois group and no bridge execution are
+established there.

@@ -1,0 +1,125 @@
+{
+  "schema_version": "miskatonic.formal-discovery.tg-convention-freeze.v0.1",
+  "work_order": "WO-FORMAL-TOPOLOGICAL-GALOIS-SOURCE-REPRESENTATION-01A",
+  "conventions": {
+    "braid_multiplication_order": {
+      "value": "juxtaposition: the word X Y is the braid X followed by the braid Y; words are read LEFT TO RIGHT",
+      "source": "src-tg-birman-brendle-2005 Sec.1 (Fig.1: 'their product XY'; 'Multiplication of braids is by juxtaposition')"
+    },
+    "sigma_i_orientation": {
+      "value": "sigma_i is the elementary braid of BB Fig.2(i) exchanging strands i and i+1; its orientation is FIXED relative to the free-group action by eq.(20): sigma_i x_i sigma_i^{-1} = x_{i+1}",
+      "source": "src-tg-birman-brendle-2005 Sec.1.2, eq.(2); Sec.4.7 eq.(20)"
+    },
+    "free_group_generators_x_i": {
+      "value": "F_n = pi_1(D_n, d_0), D_n the n-punctured disk with punctures q_1..q_n; x_i is the loop based at d_0 on the boundary travelling COUNTERCLOCKWISE about q_i",
+      "source": "src-tg-birman-brendle-2005 Sec.4.4"
+    },
+    "left_vs_right_action": {
+      "value": "LEFT action alpha: B_n -> Aut(F_n), alpha(beta)(x) = beta x beta^{-1} in F_n x| B_n; alpha(XY) = alpha(X) o alpha(Y), so for a word the RIGHTMOST letter acts first",
+      "source": "src-tg-birman-brendle-2005 Sec.4.7 eq.(19),(20); left-action law verified in certificate S2 (left_action_verified_on_probe)"
+    },
+    "function_composition_order": {
+      "value": "(f o g)(x) = f(g(x)); Endo.compose(self, other) = self o other, other applied first",
+      "source": "freegroup.Endo.compose (local definition)"
+    },
+    "hurwitz_action_convention": {
+      "value": "LEFT action on Hom(F_n, G): (beta . rho) = rho o alpha(beta^{-1}). Closed form for sigma_i: (M_i, M_{i+1}) -> (M_i M_{i+1} M_i^{-1}, M_i). The variant rho o alpha(beta) is a RIGHT action with closed form (M_i, M_{i+1}) -> (M_{i+1}, M_{i+1}^{-1} M_i M_{i+1}); it is recorded and is NOT the frozen convention",
+      "source": "DERIVED from the frozen Artin action; certificate HURWITZ (closed_form checks); no separate literature source is claimed"
+    },
+    "puncture_ordering": {
+      "value": "punctures q_1..q_n of D_n numbered so that sigma_i exchanges q_i and q_{i+1}; target roots r_1..r_n of f_{a,E} carry the same numbering (any reordering is an element of S_n and is recorded, not assumed)",
+      "source": "src-tg-birman-brendle-2005 Sec.1 (strands numbered 1..n), Sec.4.4; target-domain-derivation.v0.1.json#/degrees/*/pi_1/ordering"
+    },
+    "loop_orientation": {
+      "value": "counterclockwise",
+      "source": "src-tg-birman-brendle-2005 Sec.4.4"
+    },
+    "B_n_to_S_n_quotient_convention": {
+      "value": "pi_perm(sigma_i) = s_i = (i i+1); permutations are tuples p with p[k] = image of k and are composed LEFT TO RIGHT, (p*q)(k) = q(p(k)), so pi_perm is a homomorphism from the juxtaposition product",
+      "source": "src-tg-birman-brendle-2005 Sec.1.1 eq.(1), Sec.4.1; certificate S1"
+    },
+    "reduced_vs_unreduced_burau": {
+      "value": "UNREDUCED: sigma_i -> I_{i-1} (+) [[1-t, t],[1, 0]] (+) I_{n-i-1} in GL_n. REDUCED: sigma_i -> I_{i-2} (+) [[1,-t,0],[0,-t,0],[0,-1,1]] (+) I_{n-i-2} in GL_{n-1}, the -t in the (i,i) spot. The two are never interchanged; dimensions n and n-1",
+      "source": "src-tg-birman-brendle-2005 Sec.4.2 p.46 (signs read from the rendered PDF page, not from a text extraction)"
+    },
+    "burau_specialization_value": {
+      "value": "t = -1 (the specialization used by 00A check S1 and by BMP's beta_n); t = 2 is a CONTROL specialization only; t = 1 recovers the permutation representation",
+      "source": "src-hmc-brendle-margalit-putman-2015 Sec.1 (Burau at t = -1); src-tg-birman-brendle-2005 Sec.4.2 (t = 1)"
+    },
+    "matrices_acting_on_rows_vs_columns": {
+      "value": "matrices act on COLUMN vectors from the LEFT; beta(XY) = beta(X) beta(Y). The row-vector (right) action on the sum-zero hyperplane is used only as a decomposition control and is transposed before comparison",
+      "source": "certificate S3 (matrix_action_convention, decomposition)"
+    },
+    "conjugation_convention": {
+      "value": "conj(a, b) = a b a^{-1}; the Artin action is conjugation of x_j by sigma_i in F_n x| B_n, sigma_i x_j sigma_i^{-1}",
+      "source": "src-tg-birman-brendle-2005 Sec.4.7 eq.(20); freegroup.conj"
+    },
+    "word_equality": {
+      "value": "two braid words are compared only through their images (in S_n, Aut(F_n), or GL); two free-group words are equal iff their free reductions coincide",
+      "source": "freegroup.reduce_word (local definition)"
+    }
+  },
+  "object_registry": {
+    "B_n": {
+      "kind": "GROUP",
+      "definition": "pi_1(C_{0,n}, base) of the unordered configuration space of n points in C (BB Sec.1.1); source-side parameter loops",
+      "role": "SOURCE_GROUP"
+    },
+    "F_n": {
+      "kind": "GROUP",
+      "definition": "pi_1(P^1_q minus (n finite roots of f_{a,E} + infinity)) = pi_1(D_n, d_0), free on x_1..x_n",
+      "role": "TARGET_FUNDAMENTAL_GROUP"
+    },
+    "S_n": {
+      "kind": "GROUP",
+      "definition": "symmetric group on the n strands / punctures",
+      "role": "QUOTIENT"
+    },
+    "pi_perm": {
+      "kind": "HOMOMORPHISM",
+      "domain": "B_n",
+      "codomain": "S_n",
+      "faithful": "NO (kernel = P_n, witnessed by sigma_1^2)",
+      "role": "S1"
+    },
+    "alpha": {
+      "kind": "GROUP_ACTION",
+      "domain": "B_n",
+      "codomain": "Aut(F_n)",
+      "role": "S2"
+    },
+    "beta_n": {
+      "kind": "LINEAR_REPRESENTATION",
+      "domain": "B_n",
+      "codomain": "GL_{n-1}(Z) (reduced) / GL_n(Z) (unreduced) at t = -1",
+      "role": "S3"
+    },
+    "rho_tgt": {
+      "kind": "REPRESENTATION_VALUE",
+      "domain": "F_n",
+      "codomain": "GL_2(C)",
+      "role": "TARGET_MONODROMY (not computed in this WO)",
+      "monodromy_kind": "MK-VARIATIONAL"
+    },
+    "G_diff": {
+      "kind": "ALGEBRAIC_GROUP",
+      "definition": "differential Galois group of the algebraic NVE over C(q); contains the Zariski closure of the image of rho_tgt (Fuchsian case, source IDENTIFIED only in 00A)",
+      "role": "TARGET_PREDICATE_CARRIER (not computed)"
+    }
+  },
+  "permanent": [
+    "B_n != F_n",
+    "GROUP_ACTION != REPRESENTATION_VALUE",
+    "SOURCE_GROUP_ACTION != TARGET_MONODROMY_REPRESENTATION",
+    "PERMUTATION_QUOTIENT != FAITHFUL_BRAID_REPRESENTATION",
+    "REDUCED_BURAU != UNREDUCED_BURAU",
+    "REPRESENTATION != ITS_DUAL (for even n the reduced Burau at t=-1 and its dual are inequivalent; only the dual carries an invariant alternating form)",
+    "LOCAL_ALTERNATING_FORM != SOURCED_SYMPLECTIC_THEOREM",
+    "ODD_DEGREE_SOURCE_STATEMENT != EVEN_DEGREE_STATEMENT",
+    "SINGULAR_POLYNOMIAL = E - P_n, NOT P_n",
+    "INFINITY_IS_A_PUNCTURE",
+    "TARGET_MONODROMY_GROUP != DIFFERENTIAL_GALOIS_GROUP (without Zariski-closure scope)",
+    "SAME_WORD_MONODROMY != BRIDGE_EVIDENCE",
+    "INTERESTING_STRUCTURE != NECESSARY_STRUCTURE"
+  ]
+}

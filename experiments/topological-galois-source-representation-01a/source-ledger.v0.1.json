@@ -1,0 +1,44 @@
+{
+  "schema_version": "miskatonic.formal-discovery.tg-source-ledger.v0.1",
+  "ledger_id": "tg-source-representation-01a-sources",
+  "relation_to_other_ledgers": "Experiment-local ledger. It CONSUMES the accepted 00A sibling ledger of miskatonic-mathematics by immutable git-object binding (blob 4cafe426d4b23b82a93b74d7c946d97bb95c0b41 at main 2337c7d744f176274997374a7d4057c7272f715d) and does not promote any of its records. Neither this ledger nor the consumed one mutates miskatonic-mathematics sources/registry.v0.1.json.",
+  "consumed_ledgers": [
+    {
+      "repository": "Miskatonic-System/miskatonic-mathematics",
+      "commit": "2337c7d744f176274997374a7d4057c7272f715d",
+      "path": "program/hamiltonian-monodromy/controls-v0.1/sources.v0.1.json",
+      "blob": "4cafe426d4b23b82a93b74d7c946d97bb95c0b41",
+      "records_relied_on": {
+        "src-hmc-brendle-margalit-putman-2015": {
+          "status": "BOUND",
+          "content_digest": "53aa3114aa085439921cbc530e21b30ad576116e39bd544a0172107969fe290c",
+          "used_for": "S4 odd-n symplectic reading of the integral Burau representation; scope n = 2g+1 only; CONTROL_ONLY here"
+        },
+        "src-hmc-morales-ruiz-1999": {
+          "status": "IDENTIFIED",
+          "used_for": "NOTHING decisive: monodromy-density (Zariski closure) and Lame classification remain non-authoritative until bound"
+        },
+        "src-hmc-morales-ramis-2001": {
+          "status": "IDENTIFIED",
+          "used_for": "NOTHING decisive"
+        }
+      }
+    }
+  ],
+  "sources": [
+    {
+      "schema_version": "miskatonic.mathematics-source-record.v0.1",
+      "source_id": "src-tg-birman-brendle-2005",
+      "title": "Braids: A Survey",
+      "authors_or_authority": "Joan S. Birman, Tara E. Brendle",
+      "source_type": "PREPRINT",
+      "canonical_url_or_identifier": "https://arxiv.org/abs/math/0409205v2",
+      "version_or_date": "2005-02-26 (arXiv v2)",
+      "retrieved_at": "2026-09-22T01:12:29Z",
+      "content_digest": "a2e02e79beda1d087d12134780c99c4894a2628cc0f8f9a66940945cd9e6155c",
+      "claim_scope": "Braid multiplication by juxtaposition (Sec.1, Fig.1); B_n as pi_1 of the configuration space and the exact sequence 1 -> P_n -> B_n -> Sigma_n -> 1 (Sec.1.1); defining relations (eq.(2)); B_n -> Sigma_n, sigma_i -> (i i+1) (Sec.4.1); unreduced and reduced Burau matrices (Sec.4.2 p.46); F_n = pi_1(D_n, d_0) with x_i counterclockwise about q_i (Sec.4.4); extension 1 -> F_n -> B_{1,n} -> B_n -> 1 and Artin's action eq.(20) (Sec.4.7).",
+      "status": "BOUND",
+      "notes": "Digest is SHA-256 of the bytes served at https://arxiv.org/pdf/math/0409205v2 at retrieved_at. The signs of the reduced Burau block were read from the rendered PDF page 46 (a plain-text extraction drops the minus signs and yields a matrix that is NOT a subquotient of the unreduced representation)."
+    }
+  ]
+}

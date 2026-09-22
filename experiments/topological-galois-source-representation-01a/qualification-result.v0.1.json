@@ -1,0 +1,115 @@
+{
+  "schema_version": "miskatonic.formal-discovery.tg-qualification-result.v0.1",
+  "work_order": "WO-FORMAL-TOPOLOGICAL-GALOIS-SOURCE-REPRESENTATION-01A",
+  "disposition": "TOPOLOGICAL_GALOIS_SOURCE_REPRESENTATION_QUALIFIED",
+  "disposition_status": "PROPOSED_BY_EXECUTING_AGENT_PENDING_INDEPENDENT_REVIEW",
+  "minimal_package": {
+    "LOAD_BEARING": [
+      "B_n -> S_n permutation quotient (S1)",
+      "Artin/Hurwitz action of B_n on F_n (S2)"
+    ],
+    "CONTROL_ONLY": [
+      "reduced/unreduced Burau at t = -1 (S3)",
+      "odd-n symplectic reading (S4, BMP)"
+    ],
+    "SOURCE_INSUFFICIENT": [
+      "even-n symplectic reading (S4)"
+    ]
+  },
+  "BURAU_ROLE": "CONTROL_ONLY",
+  "positive_controls": [
+    {
+      "id": "PC1",
+      "control": "exact B_3 -> S_3 quotient",
+      "result": "PASS",
+      "detail": "image size 6 = 3!, relations and squares verified"
+    },
+    {
+      "id": "PC2",
+      "control": "exact Artin B_3 action on F_3",
+      "result": "PASS",
+      "detail": {
+        "sigma_1": {
+          "x1": "x2",
+          "x2": "x2^-1 x1 x2",
+          "x3": "x3"
+        },
+        "sigma_2": {
+          "x1": "x1",
+          "x2": "x3",
+          "x3": "x3^-1 x2 x3"
+        }
+      }
+    },
+    {
+      "id": "PC3",
+      "control": "braid relation under Artin action",
+      "result": "PASS",
+      "detail": "all relations of B_n hold in Aut(F_n) for n = 3..6"
+    },
+    {
+      "id": "PC4",
+      "control": "Artin action induces the expected permutation",
+      "result": "PASS",
+      "detail": "abelianization of alpha(sigma_i) is the permutation matrix of pi_perm(sigma_i) for n = 3..6"
+    },
+    {
+      "id": "PC5",
+      "control": "exact Hurwitz transport on an explicit tuple",
+      "result": "PASS",
+      "detail": "n=4 involution tuple: relations, closed form, left-action law, inverse, ordered product, relabel, nontriviality"
+    },
+    {
+      "id": "PC6",
+      "control": "source package reproduces accepted 00A S1/S2 controls where semantics overlap",
+      "result": "PASS",
+      "detail": {
+        "00A_S2_tuple_move_equals_frozen_left_Hurwitz_move": true,
+        "00A_S1_Burau_matrices_vs_BB_reduced_t=-1": {
+          "odd_n_(3,5)": "EQUIVALENT (explicit intertwiner); self-dual",
+          "even_n_(4,6)": "EQUIVALENT TO THE DUAL (inverse-transpose; intertwiner = identity) and NOT equivalent to BB reduced itself"
+        },
+        "consequence": "00A's even-n 'invariant alternating form of rank 2g' is a property of the dual convention only; BB reduced at t=-1 has NO invariant alternating form for n = 4, 6. For odd n the two conventions coincide."
+      }
+    }
+  ],
+  "hostile_controls_all_rejected_as_stated": true,
+  "hostile_control_count": 16,
+  "repaired_counterparts_admitted": true,
+  "permanent": [
+    "B_n != F_n",
+    "GROUP_ACTION != REPRESENTATION_VALUE",
+    "SOURCE_GROUP_ACTION != TARGET_MONODROMY_REPRESENTATION",
+    "PERMUTATION_QUOTIENT != FAITHFUL_BRAID_REPRESENTATION",
+    "REDUCED_BURAU != UNREDUCED_BURAU",
+    "REPRESENTATION != ITS_DUAL (for even n the reduced Burau at t=-1 and its dual are inequivalent; only the dual carries an invariant alternating form)",
+    "LOCAL_ALTERNATING_FORM != SOURCED_SYMPLECTIC_THEOREM",
+    "ODD_DEGREE_SOURCE_STATEMENT != EVEN_DEGREE_STATEMENT",
+    "SINGULAR_POLYNOMIAL = E - P_n, NOT P_n",
+    "INFINITY_IS_A_PUNCTURE",
+    "TARGET_MONODROMY_GROUP != DIFFERENTIAL_GALOIS_GROUP (without Zariski-closure scope)",
+    "SAME_WORD_MONODROMY != BRIDGE_EVIDENCE",
+    "INTERESTING_STRUCTURE != NECESSARY_STRUCTURE"
+  ],
+  "authority": {
+    "NEW_MATHEMATICAL_THEOREM": "NONE",
+    "HAMILTONIAN_BRIDGE": "NOT_EXECUTED",
+    "DIFFERENTIAL_GALOIS_GROUP": "NOT_COMPUTED",
+    "MORALES_RAMIS": "NOT_AUTHORIZED",
+    "FTT": "NOT_REQUIRED",
+    "ONTO_EXP_007": "PARKED",
+    "RULIOLOGY_EXECUTION": "NONE"
+  },
+  "not_done": [
+    "Kovacic on CAND-1",
+    "G_diff",
+    "G^0 classification",
+    "(mu, lambda) sweep",
+    "Morales-Ramis",
+    "integrability/nonintegrability claims",
+    "chaos analysis",
+    "mutation of miskatonic-mathematics sources/registry.v0.1.json",
+    "any write to FTT/ONTO/Ruliology"
+  ],
+  "manifest_digest": "26816f285eea2ce803d6797b703ab88502a99b99301aac809f008db0fa5daefe"
+}

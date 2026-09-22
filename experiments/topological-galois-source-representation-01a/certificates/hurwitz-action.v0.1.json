@@ -1,0 +1,482 @@
+{
+  "n3_generic": {
+    "object": "HURWITZ",
+    "n": 3,
+    "tuple_label": "n3_generic",
+    "definition": "(beta . rho)(x_j) = rho(alpha(beta^{-1})(x_j)); LEFT action on Hom(F_n, GL_2(Q)), derived from the frozen Artin action, not assumed",
+    "tuple": [
+      [
+        [
+          "2",
+          "1"
+        ],
+        [
+          "1",
+          "1"
+        ]
+      ],
+      [
+        [
+          "1",
+          "3"
+        ],
+        [
+          "0",
+          "1"
+        ]
+      ],
+      [
+        [
+          "0",
+          "-1"
+        ],
+        [
+          "1",
+          "2"
+        ]
+      ]
+    ],
+    "ordered_product_rho(x_1...x_n)": [
+      [
+        "7",
+        "12"
+      ],
+      [
+        "4",
+        "7"
+      ]
+    ],
+    "relations": [
+      {
+        "relation": "braid(1,2)",
+        "holds": true
+      }
+    ],
+    "closed_form_left_move_(M_i,M_i+1)->(M_i M_i+1 M_i^-1, M_i)": {
+      "sigma_1": true,
+      "sigma_2": true
+    },
+    "right_variant_closed_form_(M_i,M_i+1)->(M_i+1, M_i+1^-1 M_i M_i+1)": {
+      "sigma_1": true,
+      "sigma_2": true
+    },
+    "left_action_law_(XY).rho=X.(Y.rho)": true,
+    "inverse_action_restores_tuple": {
+      "sigma_1": true,
+      "sigma_2": true
+    },
+    "ordered_product_invariant": {
+      "sigma_1": true,
+      "sigma_2": true
+    },
+    "induced_relabel_matches_pi_perm": {
+      "sigma_1": true,
+      "sigma_2": true
+    },
+    "nontrivial": {
+      "sigma_1": true,
+      "sigma_2": true
+    },
+    "result": "PASS"
+  },
+  "n4_involutions_00A": {
+    "object": "HURWITZ",
+    "n": 4,
+    "tuple_label": "n4_involutions_00A",
+    "definition": "(beta . rho)(x_j) = rho(alpha(beta^{-1})(x_j)); LEFT action on Hom(F_n, GL_2(Q)), derived from the frozen Artin action, not assumed",
+    "tuple": [
+      [
+        [
+          "-1/5",
+          "-2/5"
+        ],
+        [
+          "-12/5",
+          "1/5"
+        ]
+      ],
+      [
+        [
+          "-3",
+          "-4"
+        ],
+        [
+          "2",
+          "3"
+        ]
+      ],
+      [
+        [
+          "3/5",
+          "-8/5"
+        ],
+        [
+          "-2/5",
+          "-3/5"
+        ]
+      ],
+      [
+        [
+          "-5",
+          "12"
+        ],
+        [
+          "-2",
+          "5"
+        ]
+      ]
+    ],
+    "ordered_product_rho(x_1...x_n)": [
+      [
+        "-33/25",
+        "82/25"
+      ],
+      [
+        "854/25",
+        "-2141/25"
+      ]
+    ],
+    "relations": [
+      {
+        "relation": "braid(1,2)",
+        "holds": true
+      },
+      {
+        "relation": "braid(2,3)",
+        "holds": true
+      },
+      {
+        "relation": "far(1,3)",
+        "holds": true
+      }
+    ],
+    "closed_form_left_move_(M_i,M_i+1)->(M_i M_i+1 M_i^-1, M_i)": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true
+    },
+    "right_variant_closed_form_(M_i,M_i+1)->(M_i+1, M_i+1^-1 M_i M_i+1)": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true
+    },
+    "left_action_law_(XY).rho=X.(Y.rho)": true,
+    "inverse_action_restores_tuple": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true
+    },
+    "ordered_product_invariant": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true
+    },
+    "induced_relabel_matches_pi_perm": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true
+    },
+    "nontrivial": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true
+    },
+    "result": "PASS"
+  },
+  "n5_generic": {
+    "object": "HURWITZ",
+    "n": 5,
+    "tuple_label": "n5_generic",
+    "definition": "(beta . rho)(x_j) = rho(alpha(beta^{-1})(x_j)); LEFT action on Hom(F_n, GL_2(Q)), derived from the frozen Artin action, not assumed",
+    "tuple": [
+      [
+        [
+          "1",
+          "1"
+        ],
+        [
+          "0",
+          "1"
+        ]
+      ],
+      [
+        [
+          "1",
+          "0"
+        ],
+        [
+          "1",
+          "1"
+        ]
+      ],
+      [
+        [
+          "2",
+          "0"
+        ],
+        [
+          "0",
+          "1/2"
+        ]
+      ],
+      [
+        [
+          "0",
+          "1"
+        ],
+        [
+          "-1",
+          "0"
+        ]
+      ],
+      [
+        [
+          "1",
+          "2"
+        ],
+        [
+          "3",
+          "7"
+        ]
+      ]
+    ],
+    "ordered_product_rho(x_1...x_n)": [
+      [
+        "23/2",
+        "27"
+      ],
+      [
+        "11/2",
+        "13"
+      ]
+    ],
+    "relations": [
+      {
+        "relation": "braid(1,2)",
+        "holds": true
+      },
+      {
+        "relation": "braid(2,3)",
+        "holds": true
+      },
+      {
+        "relation": "braid(3,4)",
+        "holds": true
+      },
+      {
+        "relation": "far(1,3)",
+        "holds": true
+      },
+      {
+        "relation": "far(1,4)",
+        "holds": true
+      },
+      {
+        "relation": "far(2,4)",
+        "holds": true
+      }
+    ],
+    "closed_form_left_move_(M_i,M_i+1)->(M_i M_i+1 M_i^-1, M_i)": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true,
+      "sigma_4": true
+    },
+    "right_variant_closed_form_(M_i,M_i+1)->(M_i+1, M_i+1^-1 M_i M_i+1)": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true,
+      "sigma_4": true
+    },
+    "left_action_law_(XY).rho=X.(Y.rho)": true,
+    "inverse_action_restores_tuple": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true,
+      "sigma_4": true
+    },
+    "ordered_product_invariant": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true,
+      "sigma_4": true
+    },
+    "induced_relabel_matches_pi_perm": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true,
+      "sigma_4": true
+    },
+    "nontrivial": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true,
+      "sigma_4": true
+    },
+    "result": "PASS"
+  },
+  "n6_generic": {
+    "object": "HURWITZ",
+    "n": 6,
+    "tuple_label": "n6_generic",
+    "definition": "(beta . rho)(x_j) = rho(alpha(beta^{-1})(x_j)); LEFT action on Hom(F_n, GL_2(Q)), derived from the frozen Artin action, not assumed",
+    "tuple": [
+      [
+        [
+          "1",
+          "1"
+        ],
+        [
+          "0",
+          "1"
+        ]
+      ],
+      [
+        [
+          "1",
+          "0"
+        ],
+        [
+          "1",
+          "1"
+        ]
+      ],
+      [
+        [
+          "3",
+          "1"
+        ],
+        [
+          "2",
+          "1"
+        ]
+      ],
+      [
+        [
+          "0",
+          "1"
+        ],
+        [
+          "-1",
+          "0"
+        ]
+      ],
+      [
+        [
+          "1",
+          "-1"
+        ],
+        [
+          "1",
+          "0"
+        ]
+      ],
+      [
+        [
+          "2",
+          "3"
+        ],
+        [
+          "1",
+          "2"
+        ]
+      ]
+    ],
+    "ordered_product_rho(x_1...x_n)": [
+      [
+        "13",
+        "21"
+      ],
+      [
+        "8",
+        "13"
+      ]
+    ],
+    "relations": [
+      {
+        "relation": "braid(1,2)",
+        "holds": true
+      },
+      {
+        "relation": "braid(2,3)",
+        "holds": true
+      },
+      {
+        "relation": "braid(3,4)",
+        "holds": true
+      },
+      {
+        "relation": "braid(4,5)",
+        "holds": true
+      },
+      {
+        "relation": "far(1,3)",
+        "holds": true
+      },
+      {
+        "relation": "far(1,4)",
+        "holds": true
+      },
+      {
+        "relation": "far(1,5)",
+        "holds": true
+      },
+      {
+        "relation": "far(2,4)",
+        "holds": true
+      },
+      {
+        "relation": "far(2,5)",
+        "holds": true
+      },
+      {
+        "relation": "far(3,5)",
+        "holds": true
+      }
+    ],
+    "closed_form_left_move_(M_i,M_i+1)->(M_i M_i+1 M_i^-1, M_i)": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true,
+      "sigma_4": true,
+      "sigma_5": true
+    },
+    "right_variant_closed_form_(M_i,M_i+1)->(M_i+1, M_i+1^-1 M_i M_i+1)": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true,
+      "sigma_4": true,
+      "sigma_5": true
+    },
+    "left_action_law_(XY).rho=X.(Y.rho)": true,
+    "inverse_action_restores_tuple": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true,
+      "sigma_4": true,
+      "sigma_5": true
+    },
+    "ordered_product_invariant": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true,
+      "sigma_4": true,
+      "sigma_5": true
+    },
+    "induced_relabel_matches_pi_perm": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true,
+      "sigma_4": true,
+      "sigma_5": true
+    },
+    "nontrivial": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true,
+      "sigma_4": true,
+      "sigma_5": true
+    },
+    "result": "PASS"
+  }
+}

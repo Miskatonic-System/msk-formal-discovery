@@ -24,7 +24,7 @@
 5. Run 16 hostile fixtures and their repaired counterparts through a typed gate; run PC1–PC6 by execution.
 6. Classify each source object under the dependency-minimization rule and output the minimal package.
 
-Reproduce: `python -m msk_formal_discovery.topological_galois.runner --check` (< 5 s; `--write` regenerates and needs sympy for the target domain).
+Reproduce: `python -m msk_formal_discovery.topological_galois.runner --check` (~5 s). Since R1 the check **replays** `target_domain.derive_all()` with sympy, compares its canonical digest to the committed artifact, and rebuilds every other artifact from the replayed object; it fails closed if sympy is unavailable. `--write` regenerates.
 
 ## 2. Convention freeze (source: Birman–Brendle, *Braids: A Survey*, arXiv:math/0409205v2, SHA-256 `a2e02e79…`)
 

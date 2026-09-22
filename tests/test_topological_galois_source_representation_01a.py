@@ -224,3 +224,44 @@ def test_burau_role_downgrade_is_detected(tmp_path):
     p.write_text(json.dumps(d))
     errs = q.validate(tmp_path / "x")
     assert any("BURAU_ROLE" in e for e in errs)
+
+
+# --- R1: target-domain replay path ------------------------------------------------------------------------------
+def test_r1_target_domain_is_replayed_not_trusted(tmp_path):
+    """Mutate a material field (exponents at infinity) that no shallow check reads; validation must fail."""
+    import shutil
+    shutil.copytree(q.EXPERIMENT_DIR, tmp_path / "x")
+    p = tmp_path / "x" / "target-domain-derivation.v0.1.json"
+    d = json.loads(p.read_text())
+    assert d["degrees"]["5"]["exponents_at_infinity"] == ["0", "3/2"]
+    d["degrees"]["5"]["exponents_at_infinity"] = ["0", "1/2"]           # still 'PASS', still n+1 punctures, still E - P_n
+    p.write_text(json.dumps(d))
+    errs = q.validate(tmp_path / "x")
+    assert any("target-domain-derivation.v0.1.json differs from a fresh replay" in e for e in errs), errs
+
+
+def test_r1_target_domain_digest_mutation_is_detected_in_dependent_artifacts(tmp_path):
+    """A mutated target domain also changes the manifest's target_domain_digest; both must be flagged."""
+    import shutil
+    shutil.copytree(q.EXPERIMENT_DIR, tmp_path / "x")
+    p = tmp_path / "x" / "target-domain-derivation.v0.1.json"
+    d = json.loads(p.read_text())
+    d["degrees"]["3"]["f_expanded"] = "2*E - 2*a0"                        # drop the a1..a3 terms
+    p.write_text(json.dumps(d))
+    errs = q.validate(tmp_path / "x")
+    assert any("fresh replay" in e for e in errs) and not any("source-representation-manifest" in e for e in errs), errs
+    # the manifest is rebuilt from the REPLAYED object, so it still matches the committed manifest; only the td artifact is flagged
+
+
+def test_r1_validation_fails_closed_without_sympy(monkeypatch, tmp_path):
+    import shutil
+    shutil.copytree(q.EXPERIMENT_DIR, tmp_path / "x")
+    monkeypatch.setattr(q, "recompute_target_domain", lambda: None)
+    errs = q.validate(tmp_path / "x")
+    assert errs == ["target-domain derivation could not be replayed (sympy unavailable): validation fails closed"]
+
+
+def test_r1_committed_target_domain_equals_fresh_replay(pkg):
+    fresh = q.recompute_target_domain()
+    assert fresh is not None
+    assert q.canonical_digest(fresh) == q.canonical_digest(pkg["target-domain-derivation.v0.1.json"])

@@ -1,7 +1,7 @@
 """Build or validate the 01A artifact package.
 
   python -m msk_formal_discovery.topological_galois.runner --write     regenerate every artifact (needs sympy for the target domain)
-  python -m msk_formal_discovery.topological_galois.runner --check     recompute and compare with the committed package
+  python -m msk_formal_discovery.topological_galois.runner --check     replay everything (incl. the sympy target domain) and compare with the committed package; fails closed without sympy
 """
 from __future__ import annotations
 

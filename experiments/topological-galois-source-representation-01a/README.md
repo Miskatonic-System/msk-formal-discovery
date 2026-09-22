@@ -22,7 +22,7 @@ Hamiltonian bridge candidate CAND-1. Narrative and tables: `docs/TOPOLOGICAL_GAL
 Regenerate / check:
 
 ```bash
-python -m msk_formal_discovery.topological_galois.runner --check     # < 5 s, pure Python
+python -m msk_formal_discovery.topological_galois.runner --check     # ~5 s; REPLAYS the sympy target-domain derivation and every certificate; fails closed without sympy (R1)
 python -m msk_formal_discovery.topological_galois.runner --write     # regenerates; needs sympy for the target domain
 python -m pytest tests/test_topological_galois_source_representation_01a.py
 ```

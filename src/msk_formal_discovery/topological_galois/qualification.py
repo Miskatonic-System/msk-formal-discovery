@@ -390,20 +390,39 @@ def load_artifacts(base: Path = EXPERIMENT_DIR) -> Dict[str, Any]:
     return out
 
 
+def recompute_target_domain():
+    """Replay the target-domain derivation. Fails closed (returns None) when sympy is unavailable."""
+    try:
+        from . import target_domain
+    except ImportError:
+        return None
+    return target_domain.derive_all()
+
+
 def validate(base: Path = EXPERIMENT_DIR) -> List[str]:
-    """Recompute everything deterministic and compare with the committed artifacts."""
+    """Recompute EVERYTHING, including the sympy target-domain derivation, and compare with the committed artifacts.
+
+    R1: the committed target-domain artifact is never trusted. It is replayed, compared by canonical
+    digest, and every other artifact is rebuilt from the REPLAYED object, not from the committed one.
+    """
     errors: List[str] = []
     committed = load_artifacts(base)
-    td = committed.get("target-domain-derivation.v0.1.json")
+    td_committed = committed.get("target-domain-derivation.v0.1.json")
+    td = recompute_target_domain()
+    if td is None:
+        errors.append("target-domain derivation could not be replayed (sympy unavailable): validation fails closed")
+        return errors
+    if td_committed is None:
+        errors.append("target-domain-derivation.v0.1.json missing")
+    elif canonical_digest(td) != canonical_digest(td_committed):
+        errors.append("artifact target-domain-derivation.v0.1.json differs from a fresh replay of target_domain.derive_all()")
     fresh = build_artifacts(td)
     for name, obj in fresh.items():
         if name not in committed:
             errors.append(f"missing artifact {name}")
         elif canonical_digest(obj) != canonical_digest(committed[name]):
             errors.append(f"artifact {name} differs from a fresh recomputation")
-    if td is None:
-        errors.append("target-domain-derivation.v0.1.json missing (needs sympy to regenerate)")
-    elif td["result"] != "PASS":
+    if td["result"] != "PASS":
         errors.append("target-domain derivation did not pass")
     else:
         for n, v in td["degrees"].items():

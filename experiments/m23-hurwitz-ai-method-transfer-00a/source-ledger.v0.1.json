@@ -1,0 +1,57 @@
+{
+  "schema_version": "miskatonic.formal-discovery.m23-method-transfer-source-ledger.v0.1",
+  "ledger_id": "m23-hurwitz-ai-method-transfer-00a-intake",
+  "status": "INTAKE_ONLY",
+  "policy": "Source coordinates are preserved but remain IDENTIFIED_UNBOUND until a future qualification WO pins exact versions/content hashes. Secondary narrative sources are never theorem authority.",
+  "sources": [
+    {
+      "source_id": "src-m23-huang-et-al-2026",
+      "title": "The Mathieu group M23 is a Galois group over Q",
+      "authors_or_authority": "Xiaoyu Huang; Blake Jackson; Kyu-Hwan Lee; Bjorn Poonen; Rachel Pries; Shaowu Zhang",
+      "source_type": "PRIMARY_PREPRINT",
+      "canonical_url_or_identifier": "https://arxiv.org/abs/2608.08538",
+      "version_or_date": "2026-08",
+      "content_digest": null,
+      "status": "IDENTIFIED_UNBOUND",
+      "claim_scope": "Future theorem/method authority only after exact source-byte binding."
+    },
+    {
+      "source_id": "src-m23-zhang-2026-workflow",
+      "title": "Where to Point the Telescope: AI, Mathematical Judgment, and M23",
+      "authors_or_authority": "Shaowu Zhang",
+      "source_type": "AUTHOR_WORKFLOW_ACCOUNT",
+      "canonical_url_or_identifier": "https://proofsandprompts.com/2026/08/21/where-to-point-the-telescope/",
+      "version_or_date": "2026-08-21",
+      "content_digest": null,
+      "status": "IDENTIFIED_UNBOUND",
+      "claim_scope": "Workflow/methodology account only; not theorem authority."
+    },
+    {
+      "source_id": "src-m23-author-code",
+      "title": "m23isgalois",
+      "authors_or_authority": "shaowuz",
+      "source_type": "AUTHOR_CODE_REPOSITORY",
+      "canonical_url_or_identifier": "https://github.com/shaowuz/m23isgalois",
+      "version_or_date": "exact commit TBD",
+      "content_digest": null,
+      "status": "IDENTIFIED_UNBOUND",
+      "claim_scope": "Future code/provenance qualification only after exact commit pin and file digests."
+    },
+    {
+      "source_id": "src-m23-scientific-american-2026",
+      "title": "Mathematicians use AI to find mysterious symmetries, solving decades-old problem",
+      "authors_or_authority": "Scientific American",
+      "source_type": "SECONDARY_NARRATIVE",
+      "canonical_url_or_identifier": "https://www.scientificamerican.com/article/mathematicians-use-ai-to-find-mysterious-symmetries-solving-decades-old-problem/",
+      "version_or_date": "2026-09-22",
+      "content_digest": null,
+      "status": "IDENTIFIED_UNBOUND",
+      "claim_scope": "Narrative discovery/context only; never theorem authority."
+    }
+  ],
+  "authority_ceiling": {
+    "m23_theorem": "NONE_IN_THIS_INTAKE",
+    "workflow_transfer": "PROPOSED_ONLY",
+    "hamiltonian_result": "NONE"
+  }
+}

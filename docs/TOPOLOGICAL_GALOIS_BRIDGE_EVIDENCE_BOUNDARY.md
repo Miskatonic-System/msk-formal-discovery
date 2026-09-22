@@ -132,3 +132,46 @@ GROUP_ACTION != REPRESENTATION_VALUE
 
 No theorem, no differential Galois group and no bridge execution are
 established there.
+
+## Parallel intake: M23 inverse-Galois / Hurwitz method transfer
+
+A 2026 external inverse-Galois result for `M23` motivates a future method-transfer qualification. This intake is not mathematical authority and does not alter the executed Hamiltonian bridge program.
+
+See:
+
+```text
+docs/M23_HURWITZ_AI_METHOD_TRANSFER_00A.md
+experiments/m23-hurwitz-ai-method-transfer-00a/
+```
+
+Candidate object kinds include:
+
+```text
+CONJUGACY_CLASS_TUPLE
+NIELSEN_CLASS
+BRAID_ORBIT
+HURWITZ_SPACE
+ARITHMETIC_GALOIS_ACTION
+FIELD_OF_MODULI
+FIELD_OF_DEFINITION
+BELYI_MAP
+EXACT_ALGEBRAIC_RECONSTRUCTION
+GROUP_ACTION_FIXED_POINT
+```
+
+Permanent intake firewalls:
+
+```text
+INVERSE_GALOIS != DIFFERENTIAL_GALOIS
+BRAID_ACTION != ABSOLUTE_GALOIS_ACTION
+BRAID_ORBIT != ARITHMETIC_GALOIS_ORBIT
+FIELD_OF_MODULI != FIELD_OF_DEFINITION
+NUMERICAL_APPROXIMATION != EXACT_COVER
+AI_PROPOSAL != MATHEMATICAL_AUTHORITY
+EXCEPTIONAL_FIXED_POINT != CONCEPTUAL_EXPLANATION
+```
+
+The intended reusable discovery pattern is to make the group action explicit and search for exceptional stabilizers, fixed points, and unexpectedly small orbits rather than treating "symmetry" as an untyped prose observation.
+
+No M23 theorem or arithmetic-Galois conclusion is imported by this document.
+

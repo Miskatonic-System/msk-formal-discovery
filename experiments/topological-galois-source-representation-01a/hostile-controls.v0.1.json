@@ -1,0 +1,376 @@
+{
+  "schema_version": "miskatonic.formal-discovery.tg-hostile-controls.v0.1",
+  "work_order": "WO-FORMAL-TOPOLOGICAL-GALOIS-SOURCE-REPRESENTATION-01A",
+  "results": [
+    {
+      "id": "H01",
+      "pattern": "B_n relabeled F_n",
+      "claim": {
+        "claim_type": "GROUP_IDENTIFICATION",
+        "identify": [
+          "B_n",
+          "F_n"
+        ]
+      },
+      "expected": [
+        "DISTINCT_OBJECTS:B_n!=F_n"
+      ],
+      "got": [
+        "DISTINCT_OBJECTS:B_n!=F_n"
+      ],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "H02",
+      "pattern": "B_n -> S_n quotient relabeled faithful braid representation",
+      "claim": {
+        "claim_type": "FAITHFULNESS",
+        "map": "pi_perm",
+        "faithful": true,
+        "n": 3
+      },
+      "expected": [
+        "NONTRIVIAL_KERNEL_WITNESS:sigma_1^2"
+      ],
+      "got": [
+        "NONTRIVIAL_KERNEL_WITNESS:sigma_1^2"
+      ],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "H03",
+      "pattern": "Artin action direction reversed",
+      "claim": {
+        "claim_type": "ARTIN_GENERATOR_ACTION",
+        "n": 3,
+        "i": 1,
+        "labelled_as": "alpha(sigma_i)",
+        "images": {
+          "x1": "x1 x2 x1^-1",
+          "x2": "x1",
+          "x3": "x3"
+        }
+      },
+      "expected": [
+        "ACTION_HANDEDNESS_REVERSED:images_equal_alpha(sigma_i^-1)"
+      ],
+      "got": [
+        "ACTION_HANDEDNESS_REVERSED:images_equal_alpha(sigma_i^-1)"
+      ],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "H04",
+      "pattern": "left/right action convention switched after freeze",
+      "claim": {
+        "claim_type": "ACTION_SIDE",
+        "side": "RIGHT",
+        "letter_order": "LEFTMOST_FIRST"
+      },
+      "expected": [
+        "CONVENTION_DRIFT:left_vs_right_action"
+      ],
+      "got": [
+        "CONVENTION_DRIFT:left_vs_right_action"
+      ],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "H05",
+      "pattern": "word-composition order reversed",
+      "claim": {
+        "claim_type": "WORD_ORDER",
+        "order": "RIGHT_TO_LEFT",
+        "n": 3
+      },
+      "expected": [
+        "CONVENTION_DRIFT:braid_multiplication_order"
+      ],
+      "got": [
+        "CONVENTION_DRIFT:braid_multiplication_order"
+      ],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "H06",
+      "pattern": "Hurwitz tuple convention silently changed",
+      "claim": {
+        "claim_type": "HURWITZ_TUPLE_MOVE",
+        "i": 1,
+        "labelled_as": "frozen_left_action",
+        "move": "(M_i+1, M_i+1^-1 M_i M_i+1)"
+      },
+      "expected": [
+        "TUPLE_CONVENTION_MISMATCH:move_is_the_right_variant"
+      ],
+      "got": [
+        "TUPLE_CONVENTION_MISMATCH:move_is_the_right_variant"
+      ],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "H07",
+      "pattern": "reduced and unreduced Burau conflated",
+      "claim": {
+        "claim_type": "BURAU_VARIANT",
+        "n": 5,
+        "variant": "reduced",
+        "dimension": 5
+      },
+      "expected": [
+        "BURAU_VARIANT_CONFLATION:dimension"
+      ],
+      "got": [
+        "BURAU_VARIANT_CONFLATION:dimension"
+      ],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "H08",
+      "pattern": "Burau specialization silently changed",
+      "claim": {
+        "claim_type": "BURAU_SPECIALIZATION",
+        "labelled_as": "frozen_specialization",
+        "t": 2
+      },
+      "expected": [
+        "SPECIALIZATION_DRIFT:t=2!=-1"
+      ],
+      "got": [
+        "SPECIALIZATION_DRIFT:t=2!=-1"
+      ],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "H09",
+      "pattern": "local n=4/n=6 alternating-form check relabeled theorem authority",
+      "claim": {
+        "claim_type": "AUTHORITY_ASSIGNMENT",
+        "n": 4,
+        "authority": "EXTERNAL_THEOREM_SCOPED",
+        "source": null
+      },
+      "expected": [
+        "AUTHORITY_NOT_EARNED:no_bound_even_degree_source"
+      ],
+      "got": [
+        "AUTHORITY_NOT_EARNED:no_bound_even_degree_source"
+      ],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "H10",
+      "pattern": "odd-degree source theorem extrapolated to even degree",
+      "claim": {
+        "claim_type": "AUTHORITY_ASSIGNMENT",
+        "n": 6,
+        "authority": "EXTERNAL_THEOREM_SCOPED",
+        "source": "src-hmc-brendle-margalit-putman-2015"
+      },
+      "expected": [
+        "AUTHORITY_NOT_EARNED:no_bound_even_degree_source",
+        "SCOPE_EXTRAPOLATION:odd_degree_source_applied_to_even_degree"
+      ],
+      "got": [
+        "AUTHORITY_NOT_EARNED:no_bound_even_degree_source",
+        "SCOPE_EXTRAPOLATION:odd_degree_source_applied_to_even_degree"
+      ],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "H11",
+      "pattern": "infinity omitted from target puncture accounting",
+      "claim": {
+        "claim_type": "PUNCTURE_ACCOUNTING",
+        "n": 5,
+        "finite_punctures": 5,
+        "includes_infinity": false,
+        "claimed_rank": 5
+      },
+      "expected": [
+        "PUNCTURE_ACCOUNTING_INCOMPLETE:infinity_omitted(rank_would_be_4_not_5)"
+      ],
+      "got": [
+        "PUNCTURE_ACCOUNTING_INCOMPLETE:infinity_omitted(rank_would_be_4_not_5)"
+      ],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "H12",
+      "pattern": "roots of P_n substituted for roots of E-P_n",
+      "claim": {
+        "claim_type": "SINGULAR_POLYNOMIAL",
+        "polynomial": "P_n",
+        "energy_frozen_to_zero": false
+      },
+      "expected": [
+        "SINGULAR_POLYNOMIAL_MISMATCH:P_n_used_where_E-P_n_required"
+      ],
+      "got": [
+        "SINGULAR_POLYNOMIAL_MISMATCH:P_n_used_where_E-P_n_required"
+      ],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "H13",
+      "pattern": "source group action relabeled target monodromy",
+      "claim": {
+        "claim_type": "KIND_ASSIGNMENT",
+        "object": "alpha",
+        "monodromy_kind": "MK-VARIATIONAL"
+      },
+      "expected": [
+        "GROUP_ACTION_RELABELED_AS_REPRESENTATION_VALUE"
+      ],
+      "got": [
+        "GROUP_ACTION_RELABELED_AS_REPRESENTATION_VALUE"
+      ],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "H14",
+      "pattern": "target monodromy relabeled differential Galois group without Zariski-closure / theorem scope",
+      "claim": {
+        "claim_type": "GALOIS_ASSIGNMENT",
+        "object": "image of rho_tgt",
+        "asserted_as": "G_diff",
+        "zariski_closure_scope": null
+      },
+      "expected": [
+        "GALOIS_SCOPE_MISSING:no_Zariski_closure_or_theorem_scope"
+      ],
+      "got": [
+        "GALOIS_SCOPE_MISSING:no_Zariski_closure_or_theorem_scope"
+      ],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "H15",
+      "pattern": "FTT artifact imported despite FTT_ROLE=NOT_REQUIRED",
+      "claim": {
+        "claim_type": "PROVIDER_IMPORT",
+        "provider": "msk-ftt-nhe",
+        "object": "YANG_LEE_B6_REPRESENTATION",
+        "ftt_specific_operation": false
+      },
+      "expected": [
+        "FTT_NOT_REQUIRED_VIOLATION"
+      ],
+      "got": [
+        "FTT_NOT_REQUIRED_VIOLATION"
+      ],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "H16",
+      "pattern": "same word 'monodromy' accepted as bridge evidence",
+      "claim": {
+        "claim_type": "EVIDENCE",
+        "basis": [
+          "SHARED_TERMINOLOGY"
+        ]
+      },
+      "expected": [
+        "SHARED_TERMINOLOGY_NOT_EVIDENCE"
+      ],
+      "got": [
+        "SHARED_TERMINOLOGY_NOT_EVIDENCE"
+      ],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "R03",
+      "pattern": "repaired counterpart (must be admitted)",
+      "claim": {
+        "claim_type": "ARTIN_GENERATOR_ACTION",
+        "n": 3,
+        "i": 1,
+        "labelled_as": "alpha(sigma_i)",
+        "images": {
+          "x1": "x2",
+          "x2": "x2^-1 x1 x2",
+          "x3": "x3"
+        }
+      },
+      "expected": [],
+      "got": [],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "R04",
+      "pattern": "repaired counterpart (must be admitted)",
+      "claim": {
+        "claim_type": "ACTION_SIDE",
+        "side": "LEFT",
+        "letter_order": "RIGHTMOST_FIRST"
+      },
+      "expected": [],
+      "got": [],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "R07",
+      "pattern": "repaired counterpart (must be admitted)",
+      "claim": {
+        "claim_type": "BURAU_VARIANT",
+        "n": 5,
+        "variant": "reduced",
+        "dimension": 4
+      },
+      "expected": [],
+      "got": [],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "R09",
+      "pattern": "repaired counterpart (must be admitted)",
+      "claim": {
+        "claim_type": "AUTHORITY_ASSIGNMENT",
+        "n": 5,
+        "authority": "EXTERNAL_THEOREM_SCOPED",
+        "source": "src-hmc-brendle-margalit-putman-2015"
+      },
+      "expected": [],
+      "got": [],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "R11",
+      "pattern": "repaired counterpart (must be admitted)",
+      "claim": {
+        "claim_type": "PUNCTURE_ACCOUNTING",
+        "n": 5,
+        "finite_punctures": 5,
+        "includes_infinity": true,
+        "claimed_rank": 5
+      },
+      "expected": [],
+      "got": [],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "R12",
+      "pattern": "repaired counterpart (must be admitted)",
+      "claim": {
+        "claim_type": "SINGULAR_POLYNOMIAL",
+        "polynomial": "E - P_n"
+      },
+      "expected": [],
+      "got": [],
+      "rejected_for_exactly_the_stated_reasons": true
+    },
+    {
+      "id": "R14",
+      "pattern": "repaired counterpart (must be admitted)",
+      "claim": {
+        "claim_type": "GALOIS_ASSIGNMENT",
+        "object": "image of rho_tgt",
+        "asserted_as": "G_diff",
+        "zariski_closure_scope": "Fuchsian case: Zariski closure of the monodromy group; source to be bound (00A P2)"
+      },
+      "expected": [],
+      "got": [],
+      "rejected_for_exactly_the_stated_reasons": true
+    }
+  ]
+}

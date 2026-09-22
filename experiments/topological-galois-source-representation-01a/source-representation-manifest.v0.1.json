@@ -1,0 +1,40 @@
+{
+  "schema_version": "miskatonic.formal-discovery.tg-source-representation-manifest.v0.1",
+  "work_order": "WO-FORMAL-TOPOLOGICAL-GALOIS-SOURCE-REPRESENTATION-01A",
+  "gate0": {
+    "mathematics_main": "2337c7d744f176274997374a7d4057c7272f715d",
+    "formal_discovery_main": "60b92dcb3069fe8312ee8901860f24233df1562f",
+    "candidate_freeze_digest": "889cc252226d801491a83bdd594e366fffc5a8bd1ef9379f5088bf9f65d78425",
+    "reconstruction_digest": "5dbaab30927ed76acc6cb5ca2e36761e0f624ed1ef57f932c041e7e6eb9cc0cb",
+    "predecessor_blobs_at_mathematics_main": {
+      "candidate-freeze.v0.1.json": "e0c5d4627dba5560ffc34740ac746c0fc632697d",
+      "determination.v0.1.json": "a2098a65404dc0c1126661d9dd87f1cc35be6f10",
+      "reconstruction-receipt.v0.1.json": "fff84ffc71b70b53c9a75b34ef24313c919e22ba",
+      "sources.v0.1.json": "4cafe426d4b23b82a93b74d7c946d97bb95c0b41",
+      "monodromy-kind-registry.v0.1.json": "2069e62bafe94a3faeb88fdd5ef1676431597976",
+      "docs/HAMILTONIAN_MONODROMY_POSITIVE_CONTROLS.md": "a3f6fbca7dd297bf0a14d602148a8c9d8ec8e3bd"
+    }
+  },
+  "degrees": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "frozen_burau_specialization_t": -1,
+  "source_objects": {
+    "S1": "pi_perm: B_n -> S_n",
+    "S2": "alpha: B_n -> Aut(F_n) (Artin), with the derived Hurwitz action",
+    "S3": "beta_n: reduced/unreduced Burau at t = -1",
+    "S4": "odd-n symplectic reading (BMP), even-n local only"
+  },
+  "certificate_digests": {
+    "certificates/s1-permutation-quotient.v0.1.json": "b55187df7b31d9577a77526ac70fcee9a30faf71abb12d990a98ef44a896ff37",
+    "certificates/s2-artin-action.v0.1.json": "d53d35a37c505b37cb1316a6cf55850b54712680345727f132a2d1b06662cade",
+    "certificates/hurwitz-action.v0.1.json": "06027a8780a1c8f3c168af546da45ec4709118b8534aa4e0eb5786b04178e509",
+    "certificates/s3-burau.v0.1.json": "76ce6ee3429d49f2d2ec67b2d3ea674563343a297dc393b0c20393b43332e23d",
+    "certificates/permutation-quotient-kernel-witness.v0.1.json": "f2a721044d9ffaf3fbbccecc3e28bf3b6598cb28971d146aa318b8531a9f70f5"
+  },
+  "target_domain_digest": "243b5cfdf2a1b3038f88c669ba7ded459ba2a9d98e1074a2bef5f79f169441fa",
+  "result": "PASS"
+}

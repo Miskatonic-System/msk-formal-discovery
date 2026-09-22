@@ -1,0 +1,568 @@
+{
+  "3": {
+    "object": "S1",
+    "n": 3,
+    "map": "pi_perm: B_n -> S_n, sigma_i -> (i i+1)",
+    "composition_convention": "permutations composed left to right, (p*q)(k) = q(p(k)), matching braid juxtaposition",
+    "generators": {
+      "sigma_1": [
+        2,
+        1,
+        3
+      ],
+      "sigma_2": [
+        1,
+        3,
+        2
+      ]
+    },
+    "generator_is_transposition_(i,i+1)": {
+      "sigma_1": true,
+      "sigma_2": true
+    },
+    "relations": [
+      {
+        "relation": "braid(1,2)",
+        "lhs": [
+          3,
+          2,
+          1
+        ],
+        "rhs": [
+          3,
+          2,
+          1
+        ],
+        "holds": true
+      }
+    ],
+    "sigma_i_squared_maps_to_identity": {
+      "sigma_1": true,
+      "sigma_2": true
+    },
+    "image_size": 6,
+    "expected_size_n_factorial": 6,
+    "surjective": true,
+    "result": "PASS"
+  },
+  "4": {
+    "object": "S1",
+    "n": 4,
+    "map": "pi_perm: B_n -> S_n, sigma_i -> (i i+1)",
+    "composition_convention": "permutations composed left to right, (p*q)(k) = q(p(k)), matching braid juxtaposition",
+    "generators": {
+      "sigma_1": [
+        2,
+        1,
+        3,
+        4
+      ],
+      "sigma_2": [
+        1,
+        3,
+        2,
+        4
+      ],
+      "sigma_3": [
+        1,
+        2,
+        4,
+        3
+      ]
+    },
+    "generator_is_transposition_(i,i+1)": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true
+    },
+    "relations": [
+      {
+        "relation": "braid(1,2)",
+        "lhs": [
+          3,
+          2,
+          1,
+          4
+        ],
+        "rhs": [
+          3,
+          2,
+          1,
+          4
+        ],
+        "holds": true
+      },
+      {
+        "relation": "braid(2,3)",
+        "lhs": [
+          1,
+          4,
+          3,
+          2
+        ],
+        "rhs": [
+          1,
+          4,
+          3,
+          2
+        ],
+        "holds": true
+      },
+      {
+        "relation": "far(1,3)",
+        "lhs": [
+          2,
+          1,
+          4,
+          3
+        ],
+        "rhs": [
+          2,
+          1,
+          4,
+          3
+        ],
+        "holds": true
+      }
+    ],
+    "sigma_i_squared_maps_to_identity": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true
+    },
+    "image_size": 24,
+    "expected_size_n_factorial": 24,
+    "surjective": true,
+    "result": "PASS"
+  },
+  "5": {
+    "object": "S1",
+    "n": 5,
+    "map": "pi_perm: B_n -> S_n, sigma_i -> (i i+1)",
+    "composition_convention": "permutations composed left to right, (p*q)(k) = q(p(k)), matching braid juxtaposition",
+    "generators": {
+      "sigma_1": [
+        2,
+        1,
+        3,
+        4,
+        5
+      ],
+      "sigma_2": [
+        1,
+        3,
+        2,
+        4,
+        5
+      ],
+      "sigma_3": [
+        1,
+        2,
+        4,
+        3,
+        5
+      ],
+      "sigma_4": [
+        1,
+        2,
+        3,
+        5,
+        4
+      ]
+    },
+    "generator_is_transposition_(i,i+1)": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true,
+      "sigma_4": true
+    },
+    "relations": [
+      {
+        "relation": "braid(1,2)",
+        "lhs": [
+          3,
+          2,
+          1,
+          4,
+          5
+        ],
+        "rhs": [
+          3,
+          2,
+          1,
+          4,
+          5
+        ],
+        "holds": true
+      },
+      {
+        "relation": "braid(2,3)",
+        "lhs": [
+          1,
+          4,
+          3,
+          2,
+          5
+        ],
+        "rhs": [
+          1,
+          4,
+          3,
+          2,
+          5
+        ],
+        "holds": true
+      },
+      {
+        "relation": "braid(3,4)",
+        "lhs": [
+          1,
+          2,
+          5,
+          4,
+          3
+        ],
+        "rhs": [
+          1,
+          2,
+          5,
+          4,
+          3
+        ],
+        "holds": true
+      },
+      {
+        "relation": "far(1,3)",
+        "lhs": [
+          2,
+          1,
+          4,
+          3,
+          5
+        ],
+        "rhs": [
+          2,
+          1,
+          4,
+          3,
+          5
+        ],
+        "holds": true
+      },
+      {
+        "relation": "far(1,4)",
+        "lhs": [
+          2,
+          1,
+          3,
+          5,
+          4
+        ],
+        "rhs": [
+          2,
+          1,
+          3,
+          5,
+          4
+        ],
+        "holds": true
+      },
+      {
+        "relation": "far(2,4)",
+        "lhs": [
+          1,
+          3,
+          2,
+          5,
+          4
+        ],
+        "rhs": [
+          1,
+          3,
+          2,
+          5,
+          4
+        ],
+        "holds": true
+      }
+    ],
+    "sigma_i_squared_maps_to_identity": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true,
+      "sigma_4": true
+    },
+    "image_size": 120,
+    "expected_size_n_factorial": 120,
+    "surjective": true,
+    "result": "PASS"
+  },
+  "6": {
+    "object": "S1",
+    "n": 6,
+    "map": "pi_perm: B_n -> S_n, sigma_i -> (i i+1)",
+    "composition_convention": "permutations composed left to right, (p*q)(k) = q(p(k)), matching braid juxtaposition",
+    "generators": {
+      "sigma_1": [
+        2,
+        1,
+        3,
+        4,
+        5,
+        6
+      ],
+      "sigma_2": [
+        1,
+        3,
+        2,
+        4,
+        5,
+        6
+      ],
+      "sigma_3": [
+        1,
+        2,
+        4,
+        3,
+        5,
+        6
+      ],
+      "sigma_4": [
+        1,
+        2,
+        3,
+        5,
+        4,
+        6
+      ],
+      "sigma_5": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        5
+      ]
+    },
+    "generator_is_transposition_(i,i+1)": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true,
+      "sigma_4": true,
+      "sigma_5": true
+    },
+    "relations": [
+      {
+        "relation": "braid(1,2)",
+        "lhs": [
+          3,
+          2,
+          1,
+          4,
+          5,
+          6
+        ],
+        "rhs": [
+          3,
+          2,
+          1,
+          4,
+          5,
+          6
+        ],
+        "holds": true
+      },
+      {
+        "relation": "braid(2,3)",
+        "lhs": [
+          1,
+          4,
+          3,
+          2,
+          5,
+          6
+        ],
+        "rhs": [
+          1,
+          4,
+          3,
+          2,
+          5,
+          6
+        ],
+        "holds": true
+      },
+      {
+        "relation": "braid(3,4)",
+        "lhs": [
+          1,
+          2,
+          5,
+          4,
+          3,
+          6
+        ],
+        "rhs": [
+          1,
+          2,
+          5,
+          4,
+          3,
+          6
+        ],
+        "holds": true
+      },
+      {
+        "relation": "braid(4,5)",
+        "lhs": [
+          1,
+          2,
+          3,
+          6,
+          5,
+          4
+        ],
+        "rhs": [
+          1,
+          2,
+          3,
+          6,
+          5,
+          4
+        ],
+        "holds": true
+      },
+      {
+        "relation": "far(1,3)",
+        "lhs": [
+          2,
+          1,
+          4,
+          3,
+          5,
+          6
+        ],
+        "rhs": [
+          2,
+          1,
+          4,
+          3,
+          5,
+          6
+        ],
+        "holds": true
+      },
+      {
+        "relation": "far(1,4)",
+        "lhs": [
+          2,
+          1,
+          3,
+          5,
+          4,
+          6
+        ],
+        "rhs": [
+          2,
+          1,
+          3,
+          5,
+          4,
+          6
+        ],
+        "holds": true
+      },
+      {
+        "relation": "far(1,5)",
+        "lhs": [
+          2,
+          1,
+          3,
+          4,
+          6,
+          5
+        ],
+        "rhs": [
+          2,
+          1,
+          3,
+          4,
+          6,
+          5
+        ],
+        "holds": true
+      },
+      {
+        "relation": "far(2,4)",
+        "lhs": [
+          1,
+          3,
+          2,
+          5,
+          4,
+          6
+        ],
+        "rhs": [
+          1,
+          3,
+          2,
+          5,
+          4,
+          6
+        ],
+        "holds": true
+      },
+      {
+        "relation": "far(2,5)",
+        "lhs": [
+          1,
+          3,
+          2,
+          4,
+          6,
+          5
+        ],
+        "rhs": [
+          1,
+          3,
+          2,
+          4,
+          6,
+          5
+        ],
+        "holds": true
+      },
+      {
+        "relation": "far(3,5)",
+        "lhs": [
+          1,
+          2,
+          4,
+          3,
+          6,
+          5
+        ],
+        "rhs": [
+          1,
+          2,
+          4,
+          3,
+          6,
+          5
+        ],
+        "holds": true
+      }
+    ],
+    "sigma_i_squared_maps_to_identity": {
+      "sigma_1": true,
+      "sigma_2": true,
+      "sigma_3": true,
+      "sigma_4": true,
+      "sigma_5": true
+    },
+    "image_size": 720,
+    "expected_size_n_factorial": 720,
+    "surjective": true,
+    "result": "PASS"
+  }
+}

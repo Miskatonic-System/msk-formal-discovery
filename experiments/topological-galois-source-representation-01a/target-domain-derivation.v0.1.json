@@ -1,0 +1,212 @@
+{
+  "schema_version": "miskatonic.formal-discovery.tg-target-domain-derivation.v0.1",
+  "work_order": "WO-FORMAL-TOPOLOGICAL-GALOIS-SOURCE-REPRESENTATION-01A",
+  "candidate": "CAND-1 (frozen; digest 889cc252226d801491a83bdd594e366fffc5a8bd1ef9379f5088bf9f65d78425)",
+  "scope": "NVE derived and algebrized; puncture accounting frozen. No differential Galois group, no monodromy matrix, no (mu, lambda) value, no Kovacic run.",
+  "permanent": [
+    "B_n != F_n",
+    "SINGULAR_POLYNOMIAL = E - P_n, NOT P_n (E is a free parameter, not frozen to 0)",
+    "INFINITY_IS_A_PUNCTURE"
+  ],
+  "degrees": {
+    "3": {
+      "n": 3,
+      "hamiltonian": "a0 + a1*q1 + a2*q1**2 + a3*q1**3 + p1**2/2 + p2**2/2 + q2**2*(lambda*q1/2 + mu/2)",
+      "invariant_plane": "q2 = p2 = 0",
+      "invariant_plane_verified": true,
+      "energy_on_plane": "a0 + a1*q1 + a2*q1**2 + a3*q1**3 + p1**2/2",
+      "energy_relation": "p1^2 = f_{a,E}(q1)",
+      "energy_relation_verified": true,
+      "singular_polynomial": "f_{a,E}(q) = 2(E - P_n(q; a))  [NOT P_n; equals 2(E - P_n), roots = roots of E - P_n]",
+      "f_expanded": "2*E - 2*a0 - 2*a1*q - 2*a2*q**2 - 2*a3*q**3",
+      "variational_equation_splits": true,
+      "nve": "xi'' + (mu + lambda*q1(t)) xi = 0",
+      "nve_verified": true,
+      "algebraic_nve": "f y'' + (f'/2) y' + (mu + lambda q) y = 0  with x = q = q1",
+      "algebraic_nve_verified": true,
+      "finite_singular_set": "the n roots of f_{a,E} (simple when disc(f) != 0)",
+      "finite_exponents_at_simple_root": [
+        "0",
+        "1/2"
+      ],
+      "infinity_is_singular": true,
+      "infinity_regular_singular": true,
+      "exponents_at_infinity": [
+        "(a3 - sqrt(a3*(a3 + 8*lambda)))/(4*a3)",
+        "(a3 + sqrt(a3*(a3 + 8*lambda)))/(4*a3)"
+      ],
+      "discriminant_of_f_nonzero_as_polynomial_in_(a,E)": true,
+      "puncture_count": 4,
+      "base": "P^1_q minus (3 finite roots of f_{a,E} + infinity)",
+      "pi_1": {
+        "rank": 3,
+        "isomorphic_to": "F_3",
+        "generators": [
+          "x_1: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_2: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_3: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_inf: loop counterclockwise around infinity in the local coordinate 1/q"
+        ],
+        "relation": "x_1 x_2 ... x_n x_inf = 1  (so x_inf = (x_1 ... x_n)^{-1} and the group is free on x_1..x_n)",
+        "basepoint": "d_0 on the boundary of a disk D containing all n finite roots; D minus the roots is the n-punctured disk D_n of BB Sec.4.4",
+        "ordering": "roots r_1..r_n ordered by the position of the corresponding puncture in D_n, matching the strand ordering 1..n of B_n; any reordering is a relabelling by an element of S_n and is recorded, not assumed",
+        "loop_orientation": "counterclockwise (BB Sec.4.4)",
+        "derivation": "P^1 minus infinity = C; C minus the n roots deformation-retracts onto D_n; pi_1(D_n, d_0) is free on x_1..x_n (BB Sec.4.4). Adding the puncture at infinity back as a generator x_inf introduces exactly the relation x_1...x_n x_inf = 1. LOCAL_DERIVED elementary; the free-group statement is BB Sec.4.4.",
+        "rank_if_infinity_omitted": 2,
+        "rank_if_infinity_omitted_note": "P^1 minus n points has pi_1 free of rank n-1: omitting infinity changes the rank, so infinity MUST be counted"
+      },
+      "result": "PASS"
+    },
+    "4": {
+      "n": 4,
+      "hamiltonian": "a0 + a1*q1 + a2*q1**2 + a3*q1**3 + a4*q1**4 + p1**2/2 + p2**2/2 + q2**2*(lambda*q1/2 + mu/2)",
+      "invariant_plane": "q2 = p2 = 0",
+      "invariant_plane_verified": true,
+      "energy_on_plane": "a0 + a1*q1 + a2*q1**2 + a3*q1**3 + a4*q1**4 + p1**2/2",
+      "energy_relation": "p1^2 = f_{a,E}(q1)",
+      "energy_relation_verified": true,
+      "singular_polynomial": "f_{a,E}(q) = 2(E - P_n(q; a))  [NOT P_n; equals 2(E - P_n), roots = roots of E - P_n]",
+      "f_expanded": "2*E - 2*a0 - 2*a1*q - 2*a2*q**2 - 2*a3*q**3 - 2*a4*q**4",
+      "variational_equation_splits": true,
+      "nve": "xi'' + (mu + lambda*q1(t)) xi = 0",
+      "nve_verified": true,
+      "algebraic_nve": "f y'' + (f'/2) y' + (mu + lambda q) y = 0  with x = q = q1",
+      "algebraic_nve_verified": true,
+      "finite_singular_set": "the n roots of f_{a,E} (simple when disc(f) != 0)",
+      "finite_exponents_at_simple_root": [
+        "0",
+        "1/2"
+      ],
+      "infinity_is_singular": true,
+      "infinity_regular_singular": true,
+      "exponents_at_infinity": [
+        "0",
+        "1"
+      ],
+      "discriminant_of_f_nonzero_as_polynomial_in_(a,E)": true,
+      "puncture_count": 5,
+      "base": "P^1_q minus (4 finite roots of f_{a,E} + infinity)",
+      "pi_1": {
+        "rank": 4,
+        "isomorphic_to": "F_4",
+        "generators": [
+          "x_1: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_2: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_3: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_4: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_inf: loop counterclockwise around infinity in the local coordinate 1/q"
+        ],
+        "relation": "x_1 x_2 ... x_n x_inf = 1  (so x_inf = (x_1 ... x_n)^{-1} and the group is free on x_1..x_n)",
+        "basepoint": "d_0 on the boundary of a disk D containing all n finite roots; D minus the roots is the n-punctured disk D_n of BB Sec.4.4",
+        "ordering": "roots r_1..r_n ordered by the position of the corresponding puncture in D_n, matching the strand ordering 1..n of B_n; any reordering is a relabelling by an element of S_n and is recorded, not assumed",
+        "loop_orientation": "counterclockwise (BB Sec.4.4)",
+        "derivation": "P^1 minus infinity = C; C minus the n roots deformation-retracts onto D_n; pi_1(D_n, d_0) is free on x_1..x_n (BB Sec.4.4). Adding the puncture at infinity back as a generator x_inf introduces exactly the relation x_1...x_n x_inf = 1. LOCAL_DERIVED elementary; the free-group statement is BB Sec.4.4.",
+        "rank_if_infinity_omitted": 3,
+        "rank_if_infinity_omitted_note": "P^1 minus n points has pi_1 free of rank n-1: omitting infinity changes the rank, so infinity MUST be counted"
+      },
+      "result": "PASS"
+    },
+    "5": {
+      "n": 5,
+      "hamiltonian": "a0 + a1*q1 + a2*q1**2 + a3*q1**3 + a4*q1**4 + a5*q1**5 + p1**2/2 + p2**2/2 + q2**2*(lambda*q1/2 + mu/2)",
+      "invariant_plane": "q2 = p2 = 0",
+      "invariant_plane_verified": true,
+      "energy_on_plane": "a0 + a1*q1 + a2*q1**2 + a3*q1**3 + a4*q1**4 + a5*q1**5 + p1**2/2",
+      "energy_relation": "p1^2 = f_{a,E}(q1)",
+      "energy_relation_verified": true,
+      "singular_polynomial": "f_{a,E}(q) = 2(E - P_n(q; a))  [NOT P_n; equals 2(E - P_n), roots = roots of E - P_n]",
+      "f_expanded": "2*E - 2*a0 - 2*a1*q - 2*a2*q**2 - 2*a3*q**3 - 2*a4*q**4 - 2*a5*q**5",
+      "variational_equation_splits": true,
+      "nve": "xi'' + (mu + lambda*q1(t)) xi = 0",
+      "nve_verified": true,
+      "algebraic_nve": "f y'' + (f'/2) y' + (mu + lambda q) y = 0  with x = q = q1",
+      "algebraic_nve_verified": true,
+      "finite_singular_set": "the n roots of f_{a,E} (simple when disc(f) != 0)",
+      "finite_exponents_at_simple_root": [
+        "0",
+        "1/2"
+      ],
+      "infinity_is_singular": true,
+      "infinity_regular_singular": true,
+      "exponents_at_infinity": [
+        "0",
+        "3/2"
+      ],
+      "discriminant_of_f_nonzero_as_polynomial_in_(a,E)": true,
+      "puncture_count": 6,
+      "base": "P^1_q minus (5 finite roots of f_{a,E} + infinity)",
+      "pi_1": {
+        "rank": 5,
+        "isomorphic_to": "F_5",
+        "generators": [
+          "x_1: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_2: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_3: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_4: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_5: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_inf: loop counterclockwise around infinity in the local coordinate 1/q"
+        ],
+        "relation": "x_1 x_2 ... x_n x_inf = 1  (so x_inf = (x_1 ... x_n)^{-1} and the group is free on x_1..x_n)",
+        "basepoint": "d_0 on the boundary of a disk D containing all n finite roots; D minus the roots is the n-punctured disk D_n of BB Sec.4.4",
+        "ordering": "roots r_1..r_n ordered by the position of the corresponding puncture in D_n, matching the strand ordering 1..n of B_n; any reordering is a relabelling by an element of S_n and is recorded, not assumed",
+        "loop_orientation": "counterclockwise (BB Sec.4.4)",
+        "derivation": "P^1 minus infinity = C; C minus the n roots deformation-retracts onto D_n; pi_1(D_n, d_0) is free on x_1..x_n (BB Sec.4.4). Adding the puncture at infinity back as a generator x_inf introduces exactly the relation x_1...x_n x_inf = 1. LOCAL_DERIVED elementary; the free-group statement is BB Sec.4.4.",
+        "rank_if_infinity_omitted": 4,
+        "rank_if_infinity_omitted_note": "P^1 minus n points has pi_1 free of rank n-1: omitting infinity changes the rank, so infinity MUST be counted"
+      },
+      "result": "PASS"
+    },
+    "6": {
+      "n": 6,
+      "hamiltonian": "a0 + a1*q1 + a2*q1**2 + a3*q1**3 + a4*q1**4 + a5*q1**5 + a6*q1**6 + p1**2/2 + p2**2/2 + q2**2*(lambda*q1/2 + mu/2)",
+      "invariant_plane": "q2 = p2 = 0",
+      "invariant_plane_verified": true,
+      "energy_on_plane": "a0 + a1*q1 + a2*q1**2 + a3*q1**3 + a4*q1**4 + a5*q1**5 + a6*q1**6 + p1**2/2",
+      "energy_relation": "p1^2 = f_{a,E}(q1)",
+      "energy_relation_verified": true,
+      "singular_polynomial": "f_{a,E}(q) = 2(E - P_n(q; a))  [NOT P_n; equals 2(E - P_n), roots = roots of E - P_n]",
+      "f_expanded": "2*E - 2*a0 - 2*a1*q - 2*a2*q**2 - 2*a3*q**3 - 2*a4*q**4 - 2*a5*q**5 - 2*a6*q**6",
+      "variational_equation_splits": true,
+      "nve": "xi'' + (mu + lambda*q1(t)) xi = 0",
+      "nve_verified": true,
+      "algebraic_nve": "f y'' + (f'/2) y' + (mu + lambda q) y = 0  with x = q = q1",
+      "algebraic_nve_verified": true,
+      "finite_singular_set": "the n roots of f_{a,E} (simple when disc(f) != 0)",
+      "finite_exponents_at_simple_root": [
+        "0",
+        "1/2"
+      ],
+      "infinity_is_singular": true,
+      "infinity_regular_singular": true,
+      "exponents_at_infinity": [
+        "0",
+        "2"
+      ],
+      "discriminant_of_f_nonzero_as_polynomial_in_(a,E)": true,
+      "puncture_count": 7,
+      "base": "P^1_q minus (6 finite roots of f_{a,E} + infinity)",
+      "pi_1": {
+        "rank": 6,
+        "isomorphic_to": "F_6",
+        "generators": [
+          "x_1: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_2: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_3: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_4: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_5: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_6: loop based at the basepoint d_0, travelling counterclockwise once around the j-th root r_j (roots ordered by the frozen ordering below)",
+          "x_inf: loop counterclockwise around infinity in the local coordinate 1/q"
+        ],
+        "relation": "x_1 x_2 ... x_n x_inf = 1  (so x_inf = (x_1 ... x_n)^{-1} and the group is free on x_1..x_n)",
+        "basepoint": "d_0 on the boundary of a disk D containing all n finite roots; D minus the roots is the n-punctured disk D_n of BB Sec.4.4",
+        "ordering": "roots r_1..r_n ordered by the position of the corresponding puncture in D_n, matching the strand ordering 1..n of B_n; any reordering is a relabelling by an element of S_n and is recorded, not assumed",
+        "loop_orientation": "counterclockwise (BB Sec.4.4)",
+        "derivation": "P^1 minus infinity = C; C minus the n roots deformation-retracts onto D_n; pi_1(D_n, d_0) is free on x_1..x_n (BB Sec.4.4). Adding the puncture at infinity back as a generator x_inf introduces exactly the relation x_1...x_n x_inf = 1. LOCAL_DERIVED elementary; the free-group statement is BB Sec.4.4.",
+        "rank_if_infinity_omitted": 5,
+        "rank_if_infinity_omitted_note": "P^1 minus n points has pi_1 free of rank n-1: omitting infinity changes the rank, so infinity MUST be counted"
+      },
+      "result": "PASS"
+    }
+  },
+  "result": "PASS"
+}

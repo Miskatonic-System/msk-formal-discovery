@@ -1,0 +1,2650 @@
+{
+  "3": {
+    "object": "S3",
+    "n": 3,
+    "frozen_specialization_t": -1,
+    "control_specialization_t": 2,
+    "matrix_action_convention": "matrices act on column vectors from the left; beta(XY) = beta(X) beta(Y)",
+    "unreduced": {
+      "t=-1": {
+        "generators": {
+          "sigma_1": [
+            [
+              "2",
+              "-1",
+              "0"
+            ],
+            [
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_2": [
+            [
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "2",
+              "-1"
+            ],
+            [
+              "0",
+              "1",
+              "0"
+            ]
+          ]
+        },
+        "relations_hold": true,
+        "relations": [
+          {
+            "relation": "braid(1,2)",
+            "holds": true
+          }
+        ]
+      },
+      "t=2": {
+        "generators": {
+          "sigma_1": [
+            [
+              "-1",
+              "2",
+              "0"
+            ],
+            [
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_2": [
+            [
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "-1",
+              "2"
+            ],
+            [
+              "0",
+              "1",
+              "0"
+            ]
+          ]
+        },
+        "relations_hold": true,
+        "relations": [
+          {
+            "relation": "braid(1,2)",
+            "holds": true
+          }
+        ]
+      }
+    },
+    "reduced": {
+      "t=-1": {
+        "generators": {
+          "sigma_1": [
+            [
+              "1",
+              "0"
+            ],
+            [
+              "-1",
+              "1"
+            ]
+          ],
+          "sigma_2": [
+            [
+              "1",
+              "1"
+            ],
+            [
+              "0",
+              "1"
+            ]
+          ]
+        },
+        "relations_hold": true,
+        "relations": [
+          {
+            "relation": "braid(1,2)",
+            "holds": true
+          }
+        ]
+      },
+      "t=2": {
+        "generators": {
+          "sigma_1": [
+            [
+              "-2",
+              "0"
+            ],
+            [
+              "-1",
+              "1"
+            ]
+          ],
+          "sigma_2": [
+            [
+              "1",
+              "-2"
+            ],
+            [
+              "0",
+              "-2"
+            ]
+          ]
+        },
+        "relations_hold": true,
+        "relations": [
+          {
+            "relation": "braid(1,2)",
+            "holds": true
+          }
+        ]
+      }
+    },
+    "unreduced_at_t=1_is_permutation_matrix_of_pi_perm": true,
+    "decomposition": {
+      "column_ones_fixed_by_unreduced": true,
+      "row_action_on_sum_zero_hyperplane_is_a_representation_after_transpose": true,
+      "row_representation_vs_BB_reduced": {
+        "equivalent": {
+          "commutant_dimension": 1,
+          "intertwiner": [
+            [
+              "-1",
+              "0"
+            ],
+            [
+              "0",
+              "1"
+            ]
+          ]
+        },
+        "equivalent_to_dual_(inverse_transpose)": {
+          "commutant_dimension": 1,
+          "intertwiner": [
+            [
+              "0",
+              "1"
+            ],
+            [
+              "1",
+              "0"
+            ]
+          ]
+        }
+      }
+    },
+    "comparison_with_00A_S1_matrices": {
+      "00A_relations_hold": true,
+      "00A_vs_BB_reduced_t=-1": {
+        "equivalent": {
+          "commutant_dimension": 1,
+          "intertwiner": [
+            [
+              "0",
+              "-1"
+            ],
+            [
+              "1",
+              "0"
+            ]
+          ]
+        },
+        "equivalent_to_dual_(inverse_transpose)": {
+          "commutant_dimension": 1,
+          "intertwiner": [
+            [
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "1"
+            ]
+          ]
+        }
+      }
+    },
+    "invariant_alternating_forms_t=-1": {
+      "BB_reduced": {
+        "solution_space_dimension": 1,
+        "rank_of_solution": 2,
+        "nondegenerate": true
+      },
+      "BB_reduced_dual": {
+        "solution_space_dimension": 1,
+        "rank_of_solution": 2,
+        "nondegenerate": true
+      },
+      "00A_matrices": {
+        "solution_space_dimension": 1,
+        "rank_of_solution": 2,
+        "nondegenerate": true
+      },
+      "dimension_n_minus_1": 2,
+      "note": "LOCAL algebra only. For even n the existence of an invariant alternating form is NOT invariant under passing to the dual representation (a degenerate form on V is an intertwiner V -> V*, not V* -> V), so the 00A even-n 'rank 2g form' is a statement about one of two dual conventions. The hyperelliptic/symplectic reading is source-bound for odd n only (S4)."
+    },
+    "result": "PASS"
+  },
+  "4": {
+    "object": "S3",
+    "n": 4,
+    "frozen_specialization_t": -1,
+    "control_specialization_t": 2,
+    "matrix_action_convention": "matrices act on column vectors from the left; beta(XY) = beta(X) beta(Y)",
+    "unreduced": {
+      "t=-1": {
+        "generators": {
+          "sigma_1": [
+            [
+              "2",
+              "-1",
+              "0",
+              "0"
+            ],
+            [
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_2": [
+            [
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "2",
+              "-1",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_3": [
+            [
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "2",
+              "-1"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0"
+            ]
+          ]
+        },
+        "relations_hold": true,
+        "relations": [
+          {
+            "relation": "braid(1,2)",
+            "holds": true
+          },
+          {
+            "relation": "braid(2,3)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,3)",
+            "holds": true
+          }
+        ]
+      },
+      "t=2": {
+        "generators": {
+          "sigma_1": [
+            [
+              "-1",
+              "2",
+              "0",
+              "0"
+            ],
+            [
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_2": [
+            [
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "-1",
+              "2",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_3": [
+            [
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "-1",
+              "2"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0"
+            ]
+          ]
+        },
+        "relations_hold": true,
+        "relations": [
+          {
+            "relation": "braid(1,2)",
+            "holds": true
+          },
+          {
+            "relation": "braid(2,3)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,3)",
+            "holds": true
+          }
+        ]
+      }
+    },
+    "reduced": {
+      "t=-1": {
+        "generators": {
+          "sigma_1": [
+            [
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "-1",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_2": [
+            [
+              "1",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "-1",
+              "1"
+            ]
+          ],
+          "sigma_3": [
+            [
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "1"
+            ],
+            [
+              "0",
+              "0",
+              "1"
+            ]
+          ]
+        },
+        "relations_hold": true,
+        "relations": [
+          {
+            "relation": "braid(1,2)",
+            "holds": true
+          },
+          {
+            "relation": "braid(2,3)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,3)",
+            "holds": true
+          }
+        ]
+      },
+      "t=2": {
+        "generators": {
+          "sigma_1": [
+            [
+              "-2",
+              "0",
+              "0"
+            ],
+            [
+              "-1",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_2": [
+            [
+              "1",
+              "-2",
+              "0"
+            ],
+            [
+              "0",
+              "-2",
+              "0"
+            ],
+            [
+              "0",
+              "-1",
+              "1"
+            ]
+          ],
+          "sigma_3": [
+            [
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "-2"
+            ],
+            [
+              "0",
+              "0",
+              "-2"
+            ]
+          ]
+        },
+        "relations_hold": true,
+        "relations": [
+          {
+            "relation": "braid(1,2)",
+            "holds": true
+          },
+          {
+            "relation": "braid(2,3)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,3)",
+            "holds": true
+          }
+        ]
+      }
+    },
+    "unreduced_at_t=1_is_permutation_matrix_of_pi_perm": true,
+    "decomposition": {
+      "column_ones_fixed_by_unreduced": true,
+      "row_action_on_sum_zero_hyperplane_is_a_representation_after_transpose": true,
+      "row_representation_vs_BB_reduced": {
+        "equivalent": {
+          "commutant_dimension": 1,
+          "intertwiner": [
+            [
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "-1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1"
+            ]
+          ]
+        },
+        "equivalent_to_dual_(inverse_transpose)": {
+          "commutant_dimension": 1,
+          "intertwiner": null
+        }
+      }
+    },
+    "comparison_with_00A_S1_matrices": {
+      "00A_relations_hold": true,
+      "00A_vs_BB_reduced_t=-1": {
+        "equivalent": {
+          "commutant_dimension": 1,
+          "intertwiner": null
+        },
+        "equivalent_to_dual_(inverse_transpose)": {
+          "commutant_dimension": 1,
+          "intertwiner": [
+            [
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1"
+            ]
+          ]
+        }
+      }
+    },
+    "invariant_alternating_forms_t=-1": {
+      "BB_reduced": {
+        "solution_space_dimension": 0,
+        "rank_of_solution": null,
+        "nondegenerate": false
+      },
+      "BB_reduced_dual": {
+        "solution_space_dimension": 1,
+        "rank_of_solution": 2,
+        "nondegenerate": false
+      },
+      "00A_matrices": {
+        "solution_space_dimension": 1,
+        "rank_of_solution": 2,
+        "nondegenerate": false
+      },
+      "dimension_n_minus_1": 3,
+      "note": "LOCAL algebra only. For even n the existence of an invariant alternating form is NOT invariant under passing to the dual representation (a degenerate form on V is an intertwiner V -> V*, not V* -> V), so the 00A even-n 'rank 2g form' is a statement about one of two dual conventions. The hyperelliptic/symplectic reading is source-bound for odd n only (S4)."
+    },
+    "result": "PASS"
+  },
+  "5": {
+    "object": "S3",
+    "n": 5,
+    "frozen_specialization_t": -1,
+    "control_specialization_t": 2,
+    "matrix_action_convention": "matrices act on column vectors from the left; beta(XY) = beta(X) beta(Y)",
+    "unreduced": {
+      "t=-1": {
+        "generators": {
+          "sigma_1": [
+            [
+              "2",
+              "-1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_2": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "2",
+              "-1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_3": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "2",
+              "-1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_4": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "2",
+              "-1"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ]
+          ]
+        },
+        "relations_hold": true,
+        "relations": [
+          {
+            "relation": "braid(1,2)",
+            "holds": true
+          },
+          {
+            "relation": "braid(2,3)",
+            "holds": true
+          },
+          {
+            "relation": "braid(3,4)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,3)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,4)",
+            "holds": true
+          },
+          {
+            "relation": "far(2,4)",
+            "holds": true
+          }
+        ]
+      },
+      "t=2": {
+        "generators": {
+          "sigma_1": [
+            [
+              "-1",
+              "2",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_2": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "-1",
+              "2",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_3": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "-1",
+              "2",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_4": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "-1",
+              "2"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ]
+          ]
+        },
+        "relations_hold": true,
+        "relations": [
+          {
+            "relation": "braid(1,2)",
+            "holds": true
+          },
+          {
+            "relation": "braid(2,3)",
+            "holds": true
+          },
+          {
+            "relation": "braid(3,4)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,3)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,4)",
+            "holds": true
+          },
+          {
+            "relation": "far(2,4)",
+            "holds": true
+          }
+        ]
+      }
+    },
+    "reduced": {
+      "t=-1": {
+        "generators": {
+          "sigma_1": [
+            [
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "-1",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_2": [
+            [
+              "1",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "-1",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_3": [
+            [
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "-1",
+              "1"
+            ]
+          ],
+          "sigma_4": [
+            [
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "1"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ]
+        },
+        "relations_hold": true,
+        "relations": [
+          {
+            "relation": "braid(1,2)",
+            "holds": true
+          },
+          {
+            "relation": "braid(2,3)",
+            "holds": true
+          },
+          {
+            "relation": "braid(3,4)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,3)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,4)",
+            "holds": true
+          },
+          {
+            "relation": "far(2,4)",
+            "holds": true
+          }
+        ]
+      },
+      "t=2": {
+        "generators": {
+          "sigma_1": [
+            [
+              "-2",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "-1",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_2": [
+            [
+              "1",
+              "-2",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "-2",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "-1",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_3": [
+            [
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "-2",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "-2",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "-1",
+              "1"
+            ]
+          ],
+          "sigma_4": [
+            [
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "-2"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "-2"
+            ]
+          ]
+        },
+        "relations_hold": true,
+        "relations": [
+          {
+            "relation": "braid(1,2)",
+            "holds": true
+          },
+          {
+            "relation": "braid(2,3)",
+            "holds": true
+          },
+          {
+            "relation": "braid(3,4)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,3)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,4)",
+            "holds": true
+          },
+          {
+            "relation": "far(2,4)",
+            "holds": true
+          }
+        ]
+      }
+    },
+    "unreduced_at_t=1_is_permutation_matrix_of_pi_perm": true,
+    "decomposition": {
+      "column_ones_fixed_by_unreduced": true,
+      "row_action_on_sum_zero_hyperplane_is_a_representation_after_transpose": true,
+      "row_representation_vs_BB_reduced": {
+        "equivalent": {
+          "commutant_dimension": 1,
+          "intertwiner": [
+            [
+              "-1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "-1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ]
+        },
+        "equivalent_to_dual_(inverse_transpose)": {
+          "commutant_dimension": 1,
+          "intertwiner": [
+            [
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "1",
+              "0",
+              "-1",
+              "0"
+            ],
+            [
+              "0",
+              "-1",
+              "0",
+              "1"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0"
+            ]
+          ]
+        }
+      }
+    },
+    "comparison_with_00A_S1_matrices": {
+      "00A_relations_hold": true,
+      "00A_vs_BB_reduced_t=-1": {
+        "equivalent": {
+          "commutant_dimension": 1,
+          "intertwiner": [
+            [
+              "0",
+              "-1",
+              "0",
+              "0"
+            ],
+            [
+              "1",
+              "0",
+              "-1",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "-1"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0"
+            ]
+          ]
+        },
+        "equivalent_to_dual_(inverse_transpose)": {
+          "commutant_dimension": 1,
+          "intertwiner": [
+            [
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ]
+        }
+      }
+    },
+    "invariant_alternating_forms_t=-1": {
+      "BB_reduced": {
+        "solution_space_dimension": 1,
+        "rank_of_solution": 4,
+        "nondegenerate": true
+      },
+      "BB_reduced_dual": {
+        "solution_space_dimension": 1,
+        "rank_of_solution": 4,
+        "nondegenerate": true
+      },
+      "00A_matrices": {
+        "solution_space_dimension": 1,
+        "rank_of_solution": 4,
+        "nondegenerate": true
+      },
+      "dimension_n_minus_1": 4,
+      "note": "LOCAL algebra only. For even n the existence of an invariant alternating form is NOT invariant under passing to the dual representation (a degenerate form on V is an intertwiner V -> V*, not V* -> V), so the 00A even-n 'rank 2g form' is a statement about one of two dual conventions. The hyperelliptic/symplectic reading is source-bound for odd n only (S4)."
+    },
+    "result": "PASS"
+  },
+  "6": {
+    "object": "S3",
+    "n": 6,
+    "frozen_specialization_t": -1,
+    "control_specialization_t": 2,
+    "matrix_action_convention": "matrices act on column vectors from the left; beta(XY) = beta(X) beta(Y)",
+    "unreduced": {
+      "t=-1": {
+        "generators": {
+          "sigma_1": [
+            [
+              "2",
+              "-1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_2": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "2",
+              "-1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_3": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "2",
+              "-1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_4": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "2",
+              "-1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_5": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "2",
+              "-1"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ]
+          ]
+        },
+        "relations_hold": true,
+        "relations": [
+          {
+            "relation": "braid(1,2)",
+            "holds": true
+          },
+          {
+            "relation": "braid(2,3)",
+            "holds": true
+          },
+          {
+            "relation": "braid(3,4)",
+            "holds": true
+          },
+          {
+            "relation": "braid(4,5)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,3)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,4)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,5)",
+            "holds": true
+          },
+          {
+            "relation": "far(2,4)",
+            "holds": true
+          },
+          {
+            "relation": "far(2,5)",
+            "holds": true
+          },
+          {
+            "relation": "far(3,5)",
+            "holds": true
+          }
+        ]
+      },
+      "t=2": {
+        "generators": {
+          "sigma_1": [
+            [
+              "-1",
+              "2",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_2": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "-1",
+              "2",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_3": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "-1",
+              "2",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_4": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "-1",
+              "2",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_5": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "-1",
+              "2"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ]
+          ]
+        },
+        "relations_hold": true,
+        "relations": [
+          {
+            "relation": "braid(1,2)",
+            "holds": true
+          },
+          {
+            "relation": "braid(2,3)",
+            "holds": true
+          },
+          {
+            "relation": "braid(3,4)",
+            "holds": true
+          },
+          {
+            "relation": "braid(4,5)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,3)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,4)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,5)",
+            "holds": true
+          },
+          {
+            "relation": "far(2,4)",
+            "holds": true
+          },
+          {
+            "relation": "far(2,5)",
+            "holds": true
+          },
+          {
+            "relation": "far(3,5)",
+            "holds": true
+          }
+        ]
+      }
+    },
+    "reduced": {
+      "t=-1": {
+        "generators": {
+          "sigma_1": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "-1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_2": [
+            [
+              "1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "-1",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_3": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "-1",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_4": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "-1",
+              "1"
+            ]
+          ],
+          "sigma_5": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "1"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ]
+        },
+        "relations_hold": true,
+        "relations": [
+          {
+            "relation": "braid(1,2)",
+            "holds": true
+          },
+          {
+            "relation": "braid(2,3)",
+            "holds": true
+          },
+          {
+            "relation": "braid(3,4)",
+            "holds": true
+          },
+          {
+            "relation": "braid(4,5)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,3)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,4)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,5)",
+            "holds": true
+          },
+          {
+            "relation": "far(2,4)",
+            "holds": true
+          },
+          {
+            "relation": "far(2,5)",
+            "holds": true
+          },
+          {
+            "relation": "far(3,5)",
+            "holds": true
+          }
+        ]
+      },
+      "t=2": {
+        "generators": {
+          "sigma_1": [
+            [
+              "-2",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "-1",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_2": [
+            [
+              "1",
+              "-2",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "-2",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "-1",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_3": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "-2",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "-2",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "-1",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ],
+          "sigma_4": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "-2",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "-2",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "-1",
+              "1"
+            ]
+          ],
+          "sigma_5": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "-2"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "-2"
+            ]
+          ]
+        },
+        "relations_hold": true,
+        "relations": [
+          {
+            "relation": "braid(1,2)",
+            "holds": true
+          },
+          {
+            "relation": "braid(2,3)",
+            "holds": true
+          },
+          {
+            "relation": "braid(3,4)",
+            "holds": true
+          },
+          {
+            "relation": "braid(4,5)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,3)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,4)",
+            "holds": true
+          },
+          {
+            "relation": "far(1,5)",
+            "holds": true
+          },
+          {
+            "relation": "far(2,4)",
+            "holds": true
+          },
+          {
+            "relation": "far(2,5)",
+            "holds": true
+          },
+          {
+            "relation": "far(3,5)",
+            "holds": true
+          }
+        ]
+      }
+    },
+    "unreduced_at_t=1_is_permutation_matrix_of_pi_perm": true,
+    "decomposition": {
+      "column_ones_fixed_by_unreduced": true,
+      "row_action_on_sum_zero_hyperplane_is_a_representation_after_transpose": true,
+      "row_representation_vs_BB_reduced": {
+        "equivalent": {
+          "commutant_dimension": 1,
+          "intertwiner": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "-1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "-1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ]
+        },
+        "equivalent_to_dual_(inverse_transpose)": {
+          "commutant_dimension": 1,
+          "intertwiner": null
+        }
+      }
+    },
+    "comparison_with_00A_S1_matrices": {
+      "00A_relations_hold": true,
+      "00A_vs_BB_reduced_t=-1": {
+        "equivalent": {
+          "commutant_dimension": 1,
+          "intertwiner": null
+        },
+        "equivalent_to_dual_(inverse_transpose)": {
+          "commutant_dimension": 1,
+          "intertwiner": [
+            [
+              "1",
+              "0",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "1"
+            ]
+          ]
+        }
+      }
+    },
+    "invariant_alternating_forms_t=-1": {
+      "BB_reduced": {
+        "solution_space_dimension": 0,
+        "rank_of_solution": null,
+        "nondegenerate": false
+      },
+      "BB_reduced_dual": {
+        "solution_space_dimension": 1,
+        "rank_of_solution": 4,
+        "nondegenerate": false
+      },
+      "00A_matrices": {
+        "solution_space_dimension": 1,
+        "rank_of_solution": 4,
+        "nondegenerate": false
+      },
+      "dimension_n_minus_1": 5,
+      "note": "LOCAL algebra only. For even n the existence of an invariant alternating form is NOT invariant under passing to the dual representation (a degenerate form on V is an intertwiner V -> V*, not V* -> V), so the 00A even-n 'rank 2g form' is a statement about one of two dual conventions. The hyperelliptic/symplectic reading is source-bound for odd n only (S4)."
+    },
+    "result": "PASS"
+  }
+}

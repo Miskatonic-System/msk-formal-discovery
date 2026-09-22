@@ -1,0 +1,664 @@
+{
+  "schema_version": "miskatonic.formal-discovery.hvb-01b-preregistration.v0.1",
+  "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01B",
+  "gate0": {
+    "formal_discovery_start": "11c6e8cda42eb0b23c480a346f35c1bfe337a0fe",
+    "mathematics_sha": "2337c7d744f176274997374a7d4057c7272f715d",
+    "candidate_freeze_digest": "889cc252226d801491a83bdd594e366fffc5a8bd1ef9379f5088bf9f65d78425",
+    "01a_preregistration_digest": "ec6f4c7ec1596aebbc129a2045d80f4d86b3f0af5adc6c3eaff7df29f3a1c57a",
+    "01a_result_digest": "5aec4be18376d5cb2070bd75bae90fb47504703d6e89c72f1fd0d438a2bd8dc6",
+    "provider_identity": {
+      "maxima": "5.49.0",
+      "kovacicODE_sha256": "ab7f476a8c0e2c6b87161db1f347ac50f04d9d183d4ea75f0197d277cdbddccf",
+      "parity_with_01a": true
+    }
+  },
+  "frozen_member": {
+    "n": 3,
+    "P_3": "q**3 - q - 1",
+    "a": [
+      "-1",
+      "-1",
+      "0",
+      "1"
+    ],
+    "E": "-1",
+    "f_{a,E} = 2(E - P_3)": "-2*q**3 + 2*q",
+    "singular_polynomial_note": "f_{a,E} = 2(E - P_3(q; a)); its roots are the roots of E - P_3, NOT of P_3 (E = -1 != 0)",
+    "roots_of_f_ordered": [
+      "-1",
+      "0",
+      "1"
+    ],
+    "root_ordering_convention": "increasing real part (then imaginary part); this is the puncture ordering r_1 < r_2 < r_3 that the 01A convention freeze binds to strand ordering; any other ordering is an element of S_3 and must be recorded",
+    "discriminant_of_f": "64",
+    "phase_curve": "p1^2 = f(q1): nonsingular genus-1 curve (disc != 0, deg 3)"
+  },
+  "source_signature": {
+    "payload": {
+      "n": 3,
+      "a": [
+        "-1",
+        "-1",
+        "0",
+        "1"
+      ],
+      "E": "-1",
+      "root_configuration": [
+        "-1",
+        "0",
+        "1"
+      ],
+      "root_ordering": "increasing real part (then imaginary part); this is the puncture ordering r_1 < r_2 < r_3 that the 01A convention freeze binds to strand ordering; any other ordering is an element of S_3 and must be recorded",
+      "pi_perm_certificate_digest": "d95ecd16f74f95d9578bb65653cb3980c3a0754deeacf7fa6f3fc7f54583f878",
+      "artin_certificate_digest": "617227dc154d3bf9f351f215ed0e398f42cec7805415bc3ce18dd3bdb5a2afdb",
+      "hurwitz_certificate_digest": "afff094098205b46f73102643a48889cc7f5c334078cef1d6ddd45e702c494d1",
+      "hurwitz_convention": {
+        "value": "LEFT action on Hom(F_n, G): (beta . rho) = rho o alpha(beta^{-1}). Closed form for sigma_i: (M_i, M_{i+1}) -> (M_i M_{i+1} M_i^{-1}, M_i). The variant rho o alpha(beta) is a RIGHT action with closed form (M_i, M_{i+1}) -> (M_{i+1}, M_{i+1}^{-1} M_i M_{i+1}); it is recorded and is NOT the frozen convention",
+        "source": "DERIVED from the frozen Artin action; certificate HURWITZ (closed_form checks); no separate literature source is claimed"
+      }
+    },
+    "SOURCE_SIGNATURE": "a8407db0c67a25fa92c6b70bc90acbb711f869ca37417de31d221d110ee030cc"
+  },
+  "lame_parameter_map": {
+    "frozen_f": "-2*q**3 + 2*q",
+    "substitution": "q = -2 wp(t)",
+    "derived_weierstrass_relation": "wp'^2 = 4*w**3 - w",
+    "g2": "1",
+    "g3": "0",
+    "leading_coefficient_4": true,
+    "converse_check_qprime_sq_equals_f_of_q_given_wp_relation": true,
+    "transformed_nve": "xi'' = [2*lambda*wp(t) - mu] xi",
+    "lame_form": "xi'' = [ell(ell+1) wp(t) + B] xi",
+    "parameter_map": {
+      "ell(ell+1)": "2*lambda",
+      "B": "-mu"
+    },
+    "algebraic_form_identity": {
+      "x": "wp = -q/2",
+      "lame_algebraic_form": "(4*x**3 - x) Y'' + (6*x**2 - 1/2) Y' - (ell(ell+1) x + B) Y = 0",
+      "our_algebraic_nve_in_x_equals_lame_form_times": "1",
+      "identity_holds": true,
+      "note": "C(q) = C(x) (x = -q/2 is a linear change of the rational coordinate), so the differential Galois group over C(q) classified in 01A IS the Galois group of the algebraic Lame form over C(x)"
+    },
+    "e_i": [
+      "-1/2",
+      "0",
+      "1/2"
+    ],
+    "harmonic_case": "g3 = 0: {e_i} = alpha{-1, 0, 1} with alpha = 1/2 (Maier 2002 Def. 3.2, J = 1)",
+    "invariant": "POLYNOMIAL_DEGREE_n (= 3, the degree of P_3) != LAME_INDEX_ell (defined by ell(ell+1) = 2 lambda)",
+    "ell_for_01a_lambdas": {
+      "0": [
+        "-1",
+        "0"
+      ],
+      "1": [
+        "-2",
+        "1"
+      ],
+      "2": [
+        "-1/2 + sqrt(17)/2",
+        "-sqrt(17)/2 - 1/2"
+      ],
+      "3": [
+        "-3",
+        "2"
+      ],
+      "-1": [
+        "-1/2 - sqrt(7)*I/2",
+        "-1/2 + sqrt(7)*I/2"
+      ]
+    }
+  },
+  "grid": [
+    {
+      "cell": "d1",
+      "mu": "-1",
+      "lambda": "1",
+      "role": "lambda classified TRUE in 01A (ell = 1), new mu"
+    },
+    {
+      "cell": "d2",
+      "mu": "1/2",
+      "lambda": "1",
+      "role": "lambda = 1, new mu"
+    },
+    {
+      "cell": "d3",
+      "mu": "3",
+      "lambda": "1",
+      "role": "lambda = 1, new mu"
+    },
+    {
+      "cell": "d4",
+      "mu": "-1",
+      "lambda": "2",
+      "role": "lambda classified FALSE in 01A (ell irrational), new mu"
+    },
+    {
+      "cell": "d5",
+      "mu": "1/2",
+      "lambda": "2",
+      "role": "lambda = 2, new mu"
+    },
+    {
+      "cell": "d6",
+      "mu": "3",
+      "lambda": "2",
+      "role": "lambda = 2, new mu"
+    },
+    {
+      "cell": "d7",
+      "mu": "0",
+      "lambda": "3/8",
+      "role": "ell = 1/2 (Brioschi-Halphen-Crawford family, m = 0), B = 0"
+    },
+    {
+      "cell": "d8",
+      "mu": "1/2",
+      "lambda": "3/8",
+      "role": "ell = 1/2, B = -1/2"
+    },
+    {
+      "cell": "d9",
+      "mu": "-1",
+      "lambda": "3/8",
+      "role": "ell = 1/2, B = 1"
+    },
+    {
+      "cell": "d10",
+      "mu": "2",
+      "lambda": "3/8",
+      "role": "ell = 1/2, B = -2"
+    }
+  ],
+  "grid_size": 10,
+  "prior_expectations": {
+    "recorded_before_any_provider_run": true,
+    "lambda=1": "all TRUE expected (integer ell; Lame-Hermite family) — expectation only, no bound authority for the Liouvillian integer-ell statement",
+    "lambda=2": "all FALSE expected (ell irrational) — expectation only",
+    "lambda=3/8": "designed falsifier: for ell = m + 1/2 with m = 0, Chou-Wang-Wu 2024 Thm 1.2 (BOUND) gives finite projective monodromy K_4 iff p_0(B) = 0 with p_0 weighted-homogeneous of degree 1 in B and coefficients in Z[g2/4, g3/4]; since B has weight 2 and no monomial in g2 (weight 4), g3 (weight 6) has weight 2, p_0(B) = c*B, so the finite case is exactly B = 0, i.e. mu = 0 (d7): expected TRUE (finite G, G^0 trivial). For mu != 0 (d8-d10) the group is NOT finite; whether it is SL_2 (FALSE) or infinite dihedral (TRUE) is NOT source-bound here and is left to the provider. A split between d7 and any of d8-d10 would establish LAMBDA_ALONE_INSUFFICIENT.",
+    "basis_note": "expectations are design intent; the provider and the exact rules decide; cells are not chosen from outputs"
+  },
+  "cells": [
+    {
+      "cell": "d1",
+      "mu": "-1",
+      "lambda": "1",
+      "role": "lambda classified TRUE in 01A (ell = 1), new mu",
+      "original": {
+        "c2": "-2*q**3 + 2*q",
+        "c1": "1 - 3*q**2",
+        "c0": "q - 1",
+        "equation": "(-2*q**3 + 2*q) y'' + (1 - 3*q**2) y' + (q - 1) y = 0"
+      },
+      "original_digest": "d2c98d56c2fed2f52927941c79ff4d37dfaa4df069f00a21b1e64dbe3be97b12",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(3*q**2 - 1)/(2*q**3 - 2*q)",
+        "b": "-1/(2*q**2 + 2*q)",
+        "r": "(5*q**4 - 8*q**3 - 14*q**2 + 8*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)",
+        "r_factored": "(5*q**4 - 8*q**3 - 14*q**2 + 8*q - 3)/(16*q**2*(q - 1)**2*(q + 1)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((5*q**4 - 8*q**3 - 14*q**2 + 8*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)) y",
+        "r": "(5*q**4 - 8*q**3 - 14*q**2 + 8*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)"
+      },
+      "reduced_digest": "b40977d48abe0eb7613b14c1e5f469e4b9a6042158825667d76c91a671e4c3c4",
+      "poles_of_r": [
+        "-1",
+        "0",
+        "1"
+      ],
+      "order_of_r_at_infinity": 2,
+      "maxima_original": "(-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(x - 1)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((5*x^4 - 8*x^3 - 14*x^2 + 8*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y",
+      "lame": {
+        "ell": "1",
+        "ell_kind": "INTEGER",
+        "two_lambda": "2"
+      },
+      "B": "1"
+    },
+    {
+      "cell": "d2",
+      "mu": "1/2",
+      "lambda": "1",
+      "role": "lambda = 1, new mu",
+      "original": {
+        "c2": "-2*q**3 + 2*q",
+        "c1": "1 - 3*q**2",
+        "c0": "q + 1/2",
+        "equation": "(-2*q**3 + 2*q) y'' + (1 - 3*q**2) y' + (q + 1/2) y = 0"
+      },
+      "original_digest": "edd1f232fa269227183388787999496f64dfaea3f3d2b8aebd953d7c11661ffb",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(3*q**2 - 1)/(2*q**3 - 2*q)",
+        "b": "(-2*q - 1)/(4*q**3 - 4*q)",
+        "r": "(5*q**4 + 4*q**3 - 14*q**2 - 4*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)",
+        "r_factored": "(5*q**4 + 4*q**3 - 14*q**2 - 4*q - 3)/(16*q**2*(q - 1)**2*(q + 1)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((5*q**4 + 4*q**3 - 14*q**2 - 4*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)) y",
+        "r": "(5*q**4 + 4*q**3 - 14*q**2 - 4*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)"
+      },
+      "reduced_digest": "eb4bc900b64c1a794ee73a23dd8d2901863b6e5c1bcc64b810db46c8d98471ef",
+      "poles_of_r": [
+        "-1",
+        "0",
+        "1"
+      ],
+      "order_of_r_at_infinity": 2,
+      "maxima_original": "(-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(x + 1/2)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((5*x^4 + 4*x^3 - 14*x^2 - 4*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y",
+      "lame": {
+        "ell": "1",
+        "ell_kind": "INTEGER",
+        "two_lambda": "2"
+      },
+      "B": "-1/2"
+    },
+    {
+      "cell": "d3",
+      "mu": "3",
+      "lambda": "1",
+      "role": "lambda = 1, new mu",
+      "original": {
+        "c2": "-2*q**3 + 2*q",
+        "c1": "1 - 3*q**2",
+        "c0": "q + 3",
+        "equation": "(-2*q**3 + 2*q) y'' + (1 - 3*q**2) y' + (q + 3) y = 0"
+      },
+      "original_digest": "7712c4c7590f9ede17e97fb573b245355e94676effec00cd1ee7e46a76b93d7d",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(3*q**2 - 1)/(2*q**3 - 2*q)",
+        "b": "(-q - 3)/(2*q**3 - 2*q)",
+        "r": "(5*q**4 + 24*q**3 - 14*q**2 - 24*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)",
+        "r_factored": "(5*q**4 + 24*q**3 - 14*q**2 - 24*q - 3)/(16*q**2*(q - 1)**2*(q + 1)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((5*q**4 + 24*q**3 - 14*q**2 - 24*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)) y",
+        "r": "(5*q**4 + 24*q**3 - 14*q**2 - 24*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)"
+      },
+      "reduced_digest": "53cd6692f42dba3236475ebb58844635dec13e65903484e501ed39c48dcfeab1",
+      "poles_of_r": [
+        "-1",
+        "0",
+        "1"
+      ],
+      "order_of_r_at_infinity": 2,
+      "maxima_original": "(-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(x + 3)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((5*x^4 + 24*x^3 - 14*x^2 - 24*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y",
+      "lame": {
+        "ell": "1",
+        "ell_kind": "INTEGER",
+        "two_lambda": "2"
+      },
+      "B": "-3"
+    },
+    {
+      "cell": "d4",
+      "mu": "-1",
+      "lambda": "2",
+      "role": "lambda classified FALSE in 01A (ell irrational), new mu",
+      "original": {
+        "c2": "-2*q**3 + 2*q",
+        "c1": "1 - 3*q**2",
+        "c0": "2*q - 1",
+        "equation": "(-2*q**3 + 2*q) y'' + (1 - 3*q**2) y' + (2*q - 1) y = 0"
+      },
+      "original_digest": "030309adb059832f10d06f6dc01ae53ba31838b733c0c48eb8f01ce18927d01f",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(3*q**2 - 1)/(2*q**3 - 2*q)",
+        "b": "(1 - 2*q)/(2*q**3 - 2*q)",
+        "r": "(13*q**4 - 8*q**3 - 22*q**2 + 8*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)",
+        "r_factored": "(13*q**4 - 8*q**3 - 22*q**2 + 8*q - 3)/(16*q**2*(q - 1)**2*(q + 1)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((13*q**4 - 8*q**3 - 22*q**2 + 8*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)) y",
+        "r": "(13*q**4 - 8*q**3 - 22*q**2 + 8*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)"
+      },
+      "reduced_digest": "8863014933bc70aef7049145aa3f7f00eb221c07d56a9aa05967a613bd960627",
+      "poles_of_r": [
+        "-1",
+        "0",
+        "1"
+      ],
+      "order_of_r_at_infinity": 2,
+      "maxima_original": "(-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(2*x - 1)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((13*x^4 - 8*x^3 - 22*x^2 + 8*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y",
+      "lame": {
+        "ell": "-1/2 + sqrt(17)/2",
+        "ell_kind": "REAL_NONHALFINTEGER",
+        "two_lambda": "4"
+      },
+      "B": "1"
+    },
+    {
+      "cell": "d5",
+      "mu": "1/2",
+      "lambda": "2",
+      "role": "lambda = 2, new mu",
+      "original": {
+        "c2": "-2*q**3 + 2*q",
+        "c1": "1 - 3*q**2",
+        "c0": "2*q + 1/2",
+        "equation": "(-2*q**3 + 2*q) y'' + (1 - 3*q**2) y' + (2*q + 1/2) y = 0"
+      },
+      "original_digest": "0100539bafe2913421f1dbc7f399ebe11b04d4fcea060f13585e7d5ea1d63382",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(3*q**2 - 1)/(2*q**3 - 2*q)",
+        "b": "(-4*q - 1)/(4*q**3 - 4*q)",
+        "r": "(13*q**4 + 4*q**3 - 22*q**2 - 4*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)",
+        "r_factored": "(13*q**4 + 4*q**3 - 22*q**2 - 4*q - 3)/(16*q**2*(q - 1)**2*(q + 1)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((13*q**4 + 4*q**3 - 22*q**2 - 4*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)) y",
+        "r": "(13*q**4 + 4*q**3 - 22*q**2 - 4*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)"
+      },
+      "reduced_digest": "818b86cbe2d3d35d07a84d2a629528052c011cc8f2a6efee2470711b5d903122",
+      "poles_of_r": [
+        "-1",
+        "0",
+        "1"
+      ],
+      "order_of_r_at_infinity": 2,
+      "maxima_original": "(-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(2*x + 1/2)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((13*x^4 + 4*x^3 - 22*x^2 - 4*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y",
+      "lame": {
+        "ell": "-1/2 + sqrt(17)/2",
+        "ell_kind": "REAL_NONHALFINTEGER",
+        "two_lambda": "4"
+      },
+      "B": "-1/2"
+    },
+    {
+      "cell": "d6",
+      "mu": "3",
+      "lambda": "2",
+      "role": "lambda = 2, new mu",
+      "original": {
+        "c2": "-2*q**3 + 2*q",
+        "c1": "1 - 3*q**2",
+        "c0": "2*q + 3",
+        "equation": "(-2*q**3 + 2*q) y'' + (1 - 3*q**2) y' + (2*q + 3) y = 0"
+      },
+      "original_digest": "d094d6b8638166960c704c737fb969d0923c9bfcb5e3f57ceb816a19ef2be326",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(3*q**2 - 1)/(2*q**3 - 2*q)",
+        "b": "(-2*q - 3)/(2*q**3 - 2*q)",
+        "r": "(13*q**4 + 24*q**3 - 22*q**2 - 24*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)",
+        "r_factored": "(13*q**4 + 24*q**3 - 22*q**2 - 24*q - 3)/(16*q**2*(q - 1)**2*(q + 1)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((13*q**4 + 24*q**3 - 22*q**2 - 24*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)) y",
+        "r": "(13*q**4 + 24*q**3 - 22*q**2 - 24*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)"
+      },
+      "reduced_digest": "05062a0d9763a2a534b93759f118547c37f48ebf15e3206e42fa934a9ed934fa",
+      "poles_of_r": [
+        "-1",
+        "0",
+        "1"
+      ],
+      "order_of_r_at_infinity": 2,
+      "maxima_original": "(-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(2*x + 3)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((13*x^4 + 24*x^3 - 22*x^2 - 24*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y",
+      "lame": {
+        "ell": "-1/2 + sqrt(17)/2",
+        "ell_kind": "REAL_NONHALFINTEGER",
+        "two_lambda": "4"
+      },
+      "B": "-3"
+    },
+    {
+      "cell": "d7",
+      "mu": "0",
+      "lambda": "3/8",
+      "role": "ell = 1/2 (Brioschi-Halphen-Crawford family, m = 0), B = 0",
+      "original": {
+        "c2": "-2*q**3 + 2*q",
+        "c1": "1 - 3*q**2",
+        "c0": "3*q/8",
+        "equation": "(-2*q**3 + 2*q) y'' + (1 - 3*q**2) y' + (3*q/8) y = 0"
+      },
+      "original_digest": "cc7743ca04e7b4a98cc068f814031b634e78ea1d44bef2caae45a139bbcb7820",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(3*q**2 - 1)/(2*q**3 - 2*q)",
+        "b": "-3/(16*q**2 - 16)",
+        "r": "(-9*q**2 - 3)/(16*q**6 - 32*q**4 + 16*q**2)",
+        "r_factored": "(-9*q**2 - 3)/(16*q**2*(q - 1)**2*(q + 1)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((-9*q**2 - 3)/(16*q**6 - 32*q**4 + 16*q**2)) y",
+        "r": "(-9*q**2 - 3)/(16*q**6 - 32*q**4 + 16*q**2)"
+      },
+      "reduced_digest": "f123a74811c3475c40f0fa688399962105c4f459a5ee971a97a77e5c7a82f0dc",
+      "poles_of_r": [
+        "-1",
+        "0",
+        "1"
+      ],
+      "order_of_r_at_infinity": 4,
+      "maxima_original": "(-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(3*x/8)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((-9*x^2 - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y",
+      "lame": {
+        "ell": "1/2",
+        "ell_kind": "HALF_INTEGER",
+        "two_lambda": "3/4"
+      },
+      "B": "0"
+    },
+    {
+      "cell": "d8",
+      "mu": "1/2",
+      "lambda": "3/8",
+      "role": "ell = 1/2, B = -1/2",
+      "original": {
+        "c2": "-2*q**3 + 2*q",
+        "c1": "1 - 3*q**2",
+        "c0": "3*q/8 + 1/2",
+        "equation": "(-2*q**3 + 2*q) y'' + (1 - 3*q**2) y' + (3*q/8 + 1/2) y = 0"
+      },
+      "original_digest": "b007eb5d5cbc995815d360e5807266460d353c9fb205e29f0c02ca05c51e85fd",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(3*q**2 - 1)/(2*q**3 - 2*q)",
+        "b": "(-3*q - 4)/(16*q**3 - 16*q)",
+        "r": "(4*q**3 - 9*q**2 - 4*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)",
+        "r_factored": "(4*q**3 - 9*q**2 - 4*q - 3)/(16*q**2*(q - 1)**2*(q + 1)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((4*q**3 - 9*q**2 - 4*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)) y",
+        "r": "(4*q**3 - 9*q**2 - 4*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)"
+      },
+      "reduced_digest": "1fdc4156a7d22f6b92a66d30a71f3109db4027e052951f89b72d6d146749f990",
+      "poles_of_r": [
+        "-1",
+        "0",
+        "1"
+      ],
+      "order_of_r_at_infinity": 3,
+      "maxima_original": "(-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(3*x/8 + 1/2)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((4*x^3 - 9*x^2 - 4*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y",
+      "lame": {
+        "ell": "1/2",
+        "ell_kind": "HALF_INTEGER",
+        "two_lambda": "3/4"
+      },
+      "B": "-1/2"
+    },
+    {
+      "cell": "d9",
+      "mu": "-1",
+      "lambda": "3/8",
+      "role": "ell = 1/2, B = 1",
+      "original": {
+        "c2": "-2*q**3 + 2*q",
+        "c1": "1 - 3*q**2",
+        "c0": "3*q/8 - 1",
+        "equation": "(-2*q**3 + 2*q) y'' + (1 - 3*q**2) y' + (3*q/8 - 1) y = 0"
+      },
+      "original_digest": "9c022ab8c448b2753eca5b2093c6b07e4bfc9fb96571228856547f3c3d691021",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(3*q**2 - 1)/(2*q**3 - 2*q)",
+        "b": "(8 - 3*q)/(16*q**3 - 16*q)",
+        "r": "(-8*q**3 - 9*q**2 + 8*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)",
+        "r_factored": "(-8*q**3 - 9*q**2 + 8*q - 3)/(16*q**2*(q - 1)**2*(q + 1)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((-8*q**3 - 9*q**2 + 8*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)) y",
+        "r": "(-8*q**3 - 9*q**2 + 8*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)"
+      },
+      "reduced_digest": "8a3f5b4547bdad809238884cbe5ae44974cc3e58bb564987897131dcfe39a7c3",
+      "poles_of_r": [
+        "-1",
+        "0",
+        "1"
+      ],
+      "order_of_r_at_infinity": 3,
+      "maxima_original": "(-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(3*x/8 - 1)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((-8*x^3 - 9*x^2 + 8*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y",
+      "lame": {
+        "ell": "1/2",
+        "ell_kind": "HALF_INTEGER",
+        "two_lambda": "3/4"
+      },
+      "B": "1"
+    },
+    {
+      "cell": "d10",
+      "mu": "2",
+      "lambda": "3/8",
+      "role": "ell = 1/2, B = -2",
+      "original": {
+        "c2": "-2*q**3 + 2*q",
+        "c1": "1 - 3*q**2",
+        "c0": "3*q/8 + 2",
+        "equation": "(-2*q**3 + 2*q) y'' + (1 - 3*q**2) y' + (3*q/8 + 2) y = 0"
+      },
+      "original_digest": "9d0dacd4e9edc60604682ae70a2508e5084319b0f67c08e5bf79bfde84853cd7",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(3*q**2 - 1)/(2*q**3 - 2*q)",
+        "b": "(-3*q - 16)/(16*q**3 - 16*q)",
+        "r": "(16*q**3 - 9*q**2 - 16*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)",
+        "r_factored": "(16*q**3 - 9*q**2 - 16*q - 3)/(16*q**2*(q - 1)**2*(q + 1)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((16*q**3 - 9*q**2 - 16*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)) y",
+        "r": "(16*q**3 - 9*q**2 - 16*q - 3)/(16*q**6 - 32*q**4 + 16*q**2)"
+      },
+      "reduced_digest": "7973cbe18593f38e988704b73dd45d3e0f182b2a4b60f86ed54e01680e696d1e",
+      "poles_of_r": [
+        "-1",
+        "0",
+        "1"
+      ],
+      "order_of_r_at_infinity": 3,
+      "maxima_original": "(-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(3*x/8 + 2)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((16*x^3 - 9*x^2 - 16*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y",
+      "lame": {
+        "ell": "1/2",
+        "ell_kind": "HALF_INTEGER",
+        "two_lambda": "3/4"
+      },
+      "B": "-2"
+    }
+  ],
+  "rules": [
+    "BO-2 is not reopened",
+    "no cell may be added, removed or altered after the first provider run on this grid",
+    "same frozen member, same SOURCE_SIGNATURE, same provider, same rules as 01A",
+    "only (mu, lambda) vary; no floats",
+    "n = 3 only"
+  ],
+  "phase_c": {
+    "ORIGINAL_SOURCE_SIGNATURE": "{n, a, E, roots, pi_perm, Artin/Hurwitz} = 01A SOURCE_SIGNATURE (identical on all cells)",
+    "candidates": {
+      "AUGMENTED_LAMBDA": "ORIGINAL + lambda",
+      "AUGMENTED_LAME_INDEX": "ORIGINAL + ell(ell+1) (= 2 lambda: a bijective relabelling of AUGMENTED_LAMBDA)",
+      "AUGMENTED_FULL": "ORIGINAL + (lambda, mu)"
+    },
+    "historical_01a_pattern_by_lambda": {
+      "-1": {
+        "mu_values": {
+          "1": "FALSE"
+        },
+        "ell": {
+          "ell": "-1/2 - sqrt(7)*I/2",
+          "ell_kind": "COMPLEX",
+          "two_lambda": "-2"
+        },
+        "predicate_constant_across_sampled_mu": true
+      },
+      "0": {
+        "mu_values": {
+          "0": "TRUE",
+          "1": "TRUE"
+        },
+        "ell": {
+          "ell": "0",
+          "ell_kind": "INTEGER",
+          "two_lambda": "0"
+        },
+        "predicate_constant_across_sampled_mu": true
+      },
+      "1": {
+        "mu_values": {
+          "0": "TRUE",
+          "1": "TRUE"
+        },
+        "ell": {
+          "ell": "1",
+          "ell_kind": "INTEGER",
+          "two_lambda": "2"
+        },
+        "predicate_constant_across_sampled_mu": true
+      },
+      "2": {
+        "mu_values": {
+          "0": "FALSE",
+          "1": "FALSE"
+        },
+        "ell": {
+          "ell": "-1/2 + sqrt(17)/2",
+          "ell_kind": "REAL_NONHALFINTEGER",
+          "two_lambda": "4"
+        },
+        "predicate_constant_across_sampled_mu": true
+      },
+      "3": {
+        "mu_values": {
+          "0": "TRUE"
+        },
+        "ell": {
+          "ell": "2",
+          "ell_kind": "INTEGER",
+          "two_lambda": "6"
+        },
+        "predicate_constant_across_sampled_mu": true
+      }
+    },
+    "question_1": "On the 8 accepted cells the predicate is constant across the sampled mu at every sampled lambda and separates lambda classes (ell integer -> TRUE; ell non-half-integer irrational or complex -> FALSE): CONSISTENT WITH lambda (equivalently ell(ell+1)) being load-bearing. Not a proof: finite grid, and no half-integer ell was sampled in 01A.",
+    "question_2": "On the sampled cells mu did not change the predicate at fixed lambda. Whether mu CAN change it is exactly what Phase D tests; the Brioschi-Halphen-Crawford theorem (bound: Chou-Wang-Wu 2024 Thm 1.2) predicts a mu-dependence precisely at half-integer ell, which 01A did not sample.",
+    "no_sufficiency_claim": true
+  }
+}

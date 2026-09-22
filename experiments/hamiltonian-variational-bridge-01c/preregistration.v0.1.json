@@ -1,0 +1,1215 @@
+{
+  "schema_version": "miskatonic.formal-discovery.hvb-01c-preregistration.v0.1",
+  "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01C",
+  "gate0": {
+    "formal_discovery_start": "d4a71a72b36a68fca60dfffb53737846c3cde41d",
+    "mathematics_sha": "2337c7d744f176274997374a7d4057c7272f715d",
+    "candidate_freeze_digest": "889cc252226d801491a83bdd594e366fffc5a8bd1ef9379f5088bf9f65d78425",
+    "mathematics_candidate_freeze_blob": "e0c5d4627dba5560ffc34740ac746c0fc632697d",
+    "01a_result_digest": "5aec4be18376d5cb2070bd75bae90fb47504703d6e89c72f1fd0d438a2bd8dc6",
+    "01a_adjudication_digest": "912ca32cdf9516f409fb81bd3effce6fcd59907161e1e6e504d64ce6bad73cca",
+    "01b_result_digest": "4b3b8f7e80da0cbee2282709c09afdcf1afd84337978df5a090a2224e4cd91fa",
+    "01b_adjudication_digest": "ae168de8ac6b5433b7f442ad03c5a94288dc2a14fec67b3c169467394b02e135",
+    "tg_qualification_result_digest": "80659ed5ee1e321991f6c53def1d4b14e32e9219a105dfc7e3e3b39d8d7d9664",
+    "checks": {
+      "BO2": "CANONICALLY_REFUTED_NOT_REOPENED",
+      "01B_verdict": "LAME_PARAMETER_MAP_ESTABLISHED + LAMBDA_ALONE_INSUFFICIENT",
+      "pooled_cell_count": 18,
+      "distinct_lambda_count": 6,
+      "universal_half_integer_only_claim": false
+    },
+    "provider_identity": {
+      "maxima": "5.49.0",
+      "kovacicODE_sha256": "ab7f476a8c0e2c6b87161db1f347ac50f04d9d183d4ea75f0197d277cdbddccf",
+      "parity_with_01a": true
+    }
+  },
+  "source_signature_01a": {
+    "payload": {
+      "n": 3,
+      "a": [
+        "-1",
+        "-1",
+        "0",
+        "1"
+      ],
+      "E": "-1",
+      "root_configuration": [
+        "-1",
+        "0",
+        "1"
+      ],
+      "root_ordering": "increasing real part (then imaginary part); this is the puncture ordering r_1 < r_2 < r_3 that the 01A convention freeze binds to strand ordering; any other ordering is an element of S_3 and must be recorded",
+      "pi_perm_certificate_digest": "d95ecd16f74f95d9578bb65653cb3980c3a0754deeacf7fa6f3fc7f54583f878",
+      "artin_certificate_digest": "617227dc154d3bf9f351f215ed0e398f42cec7805415bc3ce18dd3bdb5a2afdb",
+      "hurwitz_certificate_digest": "afff094098205b46f73102643a48889cc7f5c334078cef1d6ddd45e702c494d1",
+      "hurwitz_convention": {
+        "value": "LEFT action on Hom(F_n, G): (beta . rho) = rho o alpha(beta^{-1}). Closed form for sigma_i: (M_i, M_{i+1}) -> (M_i M_{i+1} M_i^{-1}, M_i). The variant rho o alpha(beta) is a RIGHT action with closed form (M_i, M_{i+1}) -> (M_{i+1}, M_{i+1}^{-1} M_i M_{i+1}); it is recorded and is NOT the frozen convention",
+        "source": "DERIVED from the frozen Artin action; certificate HURWITZ (closed_form checks); no separate literature source is claimed"
+      }
+    },
+    "SOURCE_SIGNATURE": "a8407db0c67a25fa92c6b70bc90acbb711f869ca37417de31d221d110ee030cc"
+  },
+  "controlled_family": {
+    "3": {
+      "n": 3,
+      "E": "-1",
+      "root_rule": "r_{n,j} = j - (n+1)/2, j = 1..n",
+      "roots_ordered": [
+        "-1",
+        "0",
+        "1"
+      ],
+      "R_n": "q**3 - q",
+      "P_n": "q**3 - q - 1",
+      "f_n": "-2*q**3 + 2*q",
+      "discriminant_of_f_n": "64",
+      "discriminant_digest": "8ed0da24c7d6ebeda915ea38950e2dddd929c8454abd5b8dc6bd0cea864c6669",
+      "checks": {
+        "deg_P_n_equals_n": true,
+        "f_n_equals_minus_2_R_n": true,
+        "roots_of_f_n_equal_frozen_roots": true,
+        "roots_simple": true,
+        "discriminant_nonzero": true,
+        "center_zero": true,
+        "adjacent_spacing_one": true
+      },
+      "all_checks_pass": true,
+      "phase_curve": "p^2 = f_3(q): nonsingular genus-1 curve (the canonical 01A/01B member)",
+      "equation_class": "CANONICAL_N3_LAME_MEMBER",
+      "note": "controlled family, not a claim of natural uniqueness (CONTROLLED_BACKGROUND_FAMILY != UNIVERSAL_DEGREE_MODEL)"
+    },
+    "4": {
+      "n": 4,
+      "E": "-1",
+      "root_rule": "r_{n,j} = j - (n+1)/2, j = 1..n",
+      "roots_ordered": [
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2"
+      ],
+      "R_n": "q**4 - 5*q**2/2 + 9/16",
+      "P_n": "q**4 - 5*q**2/2 - 7/16",
+      "f_n": "-2*q**4 + 5*q**2 - 9/8",
+      "discriminant_of_f_n": "9216",
+      "discriminant_digest": "378be396f3bc6a84b0150463d3843eac6d59ffd88060284360cff2bc3d592b1b",
+      "checks": {
+        "deg_P_n_equals_n": true,
+        "f_n_equals_minus_2_R_n": true,
+        "roots_of_f_n_equal_frozen_roots": true,
+        "roots_simple": true,
+        "discriminant_nonzero": true,
+        "center_zero": true,
+        "adjacent_spacing_one": true
+      },
+      "all_checks_pass": true,
+      "phase_curve": "p^2 = f_4(q): hyperelliptic-type curve of degree 4 with 4 simple finite branch points",
+      "equation_class": "ALGEBRAIC_NVE_4",
+      "note": "controlled family, not a claim of natural uniqueness (CONTROLLED_BACKGROUND_FAMILY != UNIVERSAL_DEGREE_MODEL)"
+    },
+    "5": {
+      "n": 5,
+      "E": "-1",
+      "root_rule": "r_{n,j} = j - (n+1)/2, j = 1..n",
+      "roots_ordered": [
+        "-2",
+        "-1",
+        "0",
+        "1",
+        "2"
+      ],
+      "R_n": "q**5 - 5*q**3 + 4*q",
+      "P_n": "q**5 - 5*q**3 + 4*q - 1",
+      "f_n": "-2*q**5 + 10*q**3 - 8*q",
+      "discriminant_of_f_n": "21233664",
+      "discriminant_digest": "ce64a744caea0a8479be53f8bcd560ebf171990bc91d6b9c658d7bd3afad6924",
+      "checks": {
+        "deg_P_n_equals_n": true,
+        "f_n_equals_minus_2_R_n": true,
+        "roots_of_f_n_equal_frozen_roots": true,
+        "roots_simple": true,
+        "discriminant_nonzero": true,
+        "center_zero": true,
+        "adjacent_spacing_one": true
+      },
+      "all_checks_pass": true,
+      "phase_curve": "p^2 = f_5(q): hyperelliptic-type curve of degree 5 with 5 simple finite branch points",
+      "equation_class": "ALGEBRAIC_NVE_5",
+      "note": "controlled family, not a claim of natural uniqueness (CONTROLLED_BACKGROUND_FAMILY != UNIVERSAL_DEGREE_MODEL)"
+    },
+    "6": {
+      "n": 6,
+      "E": "-1",
+      "root_rule": "r_{n,j} = j - (n+1)/2, j = 1..n",
+      "roots_ordered": [
+        "-5/2",
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2",
+        "5/2"
+      ],
+      "R_n": "q**6 - 35*q**4/4 + 259*q**2/16 - 225/64",
+      "P_n": "q**6 - 35*q**4/4 + 259*q**2/16 - 289/64",
+      "f_n": "-2*q**6 + 35*q**4/2 - 259*q**2/8 + 225/32",
+      "discriminant_of_f_n": "1223059046400",
+      "discriminant_digest": "8c6409f2418847fa124ce75a5c794f810018cbd556b62a4f1a5b9096a2d4164d",
+      "checks": {
+        "deg_P_n_equals_n": true,
+        "f_n_equals_minus_2_R_n": true,
+        "roots_of_f_n_equal_frozen_roots": true,
+        "roots_simple": true,
+        "discriminant_nonzero": true,
+        "center_zero": true,
+        "adjacent_spacing_one": true
+      },
+      "all_checks_pass": true,
+      "phase_curve": "p^2 = f_6(q): hyperelliptic-type curve of degree 6 with 6 simple finite branch points",
+      "equation_class": "ALGEBRAIC_NVE_6",
+      "note": "controlled family, not a claim of natural uniqueness (CONTROLLED_BACKGROUND_FAMILY != UNIVERSAL_DEGREE_MODEL)"
+    }
+  },
+  "pc1": {
+    "P_3": "q**3 - q - 1",
+    "E": "-1",
+    "f_3": "-2*q**3 + 2*q",
+    "roots": [
+      "-1",
+      "0",
+      "1"
+    ],
+    "member_identical": true,
+    "lane_equations_identical_to_bx_target_equation": {
+      "A": true,
+      "B": true,
+      "C": true,
+      "D": true
+    },
+    "pass": true
+  },
+  "degree_signatures": {
+    "3": {
+      "n": 3,
+      "roots_ordered": [
+        "-1",
+        "0",
+        "1"
+      ],
+      "discriminant_digest": "8ed0da24c7d6ebeda915ea38950e2dddd929c8454abd5b8dc6bd0cea864c6669",
+      "B_n": {
+        "generators": "sigma_1..sigma_2",
+        "relations": "braid relations sigma_i sigma_{i+1} sigma_i = sigma_{i+1} sigma_i sigma_{i+1}, [sigma_i, sigma_j] = 1 for |i-j| >= 2",
+        "strands": 3
+      },
+      "pi_perm_certificate": {
+        "key": "3",
+        "image_size": 6,
+        "surjective": true,
+        "result": "PASS",
+        "digest": "d95ecd16f74f95d9578bb65653cb3980c3a0754deeacf7fa6f3fc7f54583f878"
+      },
+      "artin_certificate": {
+        "key": "3",
+        "result": "PASS",
+        "digest": "617227dc154d3bf9f351f215ed0e398f42cec7805415bc3ce18dd3bdb5a2afdb"
+      },
+      "hurwitz_certificate": {
+        "key": "n3_generic",
+        "tuple_label": "n3_generic",
+        "result": "PASS",
+        "digest": "afff094098205b46f73102643a48889cc7f5c334078cef1d6ddd45e702c494d1",
+        "note": "generic tuple"
+      },
+      "degree_ladder": {
+        "S_n_derived_series_orders": [
+          6,
+          3,
+          1
+        ],
+        "S_n_solvable": true,
+        "A_n_perfect": false,
+        "label": "S_3 solvable",
+        "Out_S_n_exceptional": false,
+        "authority": {
+          "classical_facts_status": "EXTERNAL_ESTABLISHED (classical); no source record bound in any consumed ledger; derived-series and perfectness corroborated mechanically here (LOCAL_DERIVED); Out(S_6) is a label only",
+          "mathematics_degree_ladder_firewall": "consumed read-only from candidate-freeze.v0.1.json@2337c7d744f1 (blob e0c5d4627dba): n is an experimental coordinate; no inference degree 5 / degree 6 / degree >= 5 -> nonintegrability or chaos; no Out(S6) -> Abel-Ruffini",
+          "expected_control_absent": "docs/TOPOLOGICAL_GALOIS_DEGREE_LADDER_CONTROL.md named in the Mathematics candidate freeze does not exist at 2337c7d744f1; nothing was rederived to replace it"
+        }
+      }
+    },
+    "4": {
+      "n": 4,
+      "roots_ordered": [
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2"
+      ],
+      "discriminant_digest": "378be396f3bc6a84b0150463d3843eac6d59ffd88060284360cff2bc3d592b1b",
+      "B_n": {
+        "generators": "sigma_1..sigma_3",
+        "relations": "braid relations sigma_i sigma_{i+1} sigma_i = sigma_{i+1} sigma_i sigma_{i+1}, [sigma_i, sigma_j] = 1 for |i-j| >= 2",
+        "strands": 4
+      },
+      "pi_perm_certificate": {
+        "key": "4",
+        "image_size": 24,
+        "surjective": true,
+        "result": "PASS",
+        "digest": "205e68cdad4ca306a73d7b95fb7126b67bb454afd2777b6af352f3206aa2289e"
+      },
+      "artin_certificate": {
+        "key": "4",
+        "result": "PASS",
+        "digest": "5ff0c235834ba860ff981b072357b4a916e5930ce3d80ecc09f576337f50bfc4"
+      },
+      "hurwitz_certificate": {
+        "key": "n4_involutions_00A",
+        "tuple_label": "n4_involutions_00A",
+        "result": "PASS",
+        "digest": "aa2f00dac218e3d445e60deff5994af45be9e03eca85cd5e5eb5afa6c561bf5f",
+        "note": "n = 4 is qualified on the 00A involution tuple, not on a generic tuple"
+      },
+      "degree_ladder": {
+        "S_n_derived_series_orders": [
+          24,
+          12,
+          4,
+          1
+        ],
+        "S_n_solvable": true,
+        "A_n_perfect": false,
+        "label": "S_4 solvable",
+        "Out_S_n_exceptional": false,
+        "authority": {
+          "classical_facts_status": "EXTERNAL_ESTABLISHED (classical); no source record bound in any consumed ledger; derived-series and perfectness corroborated mechanically here (LOCAL_DERIVED); Out(S_6) is a label only",
+          "mathematics_degree_ladder_firewall": "consumed read-only from candidate-freeze.v0.1.json@2337c7d744f1 (blob e0c5d4627dba): n is an experimental coordinate; no inference degree 5 / degree 6 / degree >= 5 -> nonintegrability or chaos; no Out(S6) -> Abel-Ruffini",
+          "expected_control_absent": "docs/TOPOLOGICAL_GALOIS_DEGREE_LADDER_CONTROL.md named in the Mathematics candidate freeze does not exist at 2337c7d744f1; nothing was rederived to replace it"
+        }
+      }
+    },
+    "5": {
+      "n": 5,
+      "roots_ordered": [
+        "-2",
+        "-1",
+        "0",
+        "1",
+        "2"
+      ],
+      "discriminant_digest": "ce64a744caea0a8479be53f8bcd560ebf171990bc91d6b9c658d7bd3afad6924",
+      "B_n": {
+        "generators": "sigma_1..sigma_4",
+        "relations": "braid relations sigma_i sigma_{i+1} sigma_i = sigma_{i+1} sigma_i sigma_{i+1}, [sigma_i, sigma_j] = 1 for |i-j| >= 2",
+        "strands": 5
+      },
+      "pi_perm_certificate": {
+        "key": "5",
+        "image_size": 120,
+        "surjective": true,
+        "result": "PASS",
+        "digest": "4c1b72fc7998f7df71754ab37b018ff1e5b413b15747f31cdbe6a8c72b717ba8"
+      },
+      "artin_certificate": {
+        "key": "5",
+        "result": "PASS",
+        "digest": "9760810b60177d943f509615a8db655d9ef48782c8234d6b90b08b22bb14a6d7"
+      },
+      "hurwitz_certificate": {
+        "key": "n5_generic",
+        "tuple_label": "n5_generic",
+        "result": "PASS",
+        "digest": "366b974ff8b052b0030e3b78f2af0939bd682f3aed03cf4947a1b396e8d65816",
+        "note": "generic tuple"
+      },
+      "degree_ladder": {
+        "S_n_derived_series_orders": [
+          120,
+          60
+        ],
+        "S_n_solvable": false,
+        "A_n_perfect": true,
+        "label": "S_5 nonsolvable; A_5 perfect/simple core appears (radical-solvability cliff 4->5)",
+        "Out_S_n_exceptional": false,
+        "authority": {
+          "classical_facts_status": "EXTERNAL_ESTABLISHED (classical); no source record bound in any consumed ledger; derived-series and perfectness corroborated mechanically here (LOCAL_DERIVED); Out(S_6) is a label only",
+          "mathematics_degree_ladder_firewall": "consumed read-only from candidate-freeze.v0.1.json@2337c7d744f1 (blob e0c5d4627dba): n is an experimental coordinate; no inference degree 5 / degree 6 / degree >= 5 -> nonintegrability or chaos; no Out(S6) -> Abel-Ruffini",
+          "expected_control_absent": "docs/TOPOLOGICAL_GALOIS_DEGREE_LADDER_CONTROL.md named in the Mathematics candidate freeze does not exist at 2337c7d744f1; nothing was rederived to replace it"
+        }
+      }
+    },
+    "6": {
+      "n": 6,
+      "roots_ordered": [
+        "-5/2",
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2",
+        "5/2"
+      ],
+      "discriminant_digest": "8c6409f2418847fa124ce75a5c794f810018cbd556b62a4f1a5b9096a2d4164d",
+      "B_n": {
+        "generators": "sigma_1..sigma_5",
+        "relations": "braid relations sigma_i sigma_{i+1} sigma_i = sigma_{i+1} sigma_i sigma_{i+1}, [sigma_i, sigma_j] = 1 for |i-j| >= 2",
+        "strands": 6
+      },
+      "pi_perm_certificate": {
+        "key": "6",
+        "image_size": 720,
+        "surjective": true,
+        "result": "PASS",
+        "digest": "954156facdfd32a12f368b442abddbfd3defb05fbf17b3e04b9f5e70f26e5b0f"
+      },
+      "artin_certificate": {
+        "key": "6",
+        "result": "PASS",
+        "digest": "0f2d9d81ae727a7fd04bc501605aba94d93f9156246250e9c6f38e1a50f544ef"
+      },
+      "hurwitz_certificate": {
+        "key": "n6_generic",
+        "tuple_label": "n6_generic",
+        "result": "PASS",
+        "digest": "31980cc247a205c110cbfc69d95cd339a9dfa58cbe6490bea915489898d58c47",
+        "note": "generic tuple"
+      },
+      "degree_ladder": {
+        "S_n_derived_series_orders": [
+          720,
+          360
+        ],
+        "S_n_solvable": false,
+        "A_n_perfect": true,
+        "label": "S_6 nonsolvable; exceptional Out(S_6) layer present (classical label; not bound; not load-bearing)",
+        "Out_S_n_exceptional": true,
+        "authority": {
+          "classical_facts_status": "EXTERNAL_ESTABLISHED (classical); no source record bound in any consumed ledger; derived-series and perfectness corroborated mechanically here (LOCAL_DERIVED); Out(S_6) is a label only",
+          "mathematics_degree_ladder_firewall": "consumed read-only from candidate-freeze.v0.1.json@2337c7d744f1 (blob e0c5d4627dba): n is an experimental coordinate; no inference degree 5 / degree 6 / degree >= 5 -> nonintegrability or chaos; no Out(S6) -> Abel-Ruffini",
+          "expected_control_absent": "docs/TOPOLOGICAL_GALOIS_DEGREE_LADDER_CONTROL.md named in the Mathematics candidate freeze does not exist at 2337c7d744f1; nothing was rederived to replace it"
+        }
+      }
+    }
+  },
+  "background_signatures": {
+    "3": {
+      "payload": {
+        "n": 3,
+        "E": "-1",
+        "P_n": "q**3 - q - 1",
+        "f_n": "-2*q**3 + 2*q",
+        "roots_ordered": [
+          "-1",
+          "0",
+          "1"
+        ],
+        "source_degree_certificates": {
+          "pi_perm": "d95ecd16f74f95d9578bb65653cb3980c3a0754deeacf7fa6f3fc7f54583f878",
+          "artin": "617227dc154d3bf9f351f215ed0e398f42cec7805415bc3ce18dd3bdb5a2afdb",
+          "hurwitz": "afff094098205b46f73102643a48889cc7f5c334078cef1d6ddd45e702c494d1"
+        }
+      },
+      "BACKGROUND_SIGNATURE": "2eea761bfca9ea66746bf30fb61766360a3dc1360aaf7241207aca8a997b905b"
+    },
+    "4": {
+      "payload": {
+        "n": 4,
+        "E": "-1",
+        "P_n": "q**4 - 5*q**2/2 - 7/16",
+        "f_n": "-2*q**4 + 5*q**2 - 9/8",
+        "roots_ordered": [
+          "-3/2",
+          "-1/2",
+          "1/2",
+          "3/2"
+        ],
+        "source_degree_certificates": {
+          "pi_perm": "205e68cdad4ca306a73d7b95fb7126b67bb454afd2777b6af352f3206aa2289e",
+          "artin": "5ff0c235834ba860ff981b072357b4a916e5930ce3d80ecc09f576337f50bfc4",
+          "hurwitz": "aa2f00dac218e3d445e60deff5994af45be9e03eca85cd5e5eb5afa6c561bf5f"
+        }
+      },
+      "BACKGROUND_SIGNATURE": "1629372124153209349aabce05cb9ea351a35b403b3815e6c5c20ce083bc332a"
+    },
+    "5": {
+      "payload": {
+        "n": 5,
+        "E": "-1",
+        "P_n": "q**5 - 5*q**3 + 4*q - 1",
+        "f_n": "-2*q**5 + 10*q**3 - 8*q",
+        "roots_ordered": [
+          "-2",
+          "-1",
+          "0",
+          "1",
+          "2"
+        ],
+        "source_degree_certificates": {
+          "pi_perm": "4c1b72fc7998f7df71754ab37b018ff1e5b413b15747f31cdbe6a8c72b717ba8",
+          "artin": "9760810b60177d943f509615a8db655d9ef48782c8234d6b90b08b22bb14a6d7",
+          "hurwitz": "366b974ff8b052b0030e3b78f2af0939bd682f3aed03cf4947a1b396e8d65816"
+        }
+      },
+      "BACKGROUND_SIGNATURE": "12155c306221c9d4cb9c6220804a449074c488b68a2e246b510651c8ea9dc153"
+    },
+    "6": {
+      "payload": {
+        "n": 6,
+        "E": "-1",
+        "P_n": "q**6 - 35*q**4/4 + 259*q**2/16 - 289/64",
+        "f_n": "-2*q**6 + 35*q**4/2 - 259*q**2/8 + 225/32",
+        "roots_ordered": [
+          "-5/2",
+          "-3/2",
+          "-1/2",
+          "1/2",
+          "3/2",
+          "5/2"
+        ],
+        "source_degree_certificates": {
+          "pi_perm": "954156facdfd32a12f368b442abddbfd3defb05fbf17b3e04b9f5e70f26e5b0f",
+          "artin": "0f2d9d81ae727a7fd04bc501605aba94d93f9156246250e9c6f38e1a50f544ef",
+          "hurwitz": "31980cc247a205c110cbfc69d95cd339a9dfa58cbe6490bea915489898d58c47"
+        }
+      },
+      "BACKGROUND_SIGNATURE": "f3f0d27a9b11360fd2d9b242c1b87814b96019e0491fdc416a84bd3afa4cbd5c"
+    }
+  },
+  "lanes": [
+    {
+      "lane": "A",
+      "lambda": "1",
+      "mu": "0",
+      "anchor": {
+        "package": "01A",
+        "cell": "c3"
+      },
+      "accepted_n3_predicate": "TRUE",
+      "design": "accepted abelian integer-Lame point (ell = 1 on the n = 3 member)",
+      "coupling_signature": "0dbf3111180df54c5e9e8a93b7f4f9d53dcdd232a94ecafd722a4a7320e042d8"
+    },
+    {
+      "lane": "B",
+      "lambda": "2",
+      "mu": "0",
+      "anchor": {
+        "package": "01A",
+        "cell": "c5"
+      },
+      "accepted_n3_predicate": "FALSE",
+      "design": "accepted nonabelian non-half-integer point (ell irrational on the n = 3 member)",
+      "coupling_signature": "96dd27cd4736c0cf8fcccb6c1185670df5f48831feb6386bbc59a61ed4d7f9d7"
+    },
+    {
+      "lane": "C",
+      "lambda": "3/8",
+      "mu": "0",
+      "anchor": {
+        "package": "01B",
+        "cell": "d7"
+      },
+      "accepted_n3_predicate": "TRUE",
+      "design": "the half-integer Brioschi-Halphen-Crawford finite point (ell = 1/2, B = 0 on the n = 3 member)",
+      "coupling_signature": "c9ac1de7fcb679d66191eed902a0e66c5589434a62dceaed81623cf2fe7f793e"
+    },
+    {
+      "lane": "D",
+      "lambda": "3/8",
+      "mu": "1/2",
+      "anchor": {
+        "package": "01B",
+        "cell": "d8"
+      },
+      "accepted_n3_predicate": "FALSE",
+      "design": "same half-integer lambda with the accessory parameter moved off the accepted finite point",
+      "coupling_signature": "46ed9706e23b305618763912e8aa355c67e943e5ae88a813830c2fa0818b5b80"
+    }
+  ],
+  "anchors": {
+    "A": {
+      "n": 3,
+      "cell": "c3",
+      "package": "01A",
+      "origin": "CONSUMED_CANONICAL",
+      "lambda": "1",
+      "mu": "0",
+      "ABELIAN_IDENTITY_COMPONENT": "TRUE",
+      "rule": "RU: y_1 is algebraic over C(x) and (y_2/y_1)' = omega is algebraic and nonzero (both solutions verified exactly); over K' = C(x)(y_1, omega) every sigma fixes y_1 and sends y_2/y_1 to y_2/y_1 + c, so Gal(L/K') is a subgroup of G_a = {[[1,c],[0,1]]}, abelian; G^0 over C(x) equals Gal(L/K')^0 (AMW Prop 6.3, bound)",
+      "original_digest": "3ff08d6f6aafc6d2856793c40833a88a9205ceb225b97040f312e14f0fe83f8b",
+      "reduced_digest": "48c9b6b7f70d0fee0ba2d851eda2277ea4652329a0c058fe96f2a308b8a96a38",
+      "record_digest": "8f04c56aee08835456cd5ce2d4e3e2c1cbe9f6b92c6894e47d4c11076d151eb1",
+      "package_log_digest": "d982dfbeff82573d7bc26c3155937034892ea3f82d2c8766578f6f09a8b4ca41",
+      "package_script_digest": "b645fb75aeede8ed0de7c0ae2a479dac022f3229e49493b20a09bccb05d18ad7"
+    },
+    "B": {
+      "n": 3,
+      "cell": "c5",
+      "package": "01A",
+      "origin": "CONSUMED_CANONICAL",
+      "lambda": "2",
+      "mu": "0",
+      "ABELIAN_IDENTITY_COMPONENT": "FALSE",
+      "rule": "R4: provider finds no Liouvillian solution on both forms => Kovacic case 4 => G = SL_2(C), G^0 = SL_2(C) nonabelian",
+      "original_digest": "60aaa3086ec588c2596ee4797019a5825ce6e705d13db53869b8c09a9c4bca7a",
+      "reduced_digest": "dcd32e08b4dc129ad6d8e55005c32e0348043e3d3621a951ffd080516e7b22ba",
+      "record_digest": "83a109cdf6759240780e001c98bb1d2a9ac152a06e65c0fe2d3ccc3eebaaa76e",
+      "package_log_digest": "d982dfbeff82573d7bc26c3155937034892ea3f82d2c8766578f6f09a8b4ca41",
+      "package_script_digest": "b645fb75aeede8ed0de7c0ae2a479dac022f3229e49493b20a09bccb05d18ad7"
+    },
+    "C": {
+      "n": 3,
+      "cell": "d7",
+      "package": "01B",
+      "origin": "CONSUMED_CANONICAL",
+      "lambda": "3/8",
+      "mu": "0",
+      "ABELIAN_IDENTITY_COMPONENT": "TRUE",
+      "rule": "R2L (conjugate form): omega_1 = y_1'/y_1 is algebraic over C(x) and satisfies the Riccati equation omega' + omega^2 + a omega + b = 0 exactly (polynomial reduction modulo s_i^2 = b_i); a Galois conjugate omega_2 != omega_1 satisfies it too, so y_2 = exp(int omega_2) is a second, independent exponential solution. Over K' = C(x)(omega_1, omega_2) both lines C.y_i are Gal(L/K')-stable, hence Gal(L/K') is diagonal, hence abelian; G^0 over C(x) equals Gal(L/K')^0 since K'/C(x) is algebraic (AMW Prop 6.3, bound)",
+      "original_digest": "cc7743ca04e7b4a98cc068f814031b634e78ea1d44bef2caae45a139bbcb7820",
+      "reduced_digest": "f123a74811c3475c40f0fa688399962105c4f459a5ee971a97a77e5c7a82f0dc",
+      "record_digest": "ac2531c74949783e166744771f186caa211c058cd162d56b9854bcd47c1e89ef",
+      "package_log_digest": "9f39b3b60ca6a08e4dddaf156a8ccd8def1f1df351fde05971d1178ef65b9789",
+      "package_script_digest": "cd7138fc29485773efd5f7026e1d13fbaf3177892406731db5c5e2ff4bea541c"
+    },
+    "D": {
+      "n": 3,
+      "cell": "d8",
+      "package": "01B",
+      "origin": "CONSUMED_CANONICAL",
+      "lambda": "3/8",
+      "mu": "1/2",
+      "ABELIAN_IDENTITY_COMPONENT": "FALSE",
+      "rule": "R4: provider finds no Liouvillian solution on both forms => Kovacic case 4 => G = SL_2(C), G^0 = SL_2(C) nonabelian",
+      "original_digest": "b007eb5d5cbc995815d360e5807266460d353c9fb205e29f0c02ca05c51e85fd",
+      "reduced_digest": "1fdc4156a7d22f6b92a66d30a71f3109db4027e052951f89b72d6d146749f990",
+      "record_digest": "6348dabe4535293ad89eebcea33f6274b493ece7533dd659b0e6fcbc65560585",
+      "package_log_digest": "9f39b3b60ca6a08e4dddaf156a8ccd8def1f1df351fde05971d1178ef65b9789",
+      "package_script_digest": "cd7138fc29485773efd5f7026e1d13fbaf3177892406731db5c5e2ff4bea541c"
+    }
+  },
+  "cells": [
+    {
+      "cell": "n4_A",
+      "n": 4,
+      "lane": "A",
+      "E": "-1",
+      "P_n": "q**4 - 5*q**2/2 - 7/16",
+      "f_n": "-2*q**4 + 5*q**2 - 9/8",
+      "roots_ordered": [
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2"
+      ],
+      "equation_class": "ALGEBRAIC_NVE_4",
+      "coupling_signature": "0dbf3111180df54c5e9e8a93b7f4f9d53dcdd232a94ecafd722a4a7320e042d8",
+      "mu": "0",
+      "lambda": "1",
+      "original": {
+        "c2": "-2*q**4 + 5*q**2 - 9/8",
+        "c1": "-4*q**3 + 5*q",
+        "c0": "q",
+        "equation": "(-2*q**4 + 5*q**2 - 9/8) y'' + (-4*q**3 + 5*q) y' + (q) y = 0"
+      },
+      "original_digest": "10e0c0ae7d1bf3a68fac092744f7b323c9fea602ec5e39e6c05ab6c21c5cadb7",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(32*q**3 - 40*q)/(16*q**4 - 40*q**2 + 9)",
+        "b": "-8*q/(16*q**4 - 40*q**2 + 9)",
+        "r": "(128*q**5 - 320*q**4 - 320*q**3 + 32*q**2 + 72*q - 180)/(256*q**8 - 1280*q**6 + 1888*q**4 - 720*q**2 + 81)",
+        "r_factored": "(128*q**5 - 320*q**4 - 320*q**3 + 32*q**2 + 72*q - 180)/((2*q - 3)**2*(2*q - 1)**2*(2*q + 1)**2*(2*q + 3)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((128*q**5 - 320*q**4 - 320*q**3 + 32*q**2 + 72*q - 180)/(256*q**8 - 1280*q**6 + 1888*q**4 - 720*q**2 + 81)) y",
+        "r": "(128*q**5 - 320*q**4 - 320*q**3 + 32*q**2 + 72*q - 180)/(256*q**8 - 1280*q**6 + 1888*q**4 - 720*q**2 + 81)"
+      },
+      "reduced_digest": "cafa06d70ebd0d46d5943663f54e030e9df5483456123514a51034e5ad80e036",
+      "poles_of_r": [
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2"
+      ],
+      "order_of_r_at_infinity": 3,
+      "maxima_original": "(-2*x^4 + 5*x^2 - 9/8)*'diff(y,x,2)+(-4*x^3 + 5*x)*'diff(y,x)+(x)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((128*x^5 - 320*x^4 - 320*x^3 + 32*x^2 + 72*x - 180)/(256*x^8 - 1280*x^6 + 1888*x^4 - 720*x^2 + 81))*y",
+      "expected_authority_ceiling": "provider (Maxima kovacicODE, qualified in 01A) + exact rules R4/R2L/RU/RD; FALSE requires case 4 on both forms; TRUE requires an exact Picard-Vessiot rule; otherwise UNRESOLVED"
+    },
+    {
+      "cell": "n4_B",
+      "n": 4,
+      "lane": "B",
+      "E": "-1",
+      "P_n": "q**4 - 5*q**2/2 - 7/16",
+      "f_n": "-2*q**4 + 5*q**2 - 9/8",
+      "roots_ordered": [
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2"
+      ],
+      "equation_class": "ALGEBRAIC_NVE_4",
+      "coupling_signature": "96dd27cd4736c0cf8fcccb6c1185670df5f48831feb6386bbc59a61ed4d7f9d7",
+      "mu": "0",
+      "lambda": "2",
+      "original": {
+        "c2": "-2*q**4 + 5*q**2 - 9/8",
+        "c1": "-4*q**3 + 5*q",
+        "c0": "2*q",
+        "equation": "(-2*q**4 + 5*q**2 - 9/8) y'' + (-4*q**3 + 5*q) y' + (2*q) y = 0"
+      },
+      "original_digest": "3f4e833e775e86dae62b2d4eef698194077a1f155e62fe2520de92dfeb00974f",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(32*q**3 - 40*q)/(16*q**4 - 40*q**2 + 9)",
+        "b": "-16*q/(16*q**4 - 40*q**2 + 9)",
+        "r": "(256*q**5 - 320*q**4 - 640*q**3 + 32*q**2 + 144*q - 180)/(256*q**8 - 1280*q**6 + 1888*q**4 - 720*q**2 + 81)",
+        "r_factored": "(256*q**5 - 320*q**4 - 640*q**3 + 32*q**2 + 144*q - 180)/((2*q - 3)**2*(2*q - 1)**2*(2*q + 1)**2*(2*q + 3)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((256*q**5 - 320*q**4 - 640*q**3 + 32*q**2 + 144*q - 180)/(256*q**8 - 1280*q**6 + 1888*q**4 - 720*q**2 + 81)) y",
+        "r": "(256*q**5 - 320*q**4 - 640*q**3 + 32*q**2 + 144*q - 180)/(256*q**8 - 1280*q**6 + 1888*q**4 - 720*q**2 + 81)"
+      },
+      "reduced_digest": "7a77cbb9cca3d527f9013a32de2269ba614104abf218122f2b28aa9911217d8e",
+      "poles_of_r": [
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2"
+      ],
+      "order_of_r_at_infinity": 3,
+      "maxima_original": "(-2*x^4 + 5*x^2 - 9/8)*'diff(y,x,2)+(-4*x^3 + 5*x)*'diff(y,x)+(2*x)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((256*x^5 - 320*x^4 - 640*x^3 + 32*x^2 + 144*x - 180)/(256*x^8 - 1280*x^6 + 1888*x^4 - 720*x^2 + 81))*y",
+      "expected_authority_ceiling": "provider (Maxima kovacicODE, qualified in 01A) + exact rules R4/R2L/RU/RD; FALSE requires case 4 on both forms; TRUE requires an exact Picard-Vessiot rule; otherwise UNRESOLVED"
+    },
+    {
+      "cell": "n4_C",
+      "n": 4,
+      "lane": "C",
+      "E": "-1",
+      "P_n": "q**4 - 5*q**2/2 - 7/16",
+      "f_n": "-2*q**4 + 5*q**2 - 9/8",
+      "roots_ordered": [
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2"
+      ],
+      "equation_class": "ALGEBRAIC_NVE_4",
+      "coupling_signature": "c9ac1de7fcb679d66191eed902a0e66c5589434a62dceaed81623cf2fe7f793e",
+      "mu": "0",
+      "lambda": "3/8",
+      "original": {
+        "c2": "-2*q**4 + 5*q**2 - 9/8",
+        "c1": "-4*q**3 + 5*q",
+        "c0": "3*q/8",
+        "equation": "(-2*q**4 + 5*q**2 - 9/8) y'' + (-4*q**3 + 5*q) y' + (3*q/8) y = 0"
+      },
+      "original_digest": "0aae19e18f97beaac836319fe886357882dca2db49c831ca50731376618ad3f3",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(32*q**3 - 40*q)/(16*q**4 - 40*q**2 + 9)",
+        "b": "-3*q/(16*q**4 - 40*q**2 + 9)",
+        "r": "(48*q**5 - 320*q**4 - 120*q**3 + 32*q**2 + 27*q - 180)/(256*q**8 - 1280*q**6 + 1888*q**4 - 720*q**2 + 81)",
+        "r_factored": "(48*q**5 - 320*q**4 - 120*q**3 + 32*q**2 + 27*q - 180)/((2*q - 3)**2*(2*q - 1)**2*(2*q + 1)**2*(2*q + 3)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((48*q**5 - 320*q**4 - 120*q**3 + 32*q**2 + 27*q - 180)/(256*q**8 - 1280*q**6 + 1888*q**4 - 720*q**2 + 81)) y",
+        "r": "(48*q**5 - 320*q**4 - 120*q**3 + 32*q**2 + 27*q - 180)/(256*q**8 - 1280*q**6 + 1888*q**4 - 720*q**2 + 81)"
+      },
+      "reduced_digest": "84bbe15cbc9f1d8b93f55ede75c72c41ba7539707ea583418f1810e68f0bc9d7",
+      "poles_of_r": [
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2"
+      ],
+      "order_of_r_at_infinity": 3,
+      "maxima_original": "(-2*x^4 + 5*x^2 - 9/8)*'diff(y,x,2)+(-4*x^3 + 5*x)*'diff(y,x)+(3*x/8)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((48*x^5 - 320*x^4 - 120*x^3 + 32*x^2 + 27*x - 180)/(256*x^8 - 1280*x^6 + 1888*x^4 - 720*x^2 + 81))*y",
+      "expected_authority_ceiling": "provider (Maxima kovacicODE, qualified in 01A) + exact rules R4/R2L/RU/RD; FALSE requires case 4 on both forms; TRUE requires an exact Picard-Vessiot rule; otherwise UNRESOLVED"
+    },
+    {
+      "cell": "n4_D",
+      "n": 4,
+      "lane": "D",
+      "E": "-1",
+      "P_n": "q**4 - 5*q**2/2 - 7/16",
+      "f_n": "-2*q**4 + 5*q**2 - 9/8",
+      "roots_ordered": [
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2"
+      ],
+      "equation_class": "ALGEBRAIC_NVE_4",
+      "coupling_signature": "46ed9706e23b305618763912e8aa355c67e943e5ae88a813830c2fa0818b5b80",
+      "mu": "1/2",
+      "lambda": "3/8",
+      "original": {
+        "c2": "-2*q**4 + 5*q**2 - 9/8",
+        "c1": "-4*q**3 + 5*q",
+        "c0": "3*q/8 + 1/2",
+        "equation": "(-2*q**4 + 5*q**2 - 9/8) y'' + (-4*q**3 + 5*q) y' + (3*q/8 + 1/2) y = 0"
+      },
+      "original_digest": "d85e090dce793d05553c7e7c1f2242ce2a85431f0a0665367b625641a60abb86",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(32*q**3 - 40*q)/(16*q**4 - 40*q**2 + 9)",
+        "b": "(-3*q - 4)/(16*q**4 - 40*q**2 + 9)",
+        "r": "(48*q**5 - 256*q**4 - 120*q**3 - 128*q**2 + 27*q - 144)/(256*q**8 - 1280*q**6 + 1888*q**4 - 720*q**2 + 81)",
+        "r_factored": "(48*q**5 - 256*q**4 - 120*q**3 - 128*q**2 + 27*q - 144)/((2*q - 3)**2*(2*q - 1)**2*(2*q + 1)**2*(2*q + 3)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((48*q**5 - 256*q**4 - 120*q**3 - 128*q**2 + 27*q - 144)/(256*q**8 - 1280*q**6 + 1888*q**4 - 720*q**2 + 81)) y",
+        "r": "(48*q**5 - 256*q**4 - 120*q**3 - 128*q**2 + 27*q - 144)/(256*q**8 - 1280*q**6 + 1888*q**4 - 720*q**2 + 81)"
+      },
+      "reduced_digest": "a7ddad927a78a5c61aaa80ac3b33d47de1ddf67e7901bae55e1a758747d3a191",
+      "poles_of_r": [
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2"
+      ],
+      "order_of_r_at_infinity": 3,
+      "maxima_original": "(-2*x^4 + 5*x^2 - 9/8)*'diff(y,x,2)+(-4*x^3 + 5*x)*'diff(y,x)+(3*x/8 + 1/2)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((48*x^5 - 256*x^4 - 120*x^3 - 128*x^2 + 27*x - 144)/(256*x^8 - 1280*x^6 + 1888*x^4 - 720*x^2 + 81))*y",
+      "expected_authority_ceiling": "provider (Maxima kovacicODE, qualified in 01A) + exact rules R4/R2L/RU/RD; FALSE requires case 4 on both forms; TRUE requires an exact Picard-Vessiot rule; otherwise UNRESOLVED"
+    },
+    {
+      "cell": "n5_A",
+      "n": 5,
+      "lane": "A",
+      "E": "-1",
+      "P_n": "q**5 - 5*q**3 + 4*q - 1",
+      "f_n": "-2*q**5 + 10*q**3 - 8*q",
+      "roots_ordered": [
+        "-2",
+        "-1",
+        "0",
+        "1",
+        "2"
+      ],
+      "equation_class": "ALGEBRAIC_NVE_5",
+      "coupling_signature": "0dbf3111180df54c5e9e8a93b7f4f9d53dcdd232a94ecafd722a4a7320e042d8",
+      "mu": "0",
+      "lambda": "1",
+      "original": {
+        "c2": "-2*q**5 + 10*q**3 - 8*q",
+        "c1": "-5*q**4 + 15*q**2 - 4",
+        "c0": "q",
+        "equation": "(-2*q**5 + 10*q**3 - 8*q) y'' + (-5*q**4 + 15*q**2 - 4) y' + (q) y = 0"
+      },
+      "original_digest": "079f0e20412f096550bed47d96e00cd3906ede9c85b13d819dfd89d0b8816e76",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(5*q**4 - 15*q**2 + 4)/(2*q**5 - 10*q**3 + 8*q)",
+        "b": "-1/(2*q**4 - 10*q**2 + 8)",
+        "r": "(5*q**8 - 62*q**6 + 85*q**4 - 88*q**2 - 48)/(16*q**10 - 160*q**8 + 528*q**6 - 640*q**4 + 256*q**2)",
+        "r_factored": "(5*q**8 - 62*q**6 + 85*q**4 - 88*q**2 - 48)/(16*q**2*(q - 2)**2*(q - 1)**2*(q + 1)**2*(q + 2)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((5*q**8 - 62*q**6 + 85*q**4 - 88*q**2 - 48)/(16*q**10 - 160*q**8 + 528*q**6 - 640*q**4 + 256*q**2)) y",
+        "r": "(5*q**8 - 62*q**6 + 85*q**4 - 88*q**2 - 48)/(16*q**10 - 160*q**8 + 528*q**6 - 640*q**4 + 256*q**2)"
+      },
+      "reduced_digest": "c65bead757ab27c25206b0a4b21beef481b79f33a39f47d15628e437087bec2a",
+      "poles_of_r": [
+        "-2",
+        "-1",
+        "0",
+        "1",
+        "2"
+      ],
+      "order_of_r_at_infinity": 2,
+      "maxima_original": "(-2*x^5 + 10*x^3 - 8*x)*'diff(y,x,2)+(-5*x^4 + 15*x^2 - 4)*'diff(y,x)+(x)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((5*x^8 - 62*x^6 + 85*x^4 - 88*x^2 - 48)/(16*x^10 - 160*x^8 + 528*x^6 - 640*x^4 + 256*x^2))*y",
+      "expected_authority_ceiling": "provider (Maxima kovacicODE, qualified in 01A) + exact rules R4/R2L/RU/RD; FALSE requires case 4 on both forms; TRUE requires an exact Picard-Vessiot rule; otherwise UNRESOLVED"
+    },
+    {
+      "cell": "n5_B",
+      "n": 5,
+      "lane": "B",
+      "E": "-1",
+      "P_n": "q**5 - 5*q**3 + 4*q - 1",
+      "f_n": "-2*q**5 + 10*q**3 - 8*q",
+      "roots_ordered": [
+        "-2",
+        "-1",
+        "0",
+        "1",
+        "2"
+      ],
+      "equation_class": "ALGEBRAIC_NVE_5",
+      "coupling_signature": "96dd27cd4736c0cf8fcccb6c1185670df5f48831feb6386bbc59a61ed4d7f9d7",
+      "mu": "0",
+      "lambda": "2",
+      "original": {
+        "c2": "-2*q**5 + 10*q**3 - 8*q",
+        "c1": "-5*q**4 + 15*q**2 - 4",
+        "c0": "2*q",
+        "equation": "(-2*q**5 + 10*q**3 - 8*q) y'' + (-5*q**4 + 15*q**2 - 4) y' + (2*q) y = 0"
+      },
+      "original_digest": "4977da9cd73c22f375009fe5f7ab1a50959cb09525b668e054df1a6b2e58ce6f",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(5*q**4 - 15*q**2 + 4)/(2*q**5 - 10*q**3 + 8*q)",
+        "b": "-1/(q**4 - 5*q**2 + 4)",
+        "r": "(5*q**8 - 54*q**6 + 45*q**4 - 56*q**2 - 48)/(16*q**10 - 160*q**8 + 528*q**6 - 640*q**4 + 256*q**2)",
+        "r_factored": "(5*q**8 - 54*q**6 + 45*q**4 - 56*q**2 - 48)/(16*q**2*(q - 2)**2*(q - 1)**2*(q + 1)**2*(q + 2)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((5*q**8 - 54*q**6 + 45*q**4 - 56*q**2 - 48)/(16*q**10 - 160*q**8 + 528*q**6 - 640*q**4 + 256*q**2)) y",
+        "r": "(5*q**8 - 54*q**6 + 45*q**4 - 56*q**2 - 48)/(16*q**10 - 160*q**8 + 528*q**6 - 640*q**4 + 256*q**2)"
+      },
+      "reduced_digest": "f33e4583dc16c68a5ded882a6d48b6b9de8a0b5f133a4771fb9226106443d44f",
+      "poles_of_r": [
+        "-2",
+        "-1",
+        "0",
+        "1",
+        "2"
+      ],
+      "order_of_r_at_infinity": 2,
+      "maxima_original": "(-2*x^5 + 10*x^3 - 8*x)*'diff(y,x,2)+(-5*x^4 + 15*x^2 - 4)*'diff(y,x)+(2*x)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((5*x^8 - 54*x^6 + 45*x^4 - 56*x^2 - 48)/(16*x^10 - 160*x^8 + 528*x^6 - 640*x^4 + 256*x^2))*y",
+      "expected_authority_ceiling": "provider (Maxima kovacicODE, qualified in 01A) + exact rules R4/R2L/RU/RD; FALSE requires case 4 on both forms; TRUE requires an exact Picard-Vessiot rule; otherwise UNRESOLVED"
+    },
+    {
+      "cell": "n5_C",
+      "n": 5,
+      "lane": "C",
+      "E": "-1",
+      "P_n": "q**5 - 5*q**3 + 4*q - 1",
+      "f_n": "-2*q**5 + 10*q**3 - 8*q",
+      "roots_ordered": [
+        "-2",
+        "-1",
+        "0",
+        "1",
+        "2"
+      ],
+      "equation_class": "ALGEBRAIC_NVE_5",
+      "coupling_signature": "c9ac1de7fcb679d66191eed902a0e66c5589434a62dceaed81623cf2fe7f793e",
+      "mu": "0",
+      "lambda": "3/8",
+      "original": {
+        "c2": "-2*q**5 + 10*q**3 - 8*q",
+        "c1": "-5*q**4 + 15*q**2 - 4",
+        "c0": "3*q/8",
+        "equation": "(-2*q**5 + 10*q**3 - 8*q) y'' + (-5*q**4 + 15*q**2 - 4) y' + (3*q/8) y = 0"
+      },
+      "original_digest": "43a7449cef4f5e6a5349f92a36ea5950b561b650a10f72a2e5cc7dde3fd9dce3",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(5*q**4 - 15*q**2 + 4)/(2*q**5 - 10*q**3 + 8*q)",
+        "b": "-3/(16*q**4 - 80*q**2 + 64)",
+        "r": "(5*q**8 - 67*q**6 + 110*q**4 - 108*q**2 - 48)/(16*q**10 - 160*q**8 + 528*q**6 - 640*q**4 + 256*q**2)",
+        "r_factored": "(5*q**8 - 67*q**6 + 110*q**4 - 108*q**2 - 48)/(16*q**2*(q - 2)**2*(q - 1)**2*(q + 1)**2*(q + 2)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((5*q**8 - 67*q**6 + 110*q**4 - 108*q**2 - 48)/(16*q**10 - 160*q**8 + 528*q**6 - 640*q**4 + 256*q**2)) y",
+        "r": "(5*q**8 - 67*q**6 + 110*q**4 - 108*q**2 - 48)/(16*q**10 - 160*q**8 + 528*q**6 - 640*q**4 + 256*q**2)"
+      },
+      "reduced_digest": "7d39ed7ace7aab40bd63f4f6347df00d3636786943f516307a5d08c34f9de2cd",
+      "poles_of_r": [
+        "-2",
+        "-1",
+        "0",
+        "1",
+        "2"
+      ],
+      "order_of_r_at_infinity": 2,
+      "maxima_original": "(-2*x^5 + 10*x^3 - 8*x)*'diff(y,x,2)+(-5*x^4 + 15*x^2 - 4)*'diff(y,x)+(3*x/8)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((5*x^8 - 67*x^6 + 110*x^4 - 108*x^2 - 48)/(16*x^10 - 160*x^8 + 528*x^6 - 640*x^4 + 256*x^2))*y",
+      "expected_authority_ceiling": "provider (Maxima kovacicODE, qualified in 01A) + exact rules R4/R2L/RU/RD; FALSE requires case 4 on both forms; TRUE requires an exact Picard-Vessiot rule; otherwise UNRESOLVED"
+    },
+    {
+      "cell": "n5_D",
+      "n": 5,
+      "lane": "D",
+      "E": "-1",
+      "P_n": "q**5 - 5*q**3 + 4*q - 1",
+      "f_n": "-2*q**5 + 10*q**3 - 8*q",
+      "roots_ordered": [
+        "-2",
+        "-1",
+        "0",
+        "1",
+        "2"
+      ],
+      "equation_class": "ALGEBRAIC_NVE_5",
+      "coupling_signature": "46ed9706e23b305618763912e8aa355c67e943e5ae88a813830c2fa0818b5b80",
+      "mu": "1/2",
+      "lambda": "3/8",
+      "original": {
+        "c2": "-2*q**5 + 10*q**3 - 8*q",
+        "c1": "-5*q**4 + 15*q**2 - 4",
+        "c0": "3*q/8 + 1/2",
+        "equation": "(-2*q**5 + 10*q**3 - 8*q) y'' + (-5*q**4 + 15*q**2 - 4) y' + (3*q/8 + 1/2) y = 0"
+      },
+      "original_digest": "151b297f6faaca7816cb263e5195c173657978da75436f5d8cc38972a6166174",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(5*q**4 - 15*q**2 + 4)/(2*q**5 - 10*q**3 + 8*q)",
+        "b": "(-3*q - 4)/(16*q**5 - 80*q**3 + 64*q)",
+        "r": "(5*q**8 - 67*q**6 + 4*q**5 + 110*q**4 - 20*q**3 - 108*q**2 + 16*q - 48)/(16*q**10 - 160*q**8 + 528*q**6 - 640*q**4 + 256*q**2)",
+        "r_factored": "(5*q**8 - 67*q**6 + 4*q**5 + 110*q**4 - 20*q**3 - 108*q**2 + 16*q - 48)/(16*q**2*(q - 2)**2*(q - 1)**2*(q + 1)**2*(q + 2)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((5*q**8 - 67*q**6 + 4*q**5 + 110*q**4 - 20*q**3 - 108*q**2 + 16*q - 48)/(16*q**10 - 160*q**8 + 528*q**6 - 640*q**4 + 256*q**2)) y",
+        "r": "(5*q**8 - 67*q**6 + 4*q**5 + 110*q**4 - 20*q**3 - 108*q**2 + 16*q - 48)/(16*q**10 - 160*q**8 + 528*q**6 - 640*q**4 + 256*q**2)"
+      },
+      "reduced_digest": "026eeeae7caf7bc6d32080a0a0067ff598778e41ee8cd10f2ddc32bdf13f51a2",
+      "poles_of_r": [
+        "-2",
+        "-1",
+        "0",
+        "1",
+        "2"
+      ],
+      "order_of_r_at_infinity": 2,
+      "maxima_original": "(-2*x^5 + 10*x^3 - 8*x)*'diff(y,x,2)+(-5*x^4 + 15*x^2 - 4)*'diff(y,x)+(3*x/8 + 1/2)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((5*x^8 - 67*x^6 + 4*x^5 + 110*x^4 - 20*x^3 - 108*x^2 + 16*x - 48)/(16*x^10 - 160*x^8 + 528*x^6 - 640*x^4 + 256*x^2))*y",
+      "expected_authority_ceiling": "provider (Maxima kovacicODE, qualified in 01A) + exact rules R4/R2L/RU/RD; FALSE requires case 4 on both forms; TRUE requires an exact Picard-Vessiot rule; otherwise UNRESOLVED"
+    },
+    {
+      "cell": "n6_A",
+      "n": 6,
+      "lane": "A",
+      "E": "-1",
+      "P_n": "q**6 - 35*q**4/4 + 259*q**2/16 - 289/64",
+      "f_n": "-2*q**6 + 35*q**4/2 - 259*q**2/8 + 225/32",
+      "roots_ordered": [
+        "-5/2",
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2",
+        "5/2"
+      ],
+      "equation_class": "ALGEBRAIC_NVE_6",
+      "coupling_signature": "0dbf3111180df54c5e9e8a93b7f4f9d53dcdd232a94ecafd722a4a7320e042d8",
+      "mu": "0",
+      "lambda": "1",
+      "original": {
+        "c2": "-2*q**6 + 35*q**4/2 - 259*q**2/8 + 225/32",
+        "c1": "-6*q**5 + 35*q**3 - 259*q/8",
+        "c0": "q",
+        "equation": "(-2*q**6 + 35*q**4/2 - 259*q**2/8 + 225/32) y'' + (-6*q**5 + 35*q**3 - 259*q/8) y' + (q) y = 0"
+      },
+      "original_digest": "525266283ea8ca6b8abe942a79105245157b8a1056e640c385e9eff2d2f874c4",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(192*q**5 - 1120*q**3 + 1036*q)/(64*q**6 - 560*q**4 + 1036*q**2 - 225)",
+        "b": "-32*q/(64*q**6 - 560*q**4 + 1036*q**2 - 225)",
+        "r": "(3072*q**10 - 53760*q**8 + 2048*q**7 + 232064*q**6 - 17920*q**5 - 398080*q**4 + 33152*q**3 + 109676*q**2 - 7200*q - 116550)/(4096*q**12 - 71680*q**10 + 446208*q**8 - 1189120*q**6 + 1325296*q**4 - 466200*q**2 + 50625)",
+        "r_factored": "(3072*q**10 - 53760*q**8 + 2048*q**7 + 232064*q**6 - 17920*q**5 - 398080*q**4 + 33152*q**3 + 109676*q**2 - 7200*q - 116550)/((2*q - 5)**2*(2*q - 3)**2*(2*q - 1)**2*(2*q + 1)**2*(2*q + 3)**2*(2*q + 5)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((3072*q**10 - 53760*q**8 + 2048*q**7 + 232064*q**6 - 17920*q**5 - 398080*q**4 + 33152*q**3 + 109676*q**2 - 7200*q - 116550)/(4096*q**12 - 71680*q**10 + 446208*q**8 - 1189120*q**6 + 1325296*q**4 - 466200*q**2 + 50625)) y",
+        "r": "(3072*q**10 - 53760*q**8 + 2048*q**7 + 232064*q**6 - 17920*q**5 - 398080*q**4 + 33152*q**3 + 109676*q**2 - 7200*q - 116550)/(4096*q**12 - 71680*q**10 + 446208*q**8 - 1189120*q**6 + 1325296*q**4 - 466200*q**2 + 50625)"
+      },
+      "reduced_digest": "e5a0895d7622c8a39eb61b483363ba5701a8e2298e082b1369d60484b978b16d",
+      "poles_of_r": [
+        "-5/2",
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2",
+        "5/2"
+      ],
+      "order_of_r_at_infinity": 2,
+      "maxima_original": "(-2*x^6 + 35*x^4/2 - 259*x^2/8 + 225/32)*'diff(y,x,2)+(-6*x^5 + 35*x^3 - 259*x/8)*'diff(y,x)+(x)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((3072*x^10 - 53760*x^8 + 2048*x^7 + 232064*x^6 - 17920*x^5 - 398080*x^4 + 33152*x^3 + 109676*x^2 - 7200*x - 116550)/(4096*x^12 - 71680*x^10 + 446208*x^8 - 1189120*x^6 + 1325296*x^4 - 466200*x^2 + 50625))*y",
+      "expected_authority_ceiling": "provider (Maxima kovacicODE, qualified in 01A) + exact rules R4/R2L/RU/RD; FALSE requires case 4 on both forms; TRUE requires an exact Picard-Vessiot rule; otherwise UNRESOLVED"
+    },
+    {
+      "cell": "n6_B",
+      "n": 6,
+      "lane": "B",
+      "E": "-1",
+      "P_n": "q**6 - 35*q**4/4 + 259*q**2/16 - 289/64",
+      "f_n": "-2*q**6 + 35*q**4/2 - 259*q**2/8 + 225/32",
+      "roots_ordered": [
+        "-5/2",
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2",
+        "5/2"
+      ],
+      "equation_class": "ALGEBRAIC_NVE_6",
+      "coupling_signature": "96dd27cd4736c0cf8fcccb6c1185670df5f48831feb6386bbc59a61ed4d7f9d7",
+      "mu": "0",
+      "lambda": "2",
+      "original": {
+        "c2": "-2*q**6 + 35*q**4/2 - 259*q**2/8 + 225/32",
+        "c1": "-6*q**5 + 35*q**3 - 259*q/8",
+        "c0": "2*q",
+        "equation": "(-2*q**6 + 35*q**4/2 - 259*q**2/8 + 225/32) y'' + (-6*q**5 + 35*q**3 - 259*q/8) y' + (2*q) y = 0"
+      },
+      "original_digest": "9505cb0cba01b013bd13c8317fb38f16dfd869ff1676d16ea96b11a06b349a8d",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(192*q**5 - 1120*q**3 + 1036*q)/(64*q**6 - 560*q**4 + 1036*q**2 - 225)",
+        "b": "-64*q/(64*q**6 - 560*q**4 + 1036*q**2 - 225)",
+        "r": "(3072*q**10 - 53760*q**8 + 4096*q**7 + 232064*q**6 - 35840*q**5 - 398080*q**4 + 66304*q**3 + 109676*q**2 - 14400*q - 116550)/(4096*q**12 - 71680*q**10 + 446208*q**8 - 1189120*q**6 + 1325296*q**4 - 466200*q**2 + 50625)",
+        "r_factored": "(3072*q**10 - 53760*q**8 + 4096*q**7 + 232064*q**6 - 35840*q**5 - 398080*q**4 + 66304*q**3 + 109676*q**2 - 14400*q - 116550)/((2*q - 5)**2*(2*q - 3)**2*(2*q - 1)**2*(2*q + 1)**2*(2*q + 3)**2*(2*q + 5)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((3072*q**10 - 53760*q**8 + 4096*q**7 + 232064*q**6 - 35840*q**5 - 398080*q**4 + 66304*q**3 + 109676*q**2 - 14400*q - 116550)/(4096*q**12 - 71680*q**10 + 446208*q**8 - 1189120*q**6 + 1325296*q**4 - 466200*q**2 + 50625)) y",
+        "r": "(3072*q**10 - 53760*q**8 + 4096*q**7 + 232064*q**6 - 35840*q**5 - 398080*q**4 + 66304*q**3 + 109676*q**2 - 14400*q - 116550)/(4096*q**12 - 71680*q**10 + 446208*q**8 - 1189120*q**6 + 1325296*q**4 - 466200*q**2 + 50625)"
+      },
+      "reduced_digest": "c900d18d7dcfe33090f0d82d50cda92d9cbcb2cfc1a4b64c656351647c73bc7d",
+      "poles_of_r": [
+        "-5/2",
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2",
+        "5/2"
+      ],
+      "order_of_r_at_infinity": 2,
+      "maxima_original": "(-2*x^6 + 35*x^4/2 - 259*x^2/8 + 225/32)*'diff(y,x,2)+(-6*x^5 + 35*x^3 - 259*x/8)*'diff(y,x)+(2*x)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((3072*x^10 - 53760*x^8 + 4096*x^7 + 232064*x^6 - 35840*x^5 - 398080*x^4 + 66304*x^3 + 109676*x^2 - 14400*x - 116550)/(4096*x^12 - 71680*x^10 + 446208*x^8 - 1189120*x^6 + 1325296*x^4 - 466200*x^2 + 50625))*y",
+      "expected_authority_ceiling": "provider (Maxima kovacicODE, qualified in 01A) + exact rules R4/R2L/RU/RD; FALSE requires case 4 on both forms; TRUE requires an exact Picard-Vessiot rule; otherwise UNRESOLVED"
+    },
+    {
+      "cell": "n6_C",
+      "n": 6,
+      "lane": "C",
+      "E": "-1",
+      "P_n": "q**6 - 35*q**4/4 + 259*q**2/16 - 289/64",
+      "f_n": "-2*q**6 + 35*q**4/2 - 259*q**2/8 + 225/32",
+      "roots_ordered": [
+        "-5/2",
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2",
+        "5/2"
+      ],
+      "equation_class": "ALGEBRAIC_NVE_6",
+      "coupling_signature": "c9ac1de7fcb679d66191eed902a0e66c5589434a62dceaed81623cf2fe7f793e",
+      "mu": "0",
+      "lambda": "3/8",
+      "original": {
+        "c2": "-2*q**6 + 35*q**4/2 - 259*q**2/8 + 225/32",
+        "c1": "-6*q**5 + 35*q**3 - 259*q/8",
+        "c0": "3*q/8",
+        "equation": "(-2*q**6 + 35*q**4/2 - 259*q**2/8 + 225/32) y'' + (-6*q**5 + 35*q**3 - 259*q/8) y' + (3*q/8) y = 0"
+      },
+      "original_digest": "a2352a4b08f2114adbb0e5c23b63dd332fabf7830cc321d0982f4804f61d354d",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(192*q**5 - 1120*q**3 + 1036*q)/(64*q**6 - 560*q**4 + 1036*q**2 - 225)",
+        "b": "-12*q/(64*q**6 - 560*q**4 + 1036*q**2 - 225)",
+        "r": "(3072*q**10 - 53760*q**8 + 768*q**7 + 232064*q**6 - 6720*q**5 - 398080*q**4 + 12432*q**3 + 109676*q**2 - 2700*q - 116550)/(4096*q**12 - 71680*q**10 + 446208*q**8 - 1189120*q**6 + 1325296*q**4 - 466200*q**2 + 50625)",
+        "r_factored": "(3072*q**10 - 53760*q**8 + 768*q**7 + 232064*q**6 - 6720*q**5 - 398080*q**4 + 12432*q**3 + 109676*q**2 - 2700*q - 116550)/((2*q - 5)**2*(2*q - 3)**2*(2*q - 1)**2*(2*q + 1)**2*(2*q + 3)**2*(2*q + 5)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((3072*q**10 - 53760*q**8 + 768*q**7 + 232064*q**6 - 6720*q**5 - 398080*q**4 + 12432*q**3 + 109676*q**2 - 2700*q - 116550)/(4096*q**12 - 71680*q**10 + 446208*q**8 - 1189120*q**6 + 1325296*q**4 - 466200*q**2 + 50625)) y",
+        "r": "(3072*q**10 - 53760*q**8 + 768*q**7 + 232064*q**6 - 6720*q**5 - 398080*q**4 + 12432*q**3 + 109676*q**2 - 2700*q - 116550)/(4096*q**12 - 71680*q**10 + 446208*q**8 - 1189120*q**6 + 1325296*q**4 - 466200*q**2 + 50625)"
+      },
+      "reduced_digest": "8f0ef215dccbf339f9dfe4693de4f24b50d4d4acfef771c3a0ea0b38162f2f9b",
+      "poles_of_r": [
+        "-5/2",
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2",
+        "5/2"
+      ],
+      "order_of_r_at_infinity": 2,
+      "maxima_original": "(-2*x^6 + 35*x^4/2 - 259*x^2/8 + 225/32)*'diff(y,x,2)+(-6*x^5 + 35*x^3 - 259*x/8)*'diff(y,x)+(3*x/8)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((3072*x^10 - 53760*x^8 + 768*x^7 + 232064*x^6 - 6720*x^5 - 398080*x^4 + 12432*x^3 + 109676*x^2 - 2700*x - 116550)/(4096*x^12 - 71680*x^10 + 446208*x^8 - 1189120*x^6 + 1325296*x^4 - 466200*x^2 + 50625))*y",
+      "expected_authority_ceiling": "provider (Maxima kovacicODE, qualified in 01A) + exact rules R4/R2L/RU/RD; FALSE requires case 4 on both forms; TRUE requires an exact Picard-Vessiot rule; otherwise UNRESOLVED"
+    },
+    {
+      "cell": "n6_D",
+      "n": 6,
+      "lane": "D",
+      "E": "-1",
+      "P_n": "q**6 - 35*q**4/4 + 259*q**2/16 - 289/64",
+      "f_n": "-2*q**6 + 35*q**4/2 - 259*q**2/8 + 225/32",
+      "roots_ordered": [
+        "-5/2",
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2",
+        "5/2"
+      ],
+      "equation_class": "ALGEBRAIC_NVE_6",
+      "coupling_signature": "46ed9706e23b305618763912e8aa355c67e943e5ae88a813830c2fa0818b5b80",
+      "mu": "1/2",
+      "lambda": "3/8",
+      "original": {
+        "c2": "-2*q**6 + 35*q**4/2 - 259*q**2/8 + 225/32",
+        "c1": "-6*q**5 + 35*q**3 - 259*q/8",
+        "c0": "3*q/8 + 1/2",
+        "equation": "(-2*q**6 + 35*q**4/2 - 259*q**2/8 + 225/32) y'' + (-6*q**5 + 35*q**3 - 259*q/8) y' + (3*q/8 + 1/2) y = 0"
+      },
+      "original_digest": "b5dc2dc6add8bddbeb2a262eab599ee5e1697b3af9eac0f7e9acfd6fc642173b",
+      "normalization": {
+        "gauge": "y = exp(-(1/2) int a dq) z, a = c1/c2, b = c0/c2",
+        "a": "(192*q**5 - 1120*q**3 + 1036*q)/(64*q**6 - 560*q**4 + 1036*q**2 - 225)",
+        "b": "(-12*q - 16)/(64*q**6 - 560*q**4 + 1036*q**2 - 225)",
+        "r": "(3072*q**10 - 53760*q**8 + 768*q**7 + 233088*q**6 - 6720*q**5 - 407040*q**4 + 12432*q**3 + 126252*q**2 - 2700*q - 120150)/(4096*q**12 - 71680*q**10 + 446208*q**8 - 1189120*q**6 + 1325296*q**4 - 466200*q**2 + 50625)",
+        "r_factored": "(3072*q**10 - 53760*q**8 + 768*q**7 + 233088*q**6 - 6720*q**5 - 407040*q**4 + 12432*q**3 + 126252*q**2 - 2700*q - 120150)/((2*q - 5)**2*(2*q - 3)**2*(2*q - 1)**2*(2*q + 1)**2*(2*q + 3)**2*(2*q + 5)**2)",
+        "scope": "the gauge factor exp(-(1/2) int a) = f^(-1/4) is algebraic over C(q) (a = f'/(2f)), so the identity component of the differential Galois group is unchanged (AMW Prop 6.2/3.4, bound in the 00A ledger); Galois groups of the two forms may differ by a finite extension"
+      },
+      "reduced": {
+        "equation": "y'' = ((3072*q**10 - 53760*q**8 + 768*q**7 + 233088*q**6 - 6720*q**5 - 407040*q**4 + 12432*q**3 + 126252*q**2 - 2700*q - 120150)/(4096*q**12 - 71680*q**10 + 446208*q**8 - 1189120*q**6 + 1325296*q**4 - 466200*q**2 + 50625)) y",
+        "r": "(3072*q**10 - 53760*q**8 + 768*q**7 + 233088*q**6 - 6720*q**5 - 407040*q**4 + 12432*q**3 + 126252*q**2 - 2700*q - 120150)/(4096*q**12 - 71680*q**10 + 446208*q**8 - 1189120*q**6 + 1325296*q**4 - 466200*q**2 + 50625)"
+      },
+      "reduced_digest": "1f618e193ae0ce9297cd74f9dc0b6efd9ad4c9b9957fea059f20323af0c94f60",
+      "poles_of_r": [
+        "-5/2",
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2",
+        "5/2"
+      ],
+      "order_of_r_at_infinity": 2,
+      "maxima_original": "(-2*x^6 + 35*x^4/2 - 259*x^2/8 + 225/32)*'diff(y,x,2)+(-6*x^5 + 35*x^3 - 259*x/8)*'diff(y,x)+(3*x/8 + 1/2)*y=0",
+      "maxima_reduced": "'diff(y,x,2)=((3072*x^10 - 53760*x^8 + 768*x^7 + 233088*x^6 - 6720*x^5 - 407040*x^4 + 12432*x^3 + 126252*x^2 - 2700*x - 120150)/(4096*x^12 - 71680*x^10 + 446208*x^8 - 1189120*x^6 + 1325296*x^4 - 466200*x^2 + 50625))*y",
+      "expected_authority_ceiling": "provider (Maxima kovacicODE, qualified in 01A) + exact rules R4/R2L/RU/RD; FALSE requires case 4 on both forms; TRUE requires an exact Picard-Vessiot rule; otherwise UNRESOLVED"
+    }
+  ],
+  "new_cell_count": 12,
+  "panel_size": 16,
+  "expectations": {
+    "target_predicate_expectations": "NONE_RECORDED",
+    "note": "no per-cell target-predicate expectation is recorded; cells are fixed by the lane x degree design, not chosen from outputs; no n >= 4 equation is labelled Lame (N3_LAME_MAP != ALL_DEGREES_ARE_LAME)"
+  },
+  "provider_policy": {
+    "scripts": "one Maxima script per (cell, form): cells/<cell>_orig.mac and cells/<cell>_red.mac, each digest-bound to its own log",
+    "timeout_s_per_script": 1800,
+    "retries": 0,
+    "parallel_workers": 6,
+    "timeout_semantics": "a timed-out or absent provider result is recorded as PROVIDER_TIMEOUT / UNPARSED for that form and the cell is UNRESOLVED unless a provider-independent exact rule (RU case-1 form) resolves it; UNRESOLVED is a valid outcome",
+    "rules": "R4, R2L, RU, RD exactly as in 01A/01B; no rule is weakened to force resolution"
+  },
+  "rules": [
+    "BO-2 is not reopened; BO-1 not executed; Morales-Ramis not applied",
+    "no lane, degree or cell may be added, removed or altered after the first provider run",
+    "n = 3 anchors are consumed from canonical 01A/01B evidence, never rerun",
+    "the coupling pair (lambda, mu) is identical across n = 3..6 inside a lane (one COUPLING_SIGNATURE per lane)",
+    "only the background (n, P_n, f_n, roots) varies inside a lane; E = -1 throughout; no floats",
+    "n >= 4 equations are ALGEBRAIC_NVE_n, never labelled Lame",
+    "UNRESOLVED is a valid outcome; no rule is weakened"
+  ]
+}

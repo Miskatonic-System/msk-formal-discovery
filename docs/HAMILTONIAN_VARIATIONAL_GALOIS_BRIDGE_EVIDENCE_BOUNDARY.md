@@ -129,3 +129,19 @@ HV7 one formally checked earned implication
 ```
 
 No stage is authorized by this document.
+
+
+## Executed: first bridge test (01A)
+
+`WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01A` executed the frozen CAND-1
+obligation BO-2 on one `n = 3` member with a pre-registered coupling grid:
+
+```text
+docs/HAMILTONIAN_VARIATIONAL_BRIDGE_01A.md
+experiments/hamiltonian-variational-bridge-01a/
+```
+
+Outcome (proposed, pending review): `BO2 = REFUTED`,
+`SOURCE_DATA_ALONE_INSUFFICIENT_FOR_TARGET_PREDICATE` — identical source
+data, differing `ABELIAN_IDENTITY_COMPONENT(G_diff)`. Morales-Ramis was not
+applied; no integrability or chaos statement was made.

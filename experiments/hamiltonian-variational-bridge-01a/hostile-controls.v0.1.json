@@ -1,0 +1,193 @@
+{
+  "schema_version": "miskatonic.formal-discovery.hvb-hostile-controls.v0.1",
+  "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01A",
+  "all_rejected": true,
+  "count": 21,
+  "results": [
+    {
+      "id": "H01",
+      "pattern": "changing P_3 between coupling cells",
+      "rejected": true,
+      "errors": [
+        "cell c5 carries SOURCE_SIGNATURE 000000000000 != a8407db0c67a",
+        "cell c5 equation or coupling differs from the preregistration",
+        "cell c5 record differs from a rebuild from the provider log"
+      ]
+    },
+    {
+      "id": "H02",
+      "pattern": "changing E between coupling cells",
+      "rejected": true,
+      "errors": [
+        "cell c6 carries SOURCE_SIGNATURE de6938236495 != a8407db0c67a"
+      ]
+    },
+    {
+      "id": "H03",
+      "pattern": "changing root ordering without recording relabel",
+      "rejected": true,
+      "errors": [
+        "preregistration differs from a fresh replay (frozen member / grid / equations / SOURCE_SIGNATURE)"
+      ]
+    },
+    {
+      "id": "H04",
+      "pattern": "changing Artin/Hurwitz convention between cells",
+      "rejected": true,
+      "errors": [
+        "preregistration differs from a fresh replay (frozen member / grid / equations / SOURCE_SIGNATURE)"
+      ]
+    },
+    {
+      "id": "H05",
+      "pattern": "adding a coupling after target results are seen",
+      "rejected": true,
+      "errors": [
+        "preregistration differs from a fresh replay (frozen member / grid / equations / SOURCE_SIGNATURE)",
+        "not every preregistered cell is reported (selective reporting)",
+        "target provider script differs from cell_script(preregistration cells): input binding broken"
+      ]
+    },
+    {
+      "id": "H06",
+      "pattern": "selecting only cells that support the expected negative",
+      "rejected": true,
+      "errors": [
+        "not every preregistered cell is reported (selective reporting)",
+        "cell c5 record differs from a rebuild from the provider log",
+        "cell c6 record differs from a rebuild from the provider log",
+        "cell c8 record differs from a rebuild from the provider log"
+      ]
+    },
+    {
+      "id": "H07",
+      "pattern": "numerical approximation substituted for exact rational equation",
+      "rejected": true,
+      "errors": [
+        "cell c2 has a floating-point mu",
+        "cell c2 equation or coupling differs from the preregistration",
+        "cell c2 record differs from a rebuild from the provider log"
+      ]
+    },
+    {
+      "id": "H08",
+      "pattern": "Liouvillian result relabeled 'G^0 abelian' without group evidence",
+      "rejected": true,
+      "errors": [
+        "cell c1 record differs from a rebuild from the provider log",
+        "cell c1: predicate TRUE without an admissible rule ('Liouvillian, hence solvable, hence abeli')"
+      ]
+    },
+    {
+      "id": "H09",
+      "pattern": "no-Liouvillian result relabeled chaos",
+      "rejected": true,
+      "errors": [
+        "cell c5: forbidden inference NO_LIOUVILLIAN->CHAOS"
+      ]
+    },
+    {
+      "id": "H10",
+      "pattern": "target monodromy relabeled G_diff without closure theorem",
+      "rejected": true,
+      "errors": [
+        "rho_tgt used as evidence about G_diff while the closure source is unbound"
+      ]
+    },
+    {
+      "id": "H11",
+      "pattern": "source braid data recomputed differently per cell",
+      "rejected": true,
+      "errors": [
+        "cell c3 carries SOURCE_SIGNATURE 43473d43e5f1 != a8407db0c67a"
+      ]
+    },
+    {
+      "id": "H12",
+      "pattern": "Burau promoted back into the critical path",
+      "rejected": true,
+      "errors": [
+        "Burau promoted into the critical path"
+      ]
+    },
+    {
+      "id": "H13",
+      "pattern": "n=4..6 added after observing n=3 outcomes",
+      "rejected": true,
+      "errors": [
+        "degrees other than 3 executed"
+      ]
+    },
+    {
+      "id": "H14",
+      "pattern": "result JSON resealed after changing source signature or target predicate without semantic rejection",
+      "rejected": true,
+      "errors": [
+        "cell c5 record differs from a rebuild from the provider log",
+        "adjudication field witness_pair differs from recomputation"
+      ]
+    },
+    {
+      "id": "H15",
+      "pattern": "NOT_FALSIFIED promoted to SOURCE_DATA_SUFFICIENT",
+      "rejected": true,
+      "errors": [
+        "adjudication field BO2 differs from recomputation",
+        "NOT_FALSIFIED was promoted to SOURCE_DATA_SUFFICIENT"
+      ]
+    },
+    {
+      "id": "H16",
+      "pattern": "nonabelian G^0 converted into a nonintegrability / Morales-Ramis claim",
+      "rejected": true,
+      "errors": [
+        "authority block altered",
+        "nonintegrability claimed from a nonabelian identity component"
+      ]
+    },
+    {
+      "id": "H17",
+      "pattern": "R1: target_cells.mac mutated so one RESULT_cN tag runs a different equation; preregistration, log and cell-results unchanged",
+      "rejected": true,
+      "errors": [
+        "target provider script differs from cell_script(preregistration cells): input binding broken",
+        "target provider script digest differs from the cell-results binding"
+      ]
+    },
+    {
+      "id": "H18",
+      "pattern": "R1: modified K-control script with unchanged qualification and log",
+      "rejected": true,
+      "errors": [
+        "K-control script differs from k_script(): provider input binding broken",
+        "K-control script digest differs from the provider-qualification binding"
+      ]
+    },
+    {
+      "id": "H19",
+      "pattern": "R1: modified K-control log",
+      "rejected": true,
+      "errors": [
+        "K-control log digest differs from the provider-qualification binding",
+        "provider K matrix (id/expected/verdict/pass) differs from a rebuild from the committed log",
+        "provider 'qualified' flag is not what the reconstructed K matrix and digest comparison give"
+      ]
+    },
+    {
+      "id": "H20",
+      "pattern": "R1: modified provider verdict row",
+      "rejected": true,
+      "errors": [
+        "provider K matrix (id/expected/verdict/pass) differs from a rebuild from the committed log"
+      ]
+    },
+    {
+      "id": "H21",
+      "pattern": "R1: qualified=true with a failed reconstructed control",
+      "rejected": true,
+      "errors": [
+        "provider K matrix (id/expected/verdict/pass) differs from a rebuild from the committed log"
+      ]
+    }
+  ]
+}

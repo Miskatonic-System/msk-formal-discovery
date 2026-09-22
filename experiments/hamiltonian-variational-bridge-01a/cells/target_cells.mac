@@ -1,0 +1,18 @@
+display2d:false$
+load(kovacicODE)$
+print("RESULT_c1_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(0)*y=0, y, x))$
+print("RESULT_c1_red", kovacicODE('diff(y,x,2)=((-3*x^4 - 6*x^2 - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$
+print("RESULT_c2_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(1)*y=0, y, x))$
+print("RESULT_c2_red", kovacicODE('diff(y,x,2)=((-3*x^4 + 8*x^3 - 6*x^2 - 8*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$
+print("RESULT_c3_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(x)*y=0, y, x))$
+print("RESULT_c3_red", kovacicODE('diff(y,x,2)=((5*x^4 - 14*x^2 - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$
+print("RESULT_c4_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(x + 1)*y=0, y, x))$
+print("RESULT_c4_red", kovacicODE('diff(y,x,2)=((5*x^4 + 8*x^3 - 14*x^2 - 8*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$
+print("RESULT_c5_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(2*x)*y=0, y, x))$
+print("RESULT_c5_red", kovacicODE('diff(y,x,2)=((13*x^4 - 22*x^2 - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$
+print("RESULT_c6_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(2*x + 1)*y=0, y, x))$
+print("RESULT_c6_red", kovacicODE('diff(y,x,2)=((13*x^4 + 8*x^3 - 22*x^2 - 8*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$
+print("RESULT_c7_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(3*x)*y=0, y, x))$
+print("RESULT_c7_red", kovacicODE('diff(y,x,2)=((21*x^4 - 30*x^2 - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$
+print("RESULT_c8_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(1 - x)*y=0, y, x))$
+print("RESULT_c8_red", kovacicODE('diff(y,x,2)=((-11*x^4 + 8*x^3 + 2*x^2 - 8*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$

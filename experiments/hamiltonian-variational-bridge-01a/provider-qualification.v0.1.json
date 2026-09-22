@@ -1,0 +1,121 @@
+{
+  "provider": "Maxima kovacicODE",
+  "maxima_version": "5.49.0",
+  "store_path": "/nix/store/7xxinqc8i6x8v2wcm3yzh597a0iiawbl-maxima-5.49.0",
+  "nixpkgs_revision": "35e212742ceab4ae1dcfbfd9039a39215c816e8e",
+  "implementation_file": "/nix/store/7xxinqc8i6x8v2wcm3yzh597a0iiawbl-maxima-5.49.0/share/maxima/5.49.0/share/contrib/maxima-odesolve/kovacicODE.mac",
+  "implementation_sha256_recorded": "ab7f476a8c0e2c6b87161db1f347ac50f04d9d183d4ea75f0197d277cdbddccf",
+  "implementation_sha256_observed": "ab7f476a8c0e2c6b87161db1f347ac50f04d9d183d4ea75f0197d277cdbddccf",
+  "implementation_provenance": "kovacicODE.mac, (C) 2014 Nijso Beishuizen, GPL-2+, implementing Kovacic 1986 after Smith 1984 (CS-84-35) and Saunders 1981",
+  "command": "nix shell nixpkgs#maxima --command maxima --very-quiet --batch=<script.mac>; load(kovacicODE); kovacicODE(eq, y, x)",
+  "coefficient_field": "Q(x) (rational coefficients; exact)",
+  "normalization": "the provider accepts the general second-order form and normalizes internally; we ALSO feed the exact reduced form y'' = r y computed in sympy and require agreement",
+  "output_semantics": "list [y = ...] => Liouvillian solutions found (cases 1-3); nil => input rejected ('ODE is not linear!'), Maxima error, or no Liouvillian solution (case 4). Message text is never used as the verdict.",
+  "known_limitation": "constant-coefficient inputs are misclassified as non-linear and rejected (K1, K2 direct forms); all target cells have genuinely x-dependent coefficients; K1g/K2g cover the same Picard-Vessiot extensions through a rational gauge",
+  "timeout_resource_policy": "900 s per script; no retries; a timeout is recorded as UNRESOLVED",
+  "k_control_script_digest": "55afddd3e1e298c3db694b2aef333f1ce13bde6eca362c6742c082e7f36afaa9",
+  "k_control_log_digest": "4eb9ab06f002b6d9687fb006ecf57e17e29cc641bb9a4990f27b56de964d0159",
+  "rows": [
+    {
+      "id": "K1",
+      "control": "y'' = 0 (direct form)",
+      "input": "'diff(y,x,2)=0",
+      "expected_verdict": "INPUT_REJECTED",
+      "provider_verdict": "INPUT_REJECTED",
+      "provider_return": "nil",
+      "note": "provider misclassifies constant-coefficient input as non-linear; see K1g",
+      "pass": true
+    },
+    {
+      "id": "K1g",
+      "control": "y'' = 0 in the rational gauge y = x u:  x u'' + 2 u' = 0 (same Picard-Vessiot extension, G trivial)",
+      "input": "x*'diff(y,x,2)+2*'diff(y,x)=0",
+      "expected_verdict": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_verdict": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_return": "[y = %k1/x+%k2]",
+      "note": "known answer u in {1, 1/x}",
+      "pass": true
+    },
+    {
+      "id": "K2",
+      "control": "y'' - y = 0 (direct form)",
+      "input": "'diff(y,x,2)-y=0",
+      "expected_verdict": "INPUT_REJECTED",
+      "provider_verdict": "INPUT_REJECTED",
+      "provider_return": "nil",
+      "note": "as K1",
+      "pass": true
+    },
+    {
+      "id": "K2g",
+      "control": "y'' = y in the gauge y = x u:  x u'' + 2 u' - x u = 0 (G = G_m)",
+      "input": "x*'diff(y,x,2)+2*'diff(y,x)-x*y=0",
+      "expected_verdict": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_verdict": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_return": "[y = (%e^x*%k2)/x+(%e^-x*%k1)/x]",
+      "note": "known answer u = e^{+-x}/x",
+      "pass": true
+    },
+    {
+      "id": "K3a",
+      "control": "Kovacic case 2 (imprimitive): y'' = (1/x - 3/(16x^2)) y",
+      "input": "'diff(y,x,2)=(1/x-3/(16*x^2))*y",
+      "expected_verdict": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_verdict": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_return": "[y = %e^(2*sqrt(x))*%k2*x^(1/4)+%e^-(2*sqrt(x))*%k1*x^(1/4)]",
+      "note": "known answer y = x^{1/4} e^{+-2 sqrt(x)}",
+      "pass": true
+    },
+    {
+      "id": "K3b",
+      "control": "Kovacic case 3 (finite primitive): y'' = (-3/(16x^2) - 2/(9(x-1)^2) + 3/(16x(x-1))) y",
+      "input": "'diff(y,x,2)=(-3/(16*x^2)-2/(9*(x-1)^2)+3/(16*x*(x-1)))*y",
+      "expected_verdict": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_verdict": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_return": "[y = %e^(-(('integrate(sqrt(2*sqrt(x)\n                                       +sqrt((x-1)^(1/3)+1)*(2*(x-1)^(1/3)-1))\n                                  /(((x-1)^(1/3)+1)^(1/4)\n                                   *(x-1)^(2/3)*sqrt(x)),x))\n                  /12)\n                  -('integrate(sqrt((x-1)^(1/3)+1)/((x-1)^(2/3)*sqrt(x)),x))\n                   /12)\n             *%k2\n             *('integr",
+      "note": "algebraic solutions expected",
+      "pass": true
+    },
+    {
+      "id": "K4a",
+      "control": "Kovacic case 4: Airy y'' = x y",
+      "input": "'diff(y,x,2)=x*y",
+      "expected_verdict": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_verdict": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_return": "nil",
+      "note": "G = SL_2(C)",
+      "pass": true
+    },
+    {
+      "id": "K4b",
+      "control": "Kovacic case 4 with first-derivative term: Bessel order 0, x y'' + y' + x y = 0",
+      "input": "x*'diff(y,x,2)+'diff(y,x)+x*y=0",
+      "expected_verdict": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_verdict": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_return": "nil",
+      "note": "G = SL_2(C); exercises the provider's own normalization",
+      "pass": true
+    },
+    {
+      "id": "K5",
+      "control": "Liouvillian with first-derivative term: Legendre n=1, (1-x^2) y'' - 2x y' + 2y = 0",
+      "input": "(1-x^2)*'diff(y,x,2)-2*x*'diff(y,x)+2*y=0",
+      "expected_verdict": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_verdict": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_return": "[y = %k2*(x*log(x+1)-log(x-1)*x-2)+%k1*x]",
+      "note": "y = x is a solution",
+      "pass": true
+    },
+    {
+      "id": "K6",
+      "control": "Bessel order 1/2, x^2 y'' + x y' + (x^2 - 1/4) y = 0",
+      "input": "x^2*'diff(y,x,2)+x*'diff(y,x)+(x^2-1/4)*y=0",
+      "expected_verdict": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_verdict": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_return": "[y = (%k2*(sin(atan2(0,x)/2)*sin(x)-cos(atan2(0,x)/2)*cos(x))\n                  *'integrate(abs(x)/(sin(atan2(0,x)/2)^2*x*sin(x)^2\n                                     -2*cos(atan2(0,x)/2)*sin(atan2(0,x)/2)*x\n                                       *cos(x)*sin(x)\n                                     +cos(atan2(0,x)/2)^2*x*cos(x)^2),x))\n            /sqrt(abs(x))\n            +(%k1*(sin(atan2(0,x)/2)*",
+      "note": "y = sin x / sqrt x, cos x / sqrt x",
+      "pass": true
+    }
+  ],
+  "qualified": true
+}

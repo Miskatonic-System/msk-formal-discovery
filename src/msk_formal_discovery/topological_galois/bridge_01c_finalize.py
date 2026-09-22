@@ -40,6 +40,10 @@ ALLOWED = bv.ALLOWED_RULE_PREFIXES
 FORBIDDEN = fin_b.FORBIDDEN | {"S5_SOLVABILITY_CLIFF->TARGET_PREDICATE_CHANGE", "OUT_S6->TARGET_PREDICATE_CHANGE", "NO_CHANGE->DEGREE_IRRELEVANT",
                                "DEGREE>=5->NONINTEGRABILITY", "SOURCE_THEOREM->TARGET_PREDICATE", "FINITE_PANEL->COUPLING_PAIR_UNIVERSALLY_SUFFICIENT"}
 FORBIDDEN_PHRASES = ("caused by", "causes", "caused the", "proves that", "never matters", "degree is irrelevant", "forces the")
+# R1: theorem-level degree-ladder language is admissible on a canonical surface only with bound theorem authority (none is bound in 01C)
+UNEARNED_AUTHORITY_PHRASES = ("radical-solvability cliff", "radical solvability cliff", "solvable by radicals", "a_5 simple", "a_5 is simple", "a5 simple",
+                              "perfect/simple", "simple core", "exceptional out(s_6) layer present", "s_n_solvability_cliff", "external_established")
+CANONICAL_SURFACES = ("adjudication.v0.1.json", "result.v0.1.json", "source-ledger.v0.1.json")     # never the frozen preregistration
 FORMS = ("orig", "red")
 TIMEOUT_MARK = "[PROVIDER_TIMEOUT:"
 
@@ -286,8 +290,45 @@ def validate(base: Path = BASE, check_git: bool = True) -> List[str]:
     mr = led["consumed_ledgers"][0]["records_relied_on"].get("src-hvb-morales-ruiz-1999-attempt", {})
     if mr.get("status") not in ("UNAVAILABLE", "IDENTIFIED"):
         errors.append("Morales-Ruiz 1999 upgraded")
-    if led.get("LAME_AUTHORITY_SCOPE") != "N3_ONLY (consumed from 01B; not extended to n = 4, 5, 6)" or not str(led.get("DEGREE_LADDER_AUTHORITY", "")).startswith("LABELS_ONLY"):
-        errors.append("ledger authority scope altered (Lame beyond n = 3 or degree-ladder facts made load-bearing)")
+    if led.get("LAME_AUTHORITY_SCOPE") != "N3_ONLY (consumed from 01B; not extended to n = 4, 5, 6)" or not str(led.get("DEGREE_LADDER_AUTHORITY", "")).startswith("LOCAL_DERIVED_FOR_GROUP_SOLVABILITY_AND_PERFECTNESS"):
+        errors.append("ledger authority scope altered (Lame beyond n = 3 or degree-ladder authority not split LOCAL_DERIVED / IDENTIFIED_UNBOUND)")
+    errors.extend(validate_degree_ladder_authority(pkg, adj, res, led))
+    return errors
+
+
+def validate_degree_ladder_authority(pkg, adj, res, led) -> List[str]:
+    """R1: degree-ladder labels on canonical surfaces may not exceed what is LOCAL_DERIVED; the rest stays IDENTIFIED_UNBOUND."""
+    errors: List[str] = []
+    fresh = c.degree_ladder_authority()
+    for name in CANONICAL_SURFACES:
+        text = json.dumps(pkg[name], ensure_ascii=False).lower()
+        for p in UNEARNED_AUTHORITY_PHRASES:
+            if p in text:
+                errors.append(f"{name}: unearned degree-ladder authority language {p!r} (no bound theorem source; LOCAL_DERIVED covers only group solvability / perfectness)")
+    for surface, obj in (("adjudication", adj), ("result", res), ("source-ledger", led)):
+        a = obj.get("degree_ladder_authority")
+        if not isinstance(a, dict):
+            errors.append(f"{surface}: degree_ladder_authority matrix missing")
+            continue
+        if a.get("local_derived") != fresh["local_derived"]:
+            errors.append(f"{surface}: local_derived values differ from the exact finite-group recomputation")
+        if a.get("identified_unbound", {}).get("items") != fresh["identified_unbound"]["items"]:
+            errors.append(f"{surface}: identified_unbound item set altered (radical interpretation / A5 simplicity / Out(S_6) must stay unbound)")
+        o = a.get("Out_S6_label", {})
+        if o.get("status") != "IDENTIFIED_UNBOUND" or o.get("witnessed") is not False or o.get("load_bearing") is not False:
+            errors.append(f"{surface}: Out(S_6) label promoted beyond IDENTIFIED_UNBOUND / not witnessed / not load-bearing without evidence")
+        if a.get("transition_labels") != fresh["transition_labels"]:
+            errors.append(f"{surface}: transition labels differ from the earned wording")
+    src = next((s for s in led.get("sources", []) if s["source_id"] == "src-hvb-degree-ladder-classical-facts"), None)
+    if src is None or src.get("status") != "IDENTIFIED" or src.get("content_digest"):
+        errors.append("ledger: degree-ladder classical-facts record must remain IDENTIFIED with no bound digest")
+    absent = next((cl for cl in led.get("consumed_ledgers", []) if "candidate-freeze" in cl.get("path", "")), {}).get("records_relied_on", {}).get("frozen.expected_controls[2]", {})
+    if absent.get("status") != "ABSENT_AT_PIN":
+        errors.append("ledger: the absent Mathematics degree-ladder control document must stay ABSENT_AT_PIN")
+    for L, lane in (adj.get("lanes") or {}).items():
+        f2 = lane.get("falsifiers", {}).get("F2", "")
+        if f2.startswith("S4_TO_S5") and f2 != c.FALSIFIER_TEXT["F2"]:
+            errors.append(f"adjudication: lane {L} F2 identifier altered")
     return errors
 
 
@@ -440,6 +481,40 @@ def _c22(dst):
     shutil.copyfile(dst / "cells" / "n6_C_red.log", dst / "cells" / "n6_D_red.log")
 
 
+@hostile("C23", "R1: canonical result says 'radical-solvability cliff' while radical theorem authority remains unbound")
+def _c23(dst):
+    _edit(dst / "result.v0.1.json", lambda d: d["transitions"]["4->5"].update({"source_side_label": "S_4 -> S_5: source radical-solvability cliff"}))
+
+
+@hostile("C24", "R1: canonical result says 'A_5 simple' with only local A_5 perfectness evidence")
+def _c24(dst):
+    _edit(dst / "result.v0.1.json", lambda d: d["degree_ladder_authority"]["transition_labels"].update({"4->5": "S_4 -> S_5 GROUP-SOLVABILITY TRANSITION (A_5 simple core)"}))
+
+
+@hostile("C25", "R1: Out(S_6) promoted to BOUND / WITNESSED / LOCAL_DERIVED without evidence")
+def _c25(dst):
+    def f(d):
+        d["degree_ladder_authority"]["Out_S6_label"].update({"status": "BOUND", "witnessed": True})
+        d["degree_ladder_authority"]["local_derived"]["items"].append("Out_S6_exceptional_outer_automorphism")
+        d["degree_ladder_authority"]["identified_unbound"]["items"].remove("Out_S6_exceptional_outer_automorphism")
+    _edit_both(dst, f)
+
+
+@hostile("C26", "R1: F2 renamed back to a radical-solvability theorem claim")
+def _c26(dst):
+    _edit_both(dst, lambda d: [d["lanes"][L]["falsifiers"].update({"F2": "S_N_SOLVABILITY_CLIFF_DOES_NOT_FORCE_TARGET_PREDICATE_CHANGE"}) for L in d["lanes"]])
+
+
+@hostile("C27", "R1: degree_ladder_authority matrix deleted from the canonical result")
+def _c27(dst):
+    _edit(dst / "result.v0.1.json", lambda d: d.pop("degree_ladder_authority"))
+
+
+@hostile("C28", "R1: preregistration-time label 'EXTERNAL_ESTABLISHED' copied onto the canonical ledger")
+def _c28(dst):
+    _edit(dst / "source-ledger.v0.1.json", lambda d: d["sources"][0].update({"status": "IDENTIFIED", "notes": "EXTERNAL_ESTABLISHED classical facts"}))
+
+
 def _edit_both(dst, fn):
     _edit(dst / "adjudication.v0.1.json", fn)
     _edit(dst / "result.v0.1.json", fn)
@@ -475,7 +550,7 @@ def build() -> Dict[str, Any]:
     dump(BASE, "adjudication.v0.1.json", adj)
     panel = {L: adj["lanes"][L]["TARGET_SEQUENCE"] for L in adj["lanes"]}
     cliff = {}
-    for t, cliff_name in (("4->5", "S_5 solvability cliff"), ("5->6", "S_6 exceptional Out(S_6) layer")):
+    for t, cliff_name in (("4->5", "S_4 -> S_5 group-solvability transition (LOCAL_DERIVED: S_4 solvable, S_5 not solvable, A_5 perfect)"), ("5->6", "S_5 -> S_6 (Out(S_6) exceptional-layer label IDENTIFIED_UNBOUND, not witnessed)")):
         lanes_nc = [L for L in adj["lanes"] if adj["lanes"][L]["transitions"][t] == "NO_CHANGE"]
         lanes_ch = [L for L in adj["lanes"] if adj["lanes"][L]["transitions"][t] == "CHANGES"]
         lanes_un = [L for L in adj["lanes"] if adj["lanes"][L]["transitions"][t] == "UNRESOLVED"]
@@ -493,7 +568,9 @@ def build() -> Dict[str, Any]:
         "background_signatures": {n: v["BACKGROUND_SIGNATURE"] for n, v in pre["background_signatures"].items()},
         "panel": panel, "panel_size": pre["panel_size"], "anchors_consumed": {L: {"cell": a["cell"], "package": a["package"], "predicate": a["ABELIAN_IDENTITY_COMPONENT"]} for L, a in pre["anchors"].items()},
         "lanes": {L: {k: v[k] for k in ("lambda", "mu", "TARGET_SEQUENCE", "lane_result", "COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_DEGREE_LADDER", "witness", "transitions", "falsifiers", "unresolved_degrees")} for L, v in adj["lanes"].items()},
-        "transitions": adj["transitions"], "cliff_statements": cliff,
+        "transitions": adj["transitions"], "cliff_statements": cliff, "degree_ladder_authority": adj["degree_ladder_authority"],
+        "n6_timeout_state": {"cells": [r["cell"] for r in recs if r["n"] == 6], "predicate": "UNRESOLVED", "budget_s": pre["provider_policy"]["timeout_s_per_script"], "retries": 0,
+                             "note": "no RESULT return was emitted before timeout on any n = 6 form; the repeated intermediate Maxima text 'No Liouvillian solutions exist' is not a verdict (PARTIAL_PROVIDER_PROGRESS != PROVIDER_VERDICT)"},
         "lanes_with_split": adj["lanes_with_split"], "lanes_partial": adj["lanes_partial"], "unresolved_cells": adj["unresolved_cells"],
         "rules_by_cell": {r["cell"]: (r["rule"] or "").split(":")[0].split(" (")[0] for r in recs},
         "provider": {"identity": pre["gate0"]["provider_identity"], "policy": pre["provider_policy"], "timeouts": [r["cell"] + ":" + f for r in recs for f, k in (("orig", "provider_verdict_original_form"), ("red", "provider_verdict_reduced_form")) if r[k] == "PROVIDER_TIMEOUT"]},
@@ -504,10 +581,12 @@ def build() -> Dict[str, Any]:
                           "COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_DEGREE_LADDER is asserted only per lane where an actual TRUE/FALSE split is observed; it does not contradict 01B, which was a statement about one frozen n = 3 background",
                           "NO_DEGREE_EFFECT_OBSERVED_ON_FROZEN_LANE is not DEGREE_IRRELEVANT; a finite panel never yields COUPLING_PAIR_UNIVERSALLY_SUFFICIENT",
                           "TRUE/FALSE cells rest on the same provider and exact rules as 01A/01B (FALSE: provider completeness, case 1 independently excluded); UNRESOLVED cells are reported as such",
-                          "degree-ladder facts (solvability cliff, Out(S_6)) are labels in the transition table; no target predicate rests on them"],
+                          "degree-ladder labels: S_n solvability and A_n perfectness are LOCAL_DERIVED by exact finite-group computation; the generic radical-solvability interpretation, A_5 simplicity and Out(S_6) are IDENTIFIED_UNBOUND; no target predicate rests on any of them"],
         "permanent": ["CONTROLLED_BACKGROUND_FAMILY != UNIVERSAL_DEGREE_MODEL", "DEGREE_SIGNATURE != TARGET_GALOIS_PREDICATE", "DEGREE_LADDER_ASSOCIATION != CAUSATION_BY_GROUP_THEOREM",
                       "SAME_COUPLING != SAME_TARGET_EQUATION", "TRANSITION_ALIGNMENT != CAUSAL_TRANSPORT", "N3_LAME_MAP != ALL_DEGREES_ARE_LAME",
-                      "NO_DEGREE_EFFECT_OBSERVED != DEGREE_IRRELEVANT", "DOES_NOT_FORCE != NO_MATHEMATICAL_RELATION", "NONABELIAN_G0 != CHAOS", "MEMOIZATION != EXECUTION_INPUT_AUTHORITY"],
+                      "NO_DEGREE_EFFECT_OBSERVED != DEGREE_IRRELEVANT", "DOES_NOT_FORCE != NO_MATHEMATICAL_RELATION", "NONABELIAN_G0 != CHAOS", "MEMOIZATION != EXECUTION_INPUT_AUTHORITY",
+                      "GROUP_SOLVABILITY_TRANSITION != GENERIC_POLYNOMIAL_RADICAL_SOLVABILITY_THEOREM", "A5_PERFECT_LOCALLY_DERIVED != A5_SIMPLICITY_ESTABLISHED_HERE",
+                      "DEGREE_EQUALS_6 != OUT_S6_THEOREM_CERTIFICATE", "PARTIAL_PROVIDER_PROGRESS != PROVIDER_VERDICT"],
     }
     dump(BASE, "result.v0.1.json", result)
     dump(BASE, "hostile-controls.v0.1.json", {"schema_version": "miskatonic.formal-discovery.hvb-01c-hostile-controls.v0.1", "work_order": c.WORK_ORDER, "all_rejected": None, "count": 0, "results": []})

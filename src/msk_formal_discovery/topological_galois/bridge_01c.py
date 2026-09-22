@@ -124,10 +124,11 @@ HURWITZ_KEY = {3: "n3_generic", 4: "n4_involutions_00A", 5: "n5_generic", 6: "n6
 
 
 def degree_ladder_properties(n: int) -> Dict[str, Any]:
-    """Source-authority degree-ladder labels with a cheap mechanical corroboration (derived series computed exactly).
+    """PREREGISTRATION-TIME record, frozen at 24e0408c and retained verbatim so the preregistration replays byte-identically.
 
-    The classical facts (S_3, S_4 solvable; S_5, S_6 not solvable with a perfect A_n core; Out(S_6) nontrivial) are labels.
-    Nothing in the BO-3 adjudication depends on them: DEGREE_SIGNATURE != TARGET_GALOIS_PREDICATE.
+    R1: its prose labels ("radical-solvability cliff", "perfect/simple core", "exceptional Out(S_6) layer present") and its
+    "EXTERNAL_ESTABLISHED" status overstated the authority. They were never load-bearing and are SUPERSEDED on every canonical
+    surface (adjudication, result, ledger, docs) by degree_ladder_authority(). Do not consume this function for wording.
     """
     G = SymmetricGroup(n)
     series = [int(g.order()) for g in G.derived_series()]
@@ -142,6 +143,33 @@ def degree_ladder_properties(n: int) -> Dict[str, Any]:
         "authority": {"classical_facts_status": "EXTERNAL_ESTABLISHED (classical); no source record bound in any consumed ledger; derived-series and perfectness corroborated mechanically here (LOCAL_DERIVED); Out(S_6) is a label only",
                       "mathematics_degree_ladder_firewall": "consumed read-only from candidate-freeze.v0.1.json@" + MATH_SHA[:12] + " (blob " + MATH_CANDIDATE_FREEZE_BLOB[:12] + "): n is an experimental coordinate; no inference degree 5 / degree 6 / degree >= 5 -> nonintegrability or chaos; no Out(S6) -> Abel-Ruffini",
                       "expected_control_absent": "docs/TOPOLOGICAL_GALOIS_DEGREE_LADDER_CONTROL.md named in the Mathematics candidate freeze does not exist at " + MATH_SHA[:12] + "; nothing was rederived to replace it"},
+    }
+
+
+def degree_ladder_authority() -> Dict[str, Any]:
+    """R1 authority matrix for the degree-ladder labels (the only wording admissible on canonical surfaces).
+
+    LOCAL_DERIVED     exact finite-group computation: S_n derived-series orders, S_n solvability, A_n perfectness.
+    IDENTIFIED_UNBOUND no theorem source bound and no local witness: the generic-polynomial radical-solvability interpretation,
+                       A_5 simplicity (PERFECT is not promoted to SIMPLE), the exceptional outer automorphism of S_6.
+    No target predicate, lane result, transition verdict or falsifier depends on any of these.
+    """
+    local = {}
+    for n in DEGREES:
+        G, A = SymmetricGroup(n), AlternatingGroup(n)
+        local[str(n)] = {"S_n_derived_series_orders": [int(g.order()) for g in G.derived_series()], "S_n_solvable": bool(G.is_solvable),
+                         "A_n_perfect": bool(A.derived_subgroup().order() == A.order())}
+    return {
+        "local_derived": {"items": ["S_n_derived_series_orders", "S_n_solvable", "A_n_perfect"], "method": "exact finite-group computation (sympy.combinatorics derived series)", "values": local},
+        "identified_unbound": {"items": ["generic_radical_solvability_interpretation", "A5_simplicity", "Out_S6_exceptional_outer_automorphism"],
+                               "status": "IDENTIFIED_UNBOUND: no theorem source bound in any consumed ledger and no local witness; labels only"},
+        "Out_S6_label": {"status": "IDENTIFIED_UNBOUND", "witnessed": False, "load_bearing": False, "note": "DEGREE_EQUALS_6 != OUT_S6_THEOREM_CERTIFICATE"},
+        "transition_labels": {"3->4": "S_3 -> S_4 (both solvable; LOCAL_DERIVED)",
+                              "4->5": "S_4 -> S_5 GROUP-SOLVABILITY TRANSITION (LOCAL_DERIVED: S_4 solvable = TRUE, S_5 solvable = FALSE, A_5 perfect = TRUE)",
+                              "5->6": "S_5 -> S_6; classical Out(S_6) exceptional-layer label is IDENTIFIED_UNBOUND in this WO (not witnessed, not load-bearing)"},
+        "permanent": ["GROUP_SOLVABILITY_TRANSITION != GENERIC_POLYNOMIAL_RADICAL_SOLVABILITY_THEOREM", "A5_PERFECT_LOCALLY_DERIVED != A5_SIMPLICITY_ESTABLISHED_HERE",
+                      "DEGREE_EQUALS_6 != OUT_S6_THEOREM_CERTIFICATE", "DEGREE_SIGNATURE != TARGET_GALOIS_PREDICATE", "DEGREE_LADDER_ASSOCIATION != CAUSATION_BY_GROUP_THEOREM"],
+        "preregistration_note": "the degree_ladder labels embedded in the frozen preregistration (24e0408c) are superseded by this matrix; they were never load-bearing and are retained only for byte-identical replay",
     }
 
 
@@ -284,7 +312,7 @@ def _load(base: Path) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 FALSIFIER_TEXT = {
     "F1": "FULL_COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_BACKGROUND",
-    "F2": "S_N_SOLVABILITY_CLIFF_DOES_NOT_FORCE_TARGET_PREDICATE_CHANGE",
+    "F2": "S4_TO_S5_GROUP_SOLVABILITY_TRANSITION_DOES_NOT_FORCE_TARGET_PREDICATE_CHANGE",
     "F3": "OUTER_AUTOMORPHISM_S6_DOES_NOT_FORCE_TARGET_PREDICATE_CHANGE",
 }
 
@@ -335,11 +363,12 @@ def adjudicate(pre: Dict[str, Any], cells: List[Dict[str, Any]]) -> Dict[str, An
         verdict = "BO3_NO_VARIATION_ON_FROZEN_COUPLINGS"
     else:
         verdict = "BO3_PARTIAL"
+    authority = degree_ladder_authority()
     for t in TRANSITIONS:
-        transitions[t]["source_side_label"] = {"3->4": "S_3 -> S_4 (both solvable)", "4->5": "S_4 -> S_5: source radical-solvability cliff (S_5 nonsolvable, A_5 perfect core)", "5->6": "S_5 -> S_6: exceptional Out(S_6) layer present (classical label; not bound; not load-bearing)"}[t]
+        transitions[t]["source_side_label"] = authority["transition_labels"][t]
         transitions[t]["statement"] = _transition_statement(t, {L: transitions[t][L]["target_predicate"] for L in lanes_out})
     return {
-        "verdict": verdict, "lanes": lanes_out, "transitions": transitions,
+        "verdict": verdict, "lanes": lanes_out, "transitions": transitions, "degree_ladder_authority": authority,
         "lanes_with_split": [L for L, v in lanes_out.items() if v["COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_DEGREE_LADDER"]],
         "lanes_partial": [L for L, v in lanes_out.items() if v["lane_result"] == "LANE_PARTIAL"],
         "unresolved_cells": [c["cell"] for c in cells if c["ABELIAN_IDENTITY_COMPONENT"] not in ("TRUE", "FALSE")],
@@ -349,7 +378,7 @@ def adjudicate(pre: Dict[str, Any], cells: List[Dict[str, Any]]) -> Dict[str, An
 
 
 def _transition_statement(t: str, by_lane: Dict[str, str]) -> str:
-    cliff = {"3->4": "the 3->4 transition", "4->5": "the 4->5 source solvability cliff", "5->6": "the 5->6 transition carrying the Out(S_6) label"}[t]
+    cliff = {"3->4": "the 3->4 transition", "4->5": "the 4->5 source group-solvability transition (solvable S_4 to nonsolvable S_5, LOCAL_DERIVED)", "5->6": "the 5->6 transition carrying the IDENTIFIED_UNBOUND Out(S_6) label"}[t]
     parts = []
     for L, v in by_lane.items():
         if v == "NO_CHANGE":
@@ -390,13 +419,14 @@ def source_ledger() -> Dict[str, Any]:
         ],
         "sources": [
             {"schema_version": "miskatonic.mathematics-source-record.v0.1", "source_id": "src-hvb-degree-ladder-classical-facts",
-             "title": "Classical degree-ladder facts: S_3, S_4 solvable; S_5, S_6 nonsolvable with perfect A_n core; Out(S_6) nontrivial",
-             "authors_or_authority": "classical (Abel-Ruffini / Galois; Sylvester-Holder for Out(S_6))", "source_type": "CLASSICAL_FACT",
+             "title": "Degree-ladder labels: generic-polynomial radical-solvability interpretation; A_5 simplicity; exceptional outer automorphism of S_6",
+             "authors_or_authority": "classical; no document bound", "source_type": "CLASSICAL_FACT",
              "canonical_url_or_identifier": "none bound", "version_or_date": "n/a", "retrieved_at": None, "content_digest": None,
-             "claim_scope": "labels in the source degree signature and the transition table only; derived series and perfectness are corroborated mechanically (sympy.combinatorics) in degree_ladder_properties(); Out(S_6) is a label with no mechanical witness here",
+             "claim_scope": "IDENTIFIED_UNBOUND labels only. What IS established here is LOCAL_DERIVED by exact finite-group computation (degree_ladder_authority()): S_3, S_4 solvable; S_5, S_6 not solvable; A_5, A_6 perfect. PERFECT is not promoted to SIMPLE; the group-solvability transition S_4 -> S_5 is not promoted to a radical-solvability theorem statement; Out(S_6) is not witnessed.",
              "status": "IDENTIFIED", "notes": "No document is bound. No target predicate, lane result, transition verdict or falsifier depends on these labels (DEGREE_SIGNATURE != TARGET_GALOIS_PREDICATE; DEGREE_LADDER_ASSOCIATION != CAUSATION_BY_GROUP_THEOREM)."},
         ],
-        "DEGREE_LADDER_AUTHORITY": "LABELS_ONLY (classical facts IDENTIFIED, mechanical corroboration of derived series; not load-bearing)",
+        "DEGREE_LADDER_AUTHORITY": "LOCAL_DERIVED_FOR_GROUP_SOLVABILITY_AND_PERFECTNESS; IDENTIFIED_UNBOUND_FOR_RADICAL_THEOREM_SIMPLICITY_AND_OUT_S6",
+        "degree_ladder_authority": degree_ladder_authority(),
         "LAME_AUTHORITY_SCOPE": "N3_ONLY (consumed from 01B; not extended to n = 4, 5, 6)",
     }
 

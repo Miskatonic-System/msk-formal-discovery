@@ -2,7 +2,7 @@
   "schema_version": "miskatonic.formal-discovery.hvb-01c-hostile-controls.v0.1",
   "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01C",
   "all_rejected": true,
-  "count": 22,
+  "count": 28,
   "results": [
     {
       "id": "C01",
@@ -188,7 +188,7 @@
       "pattern": "Lame authority extended to n = 4..6 in the ledger",
       "rejected": true,
       "errors": [
-        "ledger authority scope altered (Lame beyond n = 3 or degree-ladder facts made load-bearing)"
+        "ledger authority scope altered (Lame beyond n = 3 or degree-ladder authority not split LOCAL_DERIVED / IDENTIFIED_UNBOUND)"
       ]
     },
     {
@@ -198,6 +198,60 @@
       "errors": [
         "cell n6_D: record differs from a rebuild from the bound provider logs",
         "cell n6_D: provider script/log digest (red) differs from the binding"
+      ]
+    },
+    {
+      "id": "C23",
+      "pattern": "R1: canonical result says 'radical-solvability cliff' while radical theorem authority remains unbound",
+      "rejected": true,
+      "errors": [
+        "result.v0.1.json: unearned degree-ladder authority language 'radical-solvability cliff' (no bound theorem source; LOCAL_DERIVED covers only group solvability / perfectness)"
+      ]
+    },
+    {
+      "id": "C24",
+      "pattern": "R1: canonical result says 'A_5 simple' with only local A_5 perfectness evidence",
+      "rejected": true,
+      "errors": [
+        "result.v0.1.json: unearned degree-ladder authority language 'a_5 simple' (no bound theorem source; LOCAL_DERIVED covers only group solvability / perfectness)",
+        "result.v0.1.json: unearned degree-ladder authority language 'simple core' (no bound theorem source; LOCAL_DERIVED covers only group solvability / perfectness)",
+        "result: transition labels differ from the earned wording"
+      ]
+    },
+    {
+      "id": "C25",
+      "pattern": "R1: Out(S_6) promoted to BOUND / WITNESSED / LOCAL_DERIVED without evidence",
+      "rejected": true,
+      "errors": [
+        "adjudication: local_derived values differ from the exact finite-group recomputation",
+        "adjudication: identified_unbound item set altered (radical interpretation / A5 simplicity / Out(S_6) must stay unbound)",
+        "adjudication: Out(S_6) label promoted beyond IDENTIFIED_UNBOUND / not witnessed / not load-bearing without evidence"
+      ]
+    },
+    {
+      "id": "C26",
+      "pattern": "R1: F2 renamed back to a radical-solvability theorem claim",
+      "rejected": true,
+      "errors": [
+        "adjudication field lanes differs from recomputation",
+        "adjudication.v0.1.json: unearned degree-ladder authority language 's_n_solvability_cliff' (no bound theorem source; LOCAL_DERIVED covers only group solvability / perfectness)",
+        "result.v0.1.json: unearned degree-ladder authority language 's_n_solvability_cliff' (no bound theorem source; LOCAL_DERIVED covers only group solvability / perfectness)"
+      ]
+    },
+    {
+      "id": "C27",
+      "pattern": "R1: degree_ladder_authority matrix deleted from the canonical result",
+      "rejected": true,
+      "errors": [
+        "result: degree_ladder_authority matrix missing"
+      ]
+    },
+    {
+      "id": "C28",
+      "pattern": "R1: preregistration-time label 'EXTERNAL_ESTABLISHED' copied onto the canonical ledger",
+      "rejected": true,
+      "errors": [
+        "source-ledger.v0.1.json: unearned degree-ladder authority language 'external_established' (no bound theorem source; LOCAL_DERIVED covers only group solvability / perfectness)"
       ]
     }
   ]

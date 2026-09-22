@@ -55,8 +55,8 @@ def test_target_equation_is_exact_rational_and_same_gauge():
 def test_degree_ladder_labels_are_mechanically_corroborated():
     props = {n: c.degree_ladder_properties(n) for n in c.DEGREES}
     assert props[3]["S_n_solvable"] and props[4]["S_n_solvable"] and not props[5]["S_n_solvable"] and not props[6]["S_n_solvable"]
-    assert props[5]["A_n_perfect"] and props[6]["A_n_perfect"] and props[6]["Out_S_n_exceptional"] and not props[5]["Out_S_n_exceptional"]
-    assert "not load-bearing" in props[6]["label"]
+    assert props[5]["A_n_perfect"] and props[6]["A_n_perfect"]
+    assert "not load-bearing" in props[6]["label"]      # preregistration-time record, frozen for replay only
 
 
 def test_coupling_signature_fixed_across_degrees_and_background_signature_varies(pkg, preds):
@@ -138,8 +138,8 @@ def test_result_matches_adjudication_and_firewalls(pkg):
 
 def test_all_hostile_controls_rejected(pkg, tmp_path):
     results = fin.run_hostile(BASE, tmp_path)
-    assert len(results) == 22 and all(r["rejected"] for r in results), [r["id"] for r in results if not r["rejected"]]
-    assert pkg["hostile-controls.v0.1.json"]["all_rejected"] and pkg["hostile-controls.v0.1.json"]["count"] == 22
+    assert len(results) == 28 and all(r["rejected"] for r in results), [r["id"] for r in results if not r["rejected"]]
+    assert pkg["hostile-controls.v0.1.json"]["all_rejected"] and pkg["hostile-controls.v0.1.json"]["count"] == 28
 
 
 def test_memoization_does_not_bypass_script_binding(tmp_path):
@@ -149,3 +149,51 @@ def test_memoization_does_not_bypass_script_binding(tmp_path):
     p.write_text(p.read_text(encoding="utf-8").replace("'diff(y,x,2)=(", "'diff(y,x,2)=(1+", 1), encoding="utf-8")
     errs = fin.validate(dst, check_git=False)
     assert any("input binding broken" in e for e in errs) and any("digest (red) differs" in e for e in errs)
+
+
+# --- R1: degree-ladder authority scope --------------------------------------------------------------------------
+def test_r1_authority_matrix_local_derived_vs_identified_unbound(pkg):
+    a = c.degree_ladder_authority()
+    v = a["local_derived"]["values"]
+    assert v["4"]["S_n_solvable"] is True and v["5"]["S_n_solvable"] is False and v["5"]["A_n_perfect"] is True
+    assert v["3"]["S_n_solvable"] is True and v["6"]["S_n_solvable"] is False and v["6"]["A_n_perfect"] is True
+    assert a["local_derived"]["items"] == ["S_n_derived_series_orders", "S_n_solvable", "A_n_perfect"]
+    assert a["identified_unbound"]["items"] == ["generic_radical_solvability_interpretation", "A5_simplicity", "Out_S6_exceptional_outer_automorphism"]
+    assert a["Out_S6_label"] == {"status": "IDENTIFIED_UNBOUND", "witnessed": False, "load_bearing": False, "note": "DEGREE_EQUALS_6 != OUT_S6_THEOREM_CERTIFICATE"}
+    # nothing locally earns A_5 simplicity or a radical-solvability theorem
+    assert "simpl" not in json.dumps(a["local_derived"]).lower() and "radical" not in json.dumps(a["local_derived"]).lower()
+    for surface in ("adjudication.v0.1.json", "result.v0.1.json", "source-ledger.v0.1.json"):
+        assert pkg[surface]["degree_ladder_authority"] == a
+        low = json.dumps(pkg[surface]).lower()
+        for phrase in fin.UNEARNED_AUTHORITY_PHRASES:
+            assert phrase not in low, (surface, phrase)
+    assert pkg["source-ledger.v0.1.json"]["DEGREE_LADDER_AUTHORITY"].startswith("LOCAL_DERIVED_FOR_GROUP_SOLVABILITY_AND_PERFECTNESS")
+
+
+def test_r1_f2_wording_and_primary_result_unchanged(pkg):
+    adj = pkg["adjudication.v0.1.json"]
+    assert c.FALSIFIER_TEXT["F2"] == "S4_TO_S5_GROUP_SOLVABILITY_TRANSITION_DOES_NOT_FORCE_TARGET_PREDICATE_CHANGE"
+    for L in "ABCD":
+        assert adj["lanes"][L]["falsifiers"]["F2"] == c.FALSIFIER_TEXT["F2"]
+        assert adj["lanes"][L]["transitions"] == {"3->4": "CHANGES" if L in "AC" else "NO_CHANGE", "4->5": "NO_CHANGE", "5->6": "UNRESOLVED"}
+        assert adj["lanes"][L]["TARGET_SEQUENCE"]["6"] == "UNRESOLVED"
+    assert adj["lanes"]["A"]["TARGET_SEQUENCE"] == adj["lanes"]["C"]["TARGET_SEQUENCE"] == {"3": "TRUE", "4": "FALSE", "5": "FALSE", "6": "UNRESOLVED"}
+    assert adj["lanes"]["B"]["TARGET_SEQUENCE"] == adj["lanes"]["D"]["TARGET_SEQUENCE"] == {"3": "FALSE", "4": "FALSE", "5": "FALSE", "6": "UNRESOLVED"}
+    assert adj["verdict"] == "BO3_DEGREE_CONDITIONED_VARIATION_OBSERVED" and adj["lanes_with_split"] == ["A", "C"]
+    assert adj["transitions"]["4->5"]["source_side_label"].startswith("S_4 -> S_5 GROUP-SOLVABILITY TRANSITION")
+    assert "IDENTIFIED_UNBOUND" in adj["transitions"]["5->6"]["source_side_label"]
+    for r in pkg["cell-results.v0.1.json"]["cells"]:
+        if r["n"] == 6:
+            assert r["ABELIAN_IDENTITY_COMPONENT"] == "UNRESOLVED" and r["provider_verdict_original_form"] == r["provider_verdict_reduced_form"] == "PROVIDER_TIMEOUT"
+
+
+def test_r1_unearned_authority_language_is_rejected(tmp_path):
+    for name, fn in (("result.v0.1.json", lambda d: d.update({"claim_ceiling": d["claim_ceiling"] + ["source radical-solvability cliff"]})),
+                     ("adjudication.v0.1.json", lambda d: d["degree_ladder_authority"]["Out_S6_label"].update({"witnessed": True})),
+                     ("source-ledger.v0.1.json", lambda d: d["sources"][0].update({"claim_scope": "A_5 is simple"}))):
+        dst = tmp_path / name.split(".")[0]
+        shutil.copytree(BASE, dst)
+        p = dst / name
+        d = json.loads(p.read_text()); fn(d); p.write_text(json.dumps(d))
+        errs = fin.validate(dst, check_git=False)
+        assert any("unearned" in e or "promoted beyond IDENTIFIED_UNBOUND" in e for e in errs), (name, errs)

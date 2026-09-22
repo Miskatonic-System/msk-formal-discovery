@@ -1,14 +1,14 @@
 # Coupling-Conditioned Degree-Ladder Residual Test — BO-3 (01C)
 
 **Work order:** `WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01C`  
-**Proposed disposition:** `BO3_DEGREE_CONDITIONED_VARIATION_OBSERVED` (lanes A, C split; lanes B, D partial; all `n = 6` cells unresolved by provider timeout) — `PROPOSED_BY_EXECUTING_AGENT_PENDING_INDEPENDENT_REVIEW`  
+**Proposed disposition:** `BO3_DEGREE_CONDITIONED_VARIATION_OBSERVED` (lanes A, C split; lanes B, D partial; all `n = 6` cells unresolved by provider timeout) — R1 applied (degree-ladder authority scope: LOCAL_DERIVED vs IDENTIFIED_UNBOUND; no scientific change) — `PROPOSED_BY_EXECUTING_AGENT_PENDING_INDEPENDENT_REVIEW`  
 **Canonical start:** `d4a71a72b36a68fca60dfffb53737846c3cde41d` (01B + R1 merged) · **Preregistration commit:** `24e0408caf2a8cdcaabcab7e5b70384c793e1da1` (before any provider run) · **Package:** `experiments/hamiltonian-variational-bridge-01c/` · **Code:** `bridge_01c.py`, `bridge_01c_finalize.py`
 
 BO-2 (source topology alone → target predicate) is canonically refuted and is **not reopened**. 01B showed that the target coupling pair `(λ, μ)` is the coordinate the source-only bridge omitted. The residual question of this work order is conditional: **once `(λ, μ)` is held exactly fixed, does the controlled background degree `n` still change `ABELIAN_IDENTITY_COMPONENT(G_diff)`?**
 
 ## Result in one paragraph
 
-On the controlled centred unit-spacing family (`E = −1`, `n = 3, 4, 5, 6`) with four frozen coupling lanes, the target predicate **changes with the background at fixed `(λ, μ)`**: on lane A (`λ = 1, μ = 0`) and lane C (`λ = 3/8, μ = 0`) the consumed `n = 3` anchors are TRUE while the new `n = 4` and `n = 5` cells are FALSE (Kovacic case 4 on both forms, independent case-1 exclusion consistent) — same coupling signature, different background signature, different predicate. So `COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_DEGREE_LADDER` holds for lanes A and C of this family (falsifier F1), which does **not** contradict 01B (a statement about one frozen `n = 3` background). Lanes B (`λ = 2, μ = 0`) and D (`λ = 3/8, μ = ½`) are FALSE at `n = 3, 4, 5`. All eight `n = 6` provider scripts hit the preregistered 1800 s timeout, so every `n = 6` cell is `UNRESOLVED` (no retry, by policy): lanes B and D are `LANE_PARTIAL`, and the `5→6` transition is unresolved on every lane. Across the `4→5` source solvability cliff **no** target-predicate change was observed on any lane (F2 on all four); F3 is not adjudicable. No causal statement is made about any transition, no `DEGREE_IRRELEVANT`, no universal sufficiency.
+On the controlled centred unit-spacing family (`E = −1`, `n = 3, 4, 5, 6`) with four frozen coupling lanes, the target predicate **changes with the background at fixed `(λ, μ)`**: on lane A (`λ = 1, μ = 0`) and lane C (`λ = 3/8, μ = 0`) the consumed `n = 3` anchors are TRUE while the new `n = 4` and `n = 5` cells are FALSE (Kovacic case 4 on both forms, independent case-1 exclusion consistent) — same coupling signature, different background signature, different predicate. So `COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_DEGREE_LADDER` holds for lanes A and C of this family (falsifier F1), which does **not** contradict 01B (a statement about one frozen `n = 3` background). Lanes B (`λ = 2, μ = 0`) and D (`λ = 3/8, μ = ½`) are FALSE at `n = 3, 4, 5`. All eight `n = 6` provider scripts hit the preregistered 1800 s timeout, so every `n = 6` cell is `UNRESOLVED` (no retry, by policy): lanes B and D are `LANE_PARTIAL`, and the `5→6` transition is unresolved on every lane. Across the `4→5` source group-solvability transition (solvable `S_4` → nonsolvable `S_5`, established here by exact finite-group computation) **no** target-predicate change was observed on any lane (F2 on all four); F3 is not adjudicable. No causal statement is made about any transition, no `DEGREE_IRRELEVANT`, no universal sufficiency.
 
 ## Gate 0
 
@@ -33,7 +33,14 @@ Target equation for every `(n, λ, μ)`: `f_n y'' + (f_n'/2) y' + (μ + λq) y =
 
 Per `n`: ordered roots, discriminant digest, `B_n` identity, and the TG-01A certificate digests consumed read-only — `π_perm: B_n → S_n` (`s1`, image `n!`), Artin action (`s2`), Hurwitz action (`n3_generic`, `n4_involutions_00A`, `n5_generic`, `n6_generic`; the `n = 4` certificate is on the 00A involution tuple, recorded as such). `BACKGROUND_SIGNATURE_n = digest(n, E, P_n, f_n, roots, certificate digests)`; four distinct values.
 
-Degree-ladder labels: `S_3`, `S_4` solvable; `S_5`, `S_6` nonsolvable with perfect `A_n` core; `Out(S_6)` exceptional. Derived series and perfectness are corroborated mechanically (`sympy.combinatorics`, orders `[6,3,1]`, `[24,12,4,1]`, `[120,60]`, `[720,360]`); `Out(S_6)` is a label only. The Mathematics candidate freeze's `degree_ladder_firewall` is consumed read-only (blob `e0c5d462…`); the control document it names (`docs/TOPOLOGICAL_GALOIS_DEGREE_LADDER_CONTROL.md`) does not exist at `2337c7d7` and nothing was rederived to replace it. No target predicate rests on any of these labels: `DEGREE_SIGNATURE != TARGET_GALOIS_PREDICATE`, `DEGREE_LADDER_ASSOCIATION != CAUSATION_BY_GROUP_THEOREM`.
+Degree-ladder authority matrix (R1, `degree_ladder_authority()`, recomputed by the validator on every canonical surface):
+
+| status | items | basis |
+|---|---|---|
+| **LOCAL_DERIVED** | `S_n` derived-series orders `[6,3,1]`, `[24,12,4,1]`, `[120,60]`, `[720,360]`; `S_3`, `S_4` solvable = TRUE; `S_5`, `S_6` solvable = FALSE; `A_5`, `A_6` perfect = TRUE | exact finite-group computation (`sympy.combinatorics`) |
+| **IDENTIFIED_UNBOUND** | generic-polynomial radical-solvability interpretation; `A_5` simplicity; exceptional outer automorphism of `S_6` | no theorem source bound in any consumed ledger, no local witness — labels only |
+
+`PERFECT` is not promoted to `SIMPLE`; the `S_4 → S_5` **group-solvability transition** is not promoted to a radical-solvability theorem statement; `Out(S_6)` is `IDENTIFIED_UNBOUND`, not witnessed, not load-bearing (`DEGREE_EQUALS_6 != OUT_S6_THEOREM_CERTIFICATE`). The Mathematics candidate freeze's `degree_ladder_firewall` is consumed read-only (blob `e0c5d462…`); the control document it names (`docs/TOPOLOGICAL_GALOIS_DEGREE_LADDER_CONTROL.md`) is `ABSENT_AT_PIN` and nothing was rederived to replace it. The `degree_ladder` labels embedded in the frozen preregistration (`24e0408c`) used the pre-R1 wording ("radical-solvability cliff", "perfect/simple core", "exceptional Out(S_6) layer present", "EXTERNAL_ESTABLISHED"); that document is retained byte-identically for replay, its labels were never load-bearing, and they are superseded by this matrix. No target predicate rests on any of these labels: `DEGREE_SIGNATURE != TARGET_GALOIS_PREDICATE`, `DEGREE_LADDER_ASSOCIATION != CAUSATION_BY_GROUP_THEOREM`.
 
 ## Phase C — four frozen coupling lanes and consumed anchors
 
@@ -79,23 +86,23 @@ Reading of the split (evidence-scoped): both split lanes are the two lanes whose
 | transition | source-side label | A | B | C | D |
 |---|---|---|---|---|---|
 | 3→4 | `S_3 → S_4` (both solvable) | CHANGES | NO_CHANGE | CHANGES | NO_CHANGE |
-| 4→5 | `S_4 → S_5`: radical-solvability cliff (`S_5` nonsolvable, `A_5` perfect core) | NO_CHANGE | NO_CHANGE | NO_CHANGE | NO_CHANGE |
-| 5→6 | `S_5 → S_6`: `Out(S_6)` layer (label only) | UNRESOLVED | UNRESOLVED | UNRESOLVED | UNRESOLVED |
+| 4→5 | `S_4 → S_5` GROUP-SOLVABILITY TRANSITION (LOCAL_DERIVED: `S_4` solvable = TRUE, `S_5` solvable = FALSE, `A_5` perfect = TRUE) | NO_CHANGE | NO_CHANGE | NO_CHANGE | NO_CHANGE |
+| 5→6 | `S_5 → S_6`; classical `Out(S_6)` exceptional-layer label is IDENTIFIED_UNBOUND in this WO | UNRESOLVED | UNRESOLVED | UNRESOLVED | UNRESOLVED |
 
 Exact statements (as recorded in `result.v0.1.json#/transitions` and `#/cliff_statements`, `causal_attribution = NONE` on every entry):
 
 - **3→4:** "A target-predicate change coincided with the 3→4 transition on lane A (coincidence recorded; no causal attribution)." Same for lane C. No change on lanes B, D. Both `S_3` and `S_4` are solvable, so the only observed changes sit where *no* source solvability layer changes — which is itself a reason not to read the ladder labels causally.
-- **4→5 (solvability cliff):** "No target-predicate change was observed across the 4→5 source solvability cliff on lane A." Identically on B, C, D. This is the meaningful negative result F2 on all four lanes: the `S_5` nonsolvability cliff **does not force** a target-predicate change on this family. *Does not force ≠ has no mathematical relation.*
-- **5→6 (`Out(S_6)` layer):** "The target predicate is unresolved across the 5→6 transition carrying the `Out(S_6)` label" on every lane. F3 is **not adjudicable**. Nothing is said about `Out(S_6)`.
+- **4→5 (group-solvability transition):** "No target-predicate change was observed across the 4→5 source group-solvability transition (solvable S_4 to nonsolvable S_5, LOCAL_DERIVED) on lane A." Identically on B, C, D. This is the meaningful negative result F2 on all four lanes: on the frozen lanes the target predicate remains FALSE from `n = 4` to `n = 5` even though the exact source group changes from solvable `S_4` to nonsolvable `S_5`, so that **source-group** solvability transition **does not force** a target-predicate transition on those lanes. This is not a radical-solvability theorem result. *Does not force ≠ has no mathematical relation.*
+- **5→6 (`Out(S_6)` label):** "The target predicate is unresolved across the 5→6 transition carrying the IDENTIFIED_UNBOUND `Out(S_6)` label" on every lane. F3 is **not adjudicable**. Nothing is said about `Out(S_6)`; the boolean `n == 6` is not evidence for the theorem.
 
-Forbidden and not said: "the `S_5` solvability cliff caused the target Galois change" (there was no 4→5 change to attribute); "the 3→4 change was caused by …"; "`Out(S_6)` caused/forces …"; "degree never matters".
+Forbidden and not said: "the `S_5` solvability transition caused the target Galois change" (there was no 4→5 change to attribute); "the 3→4 change was caused by …"; "`Out(S_6)` caused/forces …"; "degree never matters".
 
 ## Falsifiers
 
 | falsifier | A | B | C | D |
 |---|---|---|---|---|
 | F1 coupling-pair sufficiency | `FULL_COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_BACKGROUND` | not adjudicable (unresolved `n = 6`) | `FULL_COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_BACKGROUND` | not adjudicable |
-| F2 source-cliff determinism (4→5) | `S_N_SOLVABILITY_CLIFF_DOES_NOT_FORCE_TARGET_PREDICATE_CHANGE` | same | same | same |
+| F2 source group-solvability-transition determinism (4→5) | `S4_TO_S5_GROUP_SOLVABILITY_TRANSITION_DOES_NOT_FORCE_TARGET_PREDICATE_CHANGE` | same | same | same |
 | F3 `S_6`-exception determinism (5→6) | not adjudicable | not adjudicable | not adjudicable | not adjudicable |
 
 F1 on lanes A/C does not contradict 01B: 01B established that `ORIGINAL + (λ, μ)` separated the 18 sampled cells on **one** frozen `n = 3` background; 01C shows that across backgrounds the pair is not enough.
@@ -104,9 +111,9 @@ F1 on lanes A/C does not contradict 01B: 01B established that `ORIGINAL + (λ, �
 
 BO-2 `CANONICALLY_REFUTED_NOT_REOPENED`; BO-1 `NOT_EXECUTED` (no target-monodromy tuple needed; the unavailable Morales-Ruiz custody does not block BO-3); Morales-Ramis `NOT_APPLIED` — a nonabelian `G⁰` is recorded as `TARGET_VARIATIONAL_GALOIS_PREDICATE = NONABELIAN` and nothing more; no integrability, nonintegrability or chaos claim; FTT `NOT_REQUIRED`; Burau `CONTROL_ONLY`; Lamé `N3_ONLY`.
 
-## Hostile controls (22, all rejected by `bridge_01c_finalize.validate`)
+## Hostile controls (28, all rejected by `bridge_01c_finalize.validate`)
 
-C01 coupling changed inside a lane · C02 root spacing changed · C03 `E` changed for one degree · C04 anchor recomputed instead of consumed · C05 provider drift · C06 provider script differs from the preregistered equation · C07 background signature resealed after the result · C08 predicate coerced · C09 4→5 change attributed to `S_5` nonsolvability · C10 no-change promoted to `DEGREE_IRRELEVANT` · C11 5→6 attributed to `Out(S_6)` · C12 `n = 5` relabelled Lamé · C13 BO-2 reopened · C14 Morales-Ramis applied · C15 lane added post hoc · C16 one degree dropped from a lane · C17 `COUPLING_PAIR_UNIVERSALLY_SUFFICIENT` · C18 source-theorem label substituted for the target computation · C19 anchor resealed in the adjudication · C20 causal transition statement · C21 Lamé authority extended to `n ≥ 4` · C22 provider log swapped between cells.
+C01 coupling changed inside a lane · C02 root spacing changed · C03 `E` changed for one degree · C04 anchor recomputed instead of consumed · C05 provider drift · C06 provider script differs from the preregistered equation · C07 background signature resealed after the result · C08 predicate coerced · C09 4→5 change attributed to `S_5` nonsolvability · C10 no-change promoted to `DEGREE_IRRELEVANT` · C11 5→6 attributed to `Out(S_6)` · C12 `n = 5` relabelled Lamé · C13 BO-2 reopened · C14 Morales-Ramis applied · C15 lane added post hoc · C16 one degree dropped from a lane · C17 `COUPLING_PAIR_UNIVERSALLY_SUFFICIENT` · C18 source-theorem label substituted for the target computation · C19 anchor resealed in the adjudication · C20 causal transition statement · C21 Lamé authority extended to `n ≥ 4` · C22 provider log swapped between cells · **R1:** C23 canonical result says "radical-solvability cliff" with no bound theorem · C24 "A_5 simple" on local perfectness only · C25 `Out(S_6)` promoted to BOUND/WITNESSED/LOCAL_DERIVED · C26 F2 renamed back to the solvability-cliff claim · C27 authority matrix deleted · C28 preregistration-time `EXTERNAL_ESTABLISHED` copied onto the ledger.
 
 ## Positive controls
 
@@ -117,7 +124,8 @@ PC1 generated `n = 3` member identical to canonical (member and all four lane eq
 - **`n = 6` is entirely unresolved.** All eight `n = 6` scripts exceeded the preregistered 1800 s ceiling; by policy there were no retries and no reruns. Lanes B and D are therefore partial, and the 5→6 transition / F3 are not adjudicated. A successor would need a preregistered larger budget or a different qualified provider; nothing here says what `n = 6` would give.
 - The family is one controlled choice (centred, unit spacing, `E = −1`). `CONTROLLED_BACKGROUND_FAMILY != UNIVERSAL_DEGREE_MODEL`: no statement is made about other root geometries, other energies, or "degree" in general.
 - FALSE cells rest on the provider's completeness for Kovacic case 4 (qualified in 01A, K-matrix 10/10) plus an independent case-1 exclusion; TRUE anchors rest on the exact 01A/01B Picard–Vessiot rules. `TARGET_VARIATIONAL_GALOIS_PREDICATE = NONABELIAN` is all that is recorded for FALSE cells — Morales-Ramis not applied, no integrability/chaos claim.
-- Degree-ladder facts are labels; no classical source document is bound for them, the derived series are mechanically corroborated, `Out(S_6)` is not witnessed here, and the Mathematics degree-ladder control document named in the candidate freeze does not exist at the pinned SHA.
+- Degree-ladder authority is split: `S_n` solvability and `A_n` perfectness are LOCAL_DERIVED (exact finite-group computation); the generic radical-solvability interpretation, `A_5` simplicity and `Out(S_6)` are IDENTIFIED_UNBOUND (no source bound, no local witness); the Mathematics degree-ladder control document named in the candidate freeze is ABSENT_AT_PIN. None of these is load-bearing.
+- `n = 6` timeouts: no `RESULT` return was emitted before the 1800 s kill on any form; the repeated intermediate Maxima line "No Liouvillian solutions exist" is printed inside the search and is **not** a verdict (`PARTIAL_PROVIDER_PROGRESS != PROVIDER_VERDICT`).
 - `n ≥ 4` equations are `ALGEBRAIC_NVE_n`; whether `n = 4` (a genus-1 phase curve) admits a Lamé normal form was **not** derived and is not claimed.
 - Claim ceiling: per-lane statements on this family only; `COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_DEGREE_LADDER` only on lanes A and C; F2 only on the four lanes as observed; no `DEGREE_IRRELEVANT`, no `COUPLING_PAIR_UNIVERSALLY_SUFFICIENT`, no causal transport from any group-theoretic transition.
 

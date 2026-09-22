@@ -183,7 +183,7 @@ Outcome (proposed, pending review): `BO3_DEGREE_CONDITIONED_VARIATION_OBSERVED`
 — on lanes A `(1, 0)` and C `(3/8, 0)` the `n = 3` anchor is TRUE while
 `n = 4, 5` are FALSE (`COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_DEGREE_LADDER`
 for those lanes; consistent with 01B, which concerned one background); no
-target change across the `4→5` solvability cliff on any lane; all `n = 6`
+target change across the `4→5` source group-solvability transition (LOCAL_DERIVED) on any lane; all `n = 6`
 cells unresolved by provider timeout, so lanes B, D are partial and `5→6` is
 not adjudicated. No causal transport from any group-theoretic transition.
 

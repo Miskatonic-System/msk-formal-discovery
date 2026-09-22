@@ -1,0 +1,258 @@
+{
+  "schema_version": "miskatonic.formal-discovery.hvb-01c-hostile-controls.v0.1",
+  "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01C",
+  "all_rejected": true,
+  "count": 28,
+  "results": [
+    {
+      "id": "C01",
+      "pattern": "coupling changed between degrees inside one lane (n5_A carries lambda = 2 while the lane is lambda = 1)",
+      "rejected": true,
+      "errors": [
+        "cell n5_A: coupling / equation / degree altered relative to the preregistration",
+        "cell n5_A: coupling changed inside lane A",
+        "cell n5_A: record differs from a rebuild from the bound provider logs"
+      ]
+    },
+    {
+      "id": "C02",
+      "pattern": "root spacing changed from the frozen controlled family (n = 5 roots stretched)",
+      "rejected": true,
+      "errors": [
+        "preregistration differs from a fresh replay (family / signatures / lanes / anchors / cells)",
+        "controlled family n = 5 differs from the frozen construction (roots / spacing / E / P_n / f_n)"
+      ]
+    },
+    {
+      "id": "C03",
+      "pattern": "E changed for one degree (n = 4 at E = 0)",
+      "rejected": true,
+      "errors": [
+        "preregistration differs from a fresh replay (family / signatures / lanes / anchors / cells)",
+        "controlled family n = 4 differs from the frozen construction (roots / spacing / E / P_n / f_n)"
+      ]
+    },
+    {
+      "id": "C04",
+      "pattern": "n = 3 anchor recomputed instead of consumed from canonical evidence",
+      "rejected": true,
+      "errors": [
+        "preregistration differs from a fresh replay (family / signatures / lanes / anchors / cells)",
+        "anchor A: not the consumed canonical record"
+      ]
+    },
+    {
+      "id": "C05",
+      "pattern": "provider drift without requalification",
+      "rejected": true,
+      "errors": [
+        "PROVIDER_REQUALIFICATION_REQUIRED: provider identity differs from the 01A qualification",
+        "preregistration differs from a fresh replay (family / signatures / lanes / anchors / cells)"
+      ]
+    },
+    {
+      "id": "C06",
+      "pattern": "provider script differs from the preregistered equation (n4_A original form runs a different equation; log unchanged)",
+      "rejected": true,
+      "errors": [
+        "cell n4_A: provider script (orig) differs from form_script(preregistered cell): input binding broken",
+        "cell n4_A: record differs from a rebuild from the bound provider logs",
+        "cell n4_A: provider script/log digest (orig) differs from the binding"
+      ]
+    },
+    {
+      "id": "C07",
+      "pattern": "source degree signature silently changed after the target result (n5_B background signature resealed)",
+      "rejected": true,
+      "errors": [
+        "cell n5_B: source degree/background signature differs from recomputation",
+        "cell n5_B: record differs from a rebuild from the bound provider logs"
+      ]
+    },
+    {
+      "id": "C08",
+      "pattern": "unresolved (or provider-decided) cell coerced to TRUE by resealing the predicate",
+      "rejected": true,
+      "errors": [
+        "cell n6_A: record differs from a rebuild from the bound provider logs",
+        "adjudication field lanes differs from recomputation",
+        "adjudication field transitions differs from recomputation"
+      ]
+    },
+    {
+      "id": "C09",
+      "pattern": "4->5 target change labelled as caused by S_5 nonsolvability",
+      "rejected": true,
+      "errors": [
+        "adjudication field transitions differs from recomputation",
+        "adjudication: transition 4->5 lane A carries a causal attribution ('S_5_NONSOLVABILITY'): TRANSITION_ALIGNMENT != CAUSAL_TRANSPORT",
+        "result: transition 4->5 lane A carries a causal attribution ('S_5_NONSOLVABILITY'): TRANSITION_ALIGNMENT != CAUSAL_TRANSPORT"
+      ]
+    },
+    {
+      "id": "C10",
+      "pattern": "4->5 no-change labelled proof that source degree never matters",
+      "rejected": true,
+      "errors": [
+        "result: NO_DEGREE_EFFECT promoted to DEGREE_IRRELEVANT"
+      ]
+    },
+    {
+      "id": "C11",
+      "pattern": "5->6 transition labelled as caused by Out(S_6)",
+      "rejected": true,
+      "errors": [
+        "result: forbidden inference OUT_S6->TARGET_PREDICATE_CHANGE"
+      ]
+    },
+    {
+      "id": "C12",
+      "pattern": "n = 5 equation relabelled Lame without derivation",
+      "rejected": true,
+      "errors": [
+        "cell n5_A: n = 5 equation relabelled (LAME); only ALGEBRAIC_NVE_n is admissible",
+        "cell n5_A: record differs from a rebuild from the bound provider logs"
+      ]
+    },
+    {
+      "id": "C13",
+      "pattern": "BO-2 reopened",
+      "rejected": true,
+      "errors": [
+        "BO-2 status altered"
+      ]
+    },
+    {
+      "id": "C14",
+      "pattern": "Morales-Ramis applied",
+      "rejected": true,
+      "errors": [
+        "authority block altered"
+      ]
+    },
+    {
+      "id": "C15",
+      "pattern": "new coupling lane added post hoc",
+      "rejected": true,
+      "errors": [
+        "preregistration differs from a fresh replay (family / signatures / lanes / anchors / cells)",
+        "lane set differs from the four frozen lanes",
+        "adjudication field lanes differs from recomputation"
+      ]
+    },
+    {
+      "id": "C16",
+      "pattern": "selective omission of one degree from a lane (n5_B dropped)",
+      "rejected": true,
+      "errors": [
+        "not every preregistered cell is reported (selective omission)",
+        "adjudication field lanes differs from recomputation",
+        "adjudication field transitions differs from recomputation"
+      ]
+    },
+    {
+      "id": "C17",
+      "pattern": "coupling-pair sufficiency claimed universally from no observed split",
+      "rejected": true,
+      "errors": [
+        "result: COUPLING_PAIR_UNIVERSALLY_SUFFICIENT emitted from a finite panel"
+      ]
+    },
+    {
+      "id": "C18",
+      "pattern": "source-theorem label substituted for the direct target computation (n5_B: 'S_5 nonsolvable => nonabelian')",
+      "rejected": true,
+      "errors": [
+        "cell n5_B: record differs from a rebuild from the bound provider logs",
+        "cell n5_B: predicate without an admissible rule (source-theorem labels are not target computations)"
+      ]
+    },
+    {
+      "id": "C19",
+      "pattern": "anchor predicate resealed in the adjudication (lane C n = 3 -> FALSE)",
+      "rejected": true,
+      "errors": [
+        "adjudication field lanes differs from recomputation"
+      ]
+    },
+    {
+      "id": "C20",
+      "pattern": "transition statement rewritten in causal language",
+      "rejected": true,
+      "errors": [
+        "result: transition 4->5 statement uses causal / universal language"
+      ]
+    },
+    {
+      "id": "C21",
+      "pattern": "Lame authority extended to n = 4..6 in the ledger",
+      "rejected": true,
+      "errors": [
+        "ledger authority scope altered (Lame beyond n = 3 or degree-ladder authority not split LOCAL_DERIVED / IDENTIFIED_UNBOUND)"
+      ]
+    },
+    {
+      "id": "C22",
+      "pattern": "provider log for n6_D reduced form swapped for the n6_C log (record unchanged)",
+      "rejected": true,
+      "errors": [
+        "cell n6_D: record differs from a rebuild from the bound provider logs",
+        "cell n6_D: provider script/log digest (red) differs from the binding"
+      ]
+    },
+    {
+      "id": "C23",
+      "pattern": "R1: canonical result says 'radical-solvability cliff' while radical theorem authority remains unbound",
+      "rejected": true,
+      "errors": [
+        "result.v0.1.json: unearned degree-ladder authority language 'radical-solvability cliff' (no bound theorem source; LOCAL_DERIVED covers only group solvability / perfectness)"
+      ]
+    },
+    {
+      "id": "C24",
+      "pattern": "R1: canonical result says 'A_5 simple' with only local A_5 perfectness evidence",
+      "rejected": true,
+      "errors": [
+        "result.v0.1.json: unearned degree-ladder authority language 'a_5 simple' (no bound theorem source; LOCAL_DERIVED covers only group solvability / perfectness)",
+        "result.v0.1.json: unearned degree-ladder authority language 'simple core' (no bound theorem source; LOCAL_DERIVED covers only group solvability / perfectness)",
+        "result: transition labels differ from the earned wording"
+      ]
+    },
+    {
+      "id": "C25",
+      "pattern": "R1: Out(S_6) promoted to BOUND / WITNESSED / LOCAL_DERIVED without evidence",
+      "rejected": true,
+      "errors": [
+        "adjudication: local_derived values differ from the exact finite-group recomputation",
+        "adjudication: identified_unbound item set altered (radical interpretation / A5 simplicity / Out(S_6) must stay unbound)",
+        "adjudication: Out(S_6) label promoted beyond IDENTIFIED_UNBOUND / not witnessed / not load-bearing without evidence"
+      ]
+    },
+    {
+      "id": "C26",
+      "pattern": "R1: F2 renamed back to a radical-solvability theorem claim",
+      "rejected": true,
+      "errors": [
+        "adjudication field lanes differs from recomputation",
+        "adjudication.v0.1.json: unearned degree-ladder authority language 's_n_solvability_cliff' (no bound theorem source; LOCAL_DERIVED covers only group solvability / perfectness)",
+        "result.v0.1.json: unearned degree-ladder authority language 's_n_solvability_cliff' (no bound theorem source; LOCAL_DERIVED covers only group solvability / perfectness)"
+      ]
+    },
+    {
+      "id": "C27",
+      "pattern": "R1: degree_ladder_authority matrix deleted from the canonical result",
+      "rejected": true,
+      "errors": [
+        "result: degree_ladder_authority matrix missing"
+      ]
+    },
+    {
+      "id": "C28",
+      "pattern": "R1: preregistration-time label 'EXTERNAL_ESTABLISHED' copied onto the canonical ledger",
+      "rejected": true,
+      "errors": [
+        "source-ledger.v0.1.json: unearned degree-ladder authority language 'external_established' (no bound theorem source; LOCAL_DERIVED covers only group solvability / perfectness)"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+batch("/home/kowen9024/repos/msk-formal-discovery-hvb-01c/experiments/hamiltonian-variational-bridge-01c/cells/n5_B_red.mac")
+display2d:false
+load(kovacicODE)
+print("RESULT_n5_B_red",
+      kovacicODE('diff(y,x,2) = ((5*x^8-54*x^6+45*x^4+(-56)*x^2-48)
+                              /(16*x^10-160*x^8+528*x^6+(-640)*x^4+256*x^2))
+                              *y,y,x))
+equation:  
+          'diff(_y,_x,2) = ((5*_x^8-54*_x^6+45*_x^4-56*_x^2-48)*_y)
+                         /(16*_x^10-160*_x^8+528*_x^6-640*_x^4+256*_x^2) 
+          , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-2)^2*(_x-1)^2*_x^2*(_x+1)^2 
+           5*_x^8-54*_x^6+45*_x^4-56*_x^2-48 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*_x^2*(_x+1)^2*(_x+2)^2 
+           5*_x^8-54*_x^6+45*_x^4-56*_x^2-48 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-2)^2*(_x-1)^2*_x^2*(_x+2)^2 
+           5*_x^8-54*_x^6+45*_x^4-56*_x^2-48 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-2)^2*_x^2*(_x+1)^2*(_x+2)^2 
+           5*_x^8-54*_x^6+45*_x^4-56*_x^2-48 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-2)^2*(_x-1)^2*(_x+1)^2*(_x+2)^2 
+           5*_x^8-54*_x^6+45*_x^4-56*_x^2-48 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+RESULT_n5_B_red nil 
+"/home/kowen9024/repos/msk-formal-discovery-hvb-01c/experiments/hamiltonian-variational-bridge-01c/cells/n5_B_red.mac"

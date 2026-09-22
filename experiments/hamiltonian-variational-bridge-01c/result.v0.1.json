@@ -1,0 +1,522 @@
+{
+  "schema_version": "miskatonic.formal-discovery.hvb-01c-result.v0.1",
+  "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01C",
+  "canonical_start": "d4a71a72b36a68fca60dfffb53737846c3cde41d",
+  "mathematics_sha": "2337c7d744f176274997374a7d4057c7272f715d",
+  "preregistration_commit": "24e0408caf2a8cdcaabcab7e5b70384c793e1da1",
+  "disposition": "BO3_DEGREE_CONDITIONED_VARIATION_OBSERVED",
+  "disposition_status": "PROPOSED_BY_EXECUTING_AGENT_PENDING_INDEPENDENT_REVIEW",
+  "question": "after conditioning on the target coupling pair (lambda, mu), does the controlled background degree n still change ABELIAN_IDENTITY_COMPONENT(G_diff)?",
+  "controlled_family": {
+    "3": {
+      "P_n": "q**3 - q - 1",
+      "f_n": "-2*q**3 + 2*q",
+      "roots_ordered": [
+        "-1",
+        "0",
+        "1"
+      ],
+      "discriminant_of_f_n": "64",
+      "equation_class": "CANONICAL_N3_LAME_MEMBER"
+    },
+    "4": {
+      "P_n": "q**4 - 5*q**2/2 - 7/16",
+      "f_n": "-2*q**4 + 5*q**2 - 9/8",
+      "roots_ordered": [
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2"
+      ],
+      "discriminant_of_f_n": "9216",
+      "equation_class": "ALGEBRAIC_NVE_4"
+    },
+    "5": {
+      "P_n": "q**5 - 5*q**3 + 4*q - 1",
+      "f_n": "-2*q**5 + 10*q**3 - 8*q",
+      "roots_ordered": [
+        "-2",
+        "-1",
+        "0",
+        "1",
+        "2"
+      ],
+      "discriminant_of_f_n": "21233664",
+      "equation_class": "ALGEBRAIC_NVE_5"
+    },
+    "6": {
+      "P_n": "q**6 - 35*q**4/4 + 259*q**2/16 - 289/64",
+      "f_n": "-2*q**6 + 35*q**4/2 - 259*q**2/8 + 225/32",
+      "roots_ordered": [
+        "-5/2",
+        "-3/2",
+        "-1/2",
+        "1/2",
+        "3/2",
+        "5/2"
+      ],
+      "discriminant_of_f_n": "1223059046400",
+      "equation_class": "ALGEBRAIC_NVE_6"
+    }
+  },
+  "coupling_signatures": {
+    "A": "0dbf3111180df54c5e9e8a93b7f4f9d53dcdd232a94ecafd722a4a7320e042d8",
+    "B": "96dd27cd4736c0cf8fcccb6c1185670df5f48831feb6386bbc59a61ed4d7f9d7",
+    "C": "c9ac1de7fcb679d66191eed902a0e66c5589434a62dceaed81623cf2fe7f793e",
+    "D": "46ed9706e23b305618763912e8aa355c67e943e5ae88a813830c2fa0818b5b80"
+  },
+  "background_signatures": {
+    "3": "2eea761bfca9ea66746bf30fb61766360a3dc1360aaf7241207aca8a997b905b",
+    "4": "1629372124153209349aabce05cb9ea351a35b403b3815e6c5c20ce083bc332a",
+    "5": "12155c306221c9d4cb9c6220804a449074c488b68a2e246b510651c8ea9dc153",
+    "6": "f3f0d27a9b11360fd2d9b242c1b87814b96019e0491fdc416a84bd3afa4cbd5c"
+  },
+  "panel": {
+    "A": {
+      "3": "TRUE",
+      "4": "FALSE",
+      "5": "FALSE",
+      "6": "UNRESOLVED"
+    },
+    "B": {
+      "3": "FALSE",
+      "4": "FALSE",
+      "5": "FALSE",
+      "6": "UNRESOLVED"
+    },
+    "C": {
+      "3": "TRUE",
+      "4": "FALSE",
+      "5": "FALSE",
+      "6": "UNRESOLVED"
+    },
+    "D": {
+      "3": "FALSE",
+      "4": "FALSE",
+      "5": "FALSE",
+      "6": "UNRESOLVED"
+    }
+  },
+  "panel_size": 16,
+  "anchors_consumed": {
+    "A": {
+      "cell": "c3",
+      "package": "01A",
+      "predicate": "TRUE"
+    },
+    "B": {
+      "cell": "c5",
+      "package": "01A",
+      "predicate": "FALSE"
+    },
+    "C": {
+      "cell": "d7",
+      "package": "01B",
+      "predicate": "TRUE"
+    },
+    "D": {
+      "cell": "d8",
+      "package": "01B",
+      "predicate": "FALSE"
+    }
+  },
+  "lanes": {
+    "A": {
+      "lambda": "1",
+      "mu": "0",
+      "TARGET_SEQUENCE": {
+        "3": "TRUE",
+        "4": "FALSE",
+        "5": "FALSE",
+        "6": "UNRESOLVED"
+      },
+      "lane_result": "DEGREE_CONDITIONED_TARGET_VARIATION_OBSERVED",
+      "COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_DEGREE_LADDER": true,
+      "witness": {
+        "TRUE": {
+          "n": 3,
+          "cell": "anchor"
+        },
+        "FALSE": {
+          "n": 4,
+          "cell": "n4_A"
+        }
+      },
+      "transitions": {
+        "3->4": "CHANGES",
+        "4->5": "NO_CHANGE",
+        "5->6": "UNRESOLVED"
+      },
+      "falsifiers": {
+        "F1": "FULL_COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_BACKGROUND",
+        "F2": "S4_TO_S5_GROUP_SOLVABILITY_TRANSITION_DOES_NOT_FORCE_TARGET_PREDICATE_CHANGE",
+        "F3": "NOT_ADJUDICABLE (5->6 unresolved)"
+      },
+      "unresolved_degrees": [
+        "6"
+      ]
+    },
+    "B": {
+      "lambda": "2",
+      "mu": "0",
+      "TARGET_SEQUENCE": {
+        "3": "FALSE",
+        "4": "FALSE",
+        "5": "FALSE",
+        "6": "UNRESOLVED"
+      },
+      "lane_result": "LANE_PARTIAL",
+      "COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_DEGREE_LADDER": false,
+      "witness": null,
+      "transitions": {
+        "3->4": "NO_CHANGE",
+        "4->5": "NO_CHANGE",
+        "5->6": "UNRESOLVED"
+      },
+      "falsifiers": {
+        "F1": "NOT_ADJUDICABLE (unresolved cells)",
+        "F2": "S4_TO_S5_GROUP_SOLVABILITY_TRANSITION_DOES_NOT_FORCE_TARGET_PREDICATE_CHANGE",
+        "F3": "NOT_ADJUDICABLE (5->6 unresolved)"
+      },
+      "unresolved_degrees": [
+        "6"
+      ]
+    },
+    "C": {
+      "lambda": "3/8",
+      "mu": "0",
+      "TARGET_SEQUENCE": {
+        "3": "TRUE",
+        "4": "FALSE",
+        "5": "FALSE",
+        "6": "UNRESOLVED"
+      },
+      "lane_result": "DEGREE_CONDITIONED_TARGET_VARIATION_OBSERVED",
+      "COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_DEGREE_LADDER": true,
+      "witness": {
+        "TRUE": {
+          "n": 3,
+          "cell": "anchor"
+        },
+        "FALSE": {
+          "n": 4,
+          "cell": "n4_C"
+        }
+      },
+      "transitions": {
+        "3->4": "CHANGES",
+        "4->5": "NO_CHANGE",
+        "5->6": "UNRESOLVED"
+      },
+      "falsifiers": {
+        "F1": "FULL_COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_BACKGROUND",
+        "F2": "S4_TO_S5_GROUP_SOLVABILITY_TRANSITION_DOES_NOT_FORCE_TARGET_PREDICATE_CHANGE",
+        "F3": "NOT_ADJUDICABLE (5->6 unresolved)"
+      },
+      "unresolved_degrees": [
+        "6"
+      ]
+    },
+    "D": {
+      "lambda": "3/8",
+      "mu": "1/2",
+      "TARGET_SEQUENCE": {
+        "3": "FALSE",
+        "4": "FALSE",
+        "5": "FALSE",
+        "6": "UNRESOLVED"
+      },
+      "lane_result": "LANE_PARTIAL",
+      "COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_DEGREE_LADDER": false,
+      "witness": null,
+      "transitions": {
+        "3->4": "NO_CHANGE",
+        "4->5": "NO_CHANGE",
+        "5->6": "UNRESOLVED"
+      },
+      "falsifiers": {
+        "F1": "NOT_ADJUDICABLE (unresolved cells)",
+        "F2": "S4_TO_S5_GROUP_SOLVABILITY_TRANSITION_DOES_NOT_FORCE_TARGET_PREDICATE_CHANGE",
+        "F3": "NOT_ADJUDICABLE (5->6 unresolved)"
+      },
+      "unresolved_degrees": [
+        "6"
+      ]
+    }
+  },
+  "transitions": {
+    "3->4": {
+      "A": {
+        "from": "TRUE",
+        "to": "FALSE",
+        "target_predicate": "CHANGES",
+        "causal_attribution": "NONE"
+      },
+      "B": {
+        "from": "FALSE",
+        "to": "FALSE",
+        "target_predicate": "NO_CHANGE",
+        "causal_attribution": "NONE"
+      },
+      "C": {
+        "from": "TRUE",
+        "to": "FALSE",
+        "target_predicate": "CHANGES",
+        "causal_attribution": "NONE"
+      },
+      "D": {
+        "from": "FALSE",
+        "to": "FALSE",
+        "target_predicate": "NO_CHANGE",
+        "causal_attribution": "NONE"
+      },
+      "source_side_label": "S_3 -> S_4 (both solvable; LOCAL_DERIVED)",
+      "statement": "A target-predicate change coincided with the 3->4 transition on lane A (coincidence recorded; no causal attribution). No target-predicate change was observed across the 3->4 transition on lane B. A target-predicate change coincided with the 3->4 transition on lane C (coincidence recorded; no causal attribution). No target-predicate change was observed across the 3->4 transition on lane D."
+    },
+    "4->5": {
+      "A": {
+        "from": "FALSE",
+        "to": "FALSE",
+        "target_predicate": "NO_CHANGE",
+        "causal_attribution": "NONE"
+      },
+      "B": {
+        "from": "FALSE",
+        "to": "FALSE",
+        "target_predicate": "NO_CHANGE",
+        "causal_attribution": "NONE"
+      },
+      "C": {
+        "from": "FALSE",
+        "to": "FALSE",
+        "target_predicate": "NO_CHANGE",
+        "causal_attribution": "NONE"
+      },
+      "D": {
+        "from": "FALSE",
+        "to": "FALSE",
+        "target_predicate": "NO_CHANGE",
+        "causal_attribution": "NONE"
+      },
+      "source_side_label": "S_4 -> S_5 GROUP-SOLVABILITY TRANSITION (LOCAL_DERIVED: S_4 solvable = TRUE, S_5 solvable = FALSE, A_5 perfect = TRUE)",
+      "statement": "No target-predicate change was observed across the 4->5 source group-solvability transition (solvable S_4 to nonsolvable S_5, LOCAL_DERIVED) on lane A. No target-predicate change was observed across the 4->5 source group-solvability transition (solvable S_4 to nonsolvable S_5, LOCAL_DERIVED) on lane B. No target-predicate change was observed across the 4->5 source group-solvability transition (solvable S_4 to nonsolvable S_5, LOCAL_DERIVED) on lane C. No target-predicate change was observed across the 4->5 source group-solvability transition (solvable S_4 to nonsolvable S_5, LOCAL_DERIVED) on lane D."
+    },
+    "5->6": {
+      "A": {
+        "from": "FALSE",
+        "to": "UNRESOLVED",
+        "target_predicate": "UNRESOLVED",
+        "causal_attribution": "NONE"
+      },
+      "B": {
+        "from": "FALSE",
+        "to": "UNRESOLVED",
+        "target_predicate": "UNRESOLVED",
+        "causal_attribution": "NONE"
+      },
+      "C": {
+        "from": "FALSE",
+        "to": "UNRESOLVED",
+        "target_predicate": "UNRESOLVED",
+        "causal_attribution": "NONE"
+      },
+      "D": {
+        "from": "FALSE",
+        "to": "UNRESOLVED",
+        "target_predicate": "UNRESOLVED",
+        "causal_attribution": "NONE"
+      },
+      "source_side_label": "S_5 -> S_6; classical Out(S_6) exceptional-layer label is IDENTIFIED_UNBOUND in this WO (not witnessed, not load-bearing)",
+      "statement": "The target predicate is unresolved across the 5->6 transition carrying the IDENTIFIED_UNBOUND Out(S_6) label on lane A. The target predicate is unresolved across the 5->6 transition carrying the IDENTIFIED_UNBOUND Out(S_6) label on lane B. The target predicate is unresolved across the 5->6 transition carrying the IDENTIFIED_UNBOUND Out(S_6) label on lane C. The target predicate is unresolved across the 5->6 transition carrying the IDENTIFIED_UNBOUND Out(S_6) label on lane D."
+    }
+  },
+  "cliff_statements": {
+    "4->5": "S_4 -> S_5 group-solvability transition (LOCAL_DERIVED: S_4 solvable, S_5 not solvable, A_5 perfect): target predicate unchanged on lanes ['A', 'B', 'C', 'D'], changed on lanes [], unresolved on lanes []. Unchanged lanes establish S4_TO_S5_GROUP_SOLVABILITY_TRANSITION_DOES_NOT_FORCE_TARGET_PREDICATE_CHANGE for those lanes (does not force != has no mathematical relation). Firewall: TRANSITION_ALIGNMENT != CAUSAL_TRANSPORT; DEGREE_LADDER_ASSOCIATION != CAUSATION_BY_GROUP_THEOREM.",
+    "5->6": "S_5 -> S_6 (Out(S_6) exceptional-layer label IDENTIFIED_UNBOUND, not witnessed): target predicate unchanged on lanes [], changed on lanes [], unresolved on lanes ['A', 'B', 'C', 'D']. Firewall: TRANSITION_ALIGNMENT != CAUSAL_TRANSPORT; DEGREE_LADDER_ASSOCIATION != CAUSATION_BY_GROUP_THEOREM."
+  },
+  "degree_ladder_authority": {
+    "local_derived": {
+      "items": [
+        "S_n_derived_series_orders",
+        "S_n_solvable",
+        "A_n_perfect"
+      ],
+      "method": "exact finite-group computation (sympy.combinatorics derived series)",
+      "values": {
+        "3": {
+          "S_n_derived_series_orders": [
+            6,
+            3,
+            1
+          ],
+          "S_n_solvable": true,
+          "A_n_perfect": false
+        },
+        "4": {
+          "S_n_derived_series_orders": [
+            24,
+            12,
+            4,
+            1
+          ],
+          "S_n_solvable": true,
+          "A_n_perfect": false
+        },
+        "5": {
+          "S_n_derived_series_orders": [
+            120,
+            60
+          ],
+          "S_n_solvable": false,
+          "A_n_perfect": true
+        },
+        "6": {
+          "S_n_derived_series_orders": [
+            720,
+            360
+          ],
+          "S_n_solvable": false,
+          "A_n_perfect": true
+        }
+      }
+    },
+    "identified_unbound": {
+      "items": [
+        "generic_radical_solvability_interpretation",
+        "A5_simplicity",
+        "Out_S6_exceptional_outer_automorphism"
+      ],
+      "status": "IDENTIFIED_UNBOUND: no theorem source bound in any consumed ledger and no local witness; labels only"
+    },
+    "Out_S6_label": {
+      "status": "IDENTIFIED_UNBOUND",
+      "witnessed": false,
+      "load_bearing": false,
+      "note": "DEGREE_EQUALS_6 != OUT_S6_THEOREM_CERTIFICATE"
+    },
+    "transition_labels": {
+      "3->4": "S_3 -> S_4 (both solvable; LOCAL_DERIVED)",
+      "4->5": "S_4 -> S_5 GROUP-SOLVABILITY TRANSITION (LOCAL_DERIVED: S_4 solvable = TRUE, S_5 solvable = FALSE, A_5 perfect = TRUE)",
+      "5->6": "S_5 -> S_6; classical Out(S_6) exceptional-layer label is IDENTIFIED_UNBOUND in this WO (not witnessed, not load-bearing)"
+    },
+    "permanent": [
+      "GROUP_SOLVABILITY_TRANSITION != GENERIC_POLYNOMIAL_RADICAL_SOLVABILITY_THEOREM",
+      "A5_PERFECT_LOCALLY_DERIVED != A5_SIMPLICITY_ESTABLISHED_HERE",
+      "DEGREE_EQUALS_6 != OUT_S6_THEOREM_CERTIFICATE",
+      "DEGREE_SIGNATURE != TARGET_GALOIS_PREDICATE",
+      "DEGREE_LADDER_ASSOCIATION != CAUSATION_BY_GROUP_THEOREM"
+    ],
+    "preregistration_note": "the degree_ladder labels embedded in the frozen preregistration (24e0408c) are superseded by this matrix; they were never load-bearing and are retained only for byte-identical replay"
+  },
+  "n6_timeout_state": {
+    "cells": [
+      "n6_A",
+      "n6_B",
+      "n6_C",
+      "n6_D"
+    ],
+    "predicate": "UNRESOLVED",
+    "budget_s": 1800,
+    "retries": 0,
+    "note": "no RESULT return was emitted before timeout on any n = 6 form; the repeated intermediate Maxima text 'No Liouvillian solutions exist' is not a verdict (PARTIAL_PROVIDER_PROGRESS != PROVIDER_VERDICT)"
+  },
+  "lanes_with_split": [
+    "A",
+    "C"
+  ],
+  "lanes_partial": [
+    "B",
+    "D"
+  ],
+  "unresolved_cells": [
+    "n6_A",
+    "n6_B",
+    "n6_C",
+    "n6_D"
+  ],
+  "rules_by_cell": {
+    "n4_A": "R4",
+    "n4_B": "R4",
+    "n4_C": "R4",
+    "n4_D": "R4",
+    "n5_A": "R4",
+    "n5_B": "R4",
+    "n5_C": "R4",
+    "n5_D": "R4",
+    "n6_A": "",
+    "n6_B": "",
+    "n6_C": "",
+    "n6_D": ""
+  },
+  "provider": {
+    "identity": {
+      "maxima": "5.49.0",
+      "kovacicODE_sha256": "ab7f476a8c0e2c6b87161db1f347ac50f04d9d183d4ea75f0197d277cdbddccf",
+      "parity_with_01a": true
+    },
+    "policy": {
+      "scripts": "one Maxima script per (cell, form): cells/<cell>_orig.mac and cells/<cell>_red.mac, each digest-bound to its own log",
+      "timeout_s_per_script": 1800,
+      "retries": 0,
+      "parallel_workers": 6,
+      "timeout_semantics": "a timed-out or absent provider result is recorded as PROVIDER_TIMEOUT / UNPARSED for that form and the cell is UNRESOLVED unless a provider-independent exact rule (RU case-1 form) resolves it; UNRESOLVED is a valid outcome",
+      "rules": "R4, R2L, RU, RD exactly as in 01A/01B; no rule is weakened to force resolution"
+    },
+    "timeouts": [
+      "n6_A:orig",
+      "n6_A:red",
+      "n6_B:orig",
+      "n6_B:red",
+      "n6_C:orig",
+      "n6_C:red",
+      "n6_D:orig",
+      "n6_D:red"
+    ]
+  },
+  "BO2": "CANONICALLY_REFUTED_NOT_REOPENED",
+  "BO1": "NOT_EXECUTED",
+  "BO3": "EXECUTED_BOUNDEDLY_IN_01C",
+  "degrees_new": [
+    4,
+    5,
+    6
+  ],
+  "panel_degrees": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "MORALES_RAMIS": "NOT_APPLIED",
+  "INTEGRABILITY": "NO_CLAIM",
+  "CHAOS": "NO_CLAIM",
+  "FTT": "NOT_REQUIRED",
+  "BURAU": "CONTROL_ONLY",
+  "LAME": "N3_ONLY",
+  "COUPLING_PAIR_UNIVERSALLY_SUFFICIENT": null,
+  "DEGREE_IRRELEVANT": null,
+  "claimed_inferences": [],
+  "claim_ceiling": [
+    "statements about the controlled centred unit-spacing family at E = -1, degrees 3..6, on four frozen coupling lanes only",
+    "COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_DEGREE_LADDER is asserted only per lane where an actual TRUE/FALSE split is observed; it does not contradict 01B, which was a statement about one frozen n = 3 background",
+    "NO_DEGREE_EFFECT_OBSERVED_ON_FROZEN_LANE is not DEGREE_IRRELEVANT; a finite panel never yields COUPLING_PAIR_UNIVERSALLY_SUFFICIENT",
+    "TRUE/FALSE cells rest on the same provider and exact rules as 01A/01B (FALSE: provider completeness, case 1 independently excluded); UNRESOLVED cells are reported as such",
+    "degree-ladder labels: S_n solvability and A_n perfectness are LOCAL_DERIVED by exact finite-group computation; the generic radical-solvability interpretation, A_5 simplicity and Out(S_6) are IDENTIFIED_UNBOUND; no target predicate rests on any of them"
+  ],
+  "permanent": [
+    "CONTROLLED_BACKGROUND_FAMILY != UNIVERSAL_DEGREE_MODEL",
+    "DEGREE_SIGNATURE != TARGET_GALOIS_PREDICATE",
+    "DEGREE_LADDER_ASSOCIATION != CAUSATION_BY_GROUP_THEOREM",
+    "SAME_COUPLING != SAME_TARGET_EQUATION",
+    "TRANSITION_ALIGNMENT != CAUSAL_TRANSPORT",
+    "N3_LAME_MAP != ALL_DEGREES_ARE_LAME",
+    "NO_DEGREE_EFFECT_OBSERVED != DEGREE_IRRELEVANT",
+    "DOES_NOT_FORCE != NO_MATHEMATICAL_RELATION",
+    "NONABELIAN_G0 != CHAOS",
+    "MEMOIZATION != EXECUTION_INPUT_AUTHORITY",
+    "GROUP_SOLVABILITY_TRANSITION != GENERIC_POLYNOMIAL_RADICAL_SOLVABILITY_THEOREM",
+    "A5_PERFECT_LOCALLY_DERIVED != A5_SIMPLICITY_ESTABLISHED_HERE",
+    "DEGREE_EQUALS_6 != OUT_S6_THEOREM_CERTIFICATE",
+    "PARTIAL_PROVIDER_PROGRESS != PROVIDER_VERDICT"
+  ]
+}

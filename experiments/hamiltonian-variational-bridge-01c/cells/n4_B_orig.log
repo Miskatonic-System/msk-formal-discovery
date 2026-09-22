@@ -1,0 +1,42 @@
+batch("/home/kowen9024/repos/msk-formal-discovery-hvb-01c/experiments/hamiltonian-variational-bridge-01c/cells/n4_B_orig.mac")
+display2d:false
+load(kovacicODE)
+print("RESULT_n4_B_orig",
+      kovacicODE((-2*x^4+5*x^2+(-9)/8)*'diff(y,x,2)
+                  +(-4*x^3+5*x)*'diff(y,x)+(2*x)*y
+                   = 0,y,x))
+equation:  
+          (-(2*_x^4)+5*_x^2-9/8)*'diff(_y,_x,2)
+           +(5*_x-4*_x^3)*'diff(_y,_x,1)+2*_x*_y
+            = 0 , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 256*(_x-3/2)^2*(_x-1/2)^2*(_x+3/2)^2 
+           256*_x^5-320*_x^4-640*_x^3+32*_x^2+144*_x-180 
+_er: -(3/16) 
+undetcoeff: 0 256*(_x-3/2)^2*(_x+1/2)^2*(_x+3/2)^2 
+           256*_x^5-320*_x^4-640*_x^3+32*_x^2+144*_x-180 
+_er: -(3/16) 
+undetcoeff: 0 256*(_x-3/2)^2*(_x-1/2)^2*(_x+1/2)^2 
+           256*_x^5-320*_x^4-640*_x^3+32*_x^2+144*_x-180 
+_er: -(3/16) 
+undetcoeff: 0 256*(_x-1/2)^2*(_x+1/2)^2*(_x+3/2)^2 
+           256*_x^5-320*_x^4-640*_x^3+32*_x^2+144*_x-180 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+RESULT_n4_B_orig nil 
+"/home/kowen9024/repos/msk-formal-discovery-hvb-01c/experiments/hamiltonian-variational-bridge-01c/cells/n4_B_orig.mac"

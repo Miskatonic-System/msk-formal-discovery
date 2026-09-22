@@ -165,3 +165,29 @@ bound Brioschi–Halphen–Crawford characterization predicts.
 ```text
 POLYNOMIAL_DEGREE_n != LAME_INDEX_ell
 ```
+
+
+## Executed: coupling-conditioned degree-ladder residual test, BO-3 (01C)
+
+`WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01C` held the coupling pair
+`(λ, μ)` fixed on four lanes and varied a controlled centred unit-spacing
+background family `n = 3, 4, 5, 6` (`E = −1`), consuming the `n = 3` anchors
+from 01A/01B:
+
+```text
+docs/HAMILTONIAN_VARIATIONAL_BRIDGE_01C.md
+experiments/hamiltonian-variational-bridge-01c/
+```
+
+Outcome (proposed, pending review): `BO3_DEGREE_CONDITIONED_VARIATION_OBSERVED`
+— on lanes A `(1, 0)` and C `(3/8, 0)` the `n = 3` anchor is TRUE while
+`n = 4, 5` are FALSE (`COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_DEGREE_LADDER`
+for those lanes; consistent with 01B, which concerned one background); no
+target change across the `4→5` source group-solvability transition (LOCAL_DERIVED) on any lane; all `n = 6`
+cells unresolved by provider timeout, so lanes B, D are partial and `5→6` is
+not adjudicated. No causal transport from any group-theoretic transition.
+
+```text
+TRANSITION_ALIGNMENT != CAUSAL_TRANSPORT
+N3_LAME_MAP != ALL_DEGREES_ARE_LAME
+```

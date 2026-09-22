@@ -1,0 +1,171 @@
+{
+  "schema_version": "miskatonic.formal-discovery.hvb-01c-source-ledger.v0.1",
+  "ledger_id": "hvb-01c-sources",
+  "policy": "Experiment-local additive custody. Morales-Ruiz 1999 remains UNAVAILABLE and is NOT upgraded. The Lame sources (Maier 2002, Chou-Wang-Wu 2024) are consumed only as the context of the n = 3 anchors; they are NOT applied to n = 4, 5, 6 (N3_LAME_MAP != ALL_DEGREES_ARE_LAME). The degree-ladder classical facts are labels; no target predicate rests on them.",
+  "consumed_ledgers": [
+    {
+      "repository": "Miskatonic-System/msk-formal-discovery",
+      "commit": "d4a71a72b36a68fca60dfffb53737846c3cde41d",
+      "path": "experiments/hamiltonian-variational-bridge-01a/source-ledger.v0.1.json",
+      "blob": "61c715bceab99435e8b1f10b3a579cb74add51ba",
+      "records_relied_on": {
+        "src-hvb-smith-1984": {
+          "status": "BOUND",
+          "used_for": "provider provenance (unchanged provider, identity parity)"
+        },
+        "src-hvb-morales-ruiz-1999-attempt": {
+          "status": "UNAVAILABLE",
+          "used_for": "NOTHING; not upgraded; does not block BO-3 (direct differential-Galois classification)"
+        }
+      }
+    },
+    {
+      "repository": "Miskatonic-System/msk-formal-discovery",
+      "commit": "d4a71a72b36a68fca60dfffb53737846c3cde41d",
+      "path": "experiments/hamiltonian-variational-bridge-01b/source-ledger.v0.1.json",
+      "blob": "bc6740eee0a55e9612776540df4e4fcc840667c1",
+      "records_relied_on": {
+        "src-hvb-maier-2002": {
+          "status": "BOUND",
+          "used_for": "context of the n = 3 anchors only (lanes C/D sit on the ell = 1/2 Lame family of the n = 3 member); NOT applied to n >= 4"
+        },
+        "src-hvb-chou-wang-wu-2024": {
+          "status": "BOUND",
+          "used_for": "context of the n = 3 anchors only; NOT applied to n >= 4"
+        }
+      }
+    },
+    {
+      "repository": "Miskatonic-System/msk-formal-discovery",
+      "commit": "d4a71a72b36a68fca60dfffb53737846c3cde41d",
+      "path": "experiments/topological-galois-source-representation-01a/source-ledger.v0.1.json",
+      "blob": "996fe1233f5e3cc286055d354a1b28aae3d799d1",
+      "records_relied_on": {
+        "src-tg-birman-brendle-2005": {
+          "status": "BOUND",
+          "used_for": "convention freeze behind the consumed pi_perm / Artin / Hurwitz certificates for n = 3..6"
+        }
+      }
+    },
+    {
+      "repository": "Miskatonic-System/miskatonic-mathematics",
+      "commit": "2337c7d744f176274997374a7d4057c7272f715d",
+      "path": "program/hamiltonian-monodromy/controls-v0.1/sources.v0.1.json",
+      "blob": "4cafe426d4b23b82a93b74d7c946d97bb95c0b41",
+      "records_relied_on": {
+        "src-hmc-acosta-morales-weil-2010": {
+          "status": "BOUND",
+          "used_for": "Kovacic four cases; identity-component invariance under algebraic base change (unchanged rules)"
+        }
+      }
+    },
+    {
+      "repository": "Miskatonic-System/miskatonic-mathematics",
+      "commit": "2337c7d744f176274997374a7d4057c7272f715d",
+      "path": "program/hamiltonian-monodromy/controls-v0.1/candidate-freeze.v0.1.json",
+      "blob": "e0c5d4627dba5560ffc34740ac746c0fc632697d",
+      "records_relied_on": {
+        "frozen.degree_ladder_firewall": {
+          "status": "CONSUMED_READ_ONLY",
+          "used_for": "n is an experimental coordinate; no inference degree >= 5 -> nonintegrability/chaos; no Out(S6) -> Abel-Ruffini; no G60 bridge"
+        },
+        "frozen.expected_controls[2]": {
+          "status": "ABSENT_AT_PIN",
+          "used_for": "the named docs/TOPOLOGICAL_GALOIS_DEGREE_LADDER_CONTROL.md does not exist at the pinned SHA; nothing was rederived to replace it"
+        }
+      }
+    }
+  ],
+  "sources": [
+    {
+      "schema_version": "miskatonic.mathematics-source-record.v0.1",
+      "source_id": "src-hvb-degree-ladder-classical-facts",
+      "title": "Degree-ladder labels: generic-polynomial radical-solvability interpretation; A_5 simplicity; exceptional outer automorphism of S_6",
+      "authors_or_authority": "classical; no document bound",
+      "source_type": "CLASSICAL_FACT",
+      "canonical_url_or_identifier": "none bound",
+      "version_or_date": "n/a",
+      "retrieved_at": null,
+      "content_digest": null,
+      "claim_scope": "IDENTIFIED_UNBOUND labels only. What IS established here is LOCAL_DERIVED by exact finite-group computation (degree_ladder_authority()): S_3, S_4 solvable; S_5, S_6 not solvable; A_5, A_6 perfect. PERFECT is not promoted to SIMPLE; the group-solvability transition S_4 -> S_5 is not promoted to a radical-solvability theorem statement; Out(S_6) is not witnessed.",
+      "status": "IDENTIFIED",
+      "notes": "No document is bound. No target predicate, lane result, transition verdict or falsifier depends on these labels (DEGREE_SIGNATURE != TARGET_GALOIS_PREDICATE; DEGREE_LADDER_ASSOCIATION != CAUSATION_BY_GROUP_THEOREM)."
+    }
+  ],
+  "DEGREE_LADDER_AUTHORITY": "LOCAL_DERIVED_FOR_GROUP_SOLVABILITY_AND_PERFECTNESS; IDENTIFIED_UNBOUND_FOR_RADICAL_THEOREM_SIMPLICITY_AND_OUT_S6",
+  "degree_ladder_authority": {
+    "local_derived": {
+      "items": [
+        "S_n_derived_series_orders",
+        "S_n_solvable",
+        "A_n_perfect"
+      ],
+      "method": "exact finite-group computation (sympy.combinatorics derived series)",
+      "values": {
+        "3": {
+          "S_n_derived_series_orders": [
+            6,
+            3,
+            1
+          ],
+          "S_n_solvable": true,
+          "A_n_perfect": false
+        },
+        "4": {
+          "S_n_derived_series_orders": [
+            24,
+            12,
+            4,
+            1
+          ],
+          "S_n_solvable": true,
+          "A_n_perfect": false
+        },
+        "5": {
+          "S_n_derived_series_orders": [
+            120,
+            60
+          ],
+          "S_n_solvable": false,
+          "A_n_perfect": true
+        },
+        "6": {
+          "S_n_derived_series_orders": [
+            720,
+            360
+          ],
+          "S_n_solvable": false,
+          "A_n_perfect": true
+        }
+      }
+    },
+    "identified_unbound": {
+      "items": [
+        "generic_radical_solvability_interpretation",
+        "A5_simplicity",
+        "Out_S6_exceptional_outer_automorphism"
+      ],
+      "status": "IDENTIFIED_UNBOUND: no theorem source bound in any consumed ledger and no local witness; labels only"
+    },
+    "Out_S6_label": {
+      "status": "IDENTIFIED_UNBOUND",
+      "witnessed": false,
+      "load_bearing": false,
+      "note": "DEGREE_EQUALS_6 != OUT_S6_THEOREM_CERTIFICATE"
+    },
+    "transition_labels": {
+      "3->4": "S_3 -> S_4 (both solvable; LOCAL_DERIVED)",
+      "4->5": "S_4 -> S_5 GROUP-SOLVABILITY TRANSITION (LOCAL_DERIVED: S_4 solvable = TRUE, S_5 solvable = FALSE, A_5 perfect = TRUE)",
+      "5->6": "S_5 -> S_6; classical Out(S_6) exceptional-layer label is IDENTIFIED_UNBOUND in this WO (not witnessed, not load-bearing)"
+    },
+    "permanent": [
+      "GROUP_SOLVABILITY_TRANSITION != GENERIC_POLYNOMIAL_RADICAL_SOLVABILITY_THEOREM",
+      "A5_PERFECT_LOCALLY_DERIVED != A5_SIMPLICITY_ESTABLISHED_HERE",
+      "DEGREE_EQUALS_6 != OUT_S6_THEOREM_CERTIFICATE",
+      "DEGREE_SIGNATURE != TARGET_GALOIS_PREDICATE",
+      "DEGREE_LADDER_ASSOCIATION != CAUSATION_BY_GROUP_THEOREM"
+    ],
+    "preregistration_note": "the degree_ladder labels embedded in the frozen preregistration (24e0408c) are superseded by this matrix; they were never load-bearing and are retained only for byte-identical replay"
+  },
+  "LAME_AUTHORITY_SCOPE": "N3_ONLY (consumed from 01B; not extended to n = 4, 5, 6)"
+}

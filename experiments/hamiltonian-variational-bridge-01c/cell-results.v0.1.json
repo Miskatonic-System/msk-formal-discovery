@@ -1,0 +1,510 @@
+{
+  "schema_version": "miskatonic.formal-discovery.hvb-01c-cell-results.v0.1",
+  "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01C",
+  "provider_policy": {
+    "scripts": "one Maxima script per (cell, form): cells/<cell>_orig.mac and cells/<cell>_red.mac, each digest-bound to its own log",
+    "timeout_s_per_script": 1800,
+    "retries": 0,
+    "parallel_workers": 6,
+    "timeout_semantics": "a timed-out or absent provider result is recorded as PROVIDER_TIMEOUT / UNPARSED for that form and the cell is UNRESOLVED unless a provider-independent exact rule (RU case-1 form) resolves it; UNRESOLVED is a valid outcome",
+    "rules": "R4, R2L, RU, RD exactly as in 01A/01B; no rule is weakened to force resolution"
+  },
+  "cells": [
+    {
+      "cell": "n4_A",
+      "mu": "0",
+      "lambda": "1",
+      "original_digest": "10e0c0ae7d1bf3a68fac092744f7b323c9fea602ec5e39e6c05ab6c21c5cadb7",
+      "reduced_digest": "cafa06d70ebd0d46d5943663f54e030e9df5483456123514a51034e5ad80e036",
+      "provider_verdict_original_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_verdict_reduced_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_return_original": "nil",
+      "provider_return_reduced": "nil",
+      "provider_output_digest": "abf950bb69ae007c27989d51ae8c219417eb1e91312490e984f322d07bd492e2",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "FALSE",
+      "rule": "R4: provider finds no Liouvillian solution on both forms => Kovacic case 4 => G = SL_2(C), G^0 = SL_2(C) nonabelian",
+      "evidence": {
+        "consistent_with_independent_case1_exclusion": true
+      },
+      "n": 4,
+      "lane": "A",
+      "equation_class": "ALGEBRAIC_NVE_4",
+      "coupling_signature": "0dbf3111180df54c5e9e8a93b7f4f9d53dcdd232a94ecafd722a4a7320e042d8",
+      "background_signature": "1629372124153209349aabce05cb9ea351a35b403b3815e6c5c20ce083bc332a",
+      "provider_bindings": {
+        "orig": {
+          "script": "cells/n4_A_orig.mac",
+          "script_digest": "2e935c488fc93ad1991483a141e6979334e287328aab778771f7970c68c589ac",
+          "log": "cells/n4_A_orig.log",
+          "log_digest": "132b9ee939cfff04f5a6bac4ff5d7c96d6d5afb55f79e1c93edc4dfc4f399c90"
+        },
+        "red": {
+          "script": "cells/n4_A_red.mac",
+          "script_digest": "11b3789d4217b21f8f529c7afdbd219fde5bc35c08a5821751f9333a56a0459d",
+          "log": "cells/n4_A_red.log",
+          "log_digest": "acebd1e05bdd6dce1738f649b31150addf93bb683b9e0a765eb6b8f08685b795"
+        }
+      },
+      "claimed_inferences": []
+    },
+    {
+      "cell": "n4_B",
+      "mu": "0",
+      "lambda": "2",
+      "original_digest": "3f4e833e775e86dae62b2d4eef698194077a1f155e62fe2520de92dfeb00974f",
+      "reduced_digest": "7a77cbb9cca3d527f9013a32de2269ba614104abf218122f2b28aa9911217d8e",
+      "provider_verdict_original_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_verdict_reduced_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_return_original": "nil",
+      "provider_return_reduced": "nil",
+      "provider_output_digest": "abf950bb69ae007c27989d51ae8c219417eb1e91312490e984f322d07bd492e2",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "FALSE",
+      "rule": "R4: provider finds no Liouvillian solution on both forms => Kovacic case 4 => G = SL_2(C), G^0 = SL_2(C) nonabelian",
+      "evidence": {
+        "consistent_with_independent_case1_exclusion": true
+      },
+      "n": 4,
+      "lane": "B",
+      "equation_class": "ALGEBRAIC_NVE_4",
+      "coupling_signature": "96dd27cd4736c0cf8fcccb6c1185670df5f48831feb6386bbc59a61ed4d7f9d7",
+      "background_signature": "1629372124153209349aabce05cb9ea351a35b403b3815e6c5c20ce083bc332a",
+      "provider_bindings": {
+        "orig": {
+          "script": "cells/n4_B_orig.mac",
+          "script_digest": "538e24ad07f14a32975d500daab4ab20a019b5340a12852914091f1e79350890",
+          "log": "cells/n4_B_orig.log",
+          "log_digest": "f0460d8143e84b70425b5ae78591aaa6000eacdcaaef26bdfaf3c332ba7baf9c"
+        },
+        "red": {
+          "script": "cells/n4_B_red.mac",
+          "script_digest": "61f8264b82ca0225cad5c906bd2d5bd78335878eaea7996cc0745afbad6ecbc8",
+          "log": "cells/n4_B_red.log",
+          "log_digest": "95a46e9db6eaa7ed721e7727e4bd9600daf73de536fa82ce807067b3ae220c62"
+        }
+      },
+      "claimed_inferences": []
+    },
+    {
+      "cell": "n4_C",
+      "mu": "0",
+      "lambda": "3/8",
+      "original_digest": "0aae19e18f97beaac836319fe886357882dca2db49c831ca50731376618ad3f3",
+      "reduced_digest": "84bbe15cbc9f1d8b93f55ede75c72c41ba7539707ea583418f1810e68f0bc9d7",
+      "provider_verdict_original_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_verdict_reduced_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_return_original": "nil",
+      "provider_return_reduced": "nil",
+      "provider_output_digest": "abf950bb69ae007c27989d51ae8c219417eb1e91312490e984f322d07bd492e2",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "FALSE",
+      "rule": "R4: provider finds no Liouvillian solution on both forms => Kovacic case 4 => G = SL_2(C), G^0 = SL_2(C) nonabelian",
+      "evidence": {
+        "consistent_with_independent_case1_exclusion": true
+      },
+      "n": 4,
+      "lane": "C",
+      "equation_class": "ALGEBRAIC_NVE_4",
+      "coupling_signature": "c9ac1de7fcb679d66191eed902a0e66c5589434a62dceaed81623cf2fe7f793e",
+      "background_signature": "1629372124153209349aabce05cb9ea351a35b403b3815e6c5c20ce083bc332a",
+      "provider_bindings": {
+        "orig": {
+          "script": "cells/n4_C_orig.mac",
+          "script_digest": "987602f2402bce0a2192f392424002ab0fa1b87d475f83773d3a350bd6af533b",
+          "log": "cells/n4_C_orig.log",
+          "log_digest": "4d3294cad8a51b80ce6090dcbf3e66096801fabfa6a3251b55ef4e37a1123f9a"
+        },
+        "red": {
+          "script": "cells/n4_C_red.mac",
+          "script_digest": "ffdae45299bd5a02af83372d580da683bf5e244bf4fcb9eed78d03ff0c23e4ef",
+          "log": "cells/n4_C_red.log",
+          "log_digest": "80d4be4e79e94f21e4e6e808fcedde20b754687e110da988373de255594ff05f"
+        }
+      },
+      "claimed_inferences": []
+    },
+    {
+      "cell": "n4_D",
+      "mu": "1/2",
+      "lambda": "3/8",
+      "original_digest": "d85e090dce793d05553c7e7c1f2242ce2a85431f0a0665367b625641a60abb86",
+      "reduced_digest": "a7ddad927a78a5c61aaa80ac3b33d47de1ddf67e7901bae55e1a758747d3a191",
+      "provider_verdict_original_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_verdict_reduced_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_return_original": "nil",
+      "provider_return_reduced": "nil",
+      "provider_output_digest": "abf950bb69ae007c27989d51ae8c219417eb1e91312490e984f322d07bd492e2",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "FALSE",
+      "rule": "R4: provider finds no Liouvillian solution on both forms => Kovacic case 4 => G = SL_2(C), G^0 = SL_2(C) nonabelian",
+      "evidence": {
+        "consistent_with_independent_case1_exclusion": true
+      },
+      "n": 4,
+      "lane": "D",
+      "equation_class": "ALGEBRAIC_NVE_4",
+      "coupling_signature": "46ed9706e23b305618763912e8aa355c67e943e5ae88a813830c2fa0818b5b80",
+      "background_signature": "1629372124153209349aabce05cb9ea351a35b403b3815e6c5c20ce083bc332a",
+      "provider_bindings": {
+        "orig": {
+          "script": "cells/n4_D_orig.mac",
+          "script_digest": "7f0fcc2ccc6d4c24cd7e0f5f50f05987af0f3e31fe71a55bb002f8da0b8fe672",
+          "log": "cells/n4_D_orig.log",
+          "log_digest": "d9465e79bf5f65a598f1ca4f84c010857211b1eaa45301ca8b3474d5797cbe84"
+        },
+        "red": {
+          "script": "cells/n4_D_red.mac",
+          "script_digest": "f931790f6be70fe093116783ac508e77ddc45c4a6d4b361c91e59e9394bc9770",
+          "log": "cells/n4_D_red.log",
+          "log_digest": "df3e966bc443ffb3a82e1987b73383eaf040895610ee3243bf5e33315798655b"
+        }
+      },
+      "claimed_inferences": []
+    },
+    {
+      "cell": "n5_A",
+      "mu": "0",
+      "lambda": "1",
+      "original_digest": "079f0e20412f096550bed47d96e00cd3906ede9c85b13d819dfd89d0b8816e76",
+      "reduced_digest": "c65bead757ab27c25206b0a4b21beef481b79f33a39f47d15628e437087bec2a",
+      "provider_verdict_original_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_verdict_reduced_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_return_original": "nil",
+      "provider_return_reduced": "nil",
+      "provider_output_digest": "abf950bb69ae007c27989d51ae8c219417eb1e91312490e984f322d07bd492e2",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "FALSE",
+      "rule": "R4: provider finds no Liouvillian solution on both forms => Kovacic case 4 => G = SL_2(C), G^0 = SL_2(C) nonabelian",
+      "evidence": {
+        "consistent_with_independent_case1_exclusion": true
+      },
+      "n": 5,
+      "lane": "A",
+      "equation_class": "ALGEBRAIC_NVE_5",
+      "coupling_signature": "0dbf3111180df54c5e9e8a93b7f4f9d53dcdd232a94ecafd722a4a7320e042d8",
+      "background_signature": "12155c306221c9d4cb9c6220804a449074c488b68a2e246b510651c8ea9dc153",
+      "provider_bindings": {
+        "orig": {
+          "script": "cells/n5_A_orig.mac",
+          "script_digest": "0fa27c6dae0481561f5d62560c63426b98c9b4287022a738388fb53194789d35",
+          "log": "cells/n5_A_orig.log",
+          "log_digest": "784cd3972adbad769dca1ce67b0e8d16662d47db2af6fd67034d8072a9146d9e"
+        },
+        "red": {
+          "script": "cells/n5_A_red.mac",
+          "script_digest": "86bd09ff0871f9a5736f06dbf830b0ca94e6c40da5f5bb7b43bb914bf12c0a39",
+          "log": "cells/n5_A_red.log",
+          "log_digest": "2590af27840e782588babe5859b39bbcea86270e23adfa400273636ebb7577a5"
+        }
+      },
+      "claimed_inferences": []
+    },
+    {
+      "cell": "n5_B",
+      "mu": "0",
+      "lambda": "2",
+      "original_digest": "4977da9cd73c22f375009fe5f7ab1a50959cb09525b668e054df1a6b2e58ce6f",
+      "reduced_digest": "f33e4583dc16c68a5ded882a6d48b6b9de8a0b5f133a4771fb9226106443d44f",
+      "provider_verdict_original_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_verdict_reduced_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_return_original": "nil",
+      "provider_return_reduced": "nil",
+      "provider_output_digest": "abf950bb69ae007c27989d51ae8c219417eb1e91312490e984f322d07bd492e2",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "FALSE",
+      "rule": "R4: provider finds no Liouvillian solution on both forms => Kovacic case 4 => G = SL_2(C), G^0 = SL_2(C) nonabelian",
+      "evidence": {
+        "consistent_with_independent_case1_exclusion": true
+      },
+      "n": 5,
+      "lane": "B",
+      "equation_class": "ALGEBRAIC_NVE_5",
+      "coupling_signature": "96dd27cd4736c0cf8fcccb6c1185670df5f48831feb6386bbc59a61ed4d7f9d7",
+      "background_signature": "12155c306221c9d4cb9c6220804a449074c488b68a2e246b510651c8ea9dc153",
+      "provider_bindings": {
+        "orig": {
+          "script": "cells/n5_B_orig.mac",
+          "script_digest": "e15245c589921bd8326cf5154820fe1073176eb6fddd0d0ce2e94f5cb701235e",
+          "log": "cells/n5_B_orig.log",
+          "log_digest": "b27df9613ddddf9e85a84ed3be98657384f2255f24ea822acdf8ec4705ba90dd"
+        },
+        "red": {
+          "script": "cells/n5_B_red.mac",
+          "script_digest": "deb8d07ad6ba820e1059cfd241a52e36fe7a8061ec75c0b6014c6e208df478f2",
+          "log": "cells/n5_B_red.log",
+          "log_digest": "2239b372aba0cf8b3c0a0814c7a571e6ac6e6ceeed48e647a66b10e4b104c7ab"
+        }
+      },
+      "claimed_inferences": []
+    },
+    {
+      "cell": "n5_C",
+      "mu": "0",
+      "lambda": "3/8",
+      "original_digest": "43a7449cef4f5e6a5349f92a36ea5950b561b650a10f72a2e5cc7dde3fd9dce3",
+      "reduced_digest": "7d39ed7ace7aab40bd63f4f6347df00d3636786943f516307a5d08c34f9de2cd",
+      "provider_verdict_original_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_verdict_reduced_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_return_original": "nil",
+      "provider_return_reduced": "nil",
+      "provider_output_digest": "abf950bb69ae007c27989d51ae8c219417eb1e91312490e984f322d07bd492e2",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "FALSE",
+      "rule": "R4: provider finds no Liouvillian solution on both forms => Kovacic case 4 => G = SL_2(C), G^0 = SL_2(C) nonabelian",
+      "evidence": {
+        "consistent_with_independent_case1_exclusion": true
+      },
+      "n": 5,
+      "lane": "C",
+      "equation_class": "ALGEBRAIC_NVE_5",
+      "coupling_signature": "c9ac1de7fcb679d66191eed902a0e66c5589434a62dceaed81623cf2fe7f793e",
+      "background_signature": "12155c306221c9d4cb9c6220804a449074c488b68a2e246b510651c8ea9dc153",
+      "provider_bindings": {
+        "orig": {
+          "script": "cells/n5_C_orig.mac",
+          "script_digest": "42ac5c44a701a562a3522d84d1ed939110da570542cc944e3601816d63fca260",
+          "log": "cells/n5_C_orig.log",
+          "log_digest": "b03e55ad67fe1294843bc15649b5009e5b0ec0bcc0dc438de52d3fbc85b47a57"
+        },
+        "red": {
+          "script": "cells/n5_C_red.mac",
+          "script_digest": "d88bd17184e2c6451684577db55b264c1967d41089aa73c83cc75af466fbb13e",
+          "log": "cells/n5_C_red.log",
+          "log_digest": "f3b0f287b1f35eb215f5a9c58e5241ae52076623b1720d2d45170a7f49172038"
+        }
+      },
+      "claimed_inferences": []
+    },
+    {
+      "cell": "n5_D",
+      "mu": "1/2",
+      "lambda": "3/8",
+      "original_digest": "151b297f6faaca7816cb263e5195c173657978da75436f5d8cc38972a6166174",
+      "reduced_digest": "026eeeae7caf7bc6d32080a0a0067ff598778e41ee8cd10f2ddc32bdf13f51a2",
+      "provider_verdict_original_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_verdict_reduced_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_return_original": "nil",
+      "provider_return_reduced": "nil",
+      "provider_output_digest": "abf950bb69ae007c27989d51ae8c219417eb1e91312490e984f322d07bd492e2",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "FALSE",
+      "rule": "R4: provider finds no Liouvillian solution on both forms => Kovacic case 4 => G = SL_2(C), G^0 = SL_2(C) nonabelian",
+      "evidence": {
+        "consistent_with_independent_case1_exclusion": true
+      },
+      "n": 5,
+      "lane": "D",
+      "equation_class": "ALGEBRAIC_NVE_5",
+      "coupling_signature": "46ed9706e23b305618763912e8aa355c67e943e5ae88a813830c2fa0818b5b80",
+      "background_signature": "12155c306221c9d4cb9c6220804a449074c488b68a2e246b510651c8ea9dc153",
+      "provider_bindings": {
+        "orig": {
+          "script": "cells/n5_D_orig.mac",
+          "script_digest": "5e013f0bbe94fd930c34337d8df5e08c02e5e961dd8f66ebd0528b872caf12aa",
+          "log": "cells/n5_D_orig.log",
+          "log_digest": "c6f0be493da450f6aa2a2b84672c98a963e8f097300e30ecb07b85fca54c6574"
+        },
+        "red": {
+          "script": "cells/n5_D_red.mac",
+          "script_digest": "c987ba4fefe3169cbfb29c7304d9cb9fe583a33f335848b804f5d84dd7a36765",
+          "log": "cells/n5_D_red.log",
+          "log_digest": "b6e86c62aae7b61d741574211aac8a3d7de83da7cfab76ef0f8ffca8313e3cc0"
+        }
+      },
+      "claimed_inferences": []
+    },
+    {
+      "cell": "n6_A",
+      "mu": "0",
+      "lambda": "1",
+      "original_digest": "525266283ea8ca6b8abe942a79105245157b8a1056e640c385e9eff2d2f874c4",
+      "reduced_digest": "e5a0895d7622c8a39eb61b483363ba5701a8e2298e082b1369d60484b978b16d",
+      "provider_verdict_original_form": "PROVIDER_TIMEOUT",
+      "provider_verdict_reduced_form": "PROVIDER_TIMEOUT",
+      "provider_return_original": "",
+      "provider_return_reduced": "",
+      "provider_output_digest": "cbe5cfdf7c2118a9c3d78ef1d684f3afa089201352886449a06a6511cfef74a7",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "UNRESOLVED",
+      "rule": null,
+      "evidence": {},
+      "n": 6,
+      "lane": "A",
+      "equation_class": "ALGEBRAIC_NVE_6",
+      "coupling_signature": "0dbf3111180df54c5e9e8a93b7f4f9d53dcdd232a94ecafd722a4a7320e042d8",
+      "background_signature": "f3f0d27a9b11360fd2d9b242c1b87814b96019e0491fdc416a84bd3afa4cbd5c",
+      "provider_bindings": {
+        "orig": {
+          "script": "cells/n6_A_orig.mac",
+          "script_digest": "7403ba6d04873b5a5a5dc3f75fa1d46e40fe6bc78ab0512f0947ddf562611a7e",
+          "log": "cells/n6_A_orig.log",
+          "log_digest": "7f236576be4bd2b21e867df486f507bc66e733cc616dfbe0ed184191aee58872"
+        },
+        "red": {
+          "script": "cells/n6_A_red.mac",
+          "script_digest": "2f3635c1461f5a313919c13a6588840117433984eac07910fe91373c1f5a5118",
+          "log": "cells/n6_A_red.log",
+          "log_digest": "35d20f1e8263b4aa44214ad8229fa64abf257a922b3708f5126c3635d6e63e5d"
+        }
+      },
+      "claimed_inferences": []
+    },
+    {
+      "cell": "n6_B",
+      "mu": "0",
+      "lambda": "2",
+      "original_digest": "9505cb0cba01b013bd13c8317fb38f16dfd869ff1676d16ea96b11a06b349a8d",
+      "reduced_digest": "c900d18d7dcfe33090f0d82d50cda92d9cbcb2cfc1a4b64c656351647c73bc7d",
+      "provider_verdict_original_form": "PROVIDER_TIMEOUT",
+      "provider_verdict_reduced_form": "PROVIDER_TIMEOUT",
+      "provider_return_original": "",
+      "provider_return_reduced": "",
+      "provider_output_digest": "cbe5cfdf7c2118a9c3d78ef1d684f3afa089201352886449a06a6511cfef74a7",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "UNRESOLVED",
+      "rule": null,
+      "evidence": {},
+      "n": 6,
+      "lane": "B",
+      "equation_class": "ALGEBRAIC_NVE_6",
+      "coupling_signature": "96dd27cd4736c0cf8fcccb6c1185670df5f48831feb6386bbc59a61ed4d7f9d7",
+      "background_signature": "f3f0d27a9b11360fd2d9b242c1b87814b96019e0491fdc416a84bd3afa4cbd5c",
+      "provider_bindings": {
+        "orig": {
+          "script": "cells/n6_B_orig.mac",
+          "script_digest": "8ef2d5b03f9d7c88e154a8b98e4181e648c9eb08c2534be1aa847b7942111b7e",
+          "log": "cells/n6_B_orig.log",
+          "log_digest": "4e92c0138fc99c1f003b9862264953b02b51bb412086e1c21933a965fda0a210"
+        },
+        "red": {
+          "script": "cells/n6_B_red.mac",
+          "script_digest": "2cce52f2d6ffb29acc82eb4f0c619e0f74aefd1a47b68ebe3b08413c9805a839",
+          "log": "cells/n6_B_red.log",
+          "log_digest": "feba6b95fc442efea63e54869eb73e6fba5678071dd1b8d0b363c657fe9c1513"
+        }
+      },
+      "claimed_inferences": []
+    },
+    {
+      "cell": "n6_C",
+      "mu": "0",
+      "lambda": "3/8",
+      "original_digest": "a2352a4b08f2114adbb0e5c23b63dd332fabf7830cc321d0982f4804f61d354d",
+      "reduced_digest": "8f0ef215dccbf339f9dfe4693de4f24b50d4d4acfef771c3a0ea0b38162f2f9b",
+      "provider_verdict_original_form": "PROVIDER_TIMEOUT",
+      "provider_verdict_reduced_form": "PROVIDER_TIMEOUT",
+      "provider_return_original": "",
+      "provider_return_reduced": "",
+      "provider_output_digest": "cbe5cfdf7c2118a9c3d78ef1d684f3afa089201352886449a06a6511cfef74a7",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "UNRESOLVED",
+      "rule": null,
+      "evidence": {},
+      "n": 6,
+      "lane": "C",
+      "equation_class": "ALGEBRAIC_NVE_6",
+      "coupling_signature": "c9ac1de7fcb679d66191eed902a0e66c5589434a62dceaed81623cf2fe7f793e",
+      "background_signature": "f3f0d27a9b11360fd2d9b242c1b87814b96019e0491fdc416a84bd3afa4cbd5c",
+      "provider_bindings": {
+        "orig": {
+          "script": "cells/n6_C_orig.mac",
+          "script_digest": "3c4b1ea69660e70c4c3e451fe1203e68566bd8a1e4103a934276d7868b9c011f",
+          "log": "cells/n6_C_orig.log",
+          "log_digest": "d4a1cf186b11303241fc390b70140a6372db965047330b92286f6caf67b61b55"
+        },
+        "red": {
+          "script": "cells/n6_C_red.mac",
+          "script_digest": "8b872eb0bcac02c06108118121e75fd6eed1af9f655080cd002402c9a6b57833",
+          "log": "cells/n6_C_red.log",
+          "log_digest": "fdaad4bfbe98262c9f76ad8cf27c28aaff33ebd030165f18a6ef1133fa02fa9b"
+        }
+      },
+      "claimed_inferences": []
+    },
+    {
+      "cell": "n6_D",
+      "mu": "1/2",
+      "lambda": "3/8",
+      "original_digest": "b5dc2dc6add8bddbeb2a262eab599ee5e1697b3af9eac0f7e9acfd6fc642173b",
+      "reduced_digest": "1f618e193ae0ce9297cd74f9dc0b6efd9ad4c9b9957fea059f20323af0c94f60",
+      "provider_verdict_original_form": "PROVIDER_TIMEOUT",
+      "provider_verdict_reduced_form": "PROVIDER_TIMEOUT",
+      "provider_return_original": "",
+      "provider_return_reduced": "",
+      "provider_output_digest": "cbe5cfdf7c2118a9c3d78ef1d684f3afa089201352886449a06a6511cfef74a7",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "UNRESOLVED",
+      "rule": null,
+      "evidence": {},
+      "n": 6,
+      "lane": "D",
+      "equation_class": "ALGEBRAIC_NVE_6",
+      "coupling_signature": "46ed9706e23b305618763912e8aa355c67e943e5ae88a813830c2fa0818b5b80",
+      "background_signature": "f3f0d27a9b11360fd2d9b242c1b87814b96019e0491fdc416a84bd3afa4cbd5c",
+      "provider_bindings": {
+        "orig": {
+          "script": "cells/n6_D_orig.mac",
+          "script_digest": "de03e685febaa1a06ef0b4fec4bc97f0be26f2155a14f1862ac12c2b552a077e",
+          "log": "cells/n6_D_orig.log",
+          "log_digest": "8e38d1d2dddc64f14523a1544e712fad402493c2654ce31cd1e5503cf770569b"
+        },
+        "red": {
+          "script": "cells/n6_D_red.mac",
+          "script_digest": "1b0eb33cdad8b4122f13c78da9c81b726da542b946b34b508d88198512e85fc6",
+          "log": "cells/n6_D_red.log",
+          "log_digest": "416cae57cc6a8eefb38c5a243277c28be908e944703a27220b577f017618e81a"
+        }
+      },
+      "claimed_inferences": []
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+display2d:false$
+load(kovacicODE)$
+print("RESULT_n4_D_red", kovacicODE('diff(y,x,2)=((48*x^5 - 256*x^4 - 120*x^3 - 128*x^2 + 27*x - 144)/(256*x^8 - 1280*x^6 + 1888*x^4 - 720*x^2 + 81))*y, y, x))$

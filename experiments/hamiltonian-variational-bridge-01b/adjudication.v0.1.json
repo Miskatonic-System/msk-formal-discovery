@@ -1,4 +1,33 @@
 {
+  "pooled_summary": {
+    "pooled_cell_count": 18,
+    "cells_01a": 8,
+    "cells_01b": 10,
+    "distinct_lambdas": [
+      "-1",
+      "0",
+      "3/8",
+      "1",
+      "2",
+      "3"
+    ],
+    "distinct_lambda_count": 6,
+    "ordering": "by exact rational numerical value, ascending"
+  },
+  "mu_dependence_scope": {
+    "observed_split_lambdas": [
+      "3/8"
+    ],
+    "observed_split_ells": [
+      "1/2"
+    ],
+    "single_sampled_mu_lambdas": [
+      "-1",
+      "3"
+    ],
+    "universal_half_integer_only_claim": false,
+    "statement": "The only observed within-lambda predicate split in the pooled sample occurs at ell = 1/2 (lambda = 3/8). No universal claim is made that mu can affect the predicate only in half-integer-ell classes. Some other lambda classes, including lambda = -1 and lambda = 3, currently have only one sampled mu value, so absence of a split there is not evidence of mu-independence."
+  },
   "same_lambda_same_source_different_mu_different_predicate": [
     {
       "lambda": "3/8",
@@ -213,7 +242,7 @@
   },
   "unresolved_cells": [],
   "verdict": "LAMBDA_ALONE_INSUFFICIENT",
-  "not_claimed": "LAMBDA_SUFFICIENT is never claimed from a finite grid; AUGMENTED_FULL = ORIGINAL + (lambda, mu) is the smallest signature on which the sampled predicate is a function, and even that is a finite-grid statement",
+  "not_claimed": "LAMBDA_SUFFICIENT is never claimed from a finite grid. ORIGINAL + (lambda, mu) is the smallest OF THE THREE TESTED CANDIDATE SIGNATURES on which the predicate is a function across the pooled sampled cells; this is not a globally minimal or universally sufficient signature, and no claim is made that no other hidden coordinate exists.",
   "schema_version": "miskatonic.formal-discovery.hvb-01b-adjudication.v0.1",
   "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01B",
   "phase_c": {

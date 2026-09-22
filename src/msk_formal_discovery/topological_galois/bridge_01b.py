@@ -160,16 +160,39 @@ def adjudicate_d(pre: Dict[str, Any], cells: List[Dict[str, Any]], cells_01a: Li
             t_ = next(r for r in resolved if r["predicate"] == "TRUE"); f_ = next(r for r in resolved if r["predicate"] == "FALSE")
             splits.append({"lambda": l, "ell": ell_of(l), "TRUE": t_, "FALSE": f_})
     unresolved = [r["cell"] for r in pooled if r["predicate"] == "UNRESOLVED"]
+    pooled_summary = pooled_statistics(cells_01a, cells)
     if splits:
         verdict = "LAMBDA_ALONE_INSUFFICIENT"
     elif unresolved:
         verdict = "ACCESSORY_PARAMETER_EFFECT_UNRESOLVED"
     else:
         verdict = "LAMBDA_NOT_FALSIFIED_AS_COORDINATE"
+    single_mu = [l for l, rows in by_lambda.items() if len({r["mu"] for r in rows}) == 1]
     return {
+        "pooled_summary": pooled_summary,
+        "mu_dependence_scope": {
+            "observed_split_lambdas": sorted({s_["lambda"] for s_ in splits}, key=lambda l: sp.Rational(l)),
+            "observed_split_ells": sorted({s_["ell"]["ell"] for s_ in splits}),
+            "single_sampled_mu_lambdas": sorted(single_mu, key=lambda l: sp.Rational(l)),
+            "universal_half_integer_only_claim": False,
+            "statement": "The only observed within-lambda predicate split in the pooled sample occurs at ell = 1/2 (lambda = 3/8). No universal claim is made that mu can affect the predicate only in half-integer-ell classes. Some other lambda classes, including lambda = -1 and lambda = 3, currently have only one sampled mu value, so absence of a split there is not evidence of mu-independence.",
+        },
         "same_lambda_same_source_different_mu_different_predicate": splits,
         "per_lambda": {l: {"ell": ell_of(l), "rows": rows, "constant": len({r["predicate"] for r in rows if r["predicate"] != "UNRESOLVED"}) <= 1} for l, rows in sorted(by_lambda.items(), key=lambda kv: sp.Rational(kv[0]))},
         "unresolved_cells": unresolved,
         "verdict": verdict,
-        "not_claimed": "LAMBDA_SUFFICIENT is never claimed from a finite grid; AUGMENTED_FULL = ORIGINAL + (lambda, mu) is the smallest signature on which the sampled predicate is a function, and even that is a finite-grid statement",
+        "not_claimed": "LAMBDA_SUFFICIENT is never claimed from a finite grid. ORIGINAL + (lambda, mu) is the smallest OF THE THREE TESTED CANDIDATE SIGNATURES on which the predicate is a function across the pooled sampled cells; this is not a globally minimal or universally sufficient signature, and no claim is made that no other hidden coordinate exists.",
+    }
+
+
+def pooled_statistics(cells_01a: List[Dict[str, Any]], cells_01b: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Mechanically derived pooled cardinalities; lambda values ordered by exact rational value (never lexically)."""
+    pooled = list(cells_01a) + list(cells_01b)
+    lambdas = sorted({sp.Rational(c["lambda"]) for c in pooled})
+    return {
+        "pooled_cell_count": len(cells_01a) + len(cells_01b),
+        "cells_01a": len(cells_01a), "cells_01b": len(cells_01b),
+        "distinct_lambdas": [str(l) for l in lambdas],
+        "distinct_lambda_count": len(lambdas),
+        "ordering": "by exact rational numerical value, ascending",
     }

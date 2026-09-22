@@ -127,9 +127,31 @@ def validate(base: Path = BASE, check_git: bool = True) -> List[str]:
 
     # adjudication recomputed
     fresh_adj = b.adjudicate_d(pre, cells["cells"], pkg_a["cell-results.v0.1.json"]["cells"])
-    for k in ("verdict", "same_lambda_same_source_different_mu_different_predicate", "unresolved_cells"):
-        if fresh_adj[k] != adj[k]:
+    for k in ("verdict", "same_lambda_same_source_different_mu_different_predicate", "unresolved_cells", "pooled_summary", "mu_dependence_scope"):
+        if fresh_adj[k] != adj.get(k):
             errors.append(f"adjudication field {k} differs from recomputation")
+    # R1: pooled cardinality recomputed independently from the pooled rows and compared with BOTH summary surfaces
+    stats = b.pooled_statistics(pkg_a["cell-results.v0.1.json"]["cells"], cells["cells"])
+    for surface, obj in (("adjudication", adj.get("pooled_summary")), ("result", res.get("pooled_summary"))):
+        if obj is None:
+            errors.append(f"{surface}: pooled_summary missing")
+            continue
+        for k in ("pooled_cell_count", "distinct_lambda_count", "distinct_lambdas"):
+            if obj.get(k) != stats[k]:
+                errors.append(f"{surface}: {k} = {obj.get(k)!r} differs from recomputation {stats[k]!r}")
+    for surface, obj in (("adjudication", adj.get("mu_dependence_scope")), ("result", res.get("mu_dependence_scope"))):
+        if obj is None:
+            errors.append(f"{surface}: mu_dependence_scope missing")
+            continue
+        if obj.get("universal_half_integer_only_claim") is not False:
+            errors.append(f"{surface}: forbidden universal claim 'mu dependence only for half-integer ell'")
+        if obj.get("observed_split_lambdas") != fresh_adj["mu_dependence_scope"]["observed_split_lambdas"]:
+            errors.append(f"{surface}: observed_split_lambdas differs from recomputation")
+    mmi = res.get("minimal_missing_information")
+    if not isinstance(mmi, dict) or "smallest OF THE THREE TESTED CANDIDATE SIGNATURES" not in mmi.get("ORIGINAL + (lambda, mu)", ""):
+        errors.append("minimal-signature statement not scoped to the tested candidates")
+    if res.get("UNIVERSALLY_MINIMAL_SUFFICIENT_SIGNATURE_CLAIMED") is True:
+        errors.append("universally minimal sufficient signature claimed")
     if res.get("verdict_phase_d") != adj["verdict"]:
         errors.append("result verdict differs from the adjudication")
     if res.get("LAMBDA_SUFFICIENT") is True or res.get("UNIVERSAL_SUFFICIENCY_CLAIMED") is True:
@@ -240,6 +262,46 @@ def _b12(dst):
     _edit(dst / "result.v0.1.json", lambda d: d.update({"MORALES_RAMIS": "APPLIED"}))
 
 
+def _edit_both_summaries(dst, fn):
+    _edit(dst / "adjudication.v0.1.json", fn)
+    _edit(dst / "result.v0.1.json", fn)
+
+
+@hostile("B13", "R1: pooled_cell_count = 17 claimed while the pooled rows are unchanged")
+def _b13(dst):
+    _edit_both_summaries(dst, lambda d: d["pooled_summary"].update({"pooled_cell_count": 17}))
+
+
+@hostile("B14", "R1: distinct_lambda_count = 5 claimed while the rows contain six exact lambda values")
+def _b14(dst):
+    _edit_both_summaries(dst, lambda d: d["pooled_summary"].update({"distinct_lambda_count": 5}))
+
+
+@hostile("B15", "R1: distinct_lambdas omits 3/8")
+def _b15(dst):
+    _edit_both_summaries(dst, lambda d: d["pooled_summary"].update({"distinct_lambdas": [l for l in d["pooled_summary"]["distinct_lambdas"] if l != "3/8"]}))
+
+
+@hostile("B16", "R1: universal 'mu dependence only for half-integer ell' claim")
+def _b16(dst):
+    _edit(dst / "result.v0.1.json", lambda d: d["mu_dependence_scope"].update({"universal_half_integer_only_claim": True}))
+
+
+@hostile("B17", "R1: pooled_cell_count = 19 / distinct_lambda_count = 7 (summary-only edit)")
+def _b17(dst):
+    _edit(dst / "result.v0.1.json", lambda d: d["pooled_summary"].update({"pooled_cell_count": 19, "distinct_lambda_count": 7}))
+
+
+@hostile("B18", "R1: distinct_lambda_count = 4 (summary-only edit, adjudication surface)")
+def _b18(dst):
+    _edit(dst / "adjudication.v0.1.json", lambda d: d["pooled_summary"].update({"distinct_lambda_count": 4}))
+
+
+@hostile("B19", "R1: distinct_lambdas misordered lexically / duplicated")
+def _b19(dst):
+    _edit_both_summaries(dst, lambda d: d["pooled_summary"].update({"distinct_lambdas": sorted(d["pooled_summary"]["distinct_lambdas"]) + ["3/8"]}))
+
+
 def run_hostile(base: Path, tmp: Path) -> List[Dict[str, Any]]:
     out = []
     for h in HOSTILE:
@@ -268,15 +330,27 @@ def build() -> Dict[str, Any]:
         "disposition_status": "PROPOSED_BY_EXECUTING_AGENT_PENDING_INDEPENDENT_REVIEW",
         "phase_a": "LAME_PARAMETER_MAP_ESTABLISHED (q = -2 wp, g2 = 1, g3 = 0; ell(ell+1) = 2 lambda, B = -mu; algebraic NVE == Lame algebraic form, factor 1)",
         "phase_b": {"LAME_CLASSIFICATION_AUTHORITY": "PARTIAL", "bound": ["src-hvb-maier-2002", "src-hvb-chou-wang-wu-2024"], "unavailable_not_upgraded": ["Morales-Ruiz 1999"]},
-        "phase_c": {"question_1": "lambda / ell(ell+1) supported as load-bearing on all sampled cells (01A + 01B: 18 cells, 4 lambda classes, predicate constant across mu except at ell = 1/2)", "question_2": "mu is NOT merely accessory: at lambda = 3/8 it changes the predicate"},
+        "pooled_summary": adj["pooled_summary"],
+        "mu_dependence_scope": adj["mu_dependence_scope"],
+        "phase_c": {"question_1": f"lambda / ell(ell+1) is consistent with being load-bearing on the pooled sample (01A + 01B: {adj['pooled_summary']['pooled_cell_count']} cells, {adj['pooled_summary']['distinct_lambda_count']} distinct lambda values {adj['pooled_summary']['distinct_lambdas']}); the predicate is constant across the sampled mu at every sampled lambda except lambda = 3/8",
+                    "question_2": "mu is NOT merely accessory: at lambda = 3/8 (ell = 1/2) it changes the predicate on the sampled cells. Scope: " + adj["mu_dependence_scope"]["statement"]},
         "verdict_phase_d": adj["verdict"], "splits": adj["same_lambda_same_source_different_mu_different_predicate"],
         "outcomes_01b": outcomes,
-        "minimal_missing_information": "AUGMENTED_LAMBDA is insufficient; AUGMENTED_FULL = ORIGINAL + (lambda, mu) is the smallest of the three candidate signatures on which the sampled predicate is a function (18 sampled cells). The dependence on mu is confined, on the sampled cells, to the half-integer-ell class, matching the bound Brioschi-Halphen-Crawford characterization (finite projective monodromy iff p_0(B) = 0, i.e. B = 0).",
+        "minimal_missing_information": {
+            "ORIGINAL": "insufficient (BO-2, canonical)",
+            "ORIGINAL + lambda": "insufficient (split at lambda = 3/8)",
+            "ORIGINAL + ell(ell+1)": "equivalent relabelling of ORIGINAL + lambda, therefore insufficient",
+            "ORIGINAL + (lambda, mu)": f"smallest OF THE THREE TESTED CANDIDATE SIGNATURES on which the predicate is a function across the {adj['pooled_summary']['pooled_cell_count']} sampled cells",
+            "not_promoted_to": ["globally minimal sufficient signature", "universal sufficient statistic", "lambda and mu always determine G_diff^0", "no other hidden coordinate exists"],
+            "bhc_note": "the observed split at ell = 1/2 sits at B = 0, the point the bound Brioschi-Halphen-Crawford characterization (p_0(B) proportional to B) singles out as finite projective monodromy; the FALSE cells at ell = 1/2 remain provider-decided, not theorem-derived",
+        },
         "BO2": "CANONICALLY_REFUTED_NOT_REOPENED", "BO1": "NOT_EXECUTED", "BO3": "PARKED", "degrees_executed": [3],
         "MORALES_RAMIS": "NOT_APPLIED", "INTEGRABILITY": "NO_NEW_CLAIM", "CHAOS": "NO_CLAIM", "FTT": "NOT_REQUIRED", "BURAU": "CONTROL_ONLY",
         "LAMBDA_SUFFICIENT": None, "UNIVERSAL_SUFFICIENCY_CLAIMED": False, "claimed_inferences": [],
         "claim_ceiling": ["finite-grid statements about the frozen n = 3 member only", "TRUE/FALSE cells rest on the same rules and provider as 01A (FALSE: provider completeness, case 1 independently excluded)", "the integer-ell Liouvillian expectation and the 'non-finite half-integer => SL_2' expectation are NOT source-bound; the provider decided them on the sampled cells"],
-        "permanent": ["POLYNOMIAL_DEGREE_n != LAME_INDEX_ell", "LAMBDA_ALONE_INSUFFICIENT (sampled: ell = 1/2 splits on mu)", "NOT_FALSIFIED != SUFFICIENT", "NONABELIAN_G0 != CHAOS", "SOURCE_GROUP_ACTION != TARGET_MONODROMY_REPRESENTATION"],
+        "permanent": ["POLYNOMIAL_DEGREE_n != LAME_INDEX_ell", "LAMBDA_ALONE_INSUFFICIENT (sampled: ell = 1/2 splits on mu)", "NOT_FALSIFIED != SUFFICIENT",
+                      "ONLY_OBSERVED_SPLIT_AT_HALF_INTEGER != MU_DEPENDENCE_ONLY_AT_HALF_INTEGER", "MINIMAL_AMONG_TESTED_CANDIDATES != UNIVERSALLY_MINIMAL_SUFFICIENT_SIGNATURE",
+                      "MEMOIZATION != EXECUTION_INPUT_AUTHORITY", "NONABELIAN_G0 != CHAOS", "SOURCE_GROUP_ACTION != TARGET_MONODROMY_REPRESENTATION"],
     }
     dump(BASE, "result.v0.1.json", result)
     dump(BASE, "hostile-controls.v0.1.json", {"schema_version": "miskatonic.formal-discovery.hvb-01b-hostile-controls.v0.1", "work_order": b.WORK_ORDER, "all_rejected": None, "count": 0, "results": []})

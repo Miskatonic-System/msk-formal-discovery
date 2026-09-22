@@ -1,14 +1,14 @@
 # Lamé Parameter Map and Minimal Missing-Information Qualification (01B)
 
 **Work order:** `WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01B`  
-**Proposed disposition:** `LAME_PARAMETER_MAP_ESTABLISHED` + `LAMBDA_ALONE_INSUFFICIENT` — `PROPOSED_BY_EXECUTING_AGENT_PENDING_INDEPENDENT_REVIEW`  
+**Proposed disposition:** `LAME_PARAMETER_MAP_ESTABLISHED` + `LAMBDA_ALONE_INSUFFICIENT` — R1 applied (pooled cardinality derived mechanically; accessory-parameter scope corrected) — `PROPOSED_BY_EXECUTING_AGENT_PENDING_INDEPENDENT_REVIEW`  
 **Canonical start:** `11c6e8cda42eb0b23c480a346f35c1bfe337a0fe` (01A + R1 merged) · **Package:** `experiments/hamiltonian-variational-bridge-01b/` · **Code:** `bridge_01b.py`, `bridge_01b_finalize.py`
 
 BO-2 is canonically refuted and is **not reopened** here. The question of this work order is the next one: *which target-side coordinate is actually load-bearing?*
 
 ## Result in one paragraph
 
-On the frozen 01A member (`P_3 = q³ − q − 1`, `E = −1`, `f = −2q³ + 2q`, one `SOURCE_SIGNATURE = a8407db0…`), the NVE is exactly a Lamé equation with `ℓ(ℓ+1) = 2λ`, `B = −μ` on the lemniscatic curve `℘'² = 4℘³ − ℘`. Across the canonical 01A cells plus ten new pre-registered cells, `ABELIAN_IDENTITY_COMPONENT(G_diff)` is constant in `μ` at every sampled `λ` with integer or irrational `ℓ`, but at `λ = 3/8` (`ℓ = ½`, the Brioschi–Halphen–Crawford family) it is **TRUE at `μ = 0` and FALSE at `μ ∈ {½, −1, 2}`** — same source data, same `λ`, different `μ`, different predicate. So `λ` alone is **insufficient**; on the sampled cells the smallest of the three candidate signatures on which the predicate is a function is `AUGMENTED_FULL = ORIGINAL + (λ, μ)`, with the `μ`-dependence confined to the half-integer-`ℓ` class exactly as the bound theorem predicts. No sufficiency is claimed from a finite grid.
+On the frozen 01A member (`P_3 = q³ − q − 1`, `E = −1`, `f = −2q³ + 2q`, one `SOURCE_SIGNATURE = a8407db0…`), the NVE is exactly a Lamé equation with `ℓ(ℓ+1) = 2λ`, `B = −μ` on the lemniscatic curve `℘'² = 4℘³ − ℘`. Across the canonical 01A cells plus ten new pre-registered cells, `ABELIAN_IDENTITY_COMPONENT(G_diff)` is constant in `μ` at every sampled `λ` that has at least two sampled `μ` values and integer or irrational `ℓ` (`λ = 0, 1, 2`; `λ = −1` and `λ = 3` have a single sampled `μ`), but at `λ = 3/8` (`ℓ = ½`, the Brioschi–Halphen–Crawford family) it is **TRUE at `μ = 0` and FALSE at `μ ∈ {½, −1, 2}`** — same source data, same `λ`, different `μ`, different predicate. So `λ` alone is **insufficient**; across the 18 pooled sampled cells, `AUGMENTED_FULL = ORIGINAL + (λ, μ)` is the smallest **of the three tested candidate signatures** on which the predicate is a function. The only *observed* within-λ split sits at `ℓ = ½`, at the point (`B = 0`) the bound theorem singles out; no claim is made that μ can matter only there, and no sufficiency is claimed from a finite grid.
 
 ## Gate 0
 
@@ -83,15 +83,23 @@ Grid frozen and committed at `752e897d` **before** any provider run: `λ = 1` (T
 
 All ten outcomes coincide with the pre-registered expectations, including the bound prediction that only `B = 0` is finite at `ℓ = ½`.
 
-**Adjudication (pooled 01A + 01B, 18 cells, 5 `λ` classes):**
+**Adjudication (pooled 01A + 01B: `pooled_cell_count = 18`, `distinct_lambda_count = 6`, `distinct_lambdas = [−1, 0, 3/8, 1, 2, 3]`, ordered by exact rational value — all derived mechanically and recomputed by the validator):**
 
 ```text
 λ = 3/8:  same SOURCE_SIGNATURE, same λ,  μ = 0 → TRUE (d7)   vs   μ = ½ → FALSE (d8)     [also d9, d10]
                                           ⇒  LAMBDA_ALONE_INSUFFICIENT
-λ = 0, 1, 2, 3, −1:  predicate constant across all sampled μ
+λ = 0, 1, 2:         predicate constant across all sampled μ (≥ 2 values each)
+λ = −1, 3:           only ONE sampled μ each — no evidence either way about μ-dependence
 ```
 
-Minimal missing information on the sampled cells: `AUGMENTED_LAMBDA` fails; `AUGMENTED_FULL = ORIGINAL + (λ, μ)` is the smallest of the three candidates on which the sampled predicate is a function. The `μ`-dependence is confined to the half-integer-`ℓ` class on the sampled cells.
+Minimal missing information, scoped exactly: `ORIGINAL` insufficient (BO-2); `ORIGINAL + λ` insufficient; `ORIGINAL + ℓ(ℓ+1)` an equivalent relabelling, therefore insufficient; `ORIGINAL + (λ, μ)` the smallest **of the three tested candidate signatures** on which the predicate is a function across the 18 sampled cells. This is **not** promoted to a globally minimal or universally sufficient signature, to "λ and μ always determine `G⁰`", or to "no other hidden coordinate exists".
+
+**Accessory-parameter scope.** The only observed within-λ predicate split in the pooled sample occurs at `ℓ = ½` (`λ = 3/8`). No universal claim is made that μ can affect the predicate only in half-integer-ℓ classes; `λ = −1` and `λ = 3` currently have only one sampled μ value, so the absence of a split there is not evidence of μ-independence.
+
+```text
+ONLY_OBSERVED_SPLIT_AT_HALF_INTEGER   !=   MU_DEPENDENCE_ONLY_AT_HALF_INTEGER
+MINIMAL_AMONG_TESTED_CANDIDATES        !=   UNIVERSALLY_MINIMAL_SUFFICIENT_SIGNATURE
+```
 
 **Not claimed:** `LAMBDA_SUFFICIENT` on any class; universal sufficiency of any signature; anything about `n ≠ 3`.
 
@@ -99,9 +107,9 @@ Minimal missing information on the sampled cells: `AUGMENTED_LAMBDA` fails; `AUG
 
 BO-2 canonically refuted, not reopened · BO-1 not executed · BO-3 parked (no `n = 4..6`) · Morales-Ramis not applied · no integrability or chaos claim · FTT not required · Burau control only. Provider unchanged (identity/digest parity); K-matrix not re-run for ritual.
 
-## Hostile controls (12, all rejected)
+## Hostile controls (19, all rejected)
 
-post-hoc cell · `λ` changed on a "same-λ" row · faked split by resealing a predicate · BO-2 reopened · `n = 4` added · `LAMBDA_SUFFICIENT` claimed · Morales-Ruiz upgraded · `ℓ` conflated with `n` · provider identity drift · provider input script mutated (d7) with log/results unchanged · `SOURCE_SIGNATURE` changed on a cell · Morales-Ramis applied. The validator also replays the preregistration (bound to its commit blob), regenerates the provider script, rebuilds every cell from the digest-bound log and recomputes the adjudication.
+post-hoc cell · `λ` changed on a "same-λ" row · faked split by resealing a predicate · BO-2 reopened · `n = 4` added · `LAMBDA_SUFFICIENT` claimed · Morales-Ruiz upgraded · `ℓ` conflated with `n` · provider identity drift · provider input script mutated (d7) with log/results unchanged · `SOURCE_SIGNATURE` changed on a cell · Morales-Ramis applied · (R1) `pooled_cell_count` 17 / 19, `distinct_lambda_count` 4 / 5 / 7, `distinct_lambdas` omitting `3/8` or lexically misordered/duplicated — each a summary-only edit with the pooled rows unchanged · a universal "μ only for half-integer ℓ" claim. The validator recomputes the pooled cardinalities from the pooled rows and compares both summary surfaces, and also replays the preregistration (bound to its commit blob), regenerates the provider script, rebuilds every cell from the digest-bound log and recomputes the adjudication.
 
 ## Limitations
 

@@ -2,7 +2,7 @@
   "schema_version": "miskatonic.formal-discovery.hvb-01b-hostile-controls.v0.1",
   "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01B",
   "all_rejected": true,
-  "count": 12,
+  "count": 19,
   "results": [
     {
       "id": "B01",
@@ -30,7 +30,8 @@
       "rejected": true,
       "errors": [
         "cell d4 record differs from a rebuild from the provider log",
-        "adjudication field same_lambda_same_source_different_mu_different_predicate differs from recomputation"
+        "adjudication field same_lambda_same_source_different_mu_different_predicate differs from recomputation",
+        "adjudication field mu_dependence_scope differs from recomputation"
       ]
     },
     {
@@ -106,6 +107,72 @@
       "rejected": true,
       "errors": [
         "authority block altered"
+      ]
+    },
+    {
+      "id": "B13",
+      "pattern": "R1: pooled_cell_count = 17 claimed while the pooled rows are unchanged",
+      "rejected": true,
+      "errors": [
+        "adjudication field pooled_summary differs from recomputation",
+        "adjudication: pooled_cell_count = 17 differs from recomputation 18",
+        "result: pooled_cell_count = 17 differs from recomputation 18"
+      ]
+    },
+    {
+      "id": "B14",
+      "pattern": "R1: distinct_lambda_count = 5 claimed while the rows contain six exact lambda values",
+      "rejected": true,
+      "errors": [
+        "adjudication field pooled_summary differs from recomputation",
+        "adjudication: distinct_lambda_count = 5 differs from recomputation 6",
+        "result: distinct_lambda_count = 5 differs from recomputation 6"
+      ]
+    },
+    {
+      "id": "B15",
+      "pattern": "R1: distinct_lambdas omits 3/8",
+      "rejected": true,
+      "errors": [
+        "adjudication field pooled_summary differs from recomputation",
+        "adjudication: distinct_lambdas = ['-1', '0', '1', '2', '3'] differs from recomputation ['-1', '0', '3/8', '1', '2', '3']",
+        "result: distinct_lambdas = ['-1', '0', '1', '2', '3'] differs from recomputation ['-1', '0', '3/8', '1', '2', '3']"
+      ]
+    },
+    {
+      "id": "B16",
+      "pattern": "R1: universal 'mu dependence only for half-integer ell' claim",
+      "rejected": true,
+      "errors": [
+        "result: forbidden universal claim 'mu dependence only for half-integer ell'"
+      ]
+    },
+    {
+      "id": "B17",
+      "pattern": "R1: pooled_cell_count = 19 / distinct_lambda_count = 7 (summary-only edit)",
+      "rejected": true,
+      "errors": [
+        "result: pooled_cell_count = 19 differs from recomputation 18",
+        "result: distinct_lambda_count = 7 differs from recomputation 6"
+      ]
+    },
+    {
+      "id": "B18",
+      "pattern": "R1: distinct_lambda_count = 4 (summary-only edit, adjudication surface)",
+      "rejected": true,
+      "errors": [
+        "adjudication field pooled_summary differs from recomputation",
+        "adjudication: distinct_lambda_count = 4 differs from recomputation 6"
+      ]
+    },
+    {
+      "id": "B19",
+      "pattern": "R1: distinct_lambdas misordered lexically / duplicated",
+      "rejected": true,
+      "errors": [
+        "adjudication field pooled_summary differs from recomputation",
+        "adjudication: distinct_lambdas = ['-1', '0', '1', '2', '3', '3/8', '3/8'] differs from recomputation ['-1', '0', '3/8', '1', '2', '3']",
+        "result: distinct_lambdas = ['-1', '0', '1', '2', '3', '3/8', '3/8'] differs from recomputation ['-1', '0', '3/8', '1', '2', '3']"
       ]
     }
   ]

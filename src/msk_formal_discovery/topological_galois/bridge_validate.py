@@ -102,6 +102,38 @@ def validate(base: Path = EXPERIMENT_DIR, check_git: bool = True) -> List[str]:
     if len(cells["cells"]) != len(pre["cells"]):
         errors.append("not every preregistered cell is reported (selective reporting)")
 
+    # 3a. R1: execution-edge binding for the target cells — the committed input script must be exactly the script
+    #     regenerated from the preregistration, and its digest must be the one the cell results bind.
+    macp = base / "cells" / "target_cells.mac"
+    if not macp.exists():
+        errors.append("target provider script missing")
+    else:
+        committed_mac = macp.read_text(encoding="utf-8")
+        if committed_mac != br.cell_script(pre["cells"]):
+            errors.append("target provider script differs from cell_script(preregistration cells): input binding broken")
+        if br.sha256(committed_mac.encode("utf-8")) != cells.get("script_digest"):
+            errors.append("target provider script digest differs from the cell-results binding")
+
+    # 3b. R1: provider-qualification binding — regenerate the K script, bind both digests, and rebuild the K matrix
+    #     from the committed log; the rebuilt id / expected / verdict / pass / qualified must match exactly.
+    kmac, klog = base / "provider" / "k_controls.mac", base / "provider" / "k_controls.log"
+    if not kmac.exists() or not klog.exists():
+        errors.append("provider K-control script or log missing")
+    else:
+        kmac_text, klog_text = kmac.read_text(encoding="utf-8"), klog.read_text(encoding="utf-8")
+        if kmac_text != br.k_script():
+            errors.append("K-control script differs from k_script(): provider input binding broken")
+        if br.sha256(kmac_text.encode("utf-8")) != pq.get("k_control_script_digest"):
+            errors.append("K-control script digest differs from the provider-qualification binding")
+        if br.sha256(klog_text.encode("utf-8")) != pq.get("k_control_log_digest"):
+            errors.append("K-control log digest differs from the provider-qualification binding")
+        rebuilt_k = br.reconstruct_k_matrix(klog_text)
+        committed_rows = [{k: r.get(k) for k in ("id", "expected_verdict", "provider_verdict", "pass")} for r in pq.get("rows", [])]
+        if committed_rows != rebuilt_k["rows"]:
+            errors.append("provider K matrix (id/expected/verdict/pass) differs from a rebuild from the committed log")
+        if pq.get("qualified") is not (rebuilt_k["qualified_from_rows"] and pq.get("implementation_sha256_observed") == pq.get("implementation_sha256_recorded")):
+            errors.append("provider 'qualified' flag is not what the reconstructed K matrix and digest comparison give")
+
     # 3. cell records rebuilt from the saved provider log
     logp = base / "cells" / "target_cells.log"
     if not logp.exists():
@@ -111,8 +143,10 @@ def validate(base: Path = EXPERIMENT_DIR, check_git: bool = True) -> List[str]:
             errors.append("provider log digest differs from the cell-results binding")
         rebuilt = br.reclassify_from_log(pre, base / "cells")
         for a, b in zip(rebuilt["cells"], cells["cells"]):
-            keys = ("cell", "mu", "lambda", "provider_verdict_original_form", "provider_verdict_reduced_form", "provider_output_digest", "ABELIAN_IDENTITY_COMPONENT", "rule")
-            if any(a.get(k) != b.get(k) for k in keys):
+            # R1: the ENTIRE rebuilt record (verdicts, digests, predicate, rule and all evidence) must match; the exact
+            # engine assigns its auxiliary symbols deterministically, so evidence strings replay byte-for-byte.
+            extra = {"SOURCE_SIGNATURE", "claimed_inferences"}
+            if {k: v for k, v in b.items() if k not in extra} != a:
                 errors.append(f"cell {b['cell']} record differs from a rebuild from the provider log")
 
     # 4. rule discipline
@@ -286,6 +320,48 @@ def _h15(dst):
 @hostile("H16", "nonabelian G^0 converted into a nonintegrability / Morales-Ramis claim")
 def _h16(dst):
     _edit(dst / "result.v0.1.json", lambda d: d.update({"MORALES_RAMIS": "APPLIED", "NONINTEGRABILITY_CLAIM": "H_3 is nonintegrable"}))
+
+
+@hostile("H17", "R1: target_cells.mac mutated so one RESULT_cN tag runs a different equation; preregistration, log and cell-results unchanged")
+def _h17(dst):
+    p = dst / "cells" / "target_cells.mac"
+    t = p.read_text(encoding="utf-8")
+    assert "RESULT_c5_orig" in t
+    lines = t.split("\n")
+    for i, ln in enumerate(lines):
+        if ln.startswith('print("RESULT_c5_orig"'):
+            lines[i] = ln.replace("+(2*x)*y=0", "+(3*x)*y=0") if "+(2*x)*y=0" in ln else ln.replace("*y=0", "*y+1=0")
+            break
+    p.write_text("\n".join(lines), encoding="utf-8")
+
+
+@hostile("H18", "R1: modified K-control script with unchanged qualification and log")
+def _h18(dst):
+    p = dst / "provider" / "k_controls.mac"
+    p.write_text(p.read_text(encoding="utf-8").replace("'diff(y,x,2)=x*y", "'diff(y,x,2)=x^2*y"), encoding="utf-8")
+
+
+@hostile("H19", "R1: modified K-control log")
+def _h19(dst):
+    p = dst / "provider" / "k_controls.log"
+    p.write_text(p.read_text(encoding="utf-8").replace("RESULT_K4a nil", "RESULT_K4a [y = x]"), encoding="utf-8")
+
+
+@hostile("H20", "R1: modified provider verdict row")
+def _h20(dst):
+    def f(d):
+        row = next(r for r in d["rows"] if r["id"] == "K4a")
+        row["provider_verdict"], row["expected_verdict"] = "LIOUVILLIAN_SOLUTIONS_RETURNED", "LIOUVILLIAN_SOLUTIONS_RETURNED"
+    _edit(dst / "provider-qualification.v0.1.json", f)
+
+
+@hostile("H21", "R1: qualified=true with a failed reconstructed control")
+def _h21(dst):
+    def f(d):
+        row = next(r for r in d["rows"] if r["id"] == "K3a")
+        row["expected_verdict"], row["pass"] = "NO_LIOUVILLIAN_SOLUTION", False
+        d["qualified"] = True
+    _edit(dst / "provider-qualification.v0.1.json", f)
 
 
 def run_hostile(base: Path, tmp: Path) -> List[Dict[str, Any]]:

@@ -137,10 +137,10 @@ def test_committed_package_validates():
 
 def test_all_hostile_controls_rejected(pkg, tmp_path):
     results = bv.run_hostile(BASE, tmp_path)
-    assert len(results) == 16
+    assert len(results) == 21
     assert all(r["rejected"] for r in results), [r["id"] for r in results if not r["rejected"]]
     committed = pkg["hostile-controls.v0.1.json"]
-    assert committed["all_rejected"] and committed["count"] == 16
+    assert committed["all_rejected"] and committed["count"] == 21
 
 
 def test_post_hoc_grid_edit_is_detected(tmp_path):
@@ -153,3 +153,45 @@ def test_post_hoc_grid_edit_is_detected(tmp_path):
     p.write_text(json.dumps(d))
     errs = bv.validate(dst, check_git=False)
     assert any("preregistration differs" in e for e in errs)
+
+
+# --- R1: provider input-to-output replay binding --------------------------------------------------------------
+def test_r1_target_script_regenerates_and_binds(pkg):
+    pre, cells = pkg["preregistration.v0.1.json"], pkg["cell-results.v0.1.json"]
+    mac = (BASE / "cells" / "target_cells.mac").read_text(encoding="utf-8")
+    assert mac == br.cell_script(pre["cells"])
+    assert br.sha256(mac.encode()) == cells["script_digest"]
+    assert br.sha256((BASE / "cells" / "target_cells.log").read_bytes()) == cells["log_digest"]
+
+
+def test_r1_k_script_and_log_bind_and_k_matrix_reconstructs(pkg):
+    pq = pkg["provider-qualification.v0.1.json"]
+    kmac = (BASE / "provider" / "k_controls.mac").read_text(encoding="utf-8")
+    klog = (BASE / "provider" / "k_controls.log").read_text(encoding="utf-8")
+    assert kmac == br.k_script() and br.sha256(kmac.encode()) == pq["k_control_script_digest"] and br.sha256(klog.encode()) == pq["k_control_log_digest"]
+    rebuilt = br.reconstruct_k_matrix(klog)
+    assert rebuilt["rows"] == [{k: r[k] for k in ("id", "expected_verdict", "provider_verdict", "pass")} for r in pq["rows"]]
+    assert rebuilt["qualified_from_rows"] and pq["qualified"]
+
+
+def test_r1_mutated_target_script_is_rejected_with_everything_else_unchanged(tmp_path):
+    dst = tmp_path / "pkg"
+    shutil.copytree(BASE, dst)
+    p = dst / "cells" / "target_cells.mac"
+    t = p.read_text(encoding="utf-8")
+    p.write_text(t.replace('print("RESULT_c5_orig", kovacicODE((-2*x^3 + 2*x)*\'diff(y,x,2)+(1 - 3*x^2)*\'diff(y,x)+(2*x)*y=0',
+                           'print("RESULT_c5_orig", kovacicODE((-2*x^3 + 2*x)*\'diff(y,x,2)+(1 - 3*x^2)*\'diff(y,x)+(3*x)*y=0'), encoding="utf-8")
+    assert p.read_text(encoding="utf-8") != t
+    errs = bv.validate(dst, check_git=False)
+    assert any("input binding broken" in e for e in errs) and any("script digest differs" in e for e in errs), errs
+
+
+def test_r1_hostile_provider_controls_present_and_rejected(pkg):
+    h = pkg["hostile-controls.v0.1.json"]
+    ids = {r["id"]: r for r in h["results"]}
+    assert h["count"] == 21 and h["all_rejected"]
+    assert "input binding broken" in ids["H17"]["errors"][0]
+    assert any("K-control script differs" in e for e in ids["H18"]["errors"])
+    assert any("K-control log digest" in e for e in ids["H19"]["errors"])
+    assert any("K matrix" in e for e in ids["H20"]["errors"])
+    assert any("K matrix" in e or "qualified" in e for e in ids["H21"]["errors"])

@@ -2,7 +2,7 @@
   "schema_version": "miskatonic.formal-discovery.hvb-hostile-controls.v0.1",
   "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01A",
   "all_rejected": true,
-  "count": 16,
+  "count": 21,
   "results": [
     {
       "id": "H01",
@@ -10,7 +10,8 @@
       "rejected": true,
       "errors": [
         "cell c5 carries SOURCE_SIGNATURE 000000000000 != a8407db0c67a",
-        "cell c5 equation or coupling differs from the preregistration"
+        "cell c5 equation or coupling differs from the preregistration",
+        "cell c5 record differs from a rebuild from the provider log"
       ]
     },
     {
@@ -43,7 +44,8 @@
       "rejected": true,
       "errors": [
         "preregistration differs from a fresh replay (frozen member / grid / equations / SOURCE_SIGNATURE)",
-        "not every preregistered cell is reported (selective reporting)"
+        "not every preregistered cell is reported (selective reporting)",
+        "target provider script differs from cell_script(preregistration cells): input binding broken"
       ]
     },
     {
@@ -141,6 +143,50 @@
       "errors": [
         "authority block altered",
         "nonintegrability claimed from a nonabelian identity component"
+      ]
+    },
+    {
+      "id": "H17",
+      "pattern": "R1: target_cells.mac mutated so one RESULT_cN tag runs a different equation; preregistration, log and cell-results unchanged",
+      "rejected": true,
+      "errors": [
+        "target provider script differs from cell_script(preregistration cells): input binding broken",
+        "target provider script digest differs from the cell-results binding"
+      ]
+    },
+    {
+      "id": "H18",
+      "pattern": "R1: modified K-control script with unchanged qualification and log",
+      "rejected": true,
+      "errors": [
+        "K-control script differs from k_script(): provider input binding broken",
+        "K-control script digest differs from the provider-qualification binding"
+      ]
+    },
+    {
+      "id": "H19",
+      "pattern": "R1: modified K-control log",
+      "rejected": true,
+      "errors": [
+        "K-control log digest differs from the provider-qualification binding",
+        "provider K matrix (id/expected/verdict/pass) differs from a rebuild from the committed log",
+        "provider 'qualified' flag is not what the reconstructed K matrix and digest comparison give"
+      ]
+    },
+    {
+      "id": "H20",
+      "pattern": "R1: modified provider verdict row",
+      "rejected": true,
+      "errors": [
+        "provider K matrix (id/expected/verdict/pass) differs from a rebuild from the committed log"
+      ]
+    },
+    {
+      "id": "H21",
+      "pattern": "R1: qualified=true with a failed reconstructed control",
+      "rejected": true,
+      "errors": [
+        "provider K matrix (id/expected/verdict/pass) differs from a rebuild from the committed log"
       ]
     }
   ]

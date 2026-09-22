@@ -177,15 +177,16 @@ class ExactAlgebra:
 
     def lift(self, e):
         """Replace integrals by J symbols (integrands lifted bottom-up) and sqrt(b) by s symbols."""
-        for I in sorted(e.atoms(sp.Integral), key=lambda I: sp.count_ops(I)):
+        for I in sorted(e.atoms(sp.Integral), key=lambda I: (sp.count_ops(I), str(I))):   # deterministic
             if I not in self.J:
                 sym = sp.Symbol(f"J{len(self.J) + 1}")
                 self.J[I] = (sym, None)                  # placeholder: the integrand is strictly smaller, so this terminates
                 self.J[I] = (sym, self.lift(I.function))
         e = e.xreplace({I: sym for I, (sym, _) in self.J.items()})
         rep = {}
-        for p in e.atoms(sp.Pow):
-            if p.exp.is_Rational and p.exp.q == 2:
+        # deterministic symbol assignment: radicands registered in sorted string order (set iteration order is not stable)
+        for p in sorted((p for p in e.atoms(sp.Pow) if p.exp.is_Rational and p.exp.q == 2), key=lambda p: str(sp.expand(p.base))):
+            if True:
                 base = sp.expand(p.base)
                 unit = sp.Integer(1)
                 # branch canonicalisation: sqrt(b) = i*sqrt(-b) when b has negative leading coefficient in x
@@ -349,6 +350,16 @@ def k_script() -> str:
     for tag, _, eq, _, _ in K_CONTROLS:
         lines.append(f'print("RESULT_{tag}", kovacicODE({eq}, y, x))$')
     return "\n".join(lines) + "\n"
+
+
+def reconstruct_k_matrix(log: str) -> Dict[str, Any]:
+    """Rebuild id / expected_verdict / provider_verdict / pass / qualified from a committed K-control log (no Maxima run)."""
+    results = parse_results(log)
+    rows = []
+    for tag, _desc, _eq, expected, _note in K_CONTROLS:
+        got = verdict_for(results.get(tag, ""), block_for(log, tag))
+        rows.append({"id": tag, "expected_verdict": expected, "provider_verdict": got, "pass": got == expected})
+    return {"rows": rows, "qualified_from_rows": all(r["pass"] for r in rows)}
 
 
 def provider_qualification(workdir: Path) -> Dict[str, Any]:

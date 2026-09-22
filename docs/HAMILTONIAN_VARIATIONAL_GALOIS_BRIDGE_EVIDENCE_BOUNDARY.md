@@ -141,7 +141,7 @@ docs/HAMILTONIAN_VARIATIONAL_BRIDGE_01A.md
 experiments/hamiltonian-variational-bridge-01a/
 ```
 
-Outcome (proposed, pending review): `BO2 = REFUTED`,
+Canonical outcome: `BO2 = REFUTED`,
 `SOURCE_DATA_ALONE_INSUFFICIENT_FOR_TARGET_PREDICATE` — identical source
 data, differing `ABELIAN_IDENTITY_COMPONENT(G_diff)`. Morales-Ramis was not
 applied; no integrability or chaos statement was made.
@@ -158,10 +158,42 @@ docs/HAMILTONIAN_VARIATIONAL_BRIDGE_01B.md
 experiments/hamiltonian-variational-bridge-01b/
 ```
 
-Outcome (proposed, pending review): `LAME_PARAMETER_MAP_ESTABLISHED` +
+Canonical outcome: `LAME_PARAMETER_MAP_ESTABLISHED` +
 `LAMBDA_ALONE_INSUFFICIENT` — at `ℓ = ½` the predicate splits on `μ`, as the
 bound Brioschi–Halphen–Crawford characterization predicts.
 
 ```text
 POLYNOMIAL_DEGREE_n != LAME_INDEX_ell
 ```
+
+## Representation diagnostics before budget escalation
+
+The M23 method-transfer intake adds a workflow rule for future exact-provider stalls.
+
+When a higher-degree algebraic NVE becomes computationally intractable, the default successor should first ask whether the equation is presented in a poor exact representation before merely increasing runtime.
+
+Candidate diagnostic order:
+
+```text
+1. preserve the exact scientific target;
+2. inspect factorization and symmetry of the rational coefficients;
+3. test exact singularity-adapted or symmetry-adapted coordinates;
+4. prove the transformation preserves the relevant differential-Galois identity-component predicate;
+5. compare complexity under the transformed representation;
+6. only then choose between:
+     REPRESENTATION_DIAGNOSTIC_FIRST
+     ALTERNATE_PROVIDER_QUALIFICATION_FIRST
+     PROVIDER_BUDGET_ESCALATION_FIRST
+```
+
+Candidate invariants:
+
+```text
+MORE_COMPUTE != BETTER_REPRESENTATION
+MORE_PRECISION != BETTER_COORDINATES
+REPRESENTATION_DIAGNOSTIC != RESULT_REINTERPRETATION
+COORDINATE_CHANGE != GALOIS_EQUIVALENCE_WITHOUT_PROOF
+```
+
+This rule is methodological only. It does not authorize a new provider run, increase a timeout, or change a frozen experiment.
+

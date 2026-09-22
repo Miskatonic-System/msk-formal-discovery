@@ -1,0 +1,22 @@
+display2d:false$
+load(kovacicODE)$
+print("RESULT_d1_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(x - 1)*y=0, y, x))$
+print("RESULT_d1_red", kovacicODE('diff(y,x,2)=((5*x^4 - 8*x^3 - 14*x^2 + 8*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$
+print("RESULT_d2_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(x + 1/2)*y=0, y, x))$
+print("RESULT_d2_red", kovacicODE('diff(y,x,2)=((5*x^4 + 4*x^3 - 14*x^2 - 4*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$
+print("RESULT_d3_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(x + 3)*y=0, y, x))$
+print("RESULT_d3_red", kovacicODE('diff(y,x,2)=((5*x^4 + 24*x^3 - 14*x^2 - 24*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$
+print("RESULT_d4_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(2*x - 1)*y=0, y, x))$
+print("RESULT_d4_red", kovacicODE('diff(y,x,2)=((13*x^4 - 8*x^3 - 22*x^2 + 8*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$
+print("RESULT_d5_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(2*x + 1/2)*y=0, y, x))$
+print("RESULT_d5_red", kovacicODE('diff(y,x,2)=((13*x^4 + 4*x^3 - 22*x^2 - 4*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$
+print("RESULT_d6_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(2*x + 3)*y=0, y, x))$
+print("RESULT_d6_red", kovacicODE('diff(y,x,2)=((13*x^4 + 24*x^3 - 22*x^2 - 24*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$
+print("RESULT_d7_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(3*x/8)*y=0, y, x))$
+print("RESULT_d7_red", kovacicODE('diff(y,x,2)=((-9*x^2 - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$
+print("RESULT_d8_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(3*x/8 + 1/2)*y=0, y, x))$
+print("RESULT_d8_red", kovacicODE('diff(y,x,2)=((4*x^3 - 9*x^2 - 4*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$
+print("RESULT_d9_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(3*x/8 - 1)*y=0, y, x))$
+print("RESULT_d9_red", kovacicODE('diff(y,x,2)=((-8*x^3 - 9*x^2 + 8*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$
+print("RESULT_d10_orig", kovacicODE((-2*x^3 + 2*x)*'diff(y,x,2)+(1 - 3*x^2)*'diff(y,x)+(3*x/8 + 2)*y=0, y, x))$
+print("RESULT_d10_red", kovacicODE('diff(y,x,2)=((16*x^3 - 9*x^2 - 16*x - 3)/(16*x^6 - 32*x^4 + 16*x^2))*y, y, x))$

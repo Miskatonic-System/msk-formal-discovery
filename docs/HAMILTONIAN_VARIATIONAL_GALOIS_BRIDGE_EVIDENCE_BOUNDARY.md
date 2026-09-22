@@ -145,3 +145,23 @@ Outcome (proposed, pending review): `BO2 = REFUTED`,
 `SOURCE_DATA_ALONE_INSUFFICIENT_FOR_TARGET_PREDICATE` — identical source
 data, differing `ABELIAN_IDENTITY_COMPONENT(G_diff)`. Morales-Ramis was not
 applied; no integrability or chaos statement was made.
+
+
+## Executed: minimal missing-information qualification (01B)
+
+`WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01B` established the exact Lamé
+parameter map for the frozen member (`q = −2℘`, `g₂ = 1`, `g₃ = 0`,
+`ℓ(ℓ+1) = 2λ`, `B = −μ`) and tested the accessory parameter `μ` at fixed `λ`:
+
+```text
+docs/HAMILTONIAN_VARIATIONAL_BRIDGE_01B.md
+experiments/hamiltonian-variational-bridge-01b/
+```
+
+Outcome (proposed, pending review): `LAME_PARAMETER_MAP_ESTABLISHED` +
+`LAMBDA_ALONE_INSUFFICIENT` — at `ℓ = ½` the predicate splits on `μ`, as the
+bound Brioschi–Halphen–Crawford characterization predicts.
+
+```text
+POLYNOMIAL_DEGREE_n != LAME_INDEX_ell
+```

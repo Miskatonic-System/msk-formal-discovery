@@ -1,0 +1,112 @@
+{
+  "schema_version": "miskatonic.formal-discovery.hvb-01b-hostile-controls.v0.1",
+  "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01B",
+  "all_rejected": true,
+  "count": 12,
+  "results": [
+    {
+      "id": "B01",
+      "pattern": "cell added after results were inspected",
+      "rejected": true,
+      "errors": [
+        "preregistration differs from a fresh replay (Lame map / grid / equations / SOURCE_SIGNATURE / phase C)",
+        "provider script differs from cell_script(preregistration cells): input binding broken",
+        "not every preregistered cell is reported"
+      ]
+    },
+    {
+      "id": "B02",
+      "pattern": "lambda changed on a 'same-lambda' row",
+      "rejected": true,
+      "errors": [
+        "cell d8 record differs from a rebuild from the provider log",
+        "cell d8 not preregistered or altered",
+        "adjudication field same_lambda_same_source_different_mu_different_predicate differs from recomputation"
+      ]
+    },
+    {
+      "id": "B03",
+      "pattern": "split faked by resealing a predicate",
+      "rejected": true,
+      "errors": [
+        "cell d4 record differs from a rebuild from the provider log",
+        "adjudication field same_lambda_same_source_different_mu_different_predicate differs from recomputation"
+      ]
+    },
+    {
+      "id": "B04",
+      "pattern": "BO-2 reopened in the result",
+      "rejected": true,
+      "errors": [
+        "BO-2 status altered"
+      ]
+    },
+    {
+      "id": "B05",
+      "pattern": "n = 4 added",
+      "rejected": true,
+      "errors": [
+        "BO-3 / degree firewall breached"
+      ]
+    },
+    {
+      "id": "B06",
+      "pattern": "LAMBDA_SUFFICIENT claimed from the finite grid",
+      "rejected": true,
+      "errors": [
+        "sufficiency claimed from a finite grid"
+      ]
+    },
+    {
+      "id": "B07",
+      "pattern": "Morales-Ruiz 1999 upgraded to BOUND",
+      "rejected": true,
+      "errors": [
+        "Morales-Ruiz 1999 upgraded"
+      ]
+    },
+    {
+      "id": "B08",
+      "pattern": "Lame index ell conflated with polynomial degree n",
+      "rejected": true,
+      "errors": [
+        "preregistration differs from a fresh replay (Lame map / grid / equations / SOURCE_SIGNATURE / phase C)",
+        "cell d1: ell conflated with n"
+      ]
+    },
+    {
+      "id": "B09",
+      "pattern": "provider identity drifted without requalification",
+      "rejected": true,
+      "errors": [
+        "PROVIDER_REQUALIFICATION_REQUIRED: provider identity differs from 01A",
+        "preregistration differs from a fresh replay (Lame map / grid / equations / SOURCE_SIGNATURE / phase C)"
+      ]
+    },
+    {
+      "id": "B10",
+      "pattern": "provider input script mutated (d7 runs a different equation), log and results unchanged",
+      "rejected": true,
+      "errors": [
+        "provider script differs from cell_script(preregistration cells): input binding broken",
+        "provider script/log digest differs from the cell-results binding"
+      ]
+    },
+    {
+      "id": "B11",
+      "pattern": "SOURCE_SIGNATURE differs from 01A on one cell (source recomputed)",
+      "rejected": true,
+      "errors": [
+        "cell d7 carries a different SOURCE_SIGNATURE"
+      ]
+    },
+    {
+      "id": "B12",
+      "pattern": "Morales-Ramis applied",
+      "rejected": true,
+      "errors": [
+        "authority block altered"
+      ]
+    }
+  ]
+}

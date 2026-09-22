@@ -1,0 +1,87 @@
+{
+  "schema_version": "miskatonic.formal-discovery.hvb-01b-result.v0.1",
+  "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01B",
+  "canonical_start": "11c6e8cda42eb0b23c480a346f35c1bfe337a0fe",
+  "preregistration_commit": "752e897d37d6c12ed3ed85819082e9cca3e87595",
+  "disposition": "LAME_PARAMETER_MAP_ESTABLISHED + LAMBDA_ALONE_INSUFFICIENT",
+  "disposition_status": "PROPOSED_BY_EXECUTING_AGENT_PENDING_INDEPENDENT_REVIEW",
+  "phase_a": "LAME_PARAMETER_MAP_ESTABLISHED (q = -2 wp, g2 = 1, g3 = 0; ell(ell+1) = 2 lambda, B = -mu; algebraic NVE == Lame algebraic form, factor 1)",
+  "phase_b": {
+    "LAME_CLASSIFICATION_AUTHORITY": "PARTIAL",
+    "bound": [
+      "src-hvb-maier-2002",
+      "src-hvb-chou-wang-wu-2024"
+    ],
+    "unavailable_not_upgraded": [
+      "Morales-Ruiz 1999"
+    ]
+  },
+  "phase_c": {
+    "question_1": "lambda / ell(ell+1) supported as load-bearing on all sampled cells (01A + 01B: 18 cells, 4 lambda classes, predicate constant across mu except at ell = 1/2)",
+    "question_2": "mu is NOT merely accessory: at lambda = 3/8 it changes the predicate"
+  },
+  "verdict_phase_d": "LAMBDA_ALONE_INSUFFICIENT",
+  "splits": [
+    {
+      "lambda": "3/8",
+      "ell": {
+        "ell": "1/2",
+        "ell_kind": "HALF_INTEGER",
+        "two_lambda": "3/4"
+      },
+      "TRUE": {
+        "cell": "d7",
+        "mu": "0",
+        "lambda": "3/8",
+        "predicate": "TRUE",
+        "origin": "01B"
+      },
+      "FALSE": {
+        "cell": "d8",
+        "mu": "1/2",
+        "lambda": "3/8",
+        "predicate": "FALSE",
+        "origin": "01B"
+      }
+    }
+  ],
+  "outcomes_01b": {
+    "d1": "TRUE",
+    "d2": "TRUE",
+    "d3": "TRUE",
+    "d4": "FALSE",
+    "d5": "FALSE",
+    "d6": "FALSE",
+    "d7": "TRUE",
+    "d8": "FALSE",
+    "d9": "FALSE",
+    "d10": "FALSE"
+  },
+  "minimal_missing_information": "AUGMENTED_LAMBDA is insufficient; AUGMENTED_FULL = ORIGINAL + (lambda, mu) is the smallest of the three candidate signatures on which the sampled predicate is a function (18 sampled cells). The dependence on mu is confined, on the sampled cells, to the half-integer-ell class, matching the bound Brioschi-Halphen-Crawford characterization (finite projective monodromy iff p_0(B) = 0, i.e. B = 0).",
+  "BO2": "CANONICALLY_REFUTED_NOT_REOPENED",
+  "BO1": "NOT_EXECUTED",
+  "BO3": "PARKED",
+  "degrees_executed": [
+    3
+  ],
+  "MORALES_RAMIS": "NOT_APPLIED",
+  "INTEGRABILITY": "NO_NEW_CLAIM",
+  "CHAOS": "NO_CLAIM",
+  "FTT": "NOT_REQUIRED",
+  "BURAU": "CONTROL_ONLY",
+  "LAMBDA_SUFFICIENT": null,
+  "UNIVERSAL_SUFFICIENCY_CLAIMED": false,
+  "claimed_inferences": [],
+  "claim_ceiling": [
+    "finite-grid statements about the frozen n = 3 member only",
+    "TRUE/FALSE cells rest on the same rules and provider as 01A (FALSE: provider completeness, case 1 independently excluded)",
+    "the integer-ell Liouvillian expectation and the 'non-finite half-integer => SL_2' expectation are NOT source-bound; the provider decided them on the sampled cells"
+  ],
+  "permanent": [
+    "POLYNOMIAL_DEGREE_n != LAME_INDEX_ell",
+    "LAMBDA_ALONE_INSUFFICIENT (sampled: ell = 1/2 splits on mu)",
+    "NOT_FALSIFIED != SUFFICIENT",
+    "NONABELIAN_G0 != CHAOS",
+    "SOURCE_GROUP_ACTION != TARGET_MONODROMY_REPRESENTATION"
+  ]
+}

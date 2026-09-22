@@ -1,0 +1,691 @@
+batch("/home/kowen9024/repos/msk-formal-discovery-hvb-01b/experiments/hamiltonian-variational-bridge-01b/cells/target_cells.mac")
+display2d:false
+load(kovacicODE)
+print("RESULT_d1_orig",
+      kovacicODE((-2*x^3+2*x)*'diff(y,x,2)+(1-3*x^2)*'diff(y,x)+(x-1)*y = 0,y,
+                 x))
+equation:  
+          (2*_x-2*_x^3)*'diff(_y,_x,2)+(1-3*_x^2)*'diff(_y,_x,1)+(_x-1)*_y = 0
+           , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 5*_x^4-8*_x^3-14*_x^2+8*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 5*_x^4-8*_x^3-14*_x^2+8*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 5*_x^4-8*_x^3-14*_x^2+8*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+finding sol2 
+expression: 
+           (%e^-((sqrt(3)*'integrate((sqrt(1-_x)*sqrt(_x+1))
+                                      /(sqrt(_x)*(_x^3+2*_x^2-_x-2)),_x))
+               /sqrt(2))
+            *sqrt(_x+2))
+            /2^(1/4) 
+expression: 
+           (%e^-((sqrt(3)*'integrate((sqrt(1-_x)*sqrt(_x+1))
+                                      /(sqrt(_x)*(_x^3+2*_x^2-_x-2)),_x))
+               /sqrt(2))
+            *sqrt(_x+2))
+            /2^(1/4) 
+expression: 
+           %e^(sqrt(2)*sqrt(3)
+                      *'integrate((sqrt(1-_x)*sqrt(_x+1))
+                                   /(sqrt(_x)*(_x^3+2*_x^2-_x-2)),_x))
+            /(sqrt(_x-1)*sqrt(_x)*sqrt(_x+1)*(_x+2)) 
+expression: 
+           (sqrt(2)*%e^(sqrt(2)*sqrt(3)
+                               *'integrate(
+                                (sqrt(1-_x)*sqrt(_x+1))
+                                 /(sqrt(_x)*(_x^3+2*_x^2-_x-2)),_x)
+                       -log(2*_x^3-2*_x)/2))
+            /(_x+2) 
+RESULT_d1_orig 
+              [y = %e^-((sqrt(3)*'integrate(
+                                 (sqrt(1-x)*sqrt(x+1))
+                                  /(sqrt(x)*(x^3+2*x^2-x-2)),x))
+                      /sqrt(2))
+                 *%k2*sqrt(x+2)
+                 *'integrate(%e^(sqrt(2)*sqrt(3)
+                                        *'integrate(
+                                         (sqrt(1-x)*sqrt(x+1))
+                                          /(sqrt(x)*(x^3+2*x^2-x-2)),x))
+                              /(sqrt(x-1)*sqrt(x)*sqrt(x+1)*(x+2)),x)
+                 +%e^-((sqrt(3)*'integrate(
+                                (sqrt(1-x)*sqrt(x+1))
+                                 /(sqrt(x)*(x^3+2*x^2-x-2)),x))
+                     /sqrt(2))
+                  *%k1*sqrt(x+2)] 
+print("RESULT_d1_red",
+      kovacicODE('diff(y,x,2) = ((5*x^4-8*x^3+(-14)*x^2+8*x-3)
+                              /(16*x^6-32*x^4+16*x^2))
+                              *y,y,x))
+equation:  
+          'diff(_y,_x,2) = ((5*_x^4-8*_x^3-14*_x^2+8*_x-3)*_y)
+                         /(16*_x^6-32*_x^4+16*_x^2) , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 5*_x^4-8*_x^3-14*_x^2+8*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 5*_x^4-8*_x^3-14*_x^2+8*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 5*_x^4-8*_x^3-14*_x^2+8*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+finding sol2 
+expression: 
+           %e^-((sqrt(3)*'integrate((sqrt(1-_x)*sqrt(_x+1))
+                                     /(sqrt(_x)*(_x^3+2*_x^2-_x-2)),_x))
+              /sqrt(2))
+            *(_x-1)^(1/4)*_x^(1/4)*(_x+1)^(1/4)*sqrt(_x+2) 
+expression: 
+           %e^-((sqrt(3)*'integrate((sqrt(1-_x)*sqrt(_x+1))
+                                     /(sqrt(_x)*(_x^3+2*_x^2-_x-2)),_x))
+              /sqrt(2))
+            *(_x-1)^(1/4)*_x^(1/4)*(_x+1)^(1/4)*sqrt(_x+2) 
+expression: 
+           %e^(sqrt(2)*sqrt(3)
+                      *'integrate((sqrt(1-_x)*sqrt(_x+1))
+                                   /(sqrt(_x)*(_x^3+2*_x^2-_x-2)),_x))
+            /(sqrt(_x-1)*sqrt(_x)*sqrt(_x+1)*(_x+2)) 
+expression: 
+           %e^(sqrt(2)*sqrt(3)
+                      *'integrate((sqrt(1-_x)*sqrt(_x+1))
+                                   /(sqrt(_x)*(_x^3+2*_x^2-_x-2)),_x))
+            /(sqrt(_x-1)*sqrt(_x)*sqrt(_x+1)*(_x+2)) 
+RESULT_d1_red 
+             [y = %e^-((sqrt(3)*'integrate(
+                                (sqrt(1-x)*sqrt(x+1))
+                                 /(sqrt(x)*(x^3+2*x^2-x-2)),x))
+                     /sqrt(2))
+                *%k2*(x-1)^(1/4)*x^(1/4)*(x+1)^(1/4)*sqrt(x+2)
+                *'integrate(%e^(sqrt(2)*sqrt(3)
+                                       *'integrate(
+                                        (sqrt(1-x)*sqrt(x+1))
+                                         /(sqrt(x)*(x^3+2*x^2-x-2)),x))
+                             /(sqrt(x-1)*sqrt(x)*sqrt(x+1)*(x+2)),x)
+                +%e^-((sqrt(3)*'integrate(
+                               (sqrt(1-x)*sqrt(x+1))
+                                /(sqrt(x)*(x^3+2*x^2-x-2)),x))
+                    /sqrt(2))
+                 *%k1*(x-1)^(1/4)*x^(1/4)*(x+1)^(1/4)*sqrt(x+2)] 
+print("RESULT_d2_orig",
+      kovacicODE((-2*x^3+2*x)*'diff(y,x,2)+(1-3*x^2)*'diff(y,x)+(x+1/2)*y = 0,
+                 y,x))
+equation:  
+          (2*_x-2*_x^3)*'diff(_y,_x,2)+(1-3*_x^2)*'diff(_y,_x,1)+(_x+1/2)*_y
+            = 0 , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 5*_x^4+4*_x^3-14*_x^2-4*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 5*_x^4+4*_x^3-14*_x^2-4*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 5*_x^4+4*_x^3-14*_x^2-4*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+finding sol2 
+expression: sqrt(_x-1)/2^(1/4) 
+expression: sqrt(_x-1)/2^(1/4) 
+expression: 1/((_x-1)^(3/2)*sqrt(_x)*sqrt(_x+1)) 
+expression: (sqrt(2)*%e^-(log(2*_x^3-2*_x)/2))/(_x-1) 
+RESULT_d2_orig 
+              [y = %k2*sqrt(x-1)
+                      *'integrate(1/((x-1)^(3/2)*sqrt(x)*sqrt(x+1)),x)
+                 +%k1*sqrt(x-1)] 
+print("RESULT_d2_red",
+      kovacicODE('diff(y,x,2) = ((5*x^4+4*x^3+(-14)*x^2+(-4)*x-3)
+                              /(16*x^6-32*x^4+16*x^2))
+                              *y,y,x))
+equation:  
+          'diff(_y,_x,2) = ((5*_x^4+4*_x^3-14*_x^2-4*_x-3)*_y)
+                         /(16*_x^6-32*_x^4+16*_x^2) , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 5*_x^4+4*_x^3-14*_x^2-4*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 5*_x^4+4*_x^3-14*_x^2-4*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 5*_x^4+4*_x^3-14*_x^2-4*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+finding sol2 
+expression: (_x-1)^(3/4)*_x^(1/4)*(_x+1)^(1/4) 
+expression: (_x-1)^(3/4)*_x^(1/4)*(_x+1)^(1/4) 
+expression: 1/((_x-1)^(3/2)*sqrt(_x)*sqrt(_x+1)) 
+expression: 1/((_x-1)^(3/2)*sqrt(_x)*sqrt(_x+1)) 
+RESULT_d2_red 
+             [y = %k2*(x-1)^(3/4)*x^(1/4)*(x+1)^(1/4)
+                     *'integrate(1/((x-1)^(3/2)*sqrt(x)*sqrt(x+1)),x)
+                +%k1*(x-1)^(3/4)*x^(1/4)*(x+1)^(1/4)] 
+print("RESULT_d3_orig",
+      kovacicODE((-2*x^3+2*x)*'diff(y,x,2)+(1-3*x^2)*'diff(y,x)+(x+3)*y = 0,y,
+                 x))
+equation:  
+          (2*_x-2*_x^3)*'diff(_y,_x,2)+(1-3*_x^2)*'diff(_y,_x,1)+(_x+3)*_y = 0
+           , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 5*_x^4+24*_x^3-14*_x^2-24*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 5*_x^4+24*_x^3-14*_x^2-24*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 5*_x^4+24*_x^3-14*_x^2-24*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+finding sol2 
+expression: 
+           (%e^-((sqrt(3)*sqrt(5)*sqrt(7)
+                         *'integrate((sqrt(_x-1)*sqrt(_x+1))
+                                      /(sqrt(_x)*(_x^3-6*_x^2-_x+6)),_x))
+               /sqrt(2))
+            *sqrt(_x-6))
+            /2^(1/4) 
+expression: 
+           (%e^-((sqrt(3)*sqrt(5)*sqrt(7)
+                         *'integrate((sqrt(_x-1)*sqrt(_x+1))
+                                      /(sqrt(_x)*(_x^3-6*_x^2-_x+6)),_x))
+               /sqrt(2))
+            *sqrt(_x-6))
+            /2^(1/4) 
+expression: 
+           %e^(sqrt(2)*sqrt(3)*sqrt(5)*sqrt(7)
+                      *'integrate((sqrt(_x-1)*sqrt(_x+1))
+                                   /(sqrt(_x)*(_x^3-6*_x^2-_x+6)),_x))
+            /((_x-6)*sqrt(_x-1)*sqrt(_x)*sqrt(_x+1)) 
+expression: 
+           (sqrt(2)*%e^(sqrt(2)*sqrt(3)*sqrt(5)*sqrt(7)
+                               *'integrate(
+                                (sqrt(_x-1)*sqrt(_x+1))
+                                 /(sqrt(_x)*(_x^3-6*_x^2-_x+6)),_x)
+                       -log(2*_x^3-2*_x)/2))
+            /(_x-6) 
+RESULT_d3_orig 
+              [y = %e^-((sqrt(3)*sqrt(5)*sqrt(7)
+                                *'integrate(
+                                 (sqrt(x-1)*sqrt(x+1))
+                                  /(sqrt(x)*(x^3-6*x^2-x+6)),x))
+                      /sqrt(2))
+                 *%k2*sqrt(x-6)
+                 *'integrate(%e^(sqrt(2)*sqrt(3)*sqrt(5)*sqrt(7)
+                                        *'integrate(
+                                         (sqrt(x-1)*sqrt(x+1))
+                                          /(sqrt(x)*(x^3-6*x^2-x+6)),x))
+                              /((x-6)*sqrt(x-1)*sqrt(x)*sqrt(x+1)),x)
+                 +%e^-((sqrt(3)*sqrt(5)*sqrt(7)
+                               *'integrate(
+                                (sqrt(x-1)*sqrt(x+1))
+                                 /(sqrt(x)*(x^3-6*x^2-x+6)),x))
+                     /sqrt(2))
+                  *%k1*sqrt(x-6)] 
+print("RESULT_d3_red",
+      kovacicODE('diff(y,x,2) = ((5*x^4+24*x^3+(-14)*x^2+(-24)*x-3)
+                              /(16*x^6-32*x^4+16*x^2))
+                              *y,y,x))
+equation:  
+          'diff(_y,_x,2) = ((5*_x^4+24*_x^3-14*_x^2-24*_x-3)*_y)
+                         /(16*_x^6-32*_x^4+16*_x^2) , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 5*_x^4+24*_x^3-14*_x^2-24*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 5*_x^4+24*_x^3-14*_x^2-24*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 5*_x^4+24*_x^3-14*_x^2-24*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+finding sol2 
+expression: 
+           %e^-((sqrt(3)*sqrt(5)*sqrt(7)
+                        *'integrate((sqrt(_x-1)*sqrt(_x+1))
+                                     /(sqrt(_x)*(_x^3-6*_x^2-_x+6)),_x))
+              /sqrt(2))
+            *sqrt(_x-6)*(_x-1)^(1/4)*_x^(1/4)*(_x+1)^(1/4) 
+expression: 
+           %e^-((sqrt(3)*sqrt(5)*sqrt(7)
+                        *'integrate((sqrt(_x-1)*sqrt(_x+1))
+                                     /(sqrt(_x)*(_x^3-6*_x^2-_x+6)),_x))
+              /sqrt(2))
+            *sqrt(_x-6)*(_x-1)^(1/4)*_x^(1/4)*(_x+1)^(1/4) 
+expression: 
+           %e^(sqrt(2)*sqrt(3)*sqrt(5)*sqrt(7)
+                      *'integrate((sqrt(_x-1)*sqrt(_x+1))
+                                   /(sqrt(_x)*(_x^3-6*_x^2-_x+6)),_x))
+            /((_x-6)*sqrt(_x-1)*sqrt(_x)*sqrt(_x+1)) 
+expression: 
+           %e^(sqrt(2)*sqrt(3)*sqrt(5)*sqrt(7)
+                      *'integrate((sqrt(_x-1)*sqrt(_x+1))
+                                   /(sqrt(_x)*(_x^3-6*_x^2-_x+6)),_x))
+            /((_x-6)*sqrt(_x-1)*sqrt(_x)*sqrt(_x+1)) 
+RESULT_d3_red 
+             [y = %e^-((sqrt(3)*sqrt(5)*sqrt(7)
+                               *'integrate(
+                                (sqrt(x-1)*sqrt(x+1))
+                                 /(sqrt(x)*(x^3-6*x^2-x+6)),x))
+                     /sqrt(2))
+                *%k2*sqrt(x-6)*(x-1)^(1/4)*x^(1/4)*(x+1)^(1/4)
+                *'integrate(%e^(sqrt(2)*sqrt(3)*sqrt(5)*sqrt(7)
+                                       *'integrate(
+                                        (sqrt(x-1)*sqrt(x+1))
+                                         /(sqrt(x)*(x^3-6*x^2-x+6)),x))
+                             /((x-6)*sqrt(x-1)*sqrt(x)*sqrt(x+1)),x)
+                +%e^-((sqrt(3)*sqrt(5)*sqrt(7)
+                              *'integrate(
+                               (sqrt(x-1)*sqrt(x+1))
+                                /(sqrt(x)*(x^3-6*x^2-x+6)),x))
+                    /sqrt(2))
+                 *%k1*sqrt(x-6)*(x-1)^(1/4)*x^(1/4)*(x+1)^(1/4)] 
+print("RESULT_d4_orig",
+      kovacicODE((-2*x^3+2*x)*'diff(y,x,2)+(1-3*x^2)*'diff(y,x)+(2*x-1)*y = 0,
+                 y,x))
+equation:  
+          (2*_x-2*_x^3)*'diff(_y,_x,2)+(1-3*_x^2)*'diff(_y,_x,1)+(2*_x-1)*_y
+            = 0 , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 13*_x^4-8*_x^3-22*_x^2+8*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 13*_x^4-8*_x^3-22*_x^2+8*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 13*_x^4-8*_x^3-22*_x^2+8*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+RESULT_d4_orig nil 
+print("RESULT_d4_red",
+      kovacicODE('diff(y,x,2) = ((13*x^4-8*x^3+(-22)*x^2+8*x-3)
+                              /(16*x^6-32*x^4+16*x^2))
+                              *y,y,x))
+equation:  
+          'diff(_y,_x,2) = ((13*_x^4-8*_x^3-22*_x^2+8*_x-3)*_y)
+                         /(16*_x^6-32*_x^4+16*_x^2) , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 13*_x^4-8*_x^3-22*_x^2+8*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 13*_x^4-8*_x^3-22*_x^2+8*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 13*_x^4-8*_x^3-22*_x^2+8*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+RESULT_d4_red nil 
+print("RESULT_d5_orig",
+      kovacicODE((-2*x^3+2*x)*'diff(y,x,2)+(1-3*x^2)*'diff(y,x)+(2*x+1/2)*y
+                   = 0,y,x))
+equation:  
+          (2*_x-2*_x^3)*'diff(_y,_x,2)+(1-3*_x^2)*'diff(_y,_x,1)+(2*_x+1/2)*_y
+            = 0 , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 13*_x^4+4*_x^3-22*_x^2-4*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 13*_x^4+4*_x^3-22*_x^2-4*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 13*_x^4+4*_x^3-22*_x^2-4*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+RESULT_d5_orig nil 
+print("RESULT_d5_red",
+      kovacicODE('diff(y,x,2) = ((13*x^4+4*x^3+(-22)*x^2+(-4)*x-3)
+                              /(16*x^6-32*x^4+16*x^2))
+                              *y,y,x))
+equation:  
+          'diff(_y,_x,2) = ((13*_x^4+4*_x^3-22*_x^2-4*_x-3)*_y)
+                         /(16*_x^6-32*_x^4+16*_x^2) , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 13*_x^4+4*_x^3-22*_x^2-4*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 13*_x^4+4*_x^3-22*_x^2-4*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 13*_x^4+4*_x^3-22*_x^2-4*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+RESULT_d5_red nil 
+print("RESULT_d6_orig",
+      kovacicODE((-2*x^3+2*x)*'diff(y,x,2)+(1-3*x^2)*'diff(y,x)+(2*x+3)*y = 0,
+                 y,x))
+equation:  
+          (2*_x-2*_x^3)*'diff(_y,_x,2)+(1-3*_x^2)*'diff(_y,_x,1)+(2*_x+3)*_y
+            = 0 , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 13*_x^4+24*_x^3-22*_x^2-24*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 13*_x^4+24*_x^3-22*_x^2-24*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 13*_x^4+24*_x^3-22*_x^2-24*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+RESULT_d6_orig nil 
+print("RESULT_d6_red",
+      kovacicODE('diff(y,x,2) = ((13*x^4+24*x^3+(-22)*x^2+(-24)*x-3)
+                              /(16*x^6-32*x^4+16*x^2))
+                              *y,y,x))
+equation:  
+          'diff(_y,_x,2) = ((13*_x^4+24*_x^3-22*_x^2-24*_x-3)*_y)
+                         /(16*_x^6-32*_x^4+16*_x^2) , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 13*_x^4+24*_x^3-22*_x^2-24*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 13*_x^4+24*_x^3-22*_x^2-24*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 13*_x^4+24*_x^3-22*_x^2-24*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+RESULT_d6_red nil 
+print("RESULT_d7_orig",
+      kovacicODE((-2*x^3+2*x)*'diff(y,x,2)+(1-3*x^2)*'diff(y,x)+((3*x)/8)*y
+                   = 0,y,x))
+equation:  
+          (2*_x-2*_x^3)*'diff(_y,_x,2)+(1-3*_x^2)*'diff(_y,_x,1)+(3*_x*_y)/8
+            = 0 , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 -(9*_x^2)-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 -(9*_x^2)-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 -(9*_x^2)-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+finding sol2 
+expression: 
+           (%e^-(('integrate((sqrt(1-_x)*sqrt(_x+1))/(_x^3-_x),_x))/4)
+            *_x^(1/4))
+            /2^(1/4) 
+expression: 
+           (%e^-(('integrate((sqrt(1-_x)*sqrt(_x+1))/(_x*(_x^2-1)),_x))/4)
+            *_x^(1/4))
+            /2^(1/4) 
+expression: 
+           %e^(('integrate((sqrt(1-_x)*sqrt(_x+1))/(_x^3-_x),_x))/2)
+            /(sqrt(_x-1)*_x*sqrt(_x+1)) 
+expression: 
+           (sqrt(2)*%e^(('integrate((sqrt(1-_x)*sqrt(_x+1))/(_x^3-_x),_x))/2
+                       -log(2*_x^3-2*_x)/2))
+            /sqrt(_x) 
+RESULT_d7_orig 
+              [y = %e^-(('integrate((sqrt(1-x)*sqrt(x+1))/(x^3-x),x))/4)
+                 *%k2*x^(1/4)
+                 *'integrate(%e^(('integrate((sqrt(1-x)*sqrt(x+1))/(x^3-x),x))
+                                /2)
+                              /(sqrt(x-1)*x*sqrt(x+1)),x)
+                 +%e^-(('integrate((sqrt(1-x)*sqrt(x+1))/(x^3-x),x))/4)
+                  *%k1*x^(1/4)] 
+print("RESULT_d7_red",
+      kovacicODE('diff(y,x,2) = ((-9*x^2-3)/(16*x^6-32*x^4+16*x^2))*y,y,x))
+equation:  'diff(_y,_x,2) = ((-(9*_x^2)-3)*_y)/(16*_x^6-32*_x^4+16*_x^2) 
+          , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 -(9*_x^2)-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 -(9*_x^2)-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 -(9*_x^2)-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+finding sol2 
+expression: 
+           %e^-(('integrate((sqrt(1-_x)*sqrt(_x+1))/(_x^3-_x),_x))/4)
+            *(_x-1)^(1/4)*sqrt(_x)*(_x+1)^(1/4) 
+expression: 
+           %e^-(('integrate((sqrt(1-_x)*sqrt(_x+1))/(_x*(_x^2-1)),_x))/4)
+            *(_x-1)^(1/4)*sqrt(_x)*(_x+1)^(1/4) 
+expression: 
+           %e^(('integrate((sqrt(1-_x)*sqrt(_x+1))/(_x^3-_x),_x))/2)
+            /(sqrt(_x-1)*_x*sqrt(_x+1)) 
+expression: 
+           %e^(('integrate((sqrt(1-_x)*sqrt(_x+1))/(_x^3-_x),_x))/2)
+            /(sqrt(_x-1)*_x*sqrt(_x+1)) 
+RESULT_d7_red 
+             [y = %e^-(('integrate((sqrt(1-x)*sqrt(x+1))/(x^3-x),x))/4)
+                *%k2*(x-1)^(1/4)*sqrt(x)*(x+1)^(1/4)
+                *'integrate(%e^(('integrate((sqrt(1-x)*sqrt(x+1))/(x^3-x),x))
+                               /2)
+                             /(sqrt(x-1)*x*sqrt(x+1)),x)
+                +%e^-(('integrate((sqrt(1-x)*sqrt(x+1))/(x^3-x),x))/4)
+                 *%k1*(x-1)^(1/4)*sqrt(x)*(x+1)^(1/4)] 
+print("RESULT_d8_orig",
+      kovacicODE((-2*x^3+2*x)*'diff(y,x,2)+(1-3*x^2)*'diff(y,x)
+                                          +((3*x)/8+1/2)*y
+                   = 0,y,x))
+equation:  
+          (2*_x-2*_x^3)*'diff(_y,_x,2)+(1-3*_x^2)*'diff(_y,_x,1)
+                                      +((3*_x)/8+1/2)*_y
+            = 0 , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 4*_x^3-9*_x^2-4*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 4*_x^3-9*_x^2-4*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 4*_x^3-9*_x^2-4*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+RESULT_d8_orig nil 
+print("RESULT_d8_red",
+      kovacicODE('diff(y,x,2) = ((4*x^3-9*x^2+(-4)*x-3)
+                              /(16*x^6-32*x^4+16*x^2))
+                              *y,y,x))
+equation:  
+          'diff(_y,_x,2) = ((4*_x^3-9*_x^2-4*_x-3)*_y)
+                         /(16*_x^6-32*_x^4+16*_x^2) , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 4*_x^3-9*_x^2-4*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 4*_x^3-9*_x^2-4*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 4*_x^3-9*_x^2-4*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+RESULT_d8_red nil 
+print("RESULT_d9_orig",
+      kovacicODE((-2*x^3+2*x)*'diff(y,x,2)+(1-3*x^2)*'diff(y,x)+((3*x)/8-1)*y
+                   = 0,y,x))
+equation:  
+          (2*_x-2*_x^3)*'diff(_y,_x,2)+(1-3*_x^2)*'diff(_y,_x,1)
+                                      +((3*_x)/8-1)*_y
+            = 0 , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 -(8*_x^3)-9*_x^2+8*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 -(8*_x^3)-9*_x^2+8*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 -(8*_x^3)-9*_x^2+8*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+RESULT_d9_orig nil 
+print("RESULT_d9_red",
+      kovacicODE('diff(y,x,2) = ((-8*x^3-9*x^2+8*x-3)/(16*x^6-32*x^4+16*x^2))
+                              *y,y,x))
+equation:  
+          'diff(_y,_x,2) = ((-(8*_x^3)-9*_x^2+8*_x-3)*_y)
+                         /(16*_x^6-32*_x^4+16*_x^2) , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 -(8*_x^3)-9*_x^2+8*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 -(8*_x^3)-9*_x^2+8*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 -(8*_x^3)-9*_x^2+8*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+RESULT_d9_red nil 
+print("RESULT_d10_orig",
+      kovacicODE((-2*x^3+2*x)*'diff(y,x,2)+(1-3*x^2)*'diff(y,x)+((3*x)/8+2)*y
+                   = 0,y,x))
+equation:  
+          (2*_x-2*_x^3)*'diff(_y,_x,2)+(1-3*_x^2)*'diff(_y,_x,1)
+                                      +((3*_x)/8+2)*_y
+            = 0 , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 16*_x^3-9*_x^2-16*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 16*_x^3-9*_x^2-16*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 16*_x^3-9*_x^2-16*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+RESULT_d10_orig nil 
+print("RESULT_d10_red",
+      kovacicODE('diff(y,x,2) = ((16*x^3-9*x^2+(-16)*x-3)
+                              /(16*x^6-32*x^4+16*x^2))
+                              *y,y,x))
+equation:  
+          'diff(_y,_x,2) = ((16*_x^3-9*_x^2-16*_x-3)*_y)
+                         /(16*_x^6-32*_x^4+16*_x^2) , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 16*(_x-1)^2*_x^2 16*_x^3-9*_x^2-16*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*_x^2*(_x+1)^2 16*_x^3-9*_x^2-16*_x-3 
+_er: -(3/16) 
+undetcoeff: 0 16*(_x-1)^2*(_x+1)^2 16*_x^3-9*_x^2-16*_x-3 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+RESULT_d10_red nil 
+"/home/kowen9024/repos/msk-formal-discovery-hvb-01b/experiments/hamiltonian-variational-bridge-01b/cells/target_cells.mac"

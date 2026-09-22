@@ -475,13 +475,26 @@ def run_cells(pre: Dict[str, Any], workdir: Path) -> Dict[str, Any]:
     return {"script_digest": run["script_digest"], "log_digest": run["log_digest"], "timed_out": run["timed_out"], "returncode": run["returncode"], "cells": recs}
 
 
+_RECLASSIFY_CACHE: Dict[str, Dict[str, Any]] = {}
+
+
 def reclassify_from_log(pre: Dict[str, Any], workdir: Path) -> Dict[str, Any]:
-    """Re-parse a saved provider log (no new Maxima run) and rebuild the cell records."""
+    """Re-parse a saved provider log (no new Maxima run) and rebuild the cell records.
+
+    Deterministic in (preregistered cells, log bytes), so the result is memoized per process on exactly that pair;
+    validators that rebuild the same package many times (hostile fixtures, tests) pay for one rebuild.
+    """
+    import copy
     log = (workdir / "target_cells.log").read_text(encoding="utf-8")
     script = (workdir / "target_cells.mac").read_text(encoding="utf-8")
-    results = parse_results(log)
-    return {"script_digest": sha256(script.encode()), "log_digest": sha256(log.encode()), "timed_out": False, "returncode": 0,
-            "cells": [classify_cell(c, results, log) for c in pre["cells"]]}
+    key = bx.canonical_digest(pre["cells"]) + ":" + sha256(log.encode())
+    if key not in _RECLASSIFY_CACHE:
+        results = parse_results(log)
+        _RECLASSIFY_CACHE[key] = {"log_digest": sha256(log.encode()), "timed_out": False, "returncode": 0,
+                                  "cells": [classify_cell(c, results, log) for c in pre["cells"]]}
+    out = copy.deepcopy(_RECLASSIFY_CACHE[key])
+    out["script_digest"] = sha256(script.encode())       # the script is NOT part of the key: it is bound separately
+    return out
 
 
 def adjudicate(pre: Dict[str, Any], cells: List[Dict[str, Any]]) -> Dict[str, Any]:

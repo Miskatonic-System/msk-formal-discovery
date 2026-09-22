@@ -1,0 +1,84 @@
+{
+  "schema_version": "miskatonic.formal-discovery.hvb-source-ledger.v0.1",
+  "ledger_id": "hvb-01a-sources",
+  "policy": "Experiment-local additive custody. Neither miskatonic-mathematics sources/registry.v0.1.json nor any predecessor ledger is mutated. Decisive claims require CONTENT_HASH_BOUND or immutable git-object binding; IDENTIFIED/UNAVAILABLE sources support nothing decisive.",
+  "consumed_ledgers": [
+    {
+      "repository": "Miskatonic-System/miskatonic-mathematics",
+      "commit": "2337c7d744f176274997374a7d4057c7272f715d",
+      "path": "program/hamiltonian-monodromy/controls-v0.1/sources.v0.1.json",
+      "blob": "4cafe426d4b23b82a93b74d7c946d97bb95c0b41",
+      "records_relied_on": {
+        "src-hmc-acosta-morales-weil-2010": {
+          "status": "BOUND",
+          "content_digest": "4da4aa237819f9ababa063a99a533c01f03fcd86283fea88f75a7da5cb94c564",
+          "used_for": "DECISIVE: Appendix A statement of Kovacic's algorithm and its four cases (the provider's decision surface); Prop 6.2/6.3 and Prop 3.4: an algebraic change of variable / algebraic gauge preserves the identity component of the differential Galois group (used for the reduced-form normalization y = f^(-1/4) z and for the degree-2 base change C(q) -> C(q, sqrt f))"
+        },
+        "src-hmc-morales-ruiz-1999": {
+          "status": "IDENTIFIED",
+          "used_for": "NOTHING decisive (see attempt below)"
+        },
+        "src-hmc-morales-ramis-2001": {
+          "status": "IDENTIFIED",
+          "used_for": "NOTHING (Morales-Ramis is NOT applied in this WO)"
+        }
+      }
+    },
+    {
+      "repository": "Miskatonic-System/msk-formal-discovery",
+      "commit": "a85dd51c1ecf9a94e88ff4a742029d1b321a2512",
+      "path": "experiments/topological-galois-source-representation-01a/source-ledger.v0.1.json",
+      "records_relied_on": {
+        "src-tg-birman-brendle-2005": {
+          "status": "BOUND",
+          "content_digest": "a2e02e79beda1d087d12134780c99c4894a2628cc0f8f9a66940945cd9e6155c",
+          "used_for": "source-side conventions (through the 01A certificates, consumed by digest in SOURCE_SIGNATURE)"
+        }
+      }
+    }
+  ],
+  "sources": [
+    {
+      "schema_version": "miskatonic.mathematics-source-record.v0.1",
+      "source_id": "src-hvb-smith-1984",
+      "title": "A discussion and implementation of Kovacic's algorithm for ordinary differential equations",
+      "authors_or_authority": "Carolyn J. Smith (University of Waterloo, CS-84-35)",
+      "source_type": "TECHNICAL_REPORT",
+      "canonical_url_or_identifier": "https://cs.uwaterloo.ca/research/tr/1984/CS-84-35.pdf",
+      "version_or_date": "1984",
+      "retrieved_at": "2026-09-22T03:12:19Z",
+      "content_digest": "57c8120392a13b8aa57fd980cecdf0a416043a5ab7b393bb9899537176fc75e7",
+      "claim_scope": "The implementation reference [1] cited in the header of the qualified provider (kovacicODE.mac). Bound for provider provenance; the algorithm statement relied on is AMW 2010 Appendix A.",
+      "status": "BOUND",
+      "notes": "Retrieved as 4468885 bytes of application/pdf; digest is SHA-256 of the served bytes. Only the header of kovacicODE.mac's citation was matched; the thesis body was not read in this WO."
+    },
+    {
+      "schema_version": "miskatonic.mathematics-source-record.v0.1",
+      "source_id": "src-hvb-kovacic-1986",
+      "title": "An algorithm for solving second order linear homogeneous differential equations",
+      "authors_or_authority": "Jerald J. Kovacic",
+      "source_type": "JOURNAL_ARTICLE",
+      "canonical_url_or_identifier": "https://doi.org/10.1016/S0747-7171(86)80010-4",
+      "version_or_date": "1986 (J. Symbolic Computation 2(1) 3-43)",
+      "retrieved_at": "2026-09-22T03:05:00Z",
+      "content_digest": null,
+      "claim_scope": "Primary source of the algorithm and of the four-case theorem for algebraic subgroups of SL_2(C).",
+      "status": "IDENTIFIED",
+      "notes": "IDENTIFIED_UNBOUND: retrieval attempted from sciencedirect (HTTP 403, HTML challenge page, no PDF bytes). Not used as sole support of any decisive step; the four-case statement is taken from AMW 2010 Appendix A (BOUND)."
+    },
+    {
+      "schema_version": "miskatonic.mathematics-source-record.v0.1",
+      "source_id": "src-hvb-morales-ruiz-1999-attempt",
+      "title": "Differential Galois Theory and Non-Integrability of Hamiltonian Systems",
+      "authors_or_authority": "Juan J. Morales-Ruiz",
+      "source_type": "BOOK",
+      "canonical_url_or_identifier": "https://doi.org/10.1007/978-3-0348-8718-2",
+      "version_or_date": "1999 (Progress in Mathematics 179, Birkhauser)",
+      "retrieved_at": "2026-09-22T03:05:00Z",
+      "content_digest": null,
+      "claim_scope": "Lame differential-Galois classification; regular-singular monodromy / Zariski-closure relation.",
+      "status": "UNAVAILABLE",
+      "notes": "UNAVAILABLE / IDENTIFIED_UNBOUND: retrieval attempted from link.springer.com (HTTP 200 HTML landing page, 3038 bytes, no PDF; paywalled). CONSEQUENCE (Gate 1 rule 3): no claim in this WO uses rho_tgt (target monodromy) as evidence about G_diff; no target monodromy is computed; the Lame classification is NOT used as authority, only as recorded prior expectation."
+    }
+  ]
+}

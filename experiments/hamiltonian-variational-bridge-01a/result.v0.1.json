@@ -1,0 +1,71 @@
+{
+  "schema_version": "miskatonic.formal-discovery.hvb-result.v0.1",
+  "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01A",
+  "canonical_start": "a85dd51c1ecf9a94e88ff4a742029d1b321a2512",
+  "mathematics_sha": "2337c7d744f176274997374a7d4057c7272f715d",
+  "candidate_freeze_digest": "889cc252226d801491a83bdd594e366fffc5a8bd1ef9379f5088bf9f65d78425",
+  "preregistration_commit": "e22dd8cfa6d71e022e7fe6e4ed6b9f9e1f9a9ee2",
+  "disposition": "HAMILTONIAN_VARIATIONAL_BRIDGE_BO2_REFUTED_SOURCE_INSUFFICIENT",
+  "disposition_status": "PROPOSED_BY_EXECUTING_AGENT_PENDING_INDEPENDENT_REVIEW",
+  "BO2": "REFUTED",
+  "disposition_component": "SOURCE_DATA_ALONE_INSUFFICIENT_FOR_TARGET_PREDICATE",
+  "witness_pair": {
+    "c1": {
+      "cell": "c1",
+      "mu": "0",
+      "lambda": "0",
+      "predicate": "TRUE"
+    },
+    "c2": {
+      "cell": "c5",
+      "mu": "0",
+      "lambda": "2",
+      "predicate": "FALSE"
+    }
+  },
+  "cells_abelian_TRUE": [
+    "c1",
+    "c2",
+    "c3",
+    "c4",
+    "c7"
+  ],
+  "cells_nonabelian_FALSE": [
+    "c5",
+    "c6",
+    "c8"
+  ],
+  "cells_UNRESOLVED": [],
+  "TARGET_VARIATIONAL_GALOIS_PREDICATE_NONABELIAN_CELLS": [
+    "c5",
+    "c6",
+    "c8"
+  ],
+  "SOURCE_SIGNATURE": "a8407db0c67a25fa92c6b70bc90acbb711f869ca37417de31d221d110ee030cc",
+  "degrees_executed": [
+    3
+  ],
+  "BURAU_ROLE": "CONTROL_ONLY",
+  "FTT": "NOT_REQUIRED",
+  "MORALES_RAMIS": "NOT_APPLIED",
+  "NONINTEGRABILITY_CLAIM": "NONE",
+  "CHAOS_CLAIM": "NONE",
+  "rho_tgt_used_as_evidence_about_G_diff": false,
+  "SOURCE_DATA_SUFFICIENT": null,
+  "claimed_inferences": [],
+  "claim_ceiling": [
+    "For the frozen family (n = 3, P_3 = q^3 - q - 1, E = -1) the predicate ABELIAN_IDENTITY_COMPONENT(G_diff) of the algebraic NVE takes both values TRUE and FALSE at cells with identical SOURCE_SIGNATURE; hence the predicate is NOT a function of the qualified source representation data (pi_perm, alpha, Hurwitz) alone. This is a statement about the frozen family and the frozen source package only.",
+    "FALSE cells: G_diff = SL_2(C) (Kovacic case 4) on the authority of the qualified provider (Maxima kovacicODE, K-matrix 10/10) plus an independent sympy case-1 exclusion. TRUE cells: exact Picard-Vessiot arguments (RD / R2L / RU) with polynomial-reduction verification; the provider only supplied candidate solutions.",
+    "No integrability, nonintegrability or chaos statement about H_3 is made. Morales-Ramis is not applied. TARGET_VARIATIONAL_GALOIS_PREDICATE = NONABELIAN is recorded for the FALSE cells and nothing more.",
+    "Absence of a counterexample would not have established SOURCE_DATA_SUFFICIENT; presence of one establishes insufficiency on this family only.",
+    "BO-1 not executed (no target monodromy data); BO-3 unknown; n = 4..6 not run."
+  ],
+  "permanent": [
+    "MONODROMY_GROUP != DIFFERENTIAL_GALOIS_GROUP (closure source unbound: no monodromy used)",
+    "NONABELIAN_G0 != CHAOS",
+    "NONABELIAN_G0 != AUTHORIZED_NONINTEGRABILITY_CLAIM",
+    "LIOUVILLIAN != ABELIAN_IDENTITY_COMPONENT (Kovacic case 1 alone leaves the non-abelian Borel group possible)",
+    "NOT_FALSIFIED != SOURCE_DATA_SUFFICIENT",
+    "SOURCE_GROUP_ACTION != TARGET_MONODROMY_REPRESENTATION"
+  ]
+}

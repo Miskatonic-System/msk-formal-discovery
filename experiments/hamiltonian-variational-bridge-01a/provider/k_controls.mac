@@ -1,0 +1,12 @@
+display2d:false$
+load(kovacicODE)$
+print("RESULT_K1", kovacicODE('diff(y,x,2)=0, y, x))$
+print("RESULT_K1g", kovacicODE(x*'diff(y,x,2)+2*'diff(y,x)=0, y, x))$
+print("RESULT_K2", kovacicODE('diff(y,x,2)-y=0, y, x))$
+print("RESULT_K2g", kovacicODE(x*'diff(y,x,2)+2*'diff(y,x)-x*y=0, y, x))$
+print("RESULT_K3a", kovacicODE('diff(y,x,2)=(1/x-3/(16*x^2))*y, y, x))$
+print("RESULT_K3b", kovacicODE('diff(y,x,2)=(-3/(16*x^2)-2/(9*(x-1)^2)+3/(16*x*(x-1)))*y, y, x))$
+print("RESULT_K4a", kovacicODE('diff(y,x,2)=x*y, y, x))$
+print("RESULT_K4b", kovacicODE(x*'diff(y,x,2)+'diff(y,x)+x*y=0, y, x))$
+print("RESULT_K5", kovacicODE((1-x^2)*'diff(y,x,2)-2*x*'diff(y,x)+2*y=0, y, x))$
+print("RESULT_K6", kovacicODE(x^2*'diff(y,x,2)+x*'diff(y,x)+(x^2-1/4)*y=0, y, x))$

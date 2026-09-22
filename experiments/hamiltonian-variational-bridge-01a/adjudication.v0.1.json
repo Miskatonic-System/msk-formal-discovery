@@ -1,0 +1,73 @@
+{
+  "SOURCE_SIGNATURE_shared_by_all_cells": "a8407db0c67a25fa92c6b70bc90acbb711f869ca37417de31d221d110ee030cc",
+  "cells_resolved": 8,
+  "cells_total": 8,
+  "predicate_by_cell": {
+    "c1": "TRUE",
+    "c2": "TRUE",
+    "c3": "TRUE",
+    "c4": "TRUE",
+    "c5": "FALSE",
+    "c6": "FALSE",
+    "c7": "TRUE",
+    "c8": "FALSE"
+  },
+  "witness_pair": {
+    "c1": {
+      "cell": "c1",
+      "mu": "0",
+      "lambda": "0",
+      "predicate": "TRUE"
+    },
+    "c2": {
+      "cell": "c5",
+      "mu": "0",
+      "lambda": "2",
+      "predicate": "FALSE"
+    }
+  },
+  "BO2": "REFUTED",
+  "disposition_component": "SOURCE_DATA_ALONE_INSUFFICIENT_FOR_TARGET_PREDICATE",
+  "note": "same SOURCE_SIGNATURE, different ABELIAN_IDENTITY_COMPONENT: the target predicate is not a function of source representation data alone on the frozen family",
+  "prior_expectations_vs_outcome": {
+    "c1": {
+      "expected": "TRUE",
+      "got": "TRUE"
+    },
+    "c2": {
+      "expected": "TRUE",
+      "got": "TRUE"
+    },
+    "c3": {
+      "expected": "TRUE",
+      "got": "TRUE"
+    },
+    "c4": {
+      "expected": "TRUE",
+      "got": "TRUE"
+    },
+    "c5": {
+      "expected": "FALSE",
+      "got": "FALSE"
+    },
+    "c6": {
+      "expected": "FALSE",
+      "got": "FALSE"
+    },
+    "c7": {
+      "expected": "TRUE",
+      "got": "TRUE"
+    },
+    "c8": {
+      "expected": "FALSE",
+      "got": "FALSE"
+    }
+  },
+  "schema_version": "miskatonic.formal-discovery.hvb-adjudication.v0.1",
+  "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01A",
+  "BO1": {
+    "status": "NOT_EXECUTED",
+    "reason": "no exact target-monodromy tuple was constructed in this WO (Morales-Ruiz 1999, the Zariski-closure source, is UNAVAILABLE; no monodromy computation was attempted), so there is no target data against which to verify the frozen Hurwitz transport. The structural action B_3 -> Aut(F_3) stays qualified from 01A; STRUCTURAL_EQUIVARIANCE_SUPPORTED is NOT earned here."
+  },
+  "BO3": "UNKNOWN (not addressed; n = 3 only)"
+}

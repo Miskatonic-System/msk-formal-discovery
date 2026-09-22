@@ -1,0 +1,3 @@
+display2d:false$
+load(kovacicODE)$
+print("RESULT_n6_A_orig", kovacicODE((-2*x^6 + 35*x^4/2 - 259*x^2/8 + 225/32)*'diff(y,x,2)+(-6*x^5 + 35*x^3 - 259*x/8)*'diff(y,x)+(x)*y=0, y, x))$

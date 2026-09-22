@@ -1,0 +1,51 @@
+batch("/home/kowen9024/repos/msk-formal-discovery-hvb-01c/experiments/hamiltonian-variational-bridge-01c/cells/n6_B_orig.mac")
+display2d:false
+load(kovacicODE)
+print("RESULT_n6_B_orig",
+      kovacicODE((-2*x^6+(35*x^4)/2+(-259*x^2)/8+225/32)*'diff(y,x,2)
+                  +(-6*x^5+35*x^3+(-259*x)/8)*'diff(y,x)+(2*x)*y
+                   = 0,y,x))
+equation:  
+          (-(2*_x^6)+(35*_x^4)/2-(259*_x^2)/8+225/32)*'diff(_y,_x,2)
+           +(-(6*_x^5)+35*_x^3-(259*_x)/8)*'diff(_y,_x,1)+2*_x*_y
+            = 0 , degree =  2 
+Second order ODE found. 
+end of preliminaries... 
+undetcoeff: 0 4096*(_x-5/2)^2*(_x-3/2)^2*(_x-1/2)^2*(_x+1/2)^2*(_x+3/2)^2 
+           3072*_x^10-53760*_x^8+4096*_x^7+232064*_x^6-35840*_x^5-398080*_x^4
+                     +66304*_x^3+109676*_x^2-14400*_x-116550 
+_er: -(3/16) 
+undetcoeff: 0 4096*(_x-3/2)^2*(_x-1/2)^2*(_x+1/2)^2*(_x+3/2)^2*(_x+5/2)^2 
+           3072*_x^10-53760*_x^8+4096*_x^7+232064*_x^6-35840*_x^5-398080*_x^4
+                     +66304*_x^3+109676*_x^2-14400*_x-116550 
+_er: -(3/16) 
+undetcoeff: 0 4096*(_x-5/2)^2*(_x-3/2)^2*(_x-1/2)^2*(_x+3/2)^2*(_x+5/2)^2 
+           3072*_x^10-53760*_x^8+4096*_x^7+232064*_x^6-35840*_x^5-398080*_x^4
+                     +66304*_x^3+109676*_x^2-14400*_x-116550 
+_er: -(3/16) 
+undetcoeff: 0 4096*(_x-5/2)^2*(_x-3/2)^2*(_x+1/2)^2*(_x+3/2)^2*(_x+5/2)^2 
+           3072*_x^10-53760*_x^8+4096*_x^7+232064*_x^6-35840*_x^5-398080*_x^4
+                     +66304*_x^3+109676*_x^2-14400*_x-116550 
+_er: -(3/16) 
+undetcoeff: 0 4096*(_x-5/2)^2*(_x-3/2)^2*(_x-1/2)^2*(_x+1/2)^2*(_x+5/2)^2 
+           3072*_x^10-53760*_x^8+4096*_x^7+232064*_x^6-35840*_x^5-398080*_x^4
+                     +66304*_x^3+109676*_x^2-14400*_x-116550 
+_er: -(3/16) 
+undetcoeff: 0 4096*(_x-5/2)^2*(_x-1/2)^2*(_x+1/2)^2*(_x+3/2)^2*(_x+5/2)^2 
+           3072*_x^10-53760*_x^8+4096*_x^7+232064*_x^6-35840*_x^5-398080*_x^4
+                     +66304*_x^3+109676*_x^2-14400*_x-116550 
+_er: -(3/16) 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+No Liouvillian solutions exist 
+
+[PROVIDER_TIMEOUT: script exceeded 1800 s; no retry]

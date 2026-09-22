@@ -295,7 +295,7 @@ def adjudicate(pre: Dict[str, Any], cells: List[Dict[str, Any]]) -> Dict[str, An
     transitions: Dict[str, Dict[str, Any]] = {t: {} for t in TRANSITIONS}
     for lane in pre["lanes"]:
         L = lane["lane"]
-        seq = {"3": pre["anchors"][L]["ABELIAN_IDENTITY_COMPONENT"]}
+        seq = {"3": pre["anchors"].get(L, {}).get("ABELIAN_IDENTITY_COMPONENT", "MISSING")}
         for n in NEW_DEGREES:
             rec = by_id.get(f"n{n}_{L}")
             seq[str(n)] = rec["ABELIAN_IDENTITY_COMPONENT"] if rec else "MISSING"

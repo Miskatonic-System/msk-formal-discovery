@@ -1,0 +1,236 @@
+{
+  "verdict": "BO3_DEGREE_CONDITIONED_VARIATION_OBSERVED",
+  "lanes": {
+    "A": {
+      "lambda": "1",
+      "mu": "0",
+      "coupling_signature": "0dbf3111180df54c5e9e8a93b7f4f9d53dcdd232a94ecafd722a4a7320e042d8",
+      "TARGET_SEQUENCE": {
+        "3": "TRUE",
+        "4": "FALSE",
+        "5": "FALSE",
+        "6": "UNRESOLVED"
+      },
+      "unresolved_degrees": [
+        "6"
+      ],
+      "lane_result": "DEGREE_CONDITIONED_TARGET_VARIATION_OBSERVED",
+      "COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_DEGREE_LADDER": true,
+      "witness": {
+        "TRUE": {
+          "n": 3,
+          "cell": "anchor"
+        },
+        "FALSE": {
+          "n": 4,
+          "cell": "n4_A"
+        }
+      },
+      "transitions": {
+        "3->4": "CHANGES",
+        "4->5": "NO_CHANGE",
+        "5->6": "UNRESOLVED"
+      },
+      "falsifiers": {
+        "F1": "FULL_COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_BACKGROUND",
+        "F2": "S_N_SOLVABILITY_CLIFF_DOES_NOT_FORCE_TARGET_PREDICATE_CHANGE",
+        "F3": "NOT_ADJUDICABLE (5->6 unresolved)"
+      }
+    },
+    "B": {
+      "lambda": "2",
+      "mu": "0",
+      "coupling_signature": "96dd27cd4736c0cf8fcccb6c1185670df5f48831feb6386bbc59a61ed4d7f9d7",
+      "TARGET_SEQUENCE": {
+        "3": "FALSE",
+        "4": "FALSE",
+        "5": "FALSE",
+        "6": "UNRESOLVED"
+      },
+      "unresolved_degrees": [
+        "6"
+      ],
+      "lane_result": "LANE_PARTIAL",
+      "COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_DEGREE_LADDER": false,
+      "witness": null,
+      "transitions": {
+        "3->4": "NO_CHANGE",
+        "4->5": "NO_CHANGE",
+        "5->6": "UNRESOLVED"
+      },
+      "falsifiers": {
+        "F1": "NOT_ADJUDICABLE (unresolved cells)",
+        "F2": "S_N_SOLVABILITY_CLIFF_DOES_NOT_FORCE_TARGET_PREDICATE_CHANGE",
+        "F3": "NOT_ADJUDICABLE (5->6 unresolved)"
+      }
+    },
+    "C": {
+      "lambda": "3/8",
+      "mu": "0",
+      "coupling_signature": "c9ac1de7fcb679d66191eed902a0e66c5589434a62dceaed81623cf2fe7f793e",
+      "TARGET_SEQUENCE": {
+        "3": "TRUE",
+        "4": "FALSE",
+        "5": "FALSE",
+        "6": "UNRESOLVED"
+      },
+      "unresolved_degrees": [
+        "6"
+      ],
+      "lane_result": "DEGREE_CONDITIONED_TARGET_VARIATION_OBSERVED",
+      "COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_DEGREE_LADDER": true,
+      "witness": {
+        "TRUE": {
+          "n": 3,
+          "cell": "anchor"
+        },
+        "FALSE": {
+          "n": 4,
+          "cell": "n4_C"
+        }
+      },
+      "transitions": {
+        "3->4": "CHANGES",
+        "4->5": "NO_CHANGE",
+        "5->6": "UNRESOLVED"
+      },
+      "falsifiers": {
+        "F1": "FULL_COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_BACKGROUND",
+        "F2": "S_N_SOLVABILITY_CLIFF_DOES_NOT_FORCE_TARGET_PREDICATE_CHANGE",
+        "F3": "NOT_ADJUDICABLE (5->6 unresolved)"
+      }
+    },
+    "D": {
+      "lambda": "3/8",
+      "mu": "1/2",
+      "coupling_signature": "46ed9706e23b305618763912e8aa355c67e943e5ae88a813830c2fa0818b5b80",
+      "TARGET_SEQUENCE": {
+        "3": "FALSE",
+        "4": "FALSE",
+        "5": "FALSE",
+        "6": "UNRESOLVED"
+      },
+      "unresolved_degrees": [
+        "6"
+      ],
+      "lane_result": "LANE_PARTIAL",
+      "COUPLING_PAIR_ALONE_INSUFFICIENT_ACROSS_DEGREE_LADDER": false,
+      "witness": null,
+      "transitions": {
+        "3->4": "NO_CHANGE",
+        "4->5": "NO_CHANGE",
+        "5->6": "UNRESOLVED"
+      },
+      "falsifiers": {
+        "F1": "NOT_ADJUDICABLE (unresolved cells)",
+        "F2": "S_N_SOLVABILITY_CLIFF_DOES_NOT_FORCE_TARGET_PREDICATE_CHANGE",
+        "F3": "NOT_ADJUDICABLE (5->6 unresolved)"
+      }
+    }
+  },
+  "transitions": {
+    "3->4": {
+      "A": {
+        "from": "TRUE",
+        "to": "FALSE",
+        "target_predicate": "CHANGES",
+        "causal_attribution": "NONE"
+      },
+      "B": {
+        "from": "FALSE",
+        "to": "FALSE",
+        "target_predicate": "NO_CHANGE",
+        "causal_attribution": "NONE"
+      },
+      "C": {
+        "from": "TRUE",
+        "to": "FALSE",
+        "target_predicate": "CHANGES",
+        "causal_attribution": "NONE"
+      },
+      "D": {
+        "from": "FALSE",
+        "to": "FALSE",
+        "target_predicate": "NO_CHANGE",
+        "causal_attribution": "NONE"
+      },
+      "source_side_label": "S_3 -> S_4 (both solvable)",
+      "statement": "A target-predicate change coincided with the 3->4 transition on lane A (coincidence recorded; no causal attribution). No target-predicate change was observed across the 3->4 transition on lane B. A target-predicate change coincided with the 3->4 transition on lane C (coincidence recorded; no causal attribution). No target-predicate change was observed across the 3->4 transition on lane D."
+    },
+    "4->5": {
+      "A": {
+        "from": "FALSE",
+        "to": "FALSE",
+        "target_predicate": "NO_CHANGE",
+        "causal_attribution": "NONE"
+      },
+      "B": {
+        "from": "FALSE",
+        "to": "FALSE",
+        "target_predicate": "NO_CHANGE",
+        "causal_attribution": "NONE"
+      },
+      "C": {
+        "from": "FALSE",
+        "to": "FALSE",
+        "target_predicate": "NO_CHANGE",
+        "causal_attribution": "NONE"
+      },
+      "D": {
+        "from": "FALSE",
+        "to": "FALSE",
+        "target_predicate": "NO_CHANGE",
+        "causal_attribution": "NONE"
+      },
+      "source_side_label": "S_4 -> S_5: source radical-solvability cliff (S_5 nonsolvable, A_5 perfect core)",
+      "statement": "No target-predicate change was observed across the 4->5 source solvability cliff on lane A. No target-predicate change was observed across the 4->5 source solvability cliff on lane B. No target-predicate change was observed across the 4->5 source solvability cliff on lane C. No target-predicate change was observed across the 4->5 source solvability cliff on lane D."
+    },
+    "5->6": {
+      "A": {
+        "from": "FALSE",
+        "to": "UNRESOLVED",
+        "target_predicate": "UNRESOLVED",
+        "causal_attribution": "NONE"
+      },
+      "B": {
+        "from": "FALSE",
+        "to": "UNRESOLVED",
+        "target_predicate": "UNRESOLVED",
+        "causal_attribution": "NONE"
+      },
+      "C": {
+        "from": "FALSE",
+        "to": "UNRESOLVED",
+        "target_predicate": "UNRESOLVED",
+        "causal_attribution": "NONE"
+      },
+      "D": {
+        "from": "FALSE",
+        "to": "UNRESOLVED",
+        "target_predicate": "UNRESOLVED",
+        "causal_attribution": "NONE"
+      },
+      "source_side_label": "S_5 -> S_6: exceptional Out(S_6) layer present (classical label; not bound; not load-bearing)",
+      "statement": "The target predicate is unresolved across the 5->6 transition carrying the Out(S_6) label on lane A. The target predicate is unresolved across the 5->6 transition carrying the Out(S_6) label on lane B. The target predicate is unresolved across the 5->6 transition carrying the Out(S_6) label on lane C. The target predicate is unresolved across the 5->6 transition carrying the Out(S_6) label on lane D."
+    }
+  },
+  "lanes_with_split": [
+    "A",
+    "C"
+  ],
+  "lanes_partial": [
+    "B",
+    "D"
+  ],
+  "unresolved_cells": [
+    "n6_A",
+    "n6_B",
+    "n6_C",
+    "n6_D"
+  ],
+  "COUPLING_PAIR_UNIVERSALLY_SUFFICIENT": null,
+  "DEGREE_IRRELEVANT": null,
+  "not_claimed": "NO_DEGREE_EFFECT_OBSERVED_ON_FROZEN_LANE is never promoted to DEGREE_IRRELEVANT; a split is never promoted to a universal statement; a transition alignment is never a causal transport (TRANSITION_ALIGNMENT != CAUSAL_TRANSPORT); COUPLING_PAIR_UNIVERSALLY_SUFFICIENT is never emitted from a finite panel",
+  "schema_version": "miskatonic.formal-discovery.hvb-01c-adjudication.v0.1",
+  "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01C"
+}

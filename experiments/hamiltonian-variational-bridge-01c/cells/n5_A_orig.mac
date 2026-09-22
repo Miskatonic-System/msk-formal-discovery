@@ -1,0 +1,3 @@
+display2d:false$
+load(kovacicODE)$
+print("RESULT_n5_A_orig", kovacicODE((-2*x^5 + 10*x^3 - 8*x)*'diff(y,x,2)+(-5*x^4 + 15*x^2 - 4)*'diff(y,x)+(x)*y=0, y, x))$

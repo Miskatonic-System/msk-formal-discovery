@@ -1,0 +1,319 @@
+{
+  "pooled_summary": {
+    "pooled_cell_count": 18,
+    "cells_01a": 8,
+    "cells_01b": 10,
+    "distinct_lambdas": [
+      "-1",
+      "0",
+      "3/8",
+      "1",
+      "2",
+      "3"
+    ],
+    "distinct_lambda_count": 6,
+    "ordering": "by exact rational numerical value, ascending"
+  },
+  "mu_dependence_scope": {
+    "observed_split_lambdas": [
+      "3/8"
+    ],
+    "observed_split_ells": [
+      "1/2"
+    ],
+    "single_sampled_mu_lambdas": [
+      "-1",
+      "3"
+    ],
+    "universal_half_integer_only_claim": false,
+    "statement": "The only observed within-lambda predicate split in the pooled sample occurs at ell = 1/2 (lambda = 3/8). No universal claim is made that mu can affect the predicate only in half-integer-ell classes. Some other lambda classes, including lambda = -1 and lambda = 3, currently have only one sampled mu value, so absence of a split there is not evidence of mu-independence."
+  },
+  "same_lambda_same_source_different_mu_different_predicate": [
+    {
+      "lambda": "3/8",
+      "ell": {
+        "ell": "1/2",
+        "ell_kind": "HALF_INTEGER",
+        "two_lambda": "3/4"
+      },
+      "TRUE": {
+        "cell": "d7",
+        "mu": "0",
+        "lambda": "3/8",
+        "predicate": "TRUE",
+        "origin": "01B"
+      },
+      "FALSE": {
+        "cell": "d8",
+        "mu": "1/2",
+        "lambda": "3/8",
+        "predicate": "FALSE",
+        "origin": "01B"
+      }
+    }
+  ],
+  "per_lambda": {
+    "-1": {
+      "ell": {
+        "ell": "-1/2 - sqrt(7)*I/2",
+        "ell_kind": "COMPLEX",
+        "two_lambda": "-2"
+      },
+      "rows": [
+        {
+          "cell": "c8",
+          "mu": "1",
+          "lambda": "-1",
+          "predicate": "FALSE",
+          "origin": "01A"
+        }
+      ],
+      "constant": true
+    },
+    "0": {
+      "ell": {
+        "ell": "0",
+        "ell_kind": "INTEGER",
+        "two_lambda": "0"
+      },
+      "rows": [
+        {
+          "cell": "c1",
+          "mu": "0",
+          "lambda": "0",
+          "predicate": "TRUE",
+          "origin": "01A"
+        },
+        {
+          "cell": "c2",
+          "mu": "1",
+          "lambda": "0",
+          "predicate": "TRUE",
+          "origin": "01A"
+        }
+      ],
+      "constant": true
+    },
+    "3/8": {
+      "ell": {
+        "ell": "1/2",
+        "ell_kind": "HALF_INTEGER",
+        "two_lambda": "3/4"
+      },
+      "rows": [
+        {
+          "cell": "d7",
+          "mu": "0",
+          "lambda": "3/8",
+          "predicate": "TRUE",
+          "origin": "01B"
+        },
+        {
+          "cell": "d8",
+          "mu": "1/2",
+          "lambda": "3/8",
+          "predicate": "FALSE",
+          "origin": "01B"
+        },
+        {
+          "cell": "d9",
+          "mu": "-1",
+          "lambda": "3/8",
+          "predicate": "FALSE",
+          "origin": "01B"
+        },
+        {
+          "cell": "d10",
+          "mu": "2",
+          "lambda": "3/8",
+          "predicate": "FALSE",
+          "origin": "01B"
+        }
+      ],
+      "constant": false
+    },
+    "1": {
+      "ell": {
+        "ell": "1",
+        "ell_kind": "INTEGER",
+        "two_lambda": "2"
+      },
+      "rows": [
+        {
+          "cell": "c3",
+          "mu": "0",
+          "lambda": "1",
+          "predicate": "TRUE",
+          "origin": "01A"
+        },
+        {
+          "cell": "c4",
+          "mu": "1",
+          "lambda": "1",
+          "predicate": "TRUE",
+          "origin": "01A"
+        },
+        {
+          "cell": "d1",
+          "mu": "-1",
+          "lambda": "1",
+          "predicate": "TRUE",
+          "origin": "01B"
+        },
+        {
+          "cell": "d2",
+          "mu": "1/2",
+          "lambda": "1",
+          "predicate": "TRUE",
+          "origin": "01B"
+        },
+        {
+          "cell": "d3",
+          "mu": "3",
+          "lambda": "1",
+          "predicate": "TRUE",
+          "origin": "01B"
+        }
+      ],
+      "constant": true
+    },
+    "2": {
+      "ell": {
+        "ell": "-1/2 + sqrt(17)/2",
+        "ell_kind": "REAL_NONHALFINTEGER",
+        "two_lambda": "4"
+      },
+      "rows": [
+        {
+          "cell": "c5",
+          "mu": "0",
+          "lambda": "2",
+          "predicate": "FALSE",
+          "origin": "01A"
+        },
+        {
+          "cell": "c6",
+          "mu": "1",
+          "lambda": "2",
+          "predicate": "FALSE",
+          "origin": "01A"
+        },
+        {
+          "cell": "d4",
+          "mu": "-1",
+          "lambda": "2",
+          "predicate": "FALSE",
+          "origin": "01B"
+        },
+        {
+          "cell": "d5",
+          "mu": "1/2",
+          "lambda": "2",
+          "predicate": "FALSE",
+          "origin": "01B"
+        },
+        {
+          "cell": "d6",
+          "mu": "3",
+          "lambda": "2",
+          "predicate": "FALSE",
+          "origin": "01B"
+        }
+      ],
+      "constant": true
+    },
+    "3": {
+      "ell": {
+        "ell": "2",
+        "ell_kind": "INTEGER",
+        "two_lambda": "6"
+      },
+      "rows": [
+        {
+          "cell": "c7",
+          "mu": "0",
+          "lambda": "3",
+          "predicate": "TRUE",
+          "origin": "01A"
+        }
+      ],
+      "constant": true
+    }
+  },
+  "unresolved_cells": [],
+  "verdict": "LAMBDA_ALONE_INSUFFICIENT",
+  "not_claimed": "LAMBDA_SUFFICIENT is never claimed from a finite grid. ORIGINAL + (lambda, mu) is the smallest OF THE THREE TESTED CANDIDATE SIGNATURES on which the predicate is a function across the pooled sampled cells; this is not a globally minimal or universally sufficient signature, and no claim is made that no other hidden coordinate exists.",
+  "schema_version": "miskatonic.formal-discovery.hvb-01b-adjudication.v0.1",
+  "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01B",
+  "phase_c": {
+    "ORIGINAL_SOURCE_SIGNATURE": "{n, a, E, roots, pi_perm, Artin/Hurwitz} = 01A SOURCE_SIGNATURE (identical on all cells)",
+    "candidates": {
+      "AUGMENTED_LAMBDA": "ORIGINAL + lambda",
+      "AUGMENTED_LAME_INDEX": "ORIGINAL + ell(ell+1) (= 2 lambda: a bijective relabelling of AUGMENTED_LAMBDA)",
+      "AUGMENTED_FULL": "ORIGINAL + (lambda, mu)"
+    },
+    "historical_01a_pattern_by_lambda": {
+      "-1": {
+        "mu_values": {
+          "1": "FALSE"
+        },
+        "ell": {
+          "ell": "-1/2 - sqrt(7)*I/2",
+          "ell_kind": "COMPLEX",
+          "two_lambda": "-2"
+        },
+        "predicate_constant_across_sampled_mu": true
+      },
+      "0": {
+        "mu_values": {
+          "0": "TRUE",
+          "1": "TRUE"
+        },
+        "ell": {
+          "ell": "0",
+          "ell_kind": "INTEGER",
+          "two_lambda": "0"
+        },
+        "predicate_constant_across_sampled_mu": true
+      },
+      "1": {
+        "mu_values": {
+          "0": "TRUE",
+          "1": "TRUE"
+        },
+        "ell": {
+          "ell": "1",
+          "ell_kind": "INTEGER",
+          "two_lambda": "2"
+        },
+        "predicate_constant_across_sampled_mu": true
+      },
+      "2": {
+        "mu_values": {
+          "0": "FALSE",
+          "1": "FALSE"
+        },
+        "ell": {
+          "ell": "-1/2 + sqrt(17)/2",
+          "ell_kind": "REAL_NONHALFINTEGER",
+          "two_lambda": "4"
+        },
+        "predicate_constant_across_sampled_mu": true
+      },
+      "3": {
+        "mu_values": {
+          "0": "TRUE"
+        },
+        "ell": {
+          "ell": "2",
+          "ell_kind": "INTEGER",
+          "two_lambda": "6"
+        },
+        "predicate_constant_across_sampled_mu": true
+      }
+    },
+    "question_1": "On the 8 accepted cells the predicate is constant across the sampled mu at every sampled lambda and separates lambda classes (ell integer -> TRUE; ell non-half-integer irrational or complex -> FALSE): CONSISTENT WITH lambda (equivalently ell(ell+1)) being load-bearing. Not a proof: finite grid, and no half-integer ell was sampled in 01A.",
+    "question_2": "On the sampled cells mu did not change the predicate at fixed lambda. Whether mu CAN change it is exactly what Phase D tests; the Brioschi-Halphen-Crawford theorem (bound: Chou-Wang-Wu 2024 Thm 1.2) predicts a mu-dependence precisely at half-integer ell, which 01A did not sample.",
+    "no_sufficiency_claim": true
+  }
+}

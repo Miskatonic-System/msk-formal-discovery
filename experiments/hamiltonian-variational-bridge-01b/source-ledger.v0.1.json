@@ -1,0 +1,65 @@
+{
+  "schema_version": "miskatonic.formal-discovery.hvb-01b-source-ledger.v0.1",
+  "ledger_id": "hvb-01b-sources",
+  "policy": "Experiment-local additive custody; nothing upstream is mutated or upgraded. Morales-Ruiz 1999 remains UNAVAILABLE (see the 01A ledger) and is NOT upgraded. LAME_CLASSIFICATION_AUTHORITY is limited to exactly the statements below.",
+  "consumed_ledgers": [
+    {
+      "repository": "Miskatonic-System/msk-formal-discovery",
+      "commit": "11c6e8cda42eb0b23c480a346f35c1bfe337a0fe",
+      "path": "experiments/hamiltonian-variational-bridge-01a/source-ledger.v0.1.json",
+      "records_relied_on": {
+        "src-hvb-morales-ruiz-1999-attempt": {
+          "status": "UNAVAILABLE",
+          "used_for": "NOTHING; not upgraded"
+        },
+        "src-hvb-smith-1984": {
+          "status": "BOUND",
+          "used_for": "provider provenance (unchanged provider)"
+        }
+      }
+    },
+    {
+      "repository": "Miskatonic-System/miskatonic-mathematics",
+      "commit": "2337c7d744f176274997374a7d4057c7272f715d",
+      "path": "program/hamiltonian-monodromy/controls-v0.1/sources.v0.1.json",
+      "blob": "4cafe426d4b23b82a93b74d7c946d97bb95c0b41",
+      "records_relied_on": {
+        "src-hmc-acosta-morales-weil-2010": {
+          "status": "BOUND",
+          "used_for": "Kovacic four cases; identity-component invariance under algebraic base change (unchanged rules)"
+        }
+      }
+    }
+  ],
+  "sources": [
+    {
+      "schema_version": "miskatonic.mathematics-source-record.v0.1",
+      "source_id": "src-hvb-maier-2002",
+      "title": "Algebraic Solutions of the Lamé Equation, Revisited",
+      "authors_or_authority": "Robert S. Maier",
+      "source_type": "PREPRINT",
+      "canonical_url_or_identifier": "https://arxiv.org/abs/math/0206285v1",
+      "version_or_date": "2002-06-26 (arXiv v1); J. Differential Equations 198 (2004) 16-34",
+      "retrieved_at": "2026-09-22T05:29:41Z",
+      "content_digest": "3be9cb7ac52b412407e0791625ab5d5a43a92f4a0dc0613a415662f099f03cdd",
+      "claim_scope": "Algebraic form of the Lame equation L_{ell,B} on P^1 with singular points e_1,e_2,e_3 (exponents 0, 1/2) and infinity (exponents -ell/2, (ell+1)/2), eq.(1.1); the Weierstrass form on C is the strong pullback of the algebraic form by x = wp(t) (Sec.5, eq.(5.1)); harmonic case J = 1 (g3 = 0) has {e_i} = alpha{-1,0,1} (Def.3.2); classical facts quoted: G(L_{ell,B}) is never cyclic and can be dihedral only if 2 ell in Z (Sec.1, Thm 3.1 proof); Thm 3.1 necessary conditions for finite projective monodromy when 2 ell not in Z; Thm 5.1 finiteness on E equivalent to finiteness on P^1.",
+      "status": "BOUND",
+      "notes": "Digest is SHA-256 of https://arxiv.org/pdf/math/0206285v1 as served at retrieved_at. Uses ell for the degree parameter and explicitly distinguishes it from other integers, matching this WO's invariant."
+    },
+    {
+      "schema_version": "miskatonic.mathematics-source-record.v0.1",
+      "source_id": "src-hvb-chou-wang-wu-2024",
+      "title": "Characterization and enumeration on Lamé equations with finite monodromy",
+      "authors_or_authority": "You-Cheng Chou, Chin-Lung Wang, Po-Sheng Wu",
+      "source_type": "PREPRINT",
+      "canonical_url_or_identifier": "https://arxiv.org/abs/2402.16286v1",
+      "version_or_date": "2024-02-26 (arXiv v1)",
+      "retrieved_at": "2026-09-22T05:29:44Z",
+      "content_digest": "d95ac0f9f79dbfb92f081749052e7f346e2e954cee5ee0cca49f105b9d912956",
+      "claim_scope": "Lame equation (1.1) on a torus and its algebraic form (1.2) p(x) w'' + p'(x)/2 w' - (n(n+1)x + B) w = 0 with p = 4x^3 - g2 x - g3, exponents {0,1/2} at e_i and {-n/2,(n+1)/2} at infinity; Theorem 1.2 (Brioschi-Halphen-Crawford): for m in Z_{>=0} there is a weighted homogeneous polynomial p_m(B; g2, g3) of degree m+1 in B with coefficients in Z[g2/4, g3/4] such that p_m(B) = 0 iff the algebraic Lame equation with n = m + 1/2 has finite projective monodromy K_4; Theorem 1.5 (Beukers-van der Waall) list of n not in N/2 with finite monodromy; finiteness of the four monodromies (ordinary/projective, torus/P^1) is equivalent (Sec.2.2).",
+      "status": "BOUND",
+      "notes": "Digest is SHA-256 of https://arxiv.org/pdf/2402.16286v1 as served at retrieved_at. NOT bound here: the Lame-Hermite statement that integer-ell Lame equations have Liouvillian solutions for every B, and the statement that for half-integer ell with p_m(B) != 0 the group is SL_2; both remain expectation-only and are decided computationally by the qualified provider."
+    }
+  ],
+  "LAME_CLASSIFICATION_AUTHORITY": "PARTIAL: bound for (i) the algebraic form and its pullback relation, (ii) finite-monodromy necessary conditions for 2 ell not in Z, (iii) the Brioschi-Halphen-Crawford characterization of finite projective monodromy for half-integer ell. NONE for the integer-ell Liouvillian statement and for the non-finite half-integer case."
+}

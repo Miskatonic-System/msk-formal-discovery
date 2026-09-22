@@ -1,0 +1,131 @@
+{
+  "schema_version": "miskatonic.formal-discovery.hvb-01b-result.v0.1",
+  "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01B",
+  "canonical_start": "11c6e8cda42eb0b23c480a346f35c1bfe337a0fe",
+  "preregistration_commit": "752e897d37d6c12ed3ed85819082e9cca3e87595",
+  "disposition": "LAME_PARAMETER_MAP_ESTABLISHED + LAMBDA_ALONE_INSUFFICIENT",
+  "disposition_status": "PROPOSED_BY_EXECUTING_AGENT_PENDING_INDEPENDENT_REVIEW",
+  "phase_a": "LAME_PARAMETER_MAP_ESTABLISHED (q = -2 wp, g2 = 1, g3 = 0; ell(ell+1) = 2 lambda, B = -mu; algebraic NVE == Lame algebraic form, factor 1)",
+  "phase_b": {
+    "LAME_CLASSIFICATION_AUTHORITY": "PARTIAL",
+    "bound": [
+      "src-hvb-maier-2002",
+      "src-hvb-chou-wang-wu-2024"
+    ],
+    "unavailable_not_upgraded": [
+      "Morales-Ruiz 1999"
+    ]
+  },
+  "pooled_summary": {
+    "pooled_cell_count": 18,
+    "cells_01a": 8,
+    "cells_01b": 10,
+    "distinct_lambdas": [
+      "-1",
+      "0",
+      "3/8",
+      "1",
+      "2",
+      "3"
+    ],
+    "distinct_lambda_count": 6,
+    "ordering": "by exact rational numerical value, ascending"
+  },
+  "mu_dependence_scope": {
+    "observed_split_lambdas": [
+      "3/8"
+    ],
+    "observed_split_ells": [
+      "1/2"
+    ],
+    "single_sampled_mu_lambdas": [
+      "-1",
+      "3"
+    ],
+    "universal_half_integer_only_claim": false,
+    "statement": "The only observed within-lambda predicate split in the pooled sample occurs at ell = 1/2 (lambda = 3/8). No universal claim is made that mu can affect the predicate only in half-integer-ell classes. Some other lambda classes, including lambda = -1 and lambda = 3, currently have only one sampled mu value, so absence of a split there is not evidence of mu-independence."
+  },
+  "phase_c": {
+    "question_1": "lambda / ell(ell+1) is consistent with being load-bearing on the pooled sample (01A + 01B: 18 cells, 6 distinct lambda values ['-1', '0', '3/8', '1', '2', '3']); the predicate is constant across the sampled mu at every sampled lambda except lambda = 3/8",
+    "question_2": "mu is NOT merely accessory: at lambda = 3/8 (ell = 1/2) it changes the predicate on the sampled cells. Scope: The only observed within-lambda predicate split in the pooled sample occurs at ell = 1/2 (lambda = 3/8). No universal claim is made that mu can affect the predicate only in half-integer-ell classes. Some other lambda classes, including lambda = -1 and lambda = 3, currently have only one sampled mu value, so absence of a split there is not evidence of mu-independence."
+  },
+  "verdict_phase_d": "LAMBDA_ALONE_INSUFFICIENT",
+  "splits": [
+    {
+      "lambda": "3/8",
+      "ell": {
+        "ell": "1/2",
+        "ell_kind": "HALF_INTEGER",
+        "two_lambda": "3/4"
+      },
+      "TRUE": {
+        "cell": "d7",
+        "mu": "0",
+        "lambda": "3/8",
+        "predicate": "TRUE",
+        "origin": "01B"
+      },
+      "FALSE": {
+        "cell": "d8",
+        "mu": "1/2",
+        "lambda": "3/8",
+        "predicate": "FALSE",
+        "origin": "01B"
+      }
+    }
+  ],
+  "outcomes_01b": {
+    "d1": "TRUE",
+    "d2": "TRUE",
+    "d3": "TRUE",
+    "d4": "FALSE",
+    "d5": "FALSE",
+    "d6": "FALSE",
+    "d7": "TRUE",
+    "d8": "FALSE",
+    "d9": "FALSE",
+    "d10": "FALSE"
+  },
+  "minimal_missing_information": {
+    "ORIGINAL": "insufficient (BO-2, canonical)",
+    "ORIGINAL + lambda": "insufficient (split at lambda = 3/8)",
+    "ORIGINAL + ell(ell+1)": "equivalent relabelling of ORIGINAL + lambda, therefore insufficient",
+    "ORIGINAL + (lambda, mu)": "smallest OF THE THREE TESTED CANDIDATE SIGNATURES on which the predicate is a function across the 18 sampled cells",
+    "not_promoted_to": [
+      "globally minimal sufficient signature",
+      "universal sufficient statistic",
+      "lambda and mu always determine G_diff^0",
+      "no other hidden coordinate exists"
+    ],
+    "bhc_note": "the observed split at ell = 1/2 sits at B = 0, the point the bound Brioschi-Halphen-Crawford characterization (p_0(B) proportional to B) singles out as finite projective monodromy; the FALSE cells at ell = 1/2 remain provider-decided, not theorem-derived"
+  },
+  "BO2": "CANONICALLY_REFUTED_NOT_REOPENED",
+  "BO1": "NOT_EXECUTED",
+  "BO3": "PARKED",
+  "degrees_executed": [
+    3
+  ],
+  "MORALES_RAMIS": "NOT_APPLIED",
+  "INTEGRABILITY": "NO_NEW_CLAIM",
+  "CHAOS": "NO_CLAIM",
+  "FTT": "NOT_REQUIRED",
+  "BURAU": "CONTROL_ONLY",
+  "LAMBDA_SUFFICIENT": null,
+  "UNIVERSAL_SUFFICIENCY_CLAIMED": false,
+  "claimed_inferences": [],
+  "claim_ceiling": [
+    "finite-grid statements about the frozen n = 3 member only",
+    "TRUE/FALSE cells rest on the same rules and provider as 01A (FALSE: provider completeness, case 1 independently excluded)",
+    "the integer-ell Liouvillian expectation and the 'non-finite half-integer => SL_2' expectation are NOT source-bound; the provider decided them on the sampled cells"
+  ],
+  "permanent": [
+    "POLYNOMIAL_DEGREE_n != LAME_INDEX_ell",
+    "LAMBDA_ALONE_INSUFFICIENT (sampled: ell = 1/2 splits on mu)",
+    "NOT_FALSIFIED != SUFFICIENT",
+    "ONLY_OBSERVED_SPLIT_AT_HALF_INTEGER != MU_DEPENDENCE_ONLY_AT_HALF_INTEGER",
+    "MINIMAL_AMONG_TESTED_CANDIDATES != UNIVERSALLY_MINIMAL_SUFFICIENT_SIGNATURE",
+    "MEMOIZATION != EXECUTION_INPUT_AUTHORITY",
+    "NONABELIAN_G0 != CHAOS",
+    "SOURCE_GROUP_ACTION != TARGET_MONODROMY_REPRESENTATION"
+  ]
+}

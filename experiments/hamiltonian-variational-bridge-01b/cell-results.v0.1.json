@@ -1,0 +1,344 @@
+{
+  "script_digest": "cd7138fc29485773efd5f7026e1d13fbaf3177892406731db5c5e2ff4bea541c",
+  "log_digest": "9f39b3b60ca6a08e4dddaf156a8ccd8def1f1df351fde05971d1178ef65b9789",
+  "timed_out": false,
+  "returncode": 0,
+  "cells": [
+    {
+      "cell": "d1",
+      "mu": "-1",
+      "lambda": "1",
+      "original_digest": "d2c98d56c2fed2f52927941c79ff4d37dfaa4df069f00a21b1e64dbe3be97b12",
+      "reduced_digest": "b40977d48abe0eb7613b14c1e5f469e4b9a6042158825667d76c91a671e4c3c4",
+      "provider_verdict_original_form": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_verdict_reduced_form": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_return_original": "[y = %e^-((sqrt(3)*'integrate(\n                                 (sqrt(1-x)*sqrt(x+1))\n                                  /(sqrt(x)*(x^3+2*x^2-x-2)),x))\n                      /sqrt(2))\n                 *%k2*sqrt(x+2)\n                 *'integrate(%e^(sqrt(2)*sqrt(3)\n                                        *'integrate(\n                                         (sqrt(1-x)*sqrt(x+1))\n                                          /(sqrt(x)*(x^3+2*x^2-x-2)),x))\n                              /(sqrt(x-1)*sqrt(x)*sqrt(x+1)*(x+2)),x)\n                 +%e^-((sqrt(3)*'integrate(\n                                (sqrt(1-x)*sqrt(x+1))\n                                 /(sqrt(x)*(x^3+2*x^2-x-2)),x))\n                     /sqrt(2))\n                  *%k1*sqrt(x+2)]",
+      "provider_return_reduced": "[y = %e^-((sqrt(3)*'integrate(\n                                (sqrt(1-x)*sqrt(x+1))\n                                 /(sqrt(x)*(x^3+2*x^2-x-2)),x))\n                     /sqrt(2))\n                *%k2*(x-1)^(1/4)*x^(1/4)*(x+1)^(1/4)*sqrt(x+2)\n                *'integrate(%e^(sqrt(2)*sqrt(3)\n                                       *'integrate(\n                                        (sqrt(1-x)*sqrt(x+1))\n                                         /(sqrt(x)*(x^3+2*x^2-x-2)),x))\n                             /(sqrt(x-1)*sqrt(x)*sqrt(x+1)*(x+2)),x)\n                +%e^-((sqrt(3)*'integrate(\n                               (sqrt(1-x)*sqrt(x+1))\n                                /(sqrt(x)*(x^3+2*x^2-x-2)),x))\n                    /sqrt(2))\n                 *%k1*(x-1)^(1/4)*x^(1/4)*(x+1)^(1/4)*sqrt(x+2)]",
+      "provider_output_digest": "f6faa54c7d5a0fbff8961a5f1e7ac29141b5fa5bdf4f62f8433a36a737a6384d",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "TRUE",
+      "rule": "R2L (conjugate form): omega_1 = y_1'/y_1 is algebraic over C(x) and satisfies the Riccati equation omega' + omega^2 + a omega + b = 0 exactly (polynomial reduction modulo s_i^2 = b_i); a Galois conjugate omega_2 != omega_1 satisfies it too, so y_2 = exp(int omega_2) is a second, independent exponential solution. Over K' = C(x)(omega_1, omega_2) both lines C.y_i are Gal(L/K')-stable, hence Gal(L/K') is diagonal, hence abelian; G^0 over C(x) equals Gal(L/K')^0 since K'/C(x) is algebraic (AMW Prop 6.3, bound)",
+      "evidence": {
+        "returned_basis_checks": [
+          {
+            "solution_lifted": "s5*exp(-J1*s4/2)",
+            "satisfies_ode_exactly": true,
+            "algebraic_over_Cx": false,
+            "log_derivative_algebraic": true,
+            "log_derivative": "(-I*s1*s3*s4*s5**2 + s2*x**3 + 2*s2*x**2 - s2*x - 2*s2)/(2*s2*s5**2*x**3 + 4*s2*s5**2*x**2 - 2*s2*s5**2*x - 4*s2*s5**2)"
+          },
+          {
+            "solution_lifted": "J2*s5*exp(-J1*s4/2)",
+            "satisfies_ode_exactly": false,
+            "algebraic_over_Cx": false,
+            "log_derivative_algebraic": false,
+            "log_derivative": null
+          }
+        ],
+        "omega_1": "(-I*s1*s3*s4*s5**2 + s2*x**3 + 2*s2*x**2 - s2*x - 2*s2)/(2*s2*s5**2*x**3 + 4*s2*s5**2*x**2 - 2*s2*s5**2*x - 4*s2*s5**2)",
+        "omega_2": "(I*s1*s3*s4*s5**2 + s2*x**3 + 2*s2*x**2 - s2*x - 2*s2)/(2*s2*s5**2*x**3 + 4*s2*s5**2*x**2 - 2*s2*s5**2*x - 4*s2*s5**2)",
+        "sqrt_symbols": {
+          "s1": "x - 1",
+          "s2": "x",
+          "s3": "x + 1",
+          "s4": "6",
+          "s5": "x + 2"
+        }
+      },
+      "SOURCE_SIGNATURE": "a8407db0c67a25fa92c6b70bc90acbb711f869ca37417de31d221d110ee030cc",
+      "claimed_inferences": []
+    },
+    {
+      "cell": "d2",
+      "mu": "1/2",
+      "lambda": "1",
+      "original_digest": "edd1f232fa269227183388787999496f64dfaea3f3d2b8aebd953d7c11661ffb",
+      "reduced_digest": "eb4bc900b64c1a794ee73a23dd8d2901863b6e5c1bcc64b810db46c8d98471ef",
+      "provider_verdict_original_form": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_verdict_reduced_form": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_return_original": "[y = %k2*sqrt(x-1)\n                      *'integrate(1/((x-1)^(3/2)*sqrt(x)*sqrt(x+1)),x)\n                 +%k1*sqrt(x-1)]",
+      "provider_return_reduced": "[y = %k2*(x-1)^(3/4)*x^(1/4)*(x+1)^(1/4)\n                     *'integrate(1/((x-1)^(3/2)*sqrt(x)*sqrt(x+1)),x)\n                +%k1*(x-1)^(3/4)*x^(1/4)*(x+1)^(1/4)]",
+      "provider_output_digest": "3845f8508186f16088006629cec87257912d15ca71b3aa3c0dae1754be0b3a01",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [
+          "Eq(v(x), (5*x**2 + 2*x - 1)/(4*x**3 - 4*x))"
+        ],
+        "case_1_possible": true,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "TRUE",
+      "rule": "RU: y_1 is algebraic over C(x) and (y_2/y_1)' = omega is algebraic and nonzero (both solutions verified exactly); over K' = C(x)(y_1, omega) every sigma fixes y_1 and sends y_2/y_1 to y_2/y_1 + c, so Gal(L/K') is a subgroup of G_a = {[[1,c],[0,1]]}, abelian; G^0 over C(x) equals Gal(L/K')^0 (AMW Prop 6.3, bound)",
+      "evidence": {
+        "returned_basis_checks": [
+          {
+            "solution_lifted": "s1",
+            "satisfies_ode_exactly": true,
+            "algebraic_over_Cx": true,
+            "log_derivative_algebraic": true,
+            "log_derivative": "1/(2*s1**2)"
+          },
+          {
+            "solution_lifted": "J1*s1",
+            "satisfies_ode_exactly": true,
+            "algebraic_over_Cx": false,
+            "log_derivative_algebraic": false,
+            "log_derivative": null
+          }
+        ],
+        "omega": "1/(s1*s2*s3*x - s1*s2*s3)",
+        "sqrt_symbols": {
+          "s1": "x - 1",
+          "s2": "x",
+          "s3": "x + 1"
+        }
+      },
+      "SOURCE_SIGNATURE": "a8407db0c67a25fa92c6b70bc90acbb711f869ca37417de31d221d110ee030cc",
+      "claimed_inferences": []
+    },
+    {
+      "cell": "d3",
+      "mu": "3",
+      "lambda": "1",
+      "original_digest": "7712c4c7590f9ede17e97fb573b245355e94676effec00cd1ee7e46a76b93d7d",
+      "reduced_digest": "53cd6692f42dba3236475ebb58844635dec13e65903484e501ed39c48dcfeab1",
+      "provider_verdict_original_form": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_verdict_reduced_form": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_return_original": "[y = %e^-((sqrt(3)*sqrt(5)*sqrt(7)\n                                *'integrate(\n                                 (sqrt(x-1)*sqrt(x+1))\n                                  /(sqrt(x)*(x^3-6*x^2-x+6)),x))\n                      /sqrt(2))\n                 *%k2*sqrt(x-6)\n                 *'integrate(%e^(sqrt(2)*sqrt(3)*sqrt(5)*sqrt(7)\n                                        *'integrate(\n                                         (sqrt(x-1)*sqrt(x+1))\n                                          /(sqrt(x)*(x^3-6*x^2-x+6)),x))\n                              /((x-6)*sqrt(x-1)*sqrt(x)*sqrt(x+1)),x)\n                 +%e^-((sqrt(3)*sqrt(5)*sqrt(7)\n                               *'integrate(\n                                (sqrt(x-1)*sqrt(x+1))\n                                 /(sqrt(x)*(x^3-6*x^2-x+6)),x))\n                     /sqrt(2))\n                  *%k1*sqrt(x-6)]",
+      "provider_return_reduced": "[y = %e^-((sqrt(3)*sqrt(5)*sqrt(7)\n                               *'integrate(\n                                (sqrt(x-1)*sqrt(x+1))\n                                 /(sqrt(x)*(x^3-6*x^2-x+6)),x))\n                     /sqrt(2))\n                *%k2*sqrt(x-6)*(x-1)^(1/4)*x^(1/4)*(x+1)^(1/4)\n                *'integrate(%e^(sqrt(2)*sqrt(3)*sqrt(5)*sqrt(7)\n                                       *'integrate(\n                                        (sqrt(x-1)*sqrt(x+1))\n                                         /(sqrt(x)*(x^3-6*x^2-x+6)),x))\n                             /((x-6)*sqrt(x-1)*sqrt(x)*sqrt(x+1)),x)\n                +%e^-((sqrt(3)*sqrt(5)*sqrt(7)\n                              *'integrate(\n                               (sqrt(x-1)*sqrt(x+1))\n                                /(sqrt(x)*(x^3-6*x^2-x+6)),x))\n                    /sqrt(2))\n                 *%k1*sqrt(x-6)*(x-1)^(1/4)*x^(1/4)*(x+1)^(1/4)]",
+      "provider_output_digest": "df5c62218320fa70def4ab7063c5bd887331f296cd571b7a1aa987ea8b4271f0",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "TRUE",
+      "rule": "R2L (conjugate form): omega_1 = y_1'/y_1 is algebraic over C(x) and satisfies the Riccati equation omega' + omega^2 + a omega + b = 0 exactly (polynomial reduction modulo s_i^2 = b_i); a Galois conjugate omega_2 != omega_1 satisfies it too, so y_2 = exp(int omega_2) is a second, independent exponential solution. Over K' = C(x)(omega_1, omega_2) both lines C.y_i are Gal(L/K')-stable, hence Gal(L/K') is diagonal, hence abelian; G^0 over C(x) equals Gal(L/K')^0 since K'/C(x) is algebraic (AMW Prop 6.3, bound)",
+      "evidence": {
+        "returned_basis_checks": [
+          {
+            "solution_lifted": "s5*exp(-J1*s4/2)",
+            "satisfies_ode_exactly": true,
+            "algebraic_over_Cx": false,
+            "log_derivative_algebraic": true,
+            "log_derivative": "(s1*x**3 - 6*s1*x**2 - s1*x + 6*s1 - s2*s3*s4*s5**2)/(2*s1*s5**2*x**3 - 12*s1*s5**2*x**2 - 2*s1*s5**2*x + 12*s1*s5**2)"
+          },
+          {
+            "solution_lifted": "J2*s5*exp(-J1*s4/2)",
+            "satisfies_ode_exactly": false,
+            "algebraic_over_Cx": false,
+            "log_derivative_algebraic": false,
+            "log_derivative": null
+          }
+        ],
+        "omega_1": "(s1*x**3 - 6*s1*x**2 - s1*x + 6*s1 - s2*s3*s4*s5**2)/(2*s1*s5**2*x**3 - 12*s1*s5**2*x**2 - 2*s1*s5**2*x + 12*s1*s5**2)",
+        "omega_2": "(-s1*x**3 + 6*s1*x**2 + s1*x - 6*s1 - s2*s3*s4*s5**2)/(-2*s1*s5**2*x**3 + 12*s1*s5**2*x**2 + 2*s1*s5**2*x - 12*s1*s5**2)",
+        "sqrt_symbols": {
+          "s1": "x",
+          "s2": "x + 1",
+          "s3": "x - 1",
+          "s4": "210",
+          "s5": "x - 6"
+        }
+      },
+      "SOURCE_SIGNATURE": "a8407db0c67a25fa92c6b70bc90acbb711f869ca37417de31d221d110ee030cc",
+      "claimed_inferences": []
+    },
+    {
+      "cell": "d4",
+      "mu": "-1",
+      "lambda": "2",
+      "original_digest": "030309adb059832f10d06f6dc01ae53ba31838b733c0c48eb8f01ce18927d01f",
+      "reduced_digest": "8863014933bc70aef7049145aa3f7f00eb221c07d56a9aa05967a613bd960627",
+      "provider_verdict_original_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_verdict_reduced_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_return_original": "nil",
+      "provider_return_reduced": "nil",
+      "provider_output_digest": "abf950bb69ae007c27989d51ae8c219417eb1e91312490e984f322d07bd492e2",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "FALSE",
+      "rule": "R4: provider finds no Liouvillian solution on both forms => Kovacic case 4 => G = SL_2(C), G^0 = SL_2(C) nonabelian",
+      "evidence": {
+        "consistent_with_independent_case1_exclusion": true
+      },
+      "SOURCE_SIGNATURE": "a8407db0c67a25fa92c6b70bc90acbb711f869ca37417de31d221d110ee030cc",
+      "claimed_inferences": []
+    },
+    {
+      "cell": "d5",
+      "mu": "1/2",
+      "lambda": "2",
+      "original_digest": "0100539bafe2913421f1dbc7f399ebe11b04d4fcea060f13585e7d5ea1d63382",
+      "reduced_digest": "818b86cbe2d3d35d07a84d2a629528052c011cc8f2a6efee2470711b5d903122",
+      "provider_verdict_original_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_verdict_reduced_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_return_original": "nil",
+      "provider_return_reduced": "nil",
+      "provider_output_digest": "abf950bb69ae007c27989d51ae8c219417eb1e91312490e984f322d07bd492e2",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "FALSE",
+      "rule": "R4: provider finds no Liouvillian solution on both forms => Kovacic case 4 => G = SL_2(C), G^0 = SL_2(C) nonabelian",
+      "evidence": {
+        "consistent_with_independent_case1_exclusion": true
+      },
+      "SOURCE_SIGNATURE": "a8407db0c67a25fa92c6b70bc90acbb711f869ca37417de31d221d110ee030cc",
+      "claimed_inferences": []
+    },
+    {
+      "cell": "d6",
+      "mu": "3",
+      "lambda": "2",
+      "original_digest": "d094d6b8638166960c704c737fb969d0923c9bfcb5e3f57ceb816a19ef2be326",
+      "reduced_digest": "05062a0d9763a2a534b93759f118547c37f48ebf15e3206e42fa934a9ed934fa",
+      "provider_verdict_original_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_verdict_reduced_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_return_original": "nil",
+      "provider_return_reduced": "nil",
+      "provider_output_digest": "abf950bb69ae007c27989d51ae8c219417eb1e91312490e984f322d07bd492e2",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "FALSE",
+      "rule": "R4: provider finds no Liouvillian solution on both forms => Kovacic case 4 => G = SL_2(C), G^0 = SL_2(C) nonabelian",
+      "evidence": {
+        "consistent_with_independent_case1_exclusion": true
+      },
+      "SOURCE_SIGNATURE": "a8407db0c67a25fa92c6b70bc90acbb711f869ca37417de31d221d110ee030cc",
+      "claimed_inferences": []
+    },
+    {
+      "cell": "d7",
+      "mu": "0",
+      "lambda": "3/8",
+      "original_digest": "cc7743ca04e7b4a98cc068f814031b634e78ea1d44bef2caae45a139bbcb7820",
+      "reduced_digest": "f123a74811c3475c40f0fa688399962105c4f459a5ee971a97a77e5c7a82f0dc",
+      "provider_verdict_original_form": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_verdict_reduced_form": "LIOUVILLIAN_SOLUTIONS_RETURNED",
+      "provider_return_original": "[y = %e^-(('integrate((sqrt(1-x)*sqrt(x+1))/(x^3-x),x))/4)\n                 *%k2*x^(1/4)\n                 *'integrate(%e^(('integrate((sqrt(1-x)*sqrt(x+1))/(x^3-x),x))\n                                /2)\n                              /(sqrt(x-1)*x*sqrt(x+1)),x)\n                 +%e^-(('integrate((sqrt(1-x)*sqrt(x+1))/(x^3-x),x))/4)\n                  *%k1*x^(1/4)]",
+      "provider_return_reduced": "[y = %e^-(('integrate((sqrt(1-x)*sqrt(x+1))/(x^3-x),x))/4)\n                *%k2*(x-1)^(1/4)*sqrt(x)*(x+1)^(1/4)\n                *'integrate(%e^(('integrate((sqrt(1-x)*sqrt(x+1))/(x^3-x),x))\n                               /2)\n                             /(sqrt(x-1)*x*sqrt(x+1)),x)\n                +%e^-(('integrate((sqrt(1-x)*sqrt(x+1))/(x^3-x),x))/4)\n                 *%k1*(x-1)^(1/4)*sqrt(x)*(x+1)^(1/4)]",
+      "provider_output_digest": "6e5cc937ae9bb952722372b6cbd39e15e0c25c9c4516e7ab3f4dc654d2627ad4",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "TRUE",
+      "rule": "R2L (conjugate form): omega_1 = y_1'/y_1 is algebraic over C(x) and satisfies the Riccati equation omega' + omega^2 + a omega + b = 0 exactly (polynomial reduction modulo s_i^2 = b_i); a Galois conjugate omega_2 != omega_1 satisfies it too, so y_2 = exp(int omega_2) is a second, independent exponential solution. Over K' = C(x)(omega_1, omega_2) both lines C.y_i are Gal(L/K')-stable, hence Gal(L/K') is diagonal, hence abelian; G^0 over C(x) equals Gal(L/K')^0 since K'/C(x) is algebraic (AMW Prop 6.3, bound)",
+      "evidence": {
+        "returned_basis_checks": [
+          {
+            "solution_lifted": "x**(1/4)*exp(-J1/4)",
+            "satisfies_ode_exactly": true,
+            "algebraic_over_Cx": false,
+            "log_derivative_algebraic": true,
+            "log_derivative": "(-I*s1*s2 + x**2 - 1)/(4*x**3 - 4*x)"
+          },
+          {
+            "solution_lifted": "J2*x**(1/4)*exp(-J1/4)",
+            "satisfies_ode_exactly": false,
+            "algebraic_over_Cx": false,
+            "log_derivative_algebraic": false,
+            "log_derivative": null
+          }
+        ],
+        "omega_1": "(-I*s1*s2 + x**2 - 1)/(4*x**3 - 4*x)",
+        "omega_2": "(I*s1*s2 + x**2 - 1)/(4*x**3 - 4*x)",
+        "sqrt_symbols": {
+          "s1": "x - 1",
+          "s2": "x + 1"
+        }
+      },
+      "SOURCE_SIGNATURE": "a8407db0c67a25fa92c6b70bc90acbb711f869ca37417de31d221d110ee030cc",
+      "claimed_inferences": []
+    },
+    {
+      "cell": "d8",
+      "mu": "1/2",
+      "lambda": "3/8",
+      "original_digest": "b007eb5d5cbc995815d360e5807266460d353c9fb205e29f0c02ca05c51e85fd",
+      "reduced_digest": "1fdc4156a7d22f6b92a66d30a71f3109db4027e052951f89b72d6d146749f990",
+      "provider_verdict_original_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_verdict_reduced_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_return_original": "nil",
+      "provider_return_reduced": "nil",
+      "provider_output_digest": "abf950bb69ae007c27989d51ae8c219417eb1e91312490e984f322d07bd492e2",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "FALSE",
+      "rule": "R4: provider finds no Liouvillian solution on both forms => Kovacic case 4 => G = SL_2(C), G^0 = SL_2(C) nonabelian",
+      "evidence": {
+        "consistent_with_independent_case1_exclusion": true
+      },
+      "SOURCE_SIGNATURE": "a8407db0c67a25fa92c6b70bc90acbb711f869ca37417de31d221d110ee030cc",
+      "claimed_inferences": []
+    },
+    {
+      "cell": "d9",
+      "mu": "-1",
+      "lambda": "3/8",
+      "original_digest": "9c022ab8c448b2753eca5b2093c6b07e4bfc9fb96571228856547f3c3d691021",
+      "reduced_digest": "8a3f5b4547bdad809238884cbe5ae44974cc3e58bb564987897131dcfe39a7c3",
+      "provider_verdict_original_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_verdict_reduced_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_return_original": "nil",
+      "provider_return_reduced": "nil",
+      "provider_output_digest": "abf950bb69ae007c27989d51ae8c219417eb1e91312490e984f322d07bd492e2",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "FALSE",
+      "rule": "R4: provider finds no Liouvillian solution on both forms => Kovacic case 4 => G = SL_2(C), G^0 = SL_2(C) nonabelian",
+      "evidence": {
+        "consistent_with_independent_case1_exclusion": true
+      },
+      "SOURCE_SIGNATURE": "a8407db0c67a25fa92c6b70bc90acbb711f869ca37417de31d221d110ee030cc",
+      "claimed_inferences": []
+    },
+    {
+      "cell": "d10",
+      "mu": "2",
+      "lambda": "3/8",
+      "original_digest": "9d0dacd4e9edc60604682ae70a2508e5084319b0f67c08e5bf79bfde84853cd7",
+      "reduced_digest": "7973cbe18593f38e988704b73dd45d3e0f182b2a4b60f86ed54e01680e696d1e",
+      "provider_verdict_original_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_verdict_reduced_form": "NO_LIOUVILLIAN_SOLUTION",
+      "provider_return_original": "nil",
+      "provider_return_reduced": "nil",
+      "provider_output_digest": "abf950bb69ae007c27989d51ae8c219417eb1e91312490e984f322d07bd492e2",
+      "independent_case1_test_on_reduced_form": {
+        "rational_solutions": [],
+        "case_1_possible": false,
+        "tool": "sympy.solvers.ode.riccati.solve_riccati"
+      },
+      "ABELIAN_IDENTITY_COMPONENT": "FALSE",
+      "rule": "R4: provider finds no Liouvillian solution on both forms => Kovacic case 4 => G = SL_2(C), G^0 = SL_2(C) nonabelian",
+      "evidence": {
+        "consistent_with_independent_case1_exclusion": true
+      },
+      "SOURCE_SIGNATURE": "a8407db0c67a25fa92c6b70bc90acbb711f869ca37417de31d221d110ee030cc",
+      "claimed_inferences": []
+    }
+  ],
+  "schema_version": "miskatonic.formal-discovery.hvb-01b-cell-results.v0.1",
+  "work_order": "WO-FORMAL-HAMILTONIAN-VARIATIONAL-BRIDGE-01B",
+  "provider_script": "cells/target_cells.mac",
+  "provider_log": "cells/target_cells.log"
+}
